@@ -78,6 +78,13 @@ For direct local use without a marketplace, symlink individual skill directories
 
 Keep the symlink name identical to the skill directory name.
 
+## Git Hooks
+
+This repo provides a repo-managed pre-commit hook in `.githooks/pre-commit`.
+
+- Enable it with `git config core.hooksPath .githooks`
+- Keep it focused on durable repo policy, not machine-local tooling
+
 ## Skills
 
 Use these repo-local skills when requests match:

@@ -79,6 +79,17 @@ Repeat that pattern for any other skill in this repo. The symlink name should ma
 - Keep skill assets, scripts, references, and agents inside the owning skill directory.
 - Avoid cross-repo relative paths. A plugin install is expected to be self-contained.
 
+### Git Hooks
+
+This repo includes a repo-managed pre-commit hook under [`.githooks/pre-commit`](./.githooks/pre-commit) to block accidental commits of Anthropic API keys.
+
+Enable it locally:
+
+```bash
+git config core.hooksPath .githooks
+chmod +x .githooks/pre-commit
+```
+
 ## Eval Harness
 
 Promptfoo evals for skills in this repository live under [`tests/evals/`](./tests/evals).
