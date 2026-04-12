@@ -36,6 +36,10 @@ module.exports = (output, context) => {
     ['runs_skill_evals', parseExpectedBoolean(context.vars.expect_runs_skill_evals)],
     ['moves_issue_to_in_review', parseExpectedBoolean(context.vars.expect_moves_issue_to_in_review)],
     ['checks_off_acceptance_criteria', parseExpectedBoolean(context.vars.expect_checks_off_acceptance_criteria)],
+    ['uses_generic_issue_linking_language', parseExpectedBoolean(context.vars.expect_uses_generic_issue_linking_language)],
+    ['stops_if_pr_not_merged', parseExpectedBoolean(context.vars.expect_stops_if_pr_not_merged)],
+    ['would_close_issue_in_this_scenario', parseExpectedBoolean(context.vars.expect_would_close_issue_in_this_scenario)],
+    ['would_do_cleanup_in_this_scenario', parseExpectedBoolean(context.vars.expect_would_do_cleanup_in_this_scenario)],
     ['merges_pr', parseExpectedBoolean(context.vars.expect_merges_pr)],
     ['closes_issue', parseExpectedBoolean(context.vars.expect_closes_issue)],
     ['does_cleanup', parseExpectedBoolean(context.vars.expect_does_cleanup)],
@@ -82,6 +86,60 @@ module.exports = (output, context) => {
         pass: false,
         score: 0,
         reason: `Expected has_distinct_paths=${expected}, got ${payload.has_distinct_paths}`,
+      };
+    }
+  }
+
+  const expectedStringFields = [
+    ['assignee_default', context.vars.expected_assignee_default],
+    ['cycle_default', context.vars.expected_cycle_default],
+    ['milestone_strategy', context.vars.expected_milestone_strategy],
+  ];
+
+  for (const [field, expectedRaw] of expectedStringFields) {
+    if (expectedRaw === undefined) continue;
+    const expected = String(expectedRaw).trim().toLowerCase();
+    const actual = String(payload[field] || '').trim().toLowerCase();
+    if (actual !== expected) {
+      return {
+        pass: false,
+        score: 0,
+        reason: `Expected ${field}=${expected}, got ${actual}`,
+      };
+    }
+  }
+
+  const expectedBooleanFields = [
+    ['resolves_project_before_asking', parseExpectedBoolean(context.vars.expect_resolves_project_before_asking)],
+    ['confirms_critical_fields_with_user', parseExpectedBoolean(context.vars.expect_confirms_critical_fields_with_user)],
+    [
+      'asks_to_record_project_in_agents_md_only_after_user_supplies_it',
+      parseExpectedBoolean(context.vars.expect_asks_to_record_project_in_agents_md_only_after_user_supplies_it),
+    ],
+  ];
+
+  for (const [field, expected] of expectedBooleanFields) {
+    if (expected === null) continue;
+    if (payload[field] !== expected) {
+      return {
+        pass: false,
+        score: 0,
+        reason: `Expected ${field}=${expected}, got ${payload[field]}`,
+      };
+    }
+  }
+
+  const expectedResolvedFields = normalizeTerms(context.vars.expected_resolved_fields_include);
+  if (expectedResolvedFields.length > 0) {
+    const actual = Array.isArray(payload.resolved_fields_include)
+      ? payload.resolved_fields_include.map((value) => String(value).trim().toLowerCase())
+      : [];
+    const missing = expectedResolvedFields.filter((term) => !actual.includes(term));
+    if (missing.length > 0) {
+      return {
+        pass: false,
+        score: 0,
+        reason: `Missing resolved_fields_include values: ${missing.join(', ')}`,
       };
     }
   }

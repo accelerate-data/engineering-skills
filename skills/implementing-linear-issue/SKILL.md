@@ -32,7 +32,7 @@ Implement the approved issue, but stop before the PR phase. This skill owns mand
 
 ## Implementation
 
-**Tool contract:** use `mcp__codex_apps__linear_mcp_server_get_issue`, `list_issues`, `list_comments`, `save_issue`, `save_comment`, `git branch`, `git worktree`, `git status`, `git add <file>`, `git commit`, and repo test commands from `repo-map.json`. Retry once on tool failure, then stop and report the exact failing step.
+**Tool contract:** use the available Linear MCP tools needed for issue and comment operations in this workflow, plus `git branch`, `git worktree`, `git status`, `git add <file>`, `git commit`, and repo test commands from `repo-map.json`. Retry once on tool failure, then stop and report the exact failing step.
 
 **Status setup:**
 

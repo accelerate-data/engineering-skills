@@ -37,4 +37,6 @@ tests:
       expect_checks_off_acceptance_criteria: "true"
       expect_moves_issue_to_in_review: "true"
       expect_merges_pr: "false"
-      required_terms: "rebase,review,dirty,valid"
+      expect_uses_generic_issue_linking_language: "true"
+      required_terms: "rebase,review,dirty,issue"
+      forbidden_terms: "vu-xxx"

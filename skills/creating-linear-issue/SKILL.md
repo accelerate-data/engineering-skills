@@ -8,12 +8,12 @@ argument-hint: "[request-or-issue-context]"
 
 ## Overview
 
-Turn a request into a clear Linear issue only after codebase review, clarification, and plan approval. Product scope belongs in the issue; implementation detail belongs in the plan, not the ticket body.
+Turn a request into a clear Linear issue only after codebase review, field resolution, user confirmation, and plan approval. Product scope belongs in the issue; implementation detail belongs in the plan, not the ticket body.
 
 ## When to Use
 
 - User asks to create an issue, file a bug, track a feature, or break down an existing issue.
-- The request is still ambiguous enough that the wrong milestone, cycle, or decomposition would create churn.
+- The request is still ambiguous enough that the wrong project, milestone, assignee, cycle, or decomposition would create churn.
 - Do not use for implementation, PR raising, or closing work.
 
 ## Quick Reference
@@ -22,14 +22,16 @@ Turn a request into a clear Linear issue only after codebase review, clarificati
 |---|---|
 | 0 | Classify first: `feature`, `bug`, or `spike` |
 | 1 | Search the codebase and existing Linear issues first |
-| 2 | Answer clarification questions yourself when the code gives one clear answer |
-| 3 | Ask at most one user question at a time, only for unresolved forks |
+| 2 | Resolve `project`, `milestone`, `assignee`, and `cycle` before asking the user |
+| 3 | Confirm resolved fields with the user in one question; ask follow-up questions only for unresolved forks |
 | 4 | Enter plan mode and show the full issue draft plan before creating anything |
 | 5 | Create or update the issue only after plan approval |
 
 ## Implementation
 
-**Tool contract:** use `mcp__codex_apps__linear_mcp_server_get_issue`, `list_issues`, `list_projects`, `get_project`, `list_milestones`, `list_cycles`, `list_issue_labels`, `save_issue`, and `save_comment`. Retry once on tool failure, then stop and report the exact failing step.
+**Tool contract:** use the available Linear MCP tools needed for issue, project, milestone, cycle, label, and comment operations in this workflow. Retry once on tool failure, then stop and report the exact failing step.
+
+**Critical fields are mandatory:** every issue creation flow must resolve and confirm `project`, `milestone`, `assignee`, and `cycle`.
 
 **Classification is required before planning:**
 
@@ -46,18 +48,23 @@ Each kind has its own path:
 **Clarification protocol:**
 
 1. Search the codebase first.
-2. For each open question:
-   - If the code answers it confidently, state the decision and move on.
-   - If exactly one viable path exists, state it and move on.
-   - If two or more viable paths remain, ask one question and wait.
-3. Never batch questions.
-4. Do not enter plan mode while any gap remains unresolved.
+2. Resolve the four critical fields before asking the user:
+   - `project`: check `AGENTS.md` first for durable repo guidance. If it gives one clear project, use that provisional choice. If not, inspect Linear projects and repo context. If still unresolved, ask the user.
+   - `milestone`: load milestones for the resolved project and ignore past milestones. Prefer a future milestone with one clear fit; if multiple viable future milestones remain, ask the user to choose.
+   - `assignee`: default to the person creating the issue unless the request or repo context clearly points elsewhere.
+   - `cycle`: default to the current cycle unless the request clearly points elsewhere.
+3. Present the resolved values and ask the user to confirm or correct them before entering plan mode.
+4. If milestone selection is the only unresolved fork, combine it into that same confirmation question: show the proposed `project`, `assignee`, and `cycle`, list the viable future milestone options, and ask for one confirmation/correction response.
+5. Ask at most one user question at a time.
+6. If the project was missing from `AGENTS.md` and the user supplies it, ask after that answer whether they want the durable project mapping added to `AGENTS.md`.
+7. Do not enter plan mode while any critical field or decomposition gap remains unresolved.
 
 **Plan mode is required.** Present the full plan before creating the issue. The plan must include:
 
 - selected issue kind and why
 - issue type: feature, bug, or decomposition
-- resolved project, milestone, and cycle strategy
+- resolved project, milestone, assignee, and cycle
+- whether the project came from `AGENTS.md`, repo/Linear resolution, or direct user input
 - dedupe result
 - issue draft outline
 - decomposition approach when scope is too large for one issue
@@ -90,14 +97,18 @@ Each kind has its own path:
 **Resolution rules:**
 
 - Dedupe before creating.
-- Never create without a project, milestone, and cycle unless the user explicitly approves the exception.
+- Never create without a project, milestone, assignee, and cycle unless the user explicitly approves the exception.
 - Decompose by end-to-end slice, not by frontend/backend split.
 - Use literal Markdown in `description`; never send escaped `\n` or escaped checkboxes.
+- When confirming resolved fields, state the provisional defaults explicitly instead of silently applying them.
 
 ## Common Mistakes
 
 - Asking the user for scope details the codebase already answers.
-- Entering plan mode before milestone, cycle, or decomposition gaps are resolved.
+- Entering plan mode before project, milestone, assignee, cycle, or decomposition gaps are resolved.
+- Picking a past milestone when future milestones exist.
+- Silently defaulting assignee or cycle without user confirmation.
+- Asking to update `AGENTS.md` before the user has supplied a missing project.
 - Creating the issue immediately after drafting instead of waiting for plan approval.
 - Writing implementation details into the issue description.
 

@@ -28,7 +28,7 @@ Take completed implementation work across the finish line into review. This skil
 
 ## Implementation
 
-**Tool contract:** use repo test commands from `repo-map.json`, `git status`, `git push`, `gh pr list`, `gh pr create`, `gh pr edit`, `gh pr view`, `gh pr checks`, `mcp__codex_apps__linear_mcp_server_get_issue`, `save_issue`, and `save_comment`. Retry once on tool failure, then stop and report the exact failing step.
+**Tool contract:** use repo test commands from `repo-map.json`, `git status`, `git push`, `gh pr list`, `gh pr create`, `gh pr edit`, `gh pr view`, `gh pr checks`, and the available Linear MCP tools needed for issue and comment operations in this workflow. Retry once on tool failure, then stop and report the exact failing step.
 
 **Branch sync comes first:**
 
@@ -54,7 +54,7 @@ Take completed implementation work across the finish line into review. This skil
 - If the worktree is dirty at the start of this phase, stop immediately and hand back to `implementing-linear-issue`.
 - Push the feature branch.
 - Create the PR if none exists; otherwise update the existing PR.
-- Include the required `Fixes VU-XXX` lines.
+- Include the appropriate issue-linking lines for the actual issue IDs, for example `Fixes ENG-1023`, while preserving any workspace-specific linking convention already in use.
 - Report the PR URL and the remaining manual follow-up, if any.
 
 **Boundary rules:**

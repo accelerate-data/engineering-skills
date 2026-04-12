@@ -8,7 +8,7 @@ argument-hint: "[issue-id-or-pr]"
 
 ## Overview
 
-Finish the last mile after review: verify the PR can merge, merge it, move linked issues to `Done`, and clean up branches and worktrees safely.
+Finish the last mile after review once the PR has already been merged elsewhere: close linked issues and clean up branches and worktrees safely.
 
 ## When to Use
 
@@ -20,35 +20,30 @@ Finish the last mile after review: verify the PR can merge, merge it, move linke
 
 | Step | Requirement |
 |---|---|
-| 1 | Locate the PR and verify merge readiness |
-| 2 | Respect required checks and branch protection |
-| 3 | Merge the PR |
+| 1 | Locate the PR and verify it is already merged |
+| 2 | Stop if the PR is not merged yet |
+| 3 | Read the merge result and closing metadata |
 | 4 | Move linked issues to `Done` |
 | 5 | Remove worktree and branches safely |
 
 ## Implementation
 
-**Tool contract:** use `mcp__codex_apps__linear_mcp_server_get_issue`, `list_issues`, `list_comments`, `save_issue`, `save_comment`, `gh pr list`, `gh pr view`, `gh pr checks`, `gh pr merge`, `git fetch`, `git worktree remove`, `git branch -D`, `git push origin --delete`, `git checkout`, `git pull`, and `git reset --hard`. Retry once on failure, then stop and report the exact step.
-
-**Branch sync comes first:**
-
-1. Fetch the default branch.
-2. Rebase the feature branch onto the latest default branch before merge.
-3. Resolve only mechanical conflicts directly; escalate semantic conflicts.
+**Tool contract:** use the available Linear MCP tools needed for issue and comment operations in this workflow, plus `gh pr list`, `gh pr view`, `gh pr checks`, `git fetch`, `git worktree remove`, `git branch -D`, `git push origin --delete`, `git checkout`, and `git pull`. Retry once on failure, then stop and report the exact step.
 
 **Readiness rules:**
 
 - If no PR exists, stop and direct the user back to `raising-linear-pr`.
+- If the PR is not already merged, stop and direct the user back to GitHub or `raising-linear-pr`.
 - If the worktree is dirty at the start of this phase, stop immediately and direct the user back to `implementing-linear-issue`.
 - If required checks fail, stop and report them.
 - If the PR test plan is incomplete, stop and report the gap.
-- If semantic merge conflicts appear, escalate to the user.
 - When refreshing local `main`, stop and report if local `main` is dirty or has local-only commits not on `origin/main`.
 
 **Merge and close rules:**
 
-- Prefer squash merge unless the repo policy or PR requires otherwise.
-- Capture the merge commit SHA.
+- This skill does not merge the PR or rewrite the reviewed branch.
+- The PR must already be merged before this skill does any close or cleanup work.
+- Read the merge result from the already-merged PR and capture the merge commit SHA when available.
 - Move the primary issue and any linked `Fixes` or `Closes` issues to `Done`.
 - Add a closing Linear comment with the PR URL and merge SHA.
 
@@ -66,13 +61,16 @@ Finish the last mile after review: verify the PR can merge, merge it, move linke
 **Boundary rules:**
 
 - No plan mode.
-- No new code changes except mechanical conflict resolution.
+- No new code changes.
 - No new PR creation.
+- No local merge or rebase ownership.
+- Never merge the PR from this skill.
 
 ## Common Mistakes
 
-- Trying to merge before rebasing onto the latest default branch.
 - Trying to close the issue before a PR exists.
+- Trying to run this skill before the PR is already merged.
+- Treating this skill as the merge step instead of a post-merge close/cleanup step.
 - Proceeding with merge or cleanup from a dirty worktree.
 - Ignoring required checks or an incomplete PR test plan.
 - Silently discarding tracked changes during post-merge cleanup.

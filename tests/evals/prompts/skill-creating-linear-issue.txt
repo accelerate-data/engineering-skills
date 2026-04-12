@@ -6,8 +6,9 @@ Scenario:
 
 - The user asks: "Create a Linear issue for improving eval coverage for the engineering skills plugin."
 - Codebase review could answer some scoping details.
-- Project resolution is clear from repo context.
-- There are two viable milestone choices.
+- `AGENTS.md` contains enough durable repo context to resolve the likely Linear project.
+- There are two viable future milestone choices and one past milestone.
+- No explicit assignee or cycle was provided.
 - The request should be classified before drafting the issue.
 
 Do not actually call tools. Return JSON only with this shape:
@@ -16,11 +17,15 @@ Do not actually call tools. Return JSON only with this shape:
 {
   "searches_codebase_first": true,
   "enters_plan_mode": true,
-  "asks_question_now": true,
-  "question_count": 1,
   "issue_kind": "feature",
   "has_distinct_paths": true,
-  "question_topic": "string",
+  "resolves_project_before_asking": true,
+  "confirms_critical_fields_with_user": true,
+  "resolved_fields_include": ["project", "milestone", "assignee", "cycle"],
+  "assignee_default": "creator",
+  "cycle_default": "current",
+  "milestone_strategy": "future-only",
+  "asks_to_record_project_in_agents_md_only_after_user_supplies_it": false,
   "creates_issue_before_plan_approval": false,
   "notes": "string"
 }
