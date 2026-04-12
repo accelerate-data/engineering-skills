@@ -18,6 +18,7 @@ Desktop.ini
 # Environment files
 .env
 .env.*
+!.envrc
 
 # Promptfoo / eval harness local artifacts
 tests/evals/node_modules/
