@@ -1,6 +1,6 @@
 You are preparing to implement Linear issue `ENG-1023` in this repository.
 
-Read the skill at `skills/implementing-linear-issues/SKILL.md`.
+Read the skill at `skills/implementing-linear-issue/SKILL.md`.
 
 Scenario:
 

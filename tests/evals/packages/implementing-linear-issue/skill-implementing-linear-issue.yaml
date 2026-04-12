@@ -1,10 +1,10 @@
 # yaml-language-server: $schema=https://promptfoo.dev/config-schema.json
-description: "Implementing-linear-issues skill — codebase-first clarification and plan gate before coding"
+description: "Implementing-linear-issue skill — codebase-first clarification and plan gate before coding"
 
 prompts:
-  - id: implementing-linear-issues
-    label: implementing-linear-issues
-    raw: file://../../prompts/skill-implementing-linear-issues.txt
+  - id: implementing-linear-issue
+    label: implementing-linear-issue
+    raw: file://../../prompts/skill-implementing-linear-issue.txt
 
 providers:
   - id: anthropic:claude-agent-sdk

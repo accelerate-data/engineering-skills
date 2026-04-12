@@ -36,7 +36,7 @@
     },
     "eval_harness": {
       "path": "tests/evals/",
-      "description": "Promptfoo harness for skills in this repository. Current packages cover the Linear workflow skills: creating-linear-issues, implementing-linear-issues, raising-linear-prs, and closing-linear-issues."
+      "description": "Promptfoo harness for skills in this repository. Current packages cover the Linear workflow skills: creating-linear-issue, implementing-linear-issue, raising-linear-pr, and closing-linear-issue."
     }
   },
   "key_directories": {
@@ -47,10 +47,10 @@
   },
   "commands": {
     "eval_all": "cd tests/evals && npm run eval",
-    "eval_creating_linear_issues": "cd tests/evals && npm run eval:creating-linear-issues",
-    "eval_implementing_linear_issues": "cd tests/evals && npm run eval:implementing-linear-issues",
-    "eval_raising_linear_prs": "cd tests/evals && npm run eval:raising-linear-prs",
-    "eval_closing_linear_issues": "cd tests/evals && npm run eval:closing-linear-issues",
+    "eval_creating_linear_issue": "cd tests/evals && npm run eval:creating-linear-issue",
+    "eval_implementing_linear_issue": "cd tests/evals && npm run eval:implementing-linear-issue",
+    "eval_raising_linear_pr": "cd tests/evals && npm run eval:raising-linear-pr",
+    "eval_closing_linear_issue": "cd tests/evals && npm run eval:closing-linear-issue",
     "eval_view": "cd tests/evals && npm run view"
   },
   "conventions": {

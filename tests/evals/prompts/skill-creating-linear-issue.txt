@@ -1,6 +1,6 @@
 You are preparing to create a Linear issue in this repository.
 
-Read the skill at `skills/creating-linear-issues/SKILL.md`.
+Read the skill at `skills/creating-linear-issue/SKILL.md`.
 
 Scenario:
 

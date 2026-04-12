@@ -16,12 +16,12 @@ This repository is a single plugin source repo, not a marketplace repo.
 ├── .codex-plugin/plugin.json
 ├── skills/
 │   ├── adversarial-review/
-│   ├── closing-linear-issues/
-│   ├── creating-linear-issues/
+│   ├── closing-linear-issue/
+│   ├── creating-linear-issue/
 │   ├── explaining-code/
-│   ├── implementing-linear-issues/
+│   ├── implementing-linear-issue/
 │   ├── playwright/
-│   ├── raising-linear-prs/
+│   ├── raising-linear-pr/
 │   └── shadcn-ui/
 └── README.md
 ```
@@ -106,19 +106,19 @@ Individual suites:
 
 ```bash
 cd tests/evals
-npm run eval:creating-linear-issues
-npm run eval:implementing-linear-issues
-npm run eval:raising-linear-prs
-npm run eval:closing-linear-issues
+npm run eval:creating-linear-issue
+npm run eval:implementing-linear-issue
+npm run eval:raising-linear-pr
+npm run eval:closing-linear-issue
 ```
 
 ## Current Skills
 
 - `adversarial-review`
-- `closing-linear-issues`
-- `creating-linear-issues`
+- `closing-linear-issue`
+- `creating-linear-issue`
 - `explaining-code`
-- `implementing-linear-issues`
+- `implementing-linear-issue`
 - `playwright`
-- `raising-linear-prs`
+- `raising-linear-pr`
 - `shadcn-ui`

@@ -1,5 +1,5 @@
 ---
-name: raising-linear-prs
+name: raising-linear-pr
 description: Use when implementation is complete and this repository needs the PR-phase workflow - verification, acceptance-criteria checkoff, PR creation, and In Review transition
 ---
 
@@ -49,8 +49,8 @@ Take completed implementation work across the finish line into review. This skil
 
 **Git and PR rules:**
 
-- If the branch is missing the expected implementation commits, stop and hand back to `implementing-linear-issues`.
-- If the worktree is dirty at the start of this phase, stop immediately and hand back to `implementing-linear-issues`.
+- If the branch is missing the expected implementation commits, stop and hand back to `implementing-linear-issue`.
+- If the worktree is dirty at the start of this phase, stop immediately and hand back to `implementing-linear-issue`.
 - Push the feature branch.
 - Create the PR if none exists; otherwise update the existing PR.
 - Include the required `Fixes VU-XXX` lines.
@@ -62,7 +62,7 @@ Take completed implementation work across the finish line into review. This skil
 - No merge.
 - No close-to-done transition.
 - No new implementation commits in this phase.
-- Hand off to `closing-linear-issues` for merge and cleanup.
+- Hand off to `closing-linear-issue` for merge and cleanup.
 
 ## Common Mistakes
 

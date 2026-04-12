@@ -89,10 +89,10 @@ This repo provides a repo-managed pre-commit hook in `.githooks/pre-commit`.
 
 Use these repo-local skills when requests match:
 
-- `skills/creating-linear-issues/SKILL.md` - create or refine Linear issues
-- `skills/implementing-linear-issues/SKILL.md` - implement a Linear issue
-- `skills/raising-linear-prs/SKILL.md` - run the PR phase for a completed issue
-- `skills/closing-linear-issues/SKILL.md` - merge, close, and clean up after review
+- `skills/creating-linear-issue/SKILL.md` - create or refine a Linear issue
+- `skills/implementing-linear-issue/SKILL.md` - implement a Linear issue
+- `skills/raising-linear-pr/SKILL.md` - run the PR phase for a completed issue
+- `skills/closing-linear-issue/SKILL.md` - merge, close, and clean up after review
 - `skills/adversarial-review/SKILL.md` - run adversarial code review
 - `skills/shadcn-ui/SKILL.md` - shadcn/ui component work
 - `skills/explaining-code/SKILL.md` - explain code with diagrams and teaching-style breakdowns

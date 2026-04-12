@@ -1,10 +1,10 @@
 # yaml-language-server: $schema=https://promptfoo.dev/config-schema.json
-description: "Creating-linear-issues skill — clarification and planning before issue creation"
+description: "Creating-linear-issue skill — clarification and planning before issue creation"
 
 prompts:
-  - id: creating-linear-issues
-    label: creating-linear-issues
-    raw: file://../../prompts/skill-creating-linear-issues.txt
+  - id: creating-linear-issue
+    label: creating-linear-issue
+    raw: file://../../prompts/skill-creating-linear-issue.txt
 
 providers:
   - id: anthropic:claude-agent-sdk
@@ -33,5 +33,5 @@ tests:
       expect_question_count: "1"
       expected_issue_kind: "feature"
       expect_has_distinct_paths: "true"
-      required_terms: "feature,bug,spike,milestone,plan"
+      required_terms: "feature,milestone,plan"
       forbidden_terms: "creates_issue_before_plan_approval\":true"

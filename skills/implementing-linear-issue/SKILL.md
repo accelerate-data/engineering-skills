@@ -1,5 +1,5 @@
 ---
-name: implementing-linear-issues
+name: implementing-linear-issue
 description: Use when implementing a Linear issue in this repository after issue creation is complete and coding should stop before PR creation
 ---
 
@@ -7,7 +7,7 @@ description: Use when implementing a Linear issue in this repository after issue
 
 ## Overview
 
-Implement the approved issue, but stop before the PR phase. This skill owns mandatory branch/worktree setup, codebase-first clarification, plan approval, isolated implementation work, checkpoint commits, local quality gates, a final implementation commit, and Linear implementation updates. `raising-linear-prs` owns the post-rebase verification rerun, acceptance-criteria checkoff, PR creation, and `In Review` transition.
+Implement the approved issue, but stop before the PR phase. This skill owns mandatory branch/worktree setup, codebase-first clarification, plan approval, isolated implementation work, checkpoint commits, local quality gates, a final implementation commit, and Linear implementation updates. `raising-linear-pr` owns the post-rebase verification rerun, acceptance-criteria checkoff, PR creation, and `In Review` transition.
 
 ## When to Use
 
@@ -106,7 +106,7 @@ Post the approved plan to Linear before coding. If the user rejects it, revise a
 - Do not create or update a PR.
 - Do not move the issue to `In Review`.
 - Do not hand off with uncommitted or unstaged changes still in the worktree.
-- Hand off to `raising-linear-prs` after the final implementation commit and local verification pass.
+- Hand off to `raising-linear-pr` after the final implementation commit and local verification pass.
 - Report the branch name, worktree path, checkpoint commit SHAs, final implementation commit SHA, clean `git status`, verification run, and any remaining risks.
 
 ## Common Mistakes
@@ -135,4 +135,4 @@ Post the approved plan to Linear before coding. If the user rejects it, revise a
 
 ## Exit State
 
-When this skill finishes, the branch and worktree exist, the implementation is complete, checkpoint commits and a final implementation commit exist locally, the worktree is clean, the local verification and repo-local eval gates have run, and the issue is still in `In Progress`. The next step is `raising-linear-prs`.
+When this skill finishes, the branch and worktree exist, the implementation is complete, checkpoint commits and a final implementation commit exist locally, the worktree is clean, the local verification and repo-local eval gates have run, and the issue is still in `In Progress`. The next step is `raising-linear-pr`.

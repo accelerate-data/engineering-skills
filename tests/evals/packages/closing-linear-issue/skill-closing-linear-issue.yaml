@@ -1,10 +1,10 @@
 # yaml-language-server: $schema=https://promptfoo.dev/config-schema.json
-description: "Closing-linear-issues skill — merge, close, and cleanup after review"
+description: "Closing-linear-issue skill — merge, close, and cleanup after review"
 
 prompts:
-  - id: closing-linear-issues
-    label: closing-linear-issues
-    raw: file://../../prompts/skill-closing-linear-issues.txt
+  - id: closing-linear-issue
+    label: closing-linear-issue
+    raw: file://../../prompts/skill-closing-linear-issue.txt
 
 providers:
   - id: anthropic:claude-agent-sdk

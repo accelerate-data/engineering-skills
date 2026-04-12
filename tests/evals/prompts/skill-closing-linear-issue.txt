@@ -1,6 +1,6 @@
 You are preparing to close a completed Linear issue in this repository.
 
-Read the skill at `skills/closing-linear-issues/SKILL.md`.
+Read the skill at `skills/closing-linear-issue/SKILL.md`.
 
 Scenario:
 

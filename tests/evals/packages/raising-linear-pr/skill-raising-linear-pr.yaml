@@ -1,10 +1,10 @@
 # yaml-language-server: $schema=https://promptfoo.dev/config-schema.json
-description: "Raising-linear-prs skill — verification, AC checkoff, PR creation, and In Review transition"
+description: "Raising-linear-pr skill — verification, AC checkoff, PR creation, and In Review transition"
 
 prompts:
-  - id: raising-linear-prs
-    label: raising-linear-prs
-    raw: file://../../prompts/skill-raising-linear-prs.txt
+  - id: raising-linear-pr
+    label: raising-linear-pr
+    raw: file://../../prompts/skill-raising-linear-pr.txt
 
 providers:
   - id: anthropic:claude-agent-sdk

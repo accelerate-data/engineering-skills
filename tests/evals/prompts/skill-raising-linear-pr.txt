@@ -1,6 +1,6 @@
 You are preparing to raise a PR for a completed Linear issue in this repository.
 
-Read the skill at `skills/raising-linear-prs/SKILL.md`.
+Read the skill at `skills/raising-linear-pr/SKILL.md`.
 
 Scenario:
 

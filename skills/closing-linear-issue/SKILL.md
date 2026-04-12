@@ -1,5 +1,5 @@
 ---
-name: closing-linear-issues
+name: closing-linear-issue
 description: Use when a Linear issue already has a review-ready PR and this repository needs the merge, close, and cleanup phase
 ---
 
@@ -37,8 +37,8 @@ Finish the last mile after review: verify the PR can merge, merge it, move linke
 
 **Readiness rules:**
 
-- If no PR exists, stop and direct the user back to `raising-linear-prs`.
-- If the worktree is dirty at the start of this phase, stop immediately and direct the user back to `implementing-linear-issues`.
+- If no PR exists, stop and direct the user back to `raising-linear-pr`.
+- If the worktree is dirty at the start of this phase, stop immediately and direct the user back to `implementing-linear-issue`.
 - If required checks fail, stop and report them.
 - If the PR test plan is incomplete, stop and report the gap.
 - If semantic merge conflicts appear, escalate to the user.
