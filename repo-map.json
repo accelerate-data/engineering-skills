@@ -1,0 +1,69 @@
+{
+  "generated_at": "2026-04-12T00:00:00Z",
+  "repo_root": "engineering-skills",
+  "primary_languages": ["Markdown", "JSON", "Shell", "YAML"],
+  "package_managers": [
+    {
+      "name": "npm (eval harness)",
+      "manifest": "tests/evals/package.json"
+    }
+  ],
+  "test_frameworks": [
+    {
+      "name": "promptfoo",
+      "scope": "LLM eval harness for skills owned by this repository. Run via: cd tests/evals && npm run eval"
+    }
+  ],
+  "applications": [
+    {
+      "name": "engineering-skills plugin",
+      "type": "shared plugin source",
+      "description": "Single plugin-source repository with Claude and Codex manifests, canonical skills under skills/, and a promptfoo eval harness under tests/evals/."
+    }
+  ],
+  "modules": {
+    "claude_manifest": {
+      "path": ".claude-plugin/plugin.json",
+      "description": "Claude plugin manifest for this repository."
+    },
+    "codex_manifest": {
+      "path": ".codex-plugin/plugin.json",
+      "description": "Codex plugin manifest for this repository."
+    },
+    "skills": {
+      "path": "skills/",
+      "description": "Canonical skill directories. Each skill owns its SKILL.md and any supporting references, assets, scripts, or agents."
+    },
+    "eval_harness": {
+      "path": "tests/evals/",
+      "description": "Promptfoo harness for skills in this repository. Current packages cover the Linear workflow skills: creating-linear-issues, implementing-linear-issues, raising-linear-prs, and closing-linear-issues."
+    }
+  },
+  "key_directories": {
+    "skills/": "All skill content owned by this plugin repo",
+    "tests/evals/": "Promptfoo eval packages, prompts, assertions, and wrapper script for skill regression checks",
+    ".claude-plugin/": "Claude plugin manifest",
+    ".codex-plugin/": "Codex plugin manifest"
+  },
+  "commands": {
+    "eval_all": "cd tests/evals && npm run eval",
+    "eval_creating_linear_issues": "cd tests/evals && npm run eval:creating-linear-issues",
+    "eval_implementing_linear_issues": "cd tests/evals && npm run eval:implementing-linear-issues",
+    "eval_raising_linear_prs": "cd tests/evals && npm run eval:raising-linear-prs",
+    "eval_closing_linear_issues": "cd tests/evals && npm run eval:closing-linear-issues",
+    "eval_view": "cd tests/evals && npm run view"
+  },
+  "conventions": {
+    "skill_location": "All first-party skills live under skills/<skill-name>/",
+    "supporting_material": "References, assets, agents, and scripts stay inside the owning skill directory when needed",
+    "local_dev_symlinks": "For direct local use, symlink skills/<skill-name> into ~/.claude/skills/<skill-name> and ~/.codex/skills/<skill-name>",
+    "cross_repo_dependencies": "Do not add references that require files outside this repository",
+    "codex_repo_guidance": "Codex uses AGENTS.md directly as the repo-local guidance surface; there is no separate Codex adapter file in this repository"
+  },
+  "notes_for_agents": {
+    "startup": "Read this file before exploring the repository. It is the primary startup context for structure, ownership, and eval commands.",
+    "marketplace_model": "This repository is a plugin source, not a marketplace. Marketplaces in other repositories should point to this repo as the plugin source.",
+    "eval_scope": "tests/evals only covers skills owned by this repository. Do not move in evals for external skill repos such as superpowers.",
+    "update_repo_map": "Refresh this file whenever manifests, skill layout, eval layout, or command references change."
+  }
+}

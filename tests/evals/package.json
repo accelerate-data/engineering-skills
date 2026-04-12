@@ -1,0 +1,21 @@
+{
+  "name": "@engineering-skills/evals",
+  "private": true,
+  "description": "Promptfoo eval harness for engineering-skills",
+  "scripts": {
+    "eval": "npm run eval:creating-linear-issues && npm run eval:implementing-linear-issues && npm run eval:raising-linear-prs && npm run eval:closing-linear-issues",
+    "eval:creating-linear-issues": "./scripts/promptfoo.sh eval --no-cache -c packages/creating-linear-issues/skill-creating-linear-issues.yaml",
+    "eval:implementing-linear-issues": "./scripts/promptfoo.sh eval --no-cache -c packages/implementing-linear-issues/skill-implementing-linear-issues.yaml",
+    "eval:raising-linear-prs": "./scripts/promptfoo.sh eval --no-cache -c packages/raising-linear-prs/skill-raising-linear-prs.yaml",
+    "eval:closing-linear-issues": "./scripts/promptfoo.sh eval --no-cache -c packages/closing-linear-issues/skill-closing-linear-issues.yaml",
+    "view": "./scripts/promptfoo.sh view"
+  },
+  "dependencies": {
+    "@anthropic-ai/claude-agent-sdk": "^0.2.94",
+    "@anthropic-ai/claude-code": "^2.1.92",
+    "promptfoo": "latest"
+  },
+  "overrides": {
+    "@anthropic-ai/sdk": ">=0.81.0"
+  }
+}

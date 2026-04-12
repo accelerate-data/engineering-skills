@@ -1,0 +1,24 @@
+{
+  "name": "engineering-skills",
+  "description": "Shared engineering-team skills for code review, issue workflow, UI work, and browser automation.",
+  "author": {
+    "name": "Engineering Team"
+  },
+  "repository": "https://github.com/accelerate-data/engineering-skills",
+  "license": "MIT",
+  "keywords": [
+    "skills",
+    "engineering",
+    "codex",
+    "claude-code"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Engineering Skills",
+    "shortDescription": "Shared engineering-team skills.",
+    "developerName": "Engineering Team",
+    "category": "Coding",
+    "capabilities": [],
+    "screenshots": []
+  }
+}
