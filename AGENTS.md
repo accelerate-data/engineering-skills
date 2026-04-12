@@ -85,6 +85,14 @@ This repo provides a repo-managed pre-commit hook in `.githooks/pre-commit`.
 - Enable it with `git config core.hooksPath .githooks`
 - Keep it focused on durable repo policy, not machine-local tooling
 
+## Worktrees
+
+Use sibling worktrees at `../worktrees/<branch-name>` relative to the repo root.
+
+- Preserve the full branch name in the path, including prefixes such as `feature/`.
+- After creating the worktree, run `./scripts/setup-worktree.sh ../worktrees/<branch-name>` from the main checkout.
+- `scripts/setup-worktree.sh` derives paths relative to the repository and must stay portable across developers and machines.
+
 ## Skills
 
 Use these repo-local skills when requests match:
