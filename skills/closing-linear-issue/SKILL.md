@@ -1,6 +1,7 @@
 ---
 name: closing-linear-issue
 description: Use when a Linear issue already has a review-ready PR and this repository needs the merge, close, and cleanup phase
+argument-hint: "[issue-id-or-pr]"
 ---
 
 # Closing Linear Issues

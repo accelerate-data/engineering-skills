@@ -1,6 +1,7 @@
 ---
 name: raising-linear-pr
 description: Use when implementation is complete and this repository needs the PR-phase workflow - verification, acceptance-criteria checkoff, PR creation, and In Review transition
+argument-hint: "[issue-id-or-branch]"
 ---
 
 # Raising Linear PRs

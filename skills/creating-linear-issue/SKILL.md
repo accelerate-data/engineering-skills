@@ -1,6 +1,7 @@
 ---
 name: creating-linear-issue
 description: Use when creating, decomposing, or refining Linear issues from product requests, bug reports, or issue breakdowns in this repository
+argument-hint: "[request-or-issue-context]"
 ---
 
 # Creating Linear Issues

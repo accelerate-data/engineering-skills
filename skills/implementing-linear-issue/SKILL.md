@@ -1,6 +1,7 @@
 ---
 name: implementing-linear-issue
 description: Use when implementing a Linear issue in this repository after issue creation is complete and coding should stop before PR creation
+argument-hint: "[issue-id]"
 ---
 
 # Implementing Linear Issues
