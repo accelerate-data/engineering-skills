@@ -8,6 +8,8 @@ Scenario:
 - The issue should be closed only after merge and cleanup.
 - The worktree is clean at the start of the close phase.
 - After the PR merges and the remote branch is deleted, the feature worktree contains ignored and untracked eval artifacts plus a tracked file edit.
+{% if extra_scenario %}- {{extra_scenario}}{% endif %}
+{% if notes_focus %}{{notes_focus}}{% endif %}
 
 Do not actually call tools. Return JSON only with this shape:
 

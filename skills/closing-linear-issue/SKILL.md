@@ -28,7 +28,7 @@ Finish the last mile after review: verify the PR can merge, merge it, move linke
 
 ## Implementation
 
-**Tool contract:** use `mcp__codex_apps__linear_mcp_server_get_issue`, `list_issues`, `list_comments`, `save_issue`, `save_comment`, `gh pr list`, `gh pr view`, `gh pr checks`, `gh pr merge`, `git worktree remove`, `git branch -D`, `git push origin --delete`, and `git pull`. Retry once on failure, then stop and report the exact step.
+**Tool contract:** use `mcp__codex_apps__linear_mcp_server_get_issue`, `list_issues`, `list_comments`, `save_issue`, `save_comment`, `gh pr list`, `gh pr view`, `gh pr checks`, `gh pr merge`, `git fetch`, `git worktree remove`, `git branch -D`, `git push origin --delete`, `git checkout`, `git pull`, and `git reset --hard`. Retry once on failure, then stop and report the exact step.
 
 **Branch sync comes first:**
 
@@ -43,6 +43,7 @@ Finish the last mile after review: verify the PR can merge, merge it, move linke
 - If required checks fail, stop and report them.
 - If the PR test plan is incomplete, stop and report the gap.
 - If semantic merge conflicts appear, escalate to the user.
+- When refreshing local `main`, stop and report if local `main` is dirty or has local-only commits not on `origin/main`.
 
 **Merge and close rules:**
 
@@ -58,7 +59,9 @@ Finish the last mile after review: verify the PR can merge, merge it, move linke
 - After the PR is merged and the remote branch is deleted, treat the local feature worktree as disposable.
 - During post-merge cleanup, auto-remove ignored and untracked local artifacts before removing the worktree.
 - If tracked modifications still exist during post-merge cleanup, stop and report them explicitly instead of discarding them.
-- Clean up the worktree, local branch, remote branch, and refresh the main branch.
+- Clean up the worktree, local branch, remote branch, and then refresh local `main`.
+- Refreshing local `main` means fetching `origin/main`, verifying local `main` is clean and has no local-only commits, then making local `main` match `origin/main` exactly.
+- If local `main` has diverged from `origin/main`, stop and report it instead of reconciling automatically.
 
 **Boundary rules:**
 
@@ -73,4 +76,5 @@ Finish the last mile after review: verify the PR can merge, merge it, move linke
 - Proceeding with merge or cleanup from a dirty worktree.
 - Ignoring required checks or an incomplete PR test plan.
 - Silently discarding tracked changes during post-merge cleanup.
+- Silently rewriting or reconciling a diverged local `main`.
 - Re-running the whole implementation flow instead of just merging and closing.
