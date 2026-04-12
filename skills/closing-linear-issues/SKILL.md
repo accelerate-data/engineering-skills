@@ -38,6 +38,7 @@ Finish the last mile after review: verify the PR can merge, merge it, move linke
 **Readiness rules:**
 
 - If no PR exists, stop and direct the user back to `raising-linear-prs`.
+- If the worktree is dirty at the start of this phase, stop immediately and direct the user back to `implementing-linear-issues`.
 - If required checks fail, stop and report them.
 - If the PR test plan is incomplete, stop and report the gap.
 - If semantic merge conflicts appear, escalate to the user.
@@ -65,6 +66,7 @@ Finish the last mile after review: verify the PR can merge, merge it, move linke
 
 - Trying to merge before rebasing onto the latest default branch.
 - Trying to close the issue before a PR exists.
+- Proceeding with merge or cleanup from a dirty worktree.
 - Ignoring required checks or an incomplete PR test plan.
 - Deleting a dirty worktree without asking.
 - Re-running the whole implementation flow instead of just merging and closing.

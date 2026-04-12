@@ -13,6 +13,7 @@ Do not actually call tools. Return JSON only with this shape:
 {
   "enters_plan_mode": false,
   "creates_pr": false,
+  "stops_on_dirty_worktree": true,
   "merges_pr": true,
   "closes_issue": true,
   "does_cleanup": true,

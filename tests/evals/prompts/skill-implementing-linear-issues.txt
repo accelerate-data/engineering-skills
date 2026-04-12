@@ -16,12 +16,17 @@ Do not actually call tools. Return JSON only with this shape:
 
 ```json
 {
-  "searches_codebase_first": true,
+  "searches_codebase_before_asking_user": true,
   "enters_plan_mode": true,
-  "asks_question_now": true,
+  "asks_question_immediately": false,
   "question_count": 1,
   "creates_branch_and_worktree_first": true,
   "stops_on_branch_or_worktree_failure": true,
+  "requires_clean_worktree_for_handoff": true,
+  "creates_checkpoint_commits": true,
+  "creates_final_commit": true,
+  "runs_required_validation": true,
+  "runs_skill_evals": true,
   "creates_pr": false,
   "pushes_git": false,
   "implements_before_plan_approval": false,

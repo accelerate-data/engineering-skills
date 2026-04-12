@@ -7,7 +7,7 @@ description: Use when implementation is complete and this repository needs the P
 
 ## Overview
 
-Take completed implementation work across the finish line into review. This skill owns final quality gates, the local commit, push, PR creation or update, acceptance-criteria checkoff, and moving the issue to `In Review`.
+Take completed implementation work across the finish line into review. This skill owns the post-rebase quality-gate rerun, push, PR creation or update, acceptance-criteria checkoff, and moving the issue to `In Review`.
 
 ## When to Use
 
@@ -21,13 +21,13 @@ Take completed implementation work across the finish line into review. This skil
 |---|---|
 | 1 | Verify the approved implementation, tests, and evals |
 | 2 | Update Linear acceptance criteria after verification passes |
-| 3 | Create the commit and push the branch |
+| 3 | Push the prepared implementation branch |
 | 4 | Create or update the PR |
 | 5 | Move the issue to `In Review` |
 
 ## Implementation
 
-**Tool contract:** use repo test commands from `repo-map.json`, `git status`, `git add <file>`, `git commit`, `git push`, `gh pr list`, `gh pr create`, `gh pr edit`, `gh pr view`, `gh pr checks`, `mcp__codex_apps__linear_mcp_server_get_issue`, `save_issue`, and `save_comment`. Retry once on tool failure, then stop and report the exact failing step.
+**Tool contract:** use repo test commands from `repo-map.json`, `git status`, `git push`, `gh pr list`, `gh pr create`, `gh pr edit`, `gh pr view`, `gh pr checks`, `mcp__codex_apps__linear_mcp_server_get_issue`, `save_issue`, and `save_comment`. Retry once on tool failure, then stop and report the exact failing step.
 
 **Branch sync comes first:**
 
@@ -49,8 +49,8 @@ Take completed implementation work across the finish line into review. This skil
 
 **Git and PR rules:**
 
-- Stage specific files only.
-- Create the local commit in this phase, not earlier.
+- If the branch is missing the expected implementation commits, stop and hand back to `implementing-linear-issues`.
+- If the worktree is dirty at the start of this phase, stop immediately and hand back to `implementing-linear-issues`.
 - Push the feature branch.
 - Create the PR if none exists; otherwise update the existing PR.
 - Include the required `Fixes VU-XXX` lines.
@@ -61,11 +61,14 @@ Take completed implementation work across the finish line into review. This skil
 - No plan mode.
 - No merge.
 - No close-to-done transition.
+- No new implementation commits in this phase.
 - Hand off to `closing-linear-issues` for merge and cleanup.
 
 ## Common Mistakes
 
 - Running quality gates before rebasing onto the latest default branch.
+- Using this phase to clean up uncommitted implementation work.
+- Proceeding with push or PR creation from a dirty worktree.
 - Treating this as a lightweight push step and skipping verification.
 - Moving the issue to `In Review` before the PR exists.
 - Checking off acceptance criteria before tests and evals pass.

@@ -7,7 +7,7 @@ description: Use when implementing a Linear issue in this repository after issue
 
 ## Overview
 
-Implement the approved issue, but stop before the PR phase. This skill owns mandatory branch/worktree setup, codebase-first clarification, plan approval, isolated implementation work, local verification, and Linear implementation updates. `raising-linear-prs` owns the rebase, quality gates, commit, push, acceptance-criteria checkoff, PR creation, and `In Review` transition.
+Implement the approved issue, but stop before the PR phase. This skill owns mandatory branch/worktree setup, codebase-first clarification, plan approval, isolated implementation work, checkpoint commits, local quality gates, a final implementation commit, and Linear implementation updates. `raising-linear-prs` owns the post-rebase verification rerun, acceptance-criteria checkoff, PR creation, and `In Review` transition.
 
 ## When to Use
 
@@ -25,11 +25,13 @@ Implement the approved issue, but stop before the PR phase. This skill owns mand
 | 4 | Resolve every answerable clarification yourself |
 | 5 | Ask one question at a time only for true forks |
 | 6 | Enter plan mode and show the full plan before coding |
-| 7 | Implement, test, and hand off before commit/PR |
+| 7 | Implement in reviewable slices with checkpoint commits |
+| 8 | Run local quality gates and create the final implementation commit |
+| 9 | Hand off before push/PR |
 
 ## Implementation
 
-**Tool contract:** use `mcp__codex_apps__linear_mcp_server_get_issue`, `list_issues`, `list_comments`, `save_issue`, `save_comment`, `git branch`, `git worktree`, `git status`, and repo test commands from `repo-map.json`. Retry once on tool failure, then stop and report the exact failing step.
+**Tool contract:** use `mcp__codex_apps__linear_mcp_server_get_issue`, `list_issues`, `list_comments`, `save_issue`, `save_comment`, `git branch`, `git worktree`, `git status`, `git add <file>`, `git commit`, and repo test commands from `repo-map.json`. Retry once on tool failure, then stop and report the exact failing step.
 
 **Status setup:**
 
@@ -64,6 +66,7 @@ Implement the approved issue, but stop before the PR phase. This skill owns mand
 
 - chosen approach and rejected alternatives when relevant
 - files or modules expected to change inside the isolated worktree
+- commit checkpoints or slice boundaries for multi-step work
 - test coverage by layer: unit, integration, eval
 - skill or plugin eval coverage affected by the change
 - manual test scope, or the explicit statement `No manual tests required.`
@@ -78,6 +81,14 @@ Post the approved plan to Linear before coding. If the user rejects it, revise a
 - Read existing tests before changing them.
 - Add logging for new behavior per repo policy.
 - Update the issue description or implementation comment as a living snapshot.
+- Work in end-to-end slices that can be reviewed independently.
+- After each major slice that leaves the tree green, stage only the relevant files and create a checkpoint commit.
+- Do not let large uncommitted work accumulate when a clean checkpoint is available.
+- Before handoff, run the required automated validation for the changed area.
+- Before handoff, run the specific promptfoo evals for any changed skill or command in this repo.
+- Stop if any required local quality gate fails or remains unverified.
+- After all required local quality gates pass, create a final implementation commit for the remaining diff.
+- Leave the worktree clean before handing off to any downstream skill.
 - Output `✅ <completed step>` after each major implementation step.
 
 **Stop conditions:**
@@ -86,16 +97,17 @@ Post the approved plan to Linear before coding. If the user rejects it, revise a
 - new external dependency
 - architecture-impacting fork
 - unresolved error after two attempts
+- required local quality gate still failing after two attempts
 - required changes outside issue scope
 
 **Handoff boundary:**
 
-- Do not create commits.
 - Do not push.
 - Do not create or update a PR.
 - Do not move the issue to `In Review`.
-- Hand off to `raising-linear-prs` after local verification passes.
-- Report the branch name, worktree path, verification run, and any remaining risks.
+- Do not hand off with uncommitted or unstaged changes still in the worktree.
+- Hand off to `raising-linear-prs` after the final implementation commit and local verification pass.
+- Report the branch name, worktree path, checkpoint commit SHAs, final implementation commit SHA, clean `git status`, verification run, and any remaining risks.
 
 ## Common Mistakes
 
@@ -103,6 +115,9 @@ Post the approved plan to Linear before coding. If the user rejects it, revise a
 - Continuing after branch or worktree setup fails.
 - Asking the user questions the codebase could answer.
 - Entering plan mode before clarification is complete.
+- Waiting until the PR phase to make the first commit.
+- Deferring skill evals or changed-area validation until PR time.
+- Leaving a dirty worktree for the PR phase to clean up.
 - Treating this skill as the PR phase.
 - Checking off acceptance criteria before the PR phase quality gates run.
 
@@ -120,4 +135,4 @@ Post the approved plan to Linear before coding. If the user rejects it, revise a
 
 ## Exit State
 
-When this skill finishes, the branch and worktree exist, the implementation is complete, local verification has run, and the issue is still in `In Progress`. The next step is `raising-linear-prs`.
+When this skill finishes, the branch and worktree exist, the implementation is complete, checkpoint commits and a final implementation commit exist locally, the worktree is clean, the local verification and repo-local eval gates have run, and the issue is still in `In Progress`. The next step is `raising-linear-prs`.

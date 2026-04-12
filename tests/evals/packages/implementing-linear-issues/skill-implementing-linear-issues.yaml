@@ -25,12 +25,19 @@ defaultTest:
       value: file://../../assertions/check-linear-skill-contract.js
 
 tests:
-  - description: "implement-issue — creates branch/worktree first, searches code first, no PR/push"
+  - description: "implement-issue — creates branch/worktree first, commits during implementation, runs local gates, no PR/push"
     vars:
-      expect_searches_codebase_first: "true"
+      expect_searches_codebase_before_asking_user: "true"
       expect_enters_plan_mode: "true"
+      expect_asks_question_immediately: "false"
+      expect_question_count: "1"
       expect_creates_branch_and_worktree_first: "true"
       expect_stops_on_branch_or_worktree_failure: "true"
+      expect_requires_clean_worktree_for_handoff: "true"
+      expect_creates_checkpoint_commits: "true"
+      expect_creates_final_commit: "true"
+      expect_runs_required_validation: "true"
+      expect_runs_skill_evals: "true"
       expect_creates_pr: "false"
-      required_terms: "branch,worktree,plan"
+      required_terms: "branch,worktree,clean,commit,eval"
       forbidden_terms: "pushes_git\":true,implements_before_plan_approval\":true"

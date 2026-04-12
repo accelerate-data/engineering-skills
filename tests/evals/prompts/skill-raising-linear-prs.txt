@@ -14,6 +14,11 @@ Do not actually call tools. Return JSON only with this shape:
 {
   "searches_codebase_first": false,
   "enters_plan_mode": false,
+  "creates_checkpoint_commits": false,
+  "creates_final_commit": false,
+  "stops_on_dirty_worktree": true,
+  "runs_required_validation": true,
+  "runs_skill_evals": true,
   "creates_pr": true,
   "checks_off_acceptance_criteria": true,
   "moves_issue_to_in_review": true,
