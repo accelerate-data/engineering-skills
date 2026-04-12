@@ -53,7 +53,10 @@ Finish the last mile after review: verify the PR can merge, merge it, move linke
 **Cleanup rules:**
 
 - Treat already-removed worktrees or branches as success.
-- If the worktree still has uncommitted changes, stop and ask before force removal.
+- Keep the pre-merge safety rule strict: do not merge from a dirty worktree.
+- After the PR is merged and the remote branch is deleted, treat the local feature worktree as disposable.
+- During post-merge cleanup, auto-remove ignored and untracked local artifacts before removing the worktree.
+- If tracked modifications still exist during post-merge cleanup, stop and report them explicitly instead of discarding them.
 - Clean up the worktree, local branch, remote branch, and refresh the main branch.
 
 **Boundary rules:**
@@ -68,5 +71,5 @@ Finish the last mile after review: verify the PR can merge, merge it, move linke
 - Trying to close the issue before a PR exists.
 - Proceeding with merge or cleanup from a dirty worktree.
 - Ignoring required checks or an incomplete PR test plan.
-- Deleting a dirty worktree without asking.
+- Silently discarding tracked changes during post-merge cleanup.
 - Re-running the whole implementation flow instead of just merging and closing.

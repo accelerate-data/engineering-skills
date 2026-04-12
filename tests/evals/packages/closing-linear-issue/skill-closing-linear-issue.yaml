@@ -33,5 +33,7 @@ tests:
       expect_merges_pr: "true"
       expect_closes_issue: "true"
       expect_does_cleanup: "true"
+      expect_auto_cleans_disposable_post_merge: "true"
+      expect_stops_on_tracked_changes_during_cleanup: "true"
       expect_checks_off_acceptance_criteria: "false"
-      required_terms: "rebase,merge,clean"
+      required_terms: "merge,tracked,ignored,untracked"

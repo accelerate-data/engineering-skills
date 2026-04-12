@@ -30,6 +30,8 @@ module.exports = (output, context) => {
     ['stops_on_branch_or_worktree_failure', parseExpectedBoolean(context.vars.expect_stops_on_branch_or_worktree_failure)],
     ['requires_clean_worktree_for_handoff', parseExpectedBoolean(context.vars.expect_requires_clean_worktree_for_handoff)],
     ['stops_on_dirty_worktree', parseExpectedBoolean(context.vars.expect_stops_on_dirty_worktree)],
+    ['auto_cleans_disposable_post_merge', parseExpectedBoolean(context.vars.expect_auto_cleans_disposable_post_merge)],
+    ['stops_on_tracked_changes_during_cleanup', parseExpectedBoolean(context.vars.expect_stops_on_tracked_changes_during_cleanup)],
     ['runs_required_validation', parseExpectedBoolean(context.vars.expect_runs_required_validation)],
     ['runs_skill_evals', parseExpectedBoolean(context.vars.expect_runs_skill_evals)],
     ['moves_issue_to_in_review', parseExpectedBoolean(context.vars.expect_moves_issue_to_in_review)],

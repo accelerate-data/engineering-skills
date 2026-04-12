@@ -6,6 +6,8 @@ Scenario:
 
 - A PR already exists and has passed review.
 - The issue should be closed only after merge and cleanup.
+- The worktree is clean at the start of the close phase.
+- After the PR merges and the remote branch is deleted, the feature worktree contains ignored and untracked eval artifacts plus a tracked file edit.
 
 Do not actually call tools. Return JSON only with this shape:
 
@@ -17,6 +19,8 @@ Do not actually call tools. Return JSON only with this shape:
   "merges_pr": true,
   "closes_issue": true,
   "does_cleanup": true,
+  "auto_cleans_disposable_post_merge": true,
+  "stops_on_tracked_changes_during_cleanup": true,
   "checks_off_acceptance_criteria": false,
   "notes": "string"
 }
