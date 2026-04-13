@@ -1,6 +1,6 @@
 ---
 name: raising-linear-pr
-description: Use when implementation is complete and this repository needs the PR-phase workflow - verification, acceptance-criteria checkoff, PR creation, and In Review transition
+description: Use when implementation is complete and this repository needs the PR-phase workflow - verification, acceptance-criteria completion check, PR creation, and In Review transition
 argument-hint: "[issue-id-or-branch]"
 ---
 
@@ -8,7 +8,7 @@ argument-hint: "[issue-id-or-branch]"
 
 ## Overview
 
-Take completed implementation work across the finish line into review. This skill owns the post-rebase quality-gate rerun, push, PR creation or update, acceptance-criteria checkoff, and moving the issue to `In Review`.
+Take completed implementation work across the finish line into review. This skill owns the post-rebase quality-gate rerun, acceptance-criteria completion check, push, PR creation or update, and moving the issue to `In Review`.
 
 ## When to Use
 
@@ -21,7 +21,7 @@ Take completed implementation work across the finish line into review. This skil
 | Step | Requirement |
 |---|---|
 | 1 | Verify the approved implementation, tests, and evals |
-| 2 | Update Linear acceptance criteria after verification passes |
+| 2 | Confirm every acceptance criterion is already complete; stop and ask if any are not |
 | 3 | Push the prepared implementation branch |
 | 4 | Create or update the PR |
 | 5 | Move the issue to `In Review` |
@@ -44,8 +44,9 @@ Take completed implementation work across the finish line into review. This skil
 
 **Linear rules:**
 
-- Check off only the acceptance criteria proved by passing verification.
-- Preserve the original issue body; update only the implementation snapshot or checklist state.
+- Verify that every acceptance criterion is already complete before push or PR creation.
+- If any acceptance criterion is not complete, not proven, or still blocked, stop and ask the user how to proceed. Do not check off, rewrite, or complete the remaining criteria in this phase.
+- Preserve the original issue body; update only the implementation snapshot when needed.
 - Move the issue to `In Review` only after the PR exists.
 
 **Git and PR rules:**
@@ -72,5 +73,6 @@ Take completed implementation work across the finish line into review. This skil
 - Proceeding with push or PR creation from a dirty worktree.
 - Treating this as a lightweight push step and skipping verification.
 - Moving the issue to `In Review` before the PR exists.
-- Checking off acceptance criteria before tests and evals pass.
+- Treating AC verification as permission to check boxes in this phase.
+- Continuing to PR creation even though one or more ACs are still incomplete.
 - Merging the PR from this skill.

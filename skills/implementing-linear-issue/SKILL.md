@@ -8,7 +8,7 @@ argument-hint: "[issue-id]"
 
 ## Overview
 
-Implement the approved issue, but stop before the PR phase. This skill owns mandatory branch/worktree setup, codebase-first clarification, plan approval, isolated implementation work, checkpoint commits, local quality gates, a final implementation commit, and Linear implementation updates. `raising-linear-pr` owns the post-rebase verification rerun, acceptance-criteria checkoff, PR creation, and `In Review` transition.
+Implement the approved issue, but stop before the PR phase. This skill owns mandatory branch/worktree setup, codebase-first clarification, plan approval, isolated implementation work, checkpoint commits, independent-agent quality gates, a final implementation commit, and Linear implementation updates. `raising-linear-pr` owns the post-rebase verification rerun, push, PR creation, and `In Review` transition.
 
 ## When to Use
 
@@ -27,12 +27,12 @@ Implement the approved issue, but stop before the PR phase. This skill owns mand
 | 5 | Ask one question at a time only for true forks |
 | 6 | Enter plan mode and show the full plan before coding |
 | 7 | Implement in reviewable slices with checkpoint commits |
-| 8 | Run local quality gates and create the final implementation commit |
-| 9 | Hand off before push/PR |
+| 8 | Run tests and independent-agent quality gates, update Linear with implementation and AC status |
+| 9 | Create the final implementation commit and hand off before push/PR |
 
 ## Implementation
 
-**Tool contract:** use the available Linear MCP tools needed for issue and comment operations in this workflow, plus `git branch`, `git worktree`, `git status`, `git add <file>`, `git commit`, and repo test commands from `repo-map.json`. Retry once on tool failure, then stop and report the exact failing step.
+**Tool contract:** use the available Linear MCP tools needed for issue and comment operations in this workflow, `git branch`, `git worktree`, `git status`, `git add <file>`, `git commit`, repo test commands from `repo-map.json`, and independent review agents for the required implementation quality gates. Retry once on tool failure, then stop and report the exact failing step.
 
 **Status setup:**
 
@@ -70,6 +70,7 @@ Implement the approved issue, but stop before the PR phase. This skill owns mand
 - commit checkpoints or slice boundaries for multi-step work
 - test coverage by layer: unit, integration, eval
 - skill or plugin eval coverage affected by the change
+- independent quality-gate reviewers to run before handoff: code review, simplification review, test coverage review, AC review
 - manual test scope, or the explicit statement `No manual tests required.`
 
 Post the approved plan to Linear before coding. If the user rejects it, revise and re-enter plan mode.
@@ -87,8 +88,25 @@ Post the approved plan to Linear before coding. If the user rejects it, revise a
 - Do not let large uncommitted work accumulate when a clean checkpoint is available.
 - Before handoff, run the required automated validation for the changed area.
 - Before handoff, run the specific promptfoo evals for any changed skill or command in this repo.
-- Stop if any required local quality gate fails or remains unverified.
-- After all required local quality gates pass, create a final implementation commit for the remaining diff.
+- Before handoff, dispatch independent review agents so the checks do not reuse the main implementation context.
+- Required independent-agent quality gates are:
+  - code review
+  - simplification review using the `code-simplifier` lens or equivalent simplification-focused prompt
+  - test coverage review for changed behavior and regression risk
+  - acceptance-criteria review against the current Linear issue state and implementation evidence
+- Give each review agent only the context it needs: issue text, plan, commit range or diff, relevant test/eval results, and changed-file context. Do not pass the full implementation session history.
+- Resolve review findings before handoff. Retry a failed or inconclusive gate once after fixes or evidence updates, then stop if the gate still fails or remains unverified.
+- Treat a coverage review that finds critical paths untested as a failing quality gate.
+- Treat an AC review that finds an acceptance criterion unproven, incomplete, or blocked as a failing completion gate for that criterion; do not claim it complete.
+- Before handoff, update Linear with a final implementation note that includes:
+  - what was implemented
+  - tests, evals, and manual checks run
+  - outcomes of the code review, simplification review, test coverage review, and AC review
+  - acceptance criteria status, marking each as `done`, `not done`, or `blocked`
+  - for each `not done` or `blocked` acceptance criterion, the next step required
+- Record the AC review results in the implementation note during implementation. Do not wait for PR phase to record incomplete ACs or their next steps.
+- Stop if any required local or independent-agent quality gate fails or remains unverified.
+- After all required quality gates pass and the Linear note is posted, create a final implementation commit for the remaining diff.
 - Leave the worktree clean before handing off to any downstream skill.
 - Output `✅ <completed step>` after each major implementation step.
 
@@ -120,7 +138,8 @@ Post the approved plan to Linear before coding. If the user rejects it, revise a
 - Deferring skill evals or changed-area validation until PR time.
 - Leaving a dirty worktree for the PR phase to clean up.
 - Treating this skill as the PR phase.
-- Checking off acceptance criteria before the PR phase quality gates run.
+- Treating self-review as sufficient when the workflow requires independent review agents.
+- Claiming ACs are complete without reviewer evidence or without recording unfinished AC next steps in Linear.
 
 ## Error Recovery
 
@@ -136,4 +155,4 @@ Post the approved plan to Linear before coding. If the user rejects it, revise a
 
 ## Exit State
 
-When this skill finishes, the branch and worktree exist, the implementation is complete, checkpoint commits and a final implementation commit exist locally, the worktree is clean, the local verification and repo-local eval gates have run, and the issue is still in `In Progress`. The next step is `raising-linear-pr`.
+When this skill finishes, the branch and worktree exist, the implementation is complete, checkpoint commits and a final implementation commit exist locally, the worktree is clean, the local verification, repo-local eval gates, and independent-agent quality gates have run, the Linear issue has an implementation note with tests and AC status, and the issue is still in `In Progress`. The next step is `raising-linear-pr`.

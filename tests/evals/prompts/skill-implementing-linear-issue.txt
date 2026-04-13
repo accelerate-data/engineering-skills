@@ -27,6 +27,13 @@ Do not actually call tools. Return JSON only with this shape:
   "creates_final_commit": true,
   "runs_required_validation": true,
   "runs_skill_evals": true,
+  "uses_independent_review_agents": true,
+  "runs_code_review": true,
+  "runs_simplification_review": true,
+  "runs_test_coverage_review": true,
+  "runs_acceptance_criteria_review": true,
+  "updates_linear_with_ac_status": true,
+  "posts_linear_note_with_tests_and_next_steps": true,
   "creates_pr": false,
   "pushes_git": false,
   "implements_before_plan_approval": false,
@@ -34,4 +41,4 @@ Do not actually call tools. Return JSON only with this shape:
 }
 ```
 
-Use every key exactly once. Do not omit `creates_branch_and_worktree_first` or `stops_on_branch_or_worktree_failure`.
+Use every key exactly once. Do not omit `creates_branch_and_worktree_first`, `stops_on_branch_or_worktree_failure`, or `uses_independent_review_agents`.

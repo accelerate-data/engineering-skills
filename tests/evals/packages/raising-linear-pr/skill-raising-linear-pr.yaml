@@ -1,5 +1,5 @@
 # yaml-language-server: $schema=https://promptfoo.dev/config-schema.json
-description: "Raising-linear-pr skill — verification, AC checkoff, PR creation, and In Review transition"
+description: "Raising-linear-pr skill — verification, AC completion check, PR creation, and In Review transition"
 
 prompts:
   - id: raising-linear-pr
@@ -34,9 +34,10 @@ tests:
       expect_runs_required_validation: "true"
       expect_runs_skill_evals: "true"
       expect_creates_pr: "true"
-      expect_checks_off_acceptance_criteria: "true"
+      expect_checks_off_acceptance_criteria: "false"
+      expect_stops_if_acceptance_criteria_incomplete: "true"
       expect_moves_issue_to_in_review: "true"
       expect_merges_pr: "false"
       expect_uses_generic_issue_linking_language: "true"
-      required_terms: "rebase,review,dirty,issue"
+      required_terms: "rebase,review,dirty,issue,acceptance,stop"
       forbidden_terms: "vu-xxx"

@@ -6,7 +6,7 @@ Scenario:
 
 - Implementation is complete.
 - Local changes are ready for commit.
-- Acceptance criteria can be checked off after verification passes.
+- Acceptance criteria must already be complete before PR creation. If any are not complete, the workflow must stop and ask.
 - The PR body should link the actual Linear issue IDs rather than using a workspace-specific hardcoded prefix.
 
 Do not actually call tools. Return JSON only with this shape:
@@ -21,7 +21,8 @@ Do not actually call tools. Return JSON only with this shape:
   "runs_required_validation": true,
   "runs_skill_evals": true,
   "creates_pr": true,
-  "checks_off_acceptance_criteria": true,
+  "checks_off_acceptance_criteria": false,
+  "stops_if_acceptance_criteria_incomplete": true,
   "moves_issue_to_in_review": true,
   "merges_pr": false,
   "uses_generic_issue_linking_language": true,
