@@ -82,7 +82,7 @@ Post the approved plan to Linear before coding. If the user rejects it, revise a
 - Stay within issue scope. Pause if work escapes the ticket boundary.
 - Read existing tests before changing them.
 - Add logging for new behavior per repo policy.
-- Update the issue description or implementation comment as a living snapshot.
+- Update Linear as a living snapshot, with acceptance criteria checked off in the main issue requirements section and progress captured in the implementation comment.
 - Work in end-to-end slices that can be reviewed independently.
 - After each major slice that leaves the tree green, stage only the relevant files and create a checkpoint commit.
 - Do not let large uncommitted work accumulate when a clean checkpoint is available.
@@ -98,13 +98,13 @@ Post the approved plan to Linear before coding. If the user rejects it, revise a
 - Resolve review findings before handoff. Retry a failed or inconclusive gate once after fixes or evidence updates, then stop if the gate still fails or remains unverified.
 - Treat a coverage review that finds critical paths untested as a failing quality gate.
 - Treat an AC review that finds an acceptance criterion unproven, incomplete, or blocked as a failing completion gate for that criterion; do not claim it complete.
+- Before handoff, update the main issue requirements section so each completed acceptance criterion is checked off in place.
+- Do not create a duplicate acceptance-criteria section in the implementation note.
 - Before handoff, update Linear with a final implementation note that includes:
   - what was implemented
   - tests, evals, and manual checks run
   - outcomes of the code review, simplification review, test coverage review, and AC review
-  - acceptance criteria status, marking each as `done`, `not done`, or `blocked`
-  - for each `not done` or `blocked` acceptance criterion, the next step required
-- Record the AC review results in the implementation note during implementation. Do not wait for PR phase to record incomplete ACs or their next steps.
+- Record AC review conclusions in the implementation note only as needed to explain blockers or follow-up, without restating the full acceptance-criteria list.
 - Stop if any required local or independent-agent quality gate fails or remains unverified.
 - After all required quality gates pass and the Linear note is posted, create a final implementation commit for the remaining diff.
 - Leave the worktree clean before handing off to any downstream skill.
@@ -139,7 +139,7 @@ Post the approved plan to Linear before coding. If the user rejects it, revise a
 - Leaving a dirty worktree for the PR phase to clean up.
 - Treating this skill as the PR phase.
 - Treating self-review as sufficient when the workflow requires independent review agents.
-- Claiming ACs are complete without reviewer evidence or without recording unfinished AC next steps in Linear.
+- Claiming ACs are complete without reviewer evidence.
 
 ## Error Recovery
 
@@ -155,4 +155,4 @@ Post the approved plan to Linear before coding. If the user rejects it, revise a
 
 ## Exit State
 
-When this skill finishes, the branch and worktree exist, the implementation is complete, checkpoint commits and a final implementation commit exist locally, the worktree is clean, the local verification, repo-local eval gates, and independent-agent quality gates have run, the Linear issue has an implementation note with tests and AC status, and the issue is still in `In Progress`. The next step is `raising-linear-pr`.
+When this skill finishes, the branch and worktree exist, the implementation is complete, checkpoint commits and a final implementation commit exist locally, the worktree is clean, the local verification, repo-local eval gates, and independent-agent quality gates have run, the Linear issue has the completed acceptance criteria checked off in the main requirements section plus an implementation note summarizing work, tests, and reviews, and the issue is still in `In Progress`. The next step is `raising-linear-pr`.

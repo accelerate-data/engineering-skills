@@ -44,9 +44,9 @@ Take completed implementation work across the finish line into review. This skil
 
 **Linear rules:**
 
-- Verify that every acceptance criterion is already complete before push or PR creation.
-- If any acceptance criterion is not complete, not proven, or still blocked, stop and ask the user how to proceed. Do not check off, rewrite, or complete the remaining criteria in this phase.
-- Preserve the original issue body; update only the implementation snapshot when needed.
+- Verify that every acceptance criterion is already complete and checked off in the main issue requirements section before push or PR creation.
+- If any acceptance criterion is not complete, not proven, still blocked, or not checked off in the main issue requirements section, stop and ask the user how to proceed. Do not create a duplicate acceptance-criteria section in this phase.
+- Preserve the implementation summary format; do not restate the acceptance criteria in the implementation snapshot.
 - Move the issue to `In Review` only after the PR exists.
 
 **Git and PR rules:**
@@ -73,6 +73,6 @@ Take completed implementation work across the finish line into review. This skil
 - Proceeding with push or PR creation from a dirty worktree.
 - Treating this as a lightweight push step and skipping verification.
 - Moving the issue to `In Review` before the PR exists.
-- Treating AC verification as permission to check boxes in this phase.
+- Treating AC verification as permission to invent or duplicate acceptance criteria in this phase.
 - Continuing to PR creation even though one or more ACs are still incomplete.
 - Merging the PR from this skill.
