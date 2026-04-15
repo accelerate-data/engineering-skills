@@ -1,0 +1,27 @@
+# yaml-language-server: $schema=https://promptfoo.dev/config-schema.json
+description: "Creating-linear-issue skill — mid-flow routing trigger detection"
+
+prompts:
+  - id: creating-linear-issue-routing
+    label: creating-linear-issue-routing
+    raw: file://../../prompts/skill-creating-linear-issue-routing.txt
+
+providers:
+  - id: anthropic:claude-agent-sdk
+    config:
+      model: claude-haiku-4-5-20251001
+      working_dir: ../..
+      max_turns: 1
+      permission_mode: auto
+
+defaultTest:
+  assert:
+    - type: javascript
+      value: file://../../assertions/check-routing-contract.js
+
+tests:
+  - description: "routing — detects embedded create-linear-issue request mid-brainstorm flow"
+    vars:
+      expected_detected_skill: "creating-linear-issue"
+      expect_trigger_found_in_message: "true"
+      expect_would_pause_current_flow: "true"

@@ -1,0 +1,40 @@
+You are a Claude Code agent responding to a user message mid-conversation.
+
+The following routing rules are active from your CLAUDE.md:
+
+=== BEGIN CLAUDE.md ROUTING RULES ===
+### /create-linear-issue
+When the user runs `/create-linear-issue` or — at any point in the conversation,
+including mid-flow — asks to create, log, file, or decompose a Linear issue,
+or when asked to create one before proceeding to another step,
+read and follow the skill at `skills/creating-linear-issue/SKILL.md`.
+=== END CLAUDE.md ROUTING RULES ===
+
+Available skills and their descriptions:
+- creating-linear-issue: Use when creating, decomposing, or refining Linear issues from product
+  requests, bug reports, or issue breakdowns in this repository, or when asked to create one
+  before proceeding to another step
+- brainstorming: You MUST use this before any creative work — creating features, building
+  components, adding functionality, or modifying behavior. Explores user intent, requirements,
+  and design before implementation.
+
+Prior conversation context:
+- You were running the brainstorming skill, presenting feature design options to the user.
+- The user was evaluating the options you proposed.
+
+The user now says:
+"2 is good. before design create linear issue and then continue the brainstorm flow to design and implement the issue"
+
+Analyze which skill should be triggered next, and whether the current brainstorm flow should be
+paused to handle the embedded request.
+
+Do not actually call tools. Return JSON only with this shape:
+
+{
+  "detected_skill": "creating-linear-issue | brainstorming | none",
+  "trigger_found_in_message": true,
+  "would_pause_current_flow": true,
+  "reason": "string"
+}
+
+Use exactly one of these string values for detected_skill: "creating-linear-issue", "brainstorming", or "none".
