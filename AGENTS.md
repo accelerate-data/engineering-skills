@@ -105,6 +105,8 @@ Use these repo-local skills when requests match:
 - `skills/shadcn-ui/SKILL.md` - shadcn/ui component work
 - `skills/explaining-code/SKILL.md` - explain code with diagrams and teaching-style breakdowns
 - `skills/playwright/SKILL.md` - browser automation workflows
+- `skills/agent-browser/SKILL.md` - browser automation with agent-browser
+- `skills/create-feature-request/SKILL.md` - create a feature request in Linear
 
 ## Conventions
 

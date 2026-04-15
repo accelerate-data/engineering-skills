@@ -25,3 +25,8 @@ read and follow the skill at `skills/raising-linear-pr/SKILL.md`.
 
 When the user runs `/close-linear-issue`, or asks to close, complete, merge, or ship a Linear issue,
 read and follow the skill at `skills/closing-linear-issue/SKILL.md`.
+
+### /create-feature-request
+
+When the user runs `/create-feature-request` or asks to create, log, or file a feature request in Linear,
+read and follow the skill at `skills/create-feature-request/SKILL.md`.
