@@ -25,6 +25,14 @@ module.exports = (output, context) => {
     ['requires_full_bulk_set_approval', parseExpectedBoolean(context.vars.expect_requires_full_bulk_set_approval)],
     ['stops_on_partial_approval', parseExpectedBoolean(context.vars.expect_stops_on_partial_approval)],
     ['includes_dev_repo_delete_rule', parseExpectedBoolean(context.vars.expect_includes_dev_repo_delete_rule)],
+    [
+      'uses_activity_not_archive_timestamp_for_scratch_delete',
+      parseExpectedBoolean(context.vars.expect_uses_activity_not_archive_timestamp_for_scratch_delete),
+    ],
+    [
+      'flags_large_branch_count_for_manual_review',
+      parseExpectedBoolean(context.vars.expect_flags_large_branch_count_for_manual_review),
+    ],
     ['surfaces_threshold_constants', parseExpectedBoolean(context.vars.expect_surfaces_threshold_constants)],
   ];
 

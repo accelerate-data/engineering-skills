@@ -87,6 +87,7 @@ def fetch_all_repos(org):
                       }}
                     }}
                   }}
+                  pageInfo {{ hasNextPage }}
                 }}
               }}
               pageInfo {{ hasNextPage endCursor }}
@@ -98,7 +99,9 @@ def fetch_all_repos(org):
         data = response["data"]["organization"]["repositories"]
 
         for repo in data["nodes"]:
-            branches = repo.get("refs", {}).get("nodes", [])
+            refs = repo.get("refs", {})
+            branches = refs.get("nodes", [])
+            branch_list_truncated = refs.get("pageInfo", {}).get("hasNextPage", False)
             latest_date = None
             latest_author = "-"
             all_files = set()
@@ -126,6 +129,7 @@ def fetch_all_repos(org):
                 "has_real_content": len(real_files) > 0,
                 "all_files": sorted(all_files),
                 "no_branches": len(branches) == 0,
+                "branch_list_truncated": branch_list_truncated,
             })
 
         if not data["pageInfo"]["hasNextPage"]:
@@ -139,6 +143,7 @@ def classify_repos(repos):
     """Apply cleanup rules and return categorised action lists."""
     to_delete  = []
     to_archive = []
+    manual_review = []
     ok         = []
 
     c4  = cutoff_date(SCRATCH_ARCHIVE_WEEKS)
@@ -154,6 +159,10 @@ def classify_repos(repos):
         created    = r["created_at"]
         is_scratch = name.startswith("scratch") or name.startswith("scratch_")
         is_dev      = name.startswith("dev")
+
+        if r.get("branch_list_truncated"):
+            manual_review.append({**r, "reason": "more than 100 branches; branch activity scan is incomplete"})
+            continue
 
         if is_dev:
             # VibeData dev repo, no activity > 1 week -> delete
@@ -188,10 +197,10 @@ def classify_repos(repos):
             else:
                 ok.append(r)
 
-    return to_delete, to_archive, ok
+    return to_delete, to_archive, manual_review, ok
 
 
-def print_summary(to_delete, to_archive):
+def print_summary(to_delete, to_archive, manual_review):
     print(f"\n{'='*70}")
     print(f"PROPOSED ACTIONS")
     print(f"{'='*70}")
@@ -213,8 +222,16 @@ def print_summary(to_delete, to_archive):
     else:
         print("\n📦 ARCHIVE: none")
 
+    if manual_review:
+        print(f"\n🔎 MANUAL REVIEW ({len(manual_review)} repos):")
+        for r in sorted(manual_review, key=lambda x: x["name"]):
+            print(f"  {r['name']:<45} {r['latest_commit']:<12} {r['latest_author']}")
+            print(f"    reason: {r['reason']}")
+    else:
+        print("\n🔎 MANUAL REVIEW: none")
+
     print(f"\n{'='*70}")
-    print(f"Total: {len(to_delete)} to delete, {len(to_archive)} to archive")
+    print(f"Total: {len(to_delete)} to delete, {len(to_archive)} to archive, {len(manual_review)} for manual review")
 
 
 def execute_actions(to_delete, to_archive, org, dry_run=False):
@@ -256,8 +273,8 @@ def main():
     repos = fetch_all_repos(args.org)
     print(f"  {len(repos)} repos fetched")
 
-    to_delete, to_archive, ok = classify_repos(repos)
-    print_summary(to_delete, to_archive)
+    to_delete, to_archive, manual_review, ok = classify_repos(repos)
+    print_summary(to_delete, to_archive, manual_review)
 
     if not to_delete and not to_archive:
         print("\nNothing to do.")

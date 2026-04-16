@@ -10,6 +10,8 @@ This is a workflow-contract check. Do not call tools. Inspect the skill text onl
 - requires user confirmation on the full proposed bulk action set before executing changes
 - stops instead of using this workflow when the user wants partial approval or exclusions
 - includes the VibeData `dev*` repository rule: delete when there is no activity on any branch for more than 1 week
+- says archived scratch repos are deleted based on no branch activity for more than 8 weeks, not based on archive timestamp
+- says repos with more than 100 branches are flagged for manual review and excluded from automatic archive/delete actions
 - points to the threshold constants in the script
 
 Return JSON only with this shape:
@@ -24,6 +26,8 @@ Return JSON only with this shape:
   "requires_full_bulk_set_approval": true,
   "stops_on_partial_approval": true,
   "includes_dev_repo_delete_rule": true,
+  "uses_activity_not_archive_timestamp_for_scratch_delete": true,
+  "flags_large_branch_count_for_manual_review": true,
   "surfaces_threshold_constants": true,
   "notes": "string"
 }

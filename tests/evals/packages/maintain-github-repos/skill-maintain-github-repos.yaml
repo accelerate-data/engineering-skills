@@ -32,4 +32,6 @@ tests:
       expect_requires_full_bulk_set_approval: "true"
       expect_stops_on_partial_approval: "true"
       expect_includes_dev_repo_delete_rule: "true"
+      expect_uses_activity_not_archive_timestamp_for_scratch_delete: "true"
+      expect_flags_large_branch_count_for_manual_review: "true"
       expect_surfaces_threshold_constants: "true"
