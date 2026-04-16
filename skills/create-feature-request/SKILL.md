@@ -5,14 +5,6 @@ description: >-
   Triggers on: feature request, log a feature, new feature, request a feature,
   FR, product request.
 version: 3.1.0
-allowed-tools:
-  - Read
-  - Bash
-  - AskUserQuestion
-  - mcp__claude_ai_Linear__list_issue_labels
-  - mcp__claude_ai_Linear__list_projects
-  - mcp__claude_ai_Linear__list_issue_statuses
-  - mcp__claude_ai_Linear__save_issue
 ---
 
 # Create Feature Request
@@ -42,9 +34,12 @@ In parallel:
    Then continue — enrichment fields will be omitted rather than blocking.
 
 2. Query Linear for live metadata (all three in parallel):
-   - `mcp__claude_ai_Linear__list_issue_labels` — get available labels (scope, type, persona)
-   - `mcp__claude_ai_Linear__list_projects` — get available projects
-   - `mcp__claude_ai_Linear__list_issue_statuses` — get available statuses for the RO team
+   - list available issue labels (scope, type, persona)
+   - list available projects
+   - list available statuses for the RO team
+
+Use the Linear tools available in the current agent environment. Do not hard-code
+adapter-specific MCP tool names in the workflow.
 
 After loading, output a compact confirmation checklist (✓ files loaded,
 ✓ labels retrieved, ✓ projects retrieved, ✓ statuses retrieved). Then continue
@@ -105,17 +100,16 @@ Business justification:
 
 ### Phase 3: Validate (Human Gate)
 
-Use `AskUserQuestion` with two options:
+Ask the user to confirm with two options:
 - **Create this request** — proceed to Phase 4
 - **Let me adjust** — user provides changes in natural language; apply changes,
   re-display updated preview, then ask again. Loop until confirmed.
 
 ### Phase 4: Create in Linear
 
-Call `mcp__claude_ai_Linear__save_issue` with:
+Create the Linear issue with the available Linear issue-creation tool using:
 
 ```
-tool: mcp__claude_ai_Linear__save_issue
 params:
   title: "<title>"
   team: "RO"

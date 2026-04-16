@@ -47,7 +47,8 @@ python3 skills/maintain-github-repos/scripts/analyze_repos.py --org accelerate-d
 
 ## Threshold Changes
 
-If the user wants different thresholds, update these constants in [analyze_repos.py](/Users/hbanerjee/src/engineering-skills/skills/maintain-github-repos/scripts/analyze_repos.py:25):
+If the user wants different thresholds, update these constants in
+`skills/maintain-github-repos/scripts/analyze_repos.py`:
 
 ```python
 SCRATCH_ARCHIVE_WEEKS = 4

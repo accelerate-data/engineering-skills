@@ -10,17 +10,17 @@ schedule: "After cook sessions that produce large diffs (200+ lines), implement 
 # Adversarial Review
 
 Spawn reviewers on the **opposite model** to challenge work. Reviewers attack from distinct
-lenses grounded in brain principles. The deliverable is a synthesized verdict — do NOT make
-changes.
+lenses grounded in the bundled review lens definitions. The deliverable is a synthesized
+verdict; do not make changes.
 
 **Hard constraint:** Reviewers MUST run via the opposite model's CLI (`codex exec` or
 `claude -p`). Do NOT use subagents, the Agent tool, or any internal delegation mechanism as
 reviewers — those run on *your own* model, which defeats the purpose.
 
-## Step 1 — Load Principles
+## Step 1 — Load Review Lenses
 
-Read `brain/principles.md`. Follow every `[[wikilink]]` and read each linked principle file.
-These govern reviewer judgments.
+Read `references/reviewer-lenses.md`. These bundled lens definitions govern reviewer
+judgments and are the only required local reference material for this skill.
 
 ## Step 2 — Determine Scope and Intent
 
@@ -37,8 +37,6 @@ Assess change size:
 | Small | < 50 lines, 1–2 files | 1 (Skeptic) |
 | Medium | 50–200 lines, 3–5 files | 2 (Skeptic + Architect) |
 | Large | 200+ lines or 5+ files | 3 (Skeptic + Architect + Minimalist) |
-
-Read `references/reviewer-lenses.md` for lens definitions.
 
 ## Step 3 — Detect Model and Spawn Reviewers
 
@@ -57,7 +55,8 @@ codex exec --skip-git-repo-check -o "$REVIEW_DIR/skeptic.md" "prompt" 2>/dev/nul
 ```
 
 Use `--profile edit` only if the reviewer needs to run tests. Default to read-only.
-Run with `run_in_background: true`, monitor via `TaskOutput` with `block: true, timeout: 600000`.
+Run reviewer commands concurrently with your environment's available shell background
+mechanism and wait for every output file before synthesis.
 
 **If you are Codex** → spawn Claude reviewers via `claude` CLI:
 
@@ -65,7 +64,8 @@ Run with `run_in_background: true`, monitor via `TaskOutput` with `block: true, 
 claude -p "prompt" > "$REVIEW_DIR/skeptic.md" 2>/dev/null
 ```
 
-Run with `run_in_background: true`.
+Run reviewer commands concurrently with your environment's available shell background
+mechanism and wait for every output file before synthesis.
 
 Name each output file after the lens: `skeptic.md`, `architect.md`, `minimalist.md`.
 
@@ -75,9 +75,8 @@ Each reviewer gets a single prompt containing:
 
 1. The stated intent (from Step 2)
 2. Their assigned lens (full text from references/reviewer-lenses.md)
-3. The principles relevant to their lens (file contents, not summaries)
-4. The code or diff to review
-5. Instructions: "You are an adversarial reviewer. Your job is to find real problems, not
+3. The code or diff to review
+4. Instructions: "You are an adversarial reviewer. Your job is to find real problems, not
    validate the work. Be specific — cite files, lines, and concrete failure scenarios.
    Rate each finding: high (blocks ship), medium (should fix), low (worth noting).
    Write findings as a numbered markdown list to your output file."
@@ -112,7 +111,7 @@ Produce a single verdict:
 For each finding:
 - **[severity]** Description with file:line references
 - Lens: which reviewer raised it
-- Principle: which brain principle it maps to
+- Lens principle: which bundled review lens principle it maps to
 - Recommendation: concrete action, not vague advice
 
 ## What Went Well
@@ -126,8 +125,8 @@ For each finding:
 
 ## Step 5 — Render Judgment
 
-After synthesizing the reviewers, apply your own judgment. Using the stated intent and brain
-principles as your frame, state which findings you would accept and which you would reject —
+After synthesizing the reviewers, apply your own judgment. Using the stated intent and bundled
+review lenses as your frame, state which findings you would accept and which you would reject
 and why. Reviewers are adversarial by design; not every finding warrants action. Call out
 false positives, overreach, and findings that mistake style for substance.
 

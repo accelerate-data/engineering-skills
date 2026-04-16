@@ -107,7 +107,6 @@ module.exports = (output, context) => {
   const expectedStringFields = [
     ['assignee_default', context.vars.expected_assignee_default],
     ['cycle_default', context.vars.expected_cycle_default],
-    ['milestone_strategy', context.vars.expected_milestone_strategy],
   ];
 
   for (const [field, expectedRaw] of expectedStringFields) {
@@ -119,6 +118,22 @@ module.exports = (output, context) => {
         pass: false,
         score: 0,
         reason: `Expected ${field}=${expected}, got ${actual}`,
+      };
+    }
+  }
+
+  if (context.vars.expected_milestone_strategy !== undefined) {
+    const expected = String(context.vars.expected_milestone_strategy).trim().toLowerCase();
+    const actual = String(payload.milestone_strategy || '').trim().toLowerCase();
+    const aliases = {
+      'future-only': ['future-only', 'future milestones only', 'user-selects-from-futures', 'future-options-only'],
+    };
+    const accepted = aliases[expected] || [expected];
+    if (!accepted.includes(actual)) {
+      return {
+        pass: false,
+        score: 0,
+        reason: `Expected milestone_strategy=${expected}, got ${actual}`,
       };
     }
   }

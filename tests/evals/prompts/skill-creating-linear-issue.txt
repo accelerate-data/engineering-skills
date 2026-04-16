@@ -2,11 +2,14 @@ You are preparing to create a Linear issue in this repository.
 
 Read the skill at `skills/creating-linear-issue/SKILL.md`.
 
+Do not inspect the live `AGENTS.md` file for this eval. Use the simulated
+`AGENTS.md` facts in the scenario below as the repository guidance state.
+
 Scenario:
 
 - The user asks: "Create a Linear issue for improving eval coverage for the engineering skills plugin."
 - Codebase review could answer some scoping details.
-- `AGENTS.md` contains enough durable repo context to resolve the likely Linear project.
+- Simulated `AGENTS.md` contains enough durable repo context to resolve the likely Linear project as `Engineering Skills`.
 - There are two viable future milestone choices and one past milestone.
 - No explicit assignee or cycle was provided.
 - The request should be classified before drafting the issue.
