@@ -9,7 +9,7 @@ version: 3.1.0
 
 # Create Feature Request
 
-Logs a feature request into the **RO team** in Linear
+Logs a feature request into the **Roadmap team** in Linear
 (`https://linear.app/acceleratedata/team/RO/all`) from free-form natural
 language, enriched with Vibedata product context.
 
