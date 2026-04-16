@@ -36,7 +36,7 @@
     },
     "eval_harness": {
       "path": "tests/evals/",
-      "description": "Promptfoo harness and deterministic compatibility checks for skills in this repository. Current packages cover the Linear workflow skills, maintain-github-repos, and Codex compatibility."
+      "description": "Promptfoo harness and deterministic compatibility checks for skills in this repository. Current packages cover the Linear workflow skills, create-feature-request, maintain-github-repos, eval coverage reporting, and Codex compatibility."
     },
     "scripts": {
       "path": "scripts/",
@@ -59,6 +59,8 @@
     "eval_raising_linear_pr": "cd tests/evals && npm run eval:raising-linear-pr",
     "eval_closing_linear_issue": "cd tests/evals && npm run eval:closing-linear-issue",
     "eval_maintain_github_repos": "cd tests/evals && npm run eval:maintain-github-repos",
+    "eval_create_feature_request": "cd tests/evals && npm run eval:create-feature-request",
+    "eval_coverage": "cd tests/evals && npm run eval:coverage",
     "eval_codex_compatibility": "cd tests/evals && npm run eval:codex-compatibility",
     "eval_view": "cd tests/evals && npm run view"
   },
