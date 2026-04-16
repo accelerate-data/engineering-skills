@@ -31,4 +31,5 @@ tests:
       expect_requires_user_confirmation_before_execute: "true"
       expect_requires_full_bulk_set_approval: "true"
       expect_stops_on_partial_approval: "true"
+      expect_includes_dev_repo_delete_rule: "true"
       expect_surfaces_threshold_constants: "true"

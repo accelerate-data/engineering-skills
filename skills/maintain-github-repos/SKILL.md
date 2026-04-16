@@ -11,6 +11,7 @@ Use this skill for repository hygiene work in the `accelerate-data` GitHub organ
 
 | Repo type | Condition | Action |
 | --- | --- | --- |
+| `dev*` | VibeData repo with no activity in any branch for more than 1 week | Delete |
 | `scratch*` | No activity in any branch for more than 4 weeks | Archive |
 | `scratch*` | Already archived and no activity for more than 8 weeks | Delete |
 | non-scratch | Older than 2 weeks and empty or README-only across all branches | Delete |
@@ -50,6 +51,7 @@ If the user wants different thresholds, update these constants in [analyze_repos
 ```python
 SCRATCH_ARCHIVE_WEEKS = 4
 SCRATCH_DELETE_WEEKS = 8
+DEV_DELETE_WEEKS = 1
 NONSCRATCH_EMPTY_WEEKS = 2
 NONSCRATCH_ARCHIVE_WEEKS = 12
 ```

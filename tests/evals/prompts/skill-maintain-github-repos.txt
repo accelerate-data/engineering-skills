@@ -9,6 +9,7 @@ This is a workflow-contract check. Do not call tools. Inspect the skill text onl
 - tells the operator to preview with `--dry-run` before `--execute`
 - requires user confirmation on the full proposed bulk action set before executing changes
 - stops instead of using this workflow when the user wants partial approval or exclusions
+- includes the VibeData `dev*` repository rule: delete when there is no activity on any branch for more than 1 week
 - points to the threshold constants in the script
 
 Return JSON only with this shape:
@@ -22,6 +23,7 @@ Return JSON only with this shape:
   "requires_user_confirmation_before_execute": true,
   "requires_full_bulk_set_approval": true,
   "stops_on_partial_approval": true,
+  "includes_dev_repo_delete_rule": true,
   "surfaces_threshold_constants": true,
   "notes": "string"
 }

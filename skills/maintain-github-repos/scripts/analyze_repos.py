@@ -8,6 +8,9 @@ Rules:
     - No activity in any branch > 4 weeks  -> archive
     - Already archived > 8 weeks           -> delete
 
+  dev repos:
+    - No activity in any branch > 1 week   -> delete
+
   non-scratch repos:
     - > 2 weeks old AND empty/README-only across all branches -> delete
     - No activity in any branch > 12 weeks -> archive
@@ -24,6 +27,7 @@ ORG = "accelerate-data"  # default, overridable via --org
 
 SCRATCH_ARCHIVE_WEEKS  = 4
 SCRATCH_DELETE_WEEKS   = 8
+DEV_DELETE_WEEKS = 1
 NONSCRATCH_EMPTY_WEEKS = 2
 NONSCRATCH_ARCHIVE_WEEKS = 12
 
@@ -139,6 +143,7 @@ def classify_repos(repos):
 
     c4  = cutoff_date(SCRATCH_ARCHIVE_WEEKS)
     c8  = cutoff_date(SCRATCH_DELETE_WEEKS)
+    c1  = cutoff_date(DEV_DELETE_WEEKS)
     c2  = cutoff_date(NONSCRATCH_EMPTY_WEEKS)
     c12 = cutoff_date(NONSCRATCH_ARCHIVE_WEEKS)
 
@@ -148,8 +153,15 @@ def classify_repos(repos):
         latest     = r["latest_commit"]
         created    = r["created_at"]
         is_scratch = name.startswith("scratch") or name.startswith("scratch_")
+        is_dev      = name.startswith("dev")
 
-        if is_scratch:
+        if is_dev:
+            # VibeData dev repo, no activity > 1 week -> delete
+            if latest == "no commits" or latest < c1:
+                to_delete.append({**r, "reason": f"VibeData dev repo, last activity {latest} (>{DEV_DELETE_WEEKS}w ago)"})
+            else:
+                ok.append(r)
+        elif is_scratch:
             if archived:
                 # Archived scratch repo older than 8 weeks -> delete
                 if latest == "no commits" or latest < c8:
