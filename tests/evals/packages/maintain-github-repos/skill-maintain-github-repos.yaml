@@ -1,0 +1,34 @@
+# yaml-language-server: $schema=https://promptfoo.dev/config-schema.json
+description: "Maintain-github-repos skill — repo-local workflow and confirmation gate"
+
+prompts:
+  - id: maintain-github-repos
+    label: maintain-github-repos
+    raw: file://../../prompts/skill-maintain-github-repos.txt
+
+providers:
+  - id: anthropic:claude-agent-sdk
+    config:
+      model: claude-haiku-4-5-20251001
+      working_dir: ../..
+      max_turns: 5
+      permission_mode: auto
+      append_allowed_tools:
+        - Read
+
+defaultTest:
+  assert:
+    - type: javascript
+      value: file://../../assertions/check-maintain-github-repos-contract.js
+
+tests:
+  - description: "maintain-github-repos — uses repo-local script, stays org-specific, and requires preview plus confirmation before execute"
+    vars:
+      expected_script_path: "skills/maintain-github-repos/scripts/analyze_repos.py"
+      expect_uses_repo_local_script_path: "true"
+      expect_mentions_accelerate_data_only: "true"
+      expect_requires_dry_run_before_execute: "true"
+      expect_requires_user_confirmation_before_execute: "true"
+      expect_requires_full_bulk_set_approval: "true"
+      expect_stops_on_partial_approval: "true"
+      expect_surfaces_threshold_constants: "true"

@@ -36,7 +36,7 @@
     },
     "eval_harness": {
       "path": "tests/evals/",
-      "description": "Promptfoo harness for skills in this repository. Current packages cover the Linear workflow skills: creating-linear-issue, implementing-linear-issue, raising-linear-pr, and closing-linear-issue."
+      "description": "Promptfoo harness for skills in this repository. Current packages cover the Linear workflow skills plus maintain-github-repos."
     },
     "scripts": {
       "path": "scripts/",
@@ -58,6 +58,7 @@
     "eval_implementing_linear_issue": "cd tests/evals && npm run eval:implementing-linear-issue",
     "eval_raising_linear_pr": "cd tests/evals && npm run eval:raising-linear-pr",
     "eval_closing_linear_issue": "cd tests/evals && npm run eval:closing-linear-issue",
+    "eval_maintain_github_repos": "cd tests/evals && npm run eval:maintain-github-repos",
     "eval_view": "cd tests/evals && npm run view"
   },
   "conventions": {
