@@ -20,11 +20,12 @@ Take completed implementation work across the finish line into review. This skil
 
 | Step | Requirement |
 |---|---|
-| 1 | Verify the approved implementation, tests, and evals |
-| 2 | Confirm every acceptance criterion is already complete; stop and ask if any are not |
-| 3 | Push the prepared implementation branch |
-| 4 | Create or update the PR |
-| 5 | Move the issue to `In Review` |
+| 1 | Rebase onto default branch |
+| 2 | Check AC status on Linear; if any are unchecked, run implementing-linear-issue quality gates to complete them |
+| 3 | Run post-rebase quality gates (automated validation + evals) |
+| 4 | Push the prepared implementation branch |
+| 5 | Create or update the PR |
+| 6 | Move the issue to `In Review` |
 
 ## Implementation
 
@@ -36,6 +37,16 @@ Take completed implementation work across the finish line into review. This skil
 2. Rebase the feature branch onto the default branch before final verification.
 3. Resolve only mechanical conflicts directly; escalate semantic conflicts.
 
+**Acceptance-criteria gate (run after rebase, before quality gates):**
+
+1. Read the Linear issue and check whether every acceptance criterion is checked off in the main issue requirements section.
+2. If all ACs are checked off, proceed to the quality gate order below.
+3. If any AC is unchecked, incomplete, unproven, or blocked:
+   a. Read `skills/implementing-linear-issue/SKILL.md` and execute the independent-agent quality gates defined there (code review, simplification review, test coverage review, and acceptance-criteria review).
+   b. Resolve any findings from those gates.
+   c. Check off ACs that are now proven complete in the main issue requirements section on Linear.
+   d. If any AC still cannot be completed or proven after running the gates, stop and ask the user how to proceed. Do not proceed to push or PR creation with incomplete ACs.
+
 **Quality gate order:**
 
 1. Re-run the required automated validation for the changed area.
@@ -44,8 +55,8 @@ Take completed implementation work across the finish line into review. This skil
 
 **Linear rules:**
 
-- Verify that every acceptance criterion is already complete and checked off in the main issue requirements section before push or PR creation.
-- If any acceptance criterion is not complete, not proven, still blocked, or not checked off in the main issue requirements section, stop and ask the user how to proceed. Do not create a duplicate acceptance-criteria section in this phase.
+- Verify that every acceptance criterion is complete and checked off in the main issue requirements section before push or PR creation.
+- If any acceptance criterion remains incomplete after running the AC gate above, stop and ask the user how to proceed. Do not create a duplicate acceptance-criteria section in this phase.
 - Preserve the implementation summary format; do not restate the acceptance criteria in the implementation snapshot.
 - Move the issue to `In Review` only after the PR exists.
 
