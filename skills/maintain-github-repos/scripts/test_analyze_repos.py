@@ -357,5 +357,72 @@ class TestClassifyReposUnchanged(unittest.TestCase):
         self.assertEqual(len(to_delete) + len(to_archive) + len(manual_review), 0)
 
 
+# ---------------------------------------------------------------------------
+# 7. Branch name URL encoding
+# ---------------------------------------------------------------------------
+
+class TestBranchNameEncoding(unittest.TestCase):
+
+    @patch("analyze_repos.gh_rest")
+    def test_branch_with_slash_in_name_is_url_encoded(self, mock_rest):
+        """Branch names like 'feature/my-branch' must be URL-encoded in the REST path
+        so the API sees them as a single path segment, not nested resources."""
+        calls = []
+
+        def rest_router(path):
+            calls.append(path)
+            if "/orgs/" in path:
+                return make_repos_page(["myrepo"])
+            if "/branches?per_page=101" in path:
+                return [{"name": "feature/my-branch"}]
+            if "/branches/feature%2Fmy-branch" in path:
+                return make_branch_detail("feature/my-branch", "2026-01-01", "Dev", "tree1")
+            if "/git/trees/" in path:
+                return make_tree([("README.md", "blob")])
+            return {}
+
+        mock_rest.side_effect = rest_router
+        analyze_repos.fetch_all_repos("testorg")
+
+        branch_detail_calls = [c for c in calls if "/branches/" in c and "per_page" not in c]
+        self.assertTrue(
+            any("%2F" in c for c in branch_detail_calls),
+            f"Expected URL-encoded slash (%2F) in branch detail call, got: {branch_detail_calls}",
+        )
+
+
+# ---------------------------------------------------------------------------
+# 8. all_files completeness
+# ---------------------------------------------------------------------------
+
+class TestAllFilesCompleteness(unittest.TestCase):
+
+    @patch("analyze_repos.gh_rest")
+    def test_all_files_contains_all_root_entries_even_after_real_content_found(self, mock_rest):
+        """all_files must include every entry from the inspected tree, not just those
+        seen before the first non-noise file. The early-exit should only gate whether
+        the tree is fetched at all — not cut short the entry scan mid-tree."""
+
+        def rest_router(path):
+            if "/orgs/" in path:
+                return make_repos_page(["myrepo"])
+            if "/branches?per_page=101" in path:
+                return [{"name": "main"}]
+            if "/branches/main" in path:
+                return make_branch_detail("main", "2026-01-01", "Dev", "tree1")
+            if "/git/trees/" in path:
+                # Real file appears first, noise files appear after
+                return make_tree([("app.py", "blob"), ("README.md", "blob"), (".gitignore", "blob")])
+            return []
+
+        mock_rest.side_effect = rest_router
+        repos = analyze_repos.fetch_all_repos("testorg")
+
+        all_files = set(repos[0]["all_files"])
+        self.assertIn("app.py", all_files, "app.py should be in all_files")
+        self.assertIn("readme.md", all_files, "README.md (lowercased) should be in all_files")
+        self.assertIn(".gitignore", all_files, ".gitignore should be in all_files")
+
+
 if __name__ == "__main__":
     unittest.main()

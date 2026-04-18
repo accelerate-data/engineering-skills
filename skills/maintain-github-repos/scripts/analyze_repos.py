@@ -22,6 +22,7 @@ Usage:
 import subprocess, json, time, sys
 from datetime import datetime, timedelta
 from argparse import ArgumentParser
+from urllib.parse import quote
 
 ORG = "accelerate-data"  # default, overridable via --org
 
@@ -86,7 +87,7 @@ def fetch_all_repos(org):
 
             for branch in branches:
                 branch_name = branch["name"]
-                detail = gh_rest(f"/repos/{org}/{repo_name}/branches/{branch_name}")
+                detail = gh_rest(f"/repos/{org}/{repo_name}/branches/{quote(branch_name, safe='')}")
                 commit_inner = detail.get("commit", {}).get("commit", {})
 
                 # Extract the commit date (prefer committer, fall back to author).
@@ -116,7 +117,6 @@ def fetch_all_repos(org):
                             all_files.add(name_lower)
                             if name_lower not in NOISE_FILES:
                                 has_real_content = True
-                                break
 
             created_at = (repo.get("created_at") or "")[:10]
             repos.append({
