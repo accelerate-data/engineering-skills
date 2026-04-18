@@ -108,6 +108,10 @@ Use these repo-local skills when requests match:
 - `skills/agent-browser/SKILL.md` - browser automation with agent-browser
 - `skills/create-feature-request/SKILL.md` - create a feature request in Linear
 
+## Linear
+
+All Linear issues for this repository must be created in the **Internal-IT** project.
+
 ## Conventions
 
 - Keep all skill directories under `skills/`.

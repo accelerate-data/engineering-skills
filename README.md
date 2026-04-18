@@ -16,10 +16,13 @@ This repository is a single plugin source repo, not a marketplace repo.
 ├── .codex-plugin/plugin.json
 ├── skills/
 │   ├── adversarial-review/
+│   ├── agent-browser/
 │   ├── closing-linear-issue/
+│   ├── create-feature-request/
 │   ├── creating-linear-issue/
 │   ├── explaining-code/
 │   ├── implementing-linear-issue/
+│   ├── maintain-github-repos/
 │   ├── playwright/
 │   ├── raising-linear-pr/
 │   └── shadcn-ui/
@@ -110,15 +113,20 @@ npm run eval:creating-linear-issue
 npm run eval:implementing-linear-issue
 npm run eval:raising-linear-pr
 npm run eval:closing-linear-issue
+npm run eval:maintain-github-repos
+npm run eval:codex-compatibility
 ```
 
 ## Current Skills
 
 - `adversarial-review`
+- `agent-browser`
 - `closing-linear-issue`
+- `create-feature-request`
 - `creating-linear-issue`
 - `explaining-code`
 - `implementing-linear-issue`
+- `maintain-github-repos`
 - `playwright`
 - `raising-linear-pr`
 - `shadcn-ui`

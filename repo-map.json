@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-04-12T00:00:00Z",
+  "generated_at": "2026-04-16T00:00:00Z",
   "repo_root": "engineering-skills",
   "primary_languages": ["Markdown", "JSON", "Shell", "YAML"],
   "package_managers": [
@@ -32,11 +32,11 @@
     },
     "skills": {
       "path": "skills/",
-      "description": "Canonical skill directories (10 skills). Each skill owns its SKILL.md and any supporting references, assets, scripts, or agents."
+      "description": "Canonical skill directories (11 skills). Each skill owns its SKILL.md and any supporting references, assets, scripts, or agents."
     },
     "eval_harness": {
       "path": "tests/evals/",
-      "description": "Promptfoo harness for skills in this repository. Current packages cover the Linear workflow skills: creating-linear-issue, implementing-linear-issue, raising-linear-pr, and closing-linear-issue."
+      "description": "Promptfoo harness and deterministic compatibility checks for skills in this repository. Current packages cover the Linear workflow skills, create-feature-request, maintain-github-repos, eval coverage reporting, and Codex compatibility."
     },
     "scripts": {
       "path": "scripts/",
@@ -58,6 +58,10 @@
     "eval_implementing_linear_issue": "cd tests/evals && npm run eval:implementing-linear-issue",
     "eval_raising_linear_pr": "cd tests/evals && npm run eval:raising-linear-pr",
     "eval_closing_linear_issue": "cd tests/evals && npm run eval:closing-linear-issue",
+    "eval_maintain_github_repos": "cd tests/evals && npm run eval:maintain-github-repos",
+    "eval_create_feature_request": "cd tests/evals && npm run eval:create-feature-request",
+    "eval_coverage": "cd tests/evals && npm run eval:coverage",
+    "eval_codex_compatibility": "cd tests/evals && npm run eval:codex-compatibility",
     "eval_view": "cd tests/evals && npm run view"
   },
   "conventions": {

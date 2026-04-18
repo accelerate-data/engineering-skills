@@ -52,4 +52,4 @@ tests:
       expect_auto_cleans_disposable_post_merge: "true"
       expect_stops_on_tracked_changes_during_cleanup: "true"
       expect_checks_off_acceptance_criteria: "false"
-      required_terms: "main,origin/main,local-only commits,diverged"
+      required_terms: "main,origin/main,local-only commits,diverg"

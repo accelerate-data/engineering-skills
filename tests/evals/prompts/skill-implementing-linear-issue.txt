@@ -4,8 +4,8 @@ Read the skill at `skills/implementing-linear-issue/SKILL.md`.
 
 Scenario:
 
-- The issue has two possible implementation paths after codebase review.
-- Some clarification can be answered from local code.
+- After codebase review, exactly one unresolved fork remains with two viable implementation paths and no local evidence that makes either path clearly correct.
+- Other clarification can be answered from local code.
 - The user has not approved any plan yet.
 - No branch or worktree exists yet.
 - If branch or worktree setup fails, the workflow must stop.

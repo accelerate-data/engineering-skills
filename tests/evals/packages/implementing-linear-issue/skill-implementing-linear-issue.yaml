@@ -46,5 +46,5 @@ tests:
       expect_updates_linear_with_ac_status: "true"
       expect_posts_linear_note_with_tests_and_next_steps: "true"
       expect_creates_pr: "false"
-      required_terms: "branch,worktree,clean,commit,eval,review,acceptance,next step"
+      required_terms: "branch,worktree,clean,commit,eval,review,acceptance,next_steps"
       forbidden_terms: "pushes_git\":true,implements_before_plan_approval\":true"
