@@ -40,8 +40,9 @@ def now():
 def cutoff_date(weeks):
     return (now() - timedelta(weeks=weeks)).strftime("%Y-%m-%d")
 
-def gh_rest(path, retries=3, backoff=5):
-    """Call the GitHub REST API via the gh CLI. Returns parsed JSON."""
+def gh_rest(path, retries=3, backoff=5, allow_not_found=False):
+    """Call the GitHub REST API via the gh CLI. Returns parsed JSON, or None on 404
+    when allow_not_found=True (e.g. a branch deleted between listing and fetch)."""
     for attempt in range(retries):
         result = subprocess.run(
             ["gh", "api", path],
@@ -50,6 +51,8 @@ def gh_rest(path, retries=3, backoff=5):
         if result.returncode == 0:
             return json.loads(result.stdout)
         err = result.stderr.strip()
+        if allow_not_found and "HTTP 404" in err:
+            return None
         if attempt < retries - 1:
             print(f"  Retry {attempt + 1}/{retries - 1}: {err}, waiting {backoff}s...")
             time.sleep(backoff)
@@ -87,7 +90,13 @@ def fetch_all_repos(org):
 
             for branch in branches:
                 branch_name = branch["name"]
-                detail = gh_rest(f"/repos/{org}/{repo_name}/branches/{quote(branch_name, safe='')}")
+                detail = gh_rest(
+                    f"/repos/{org}/{repo_name}/branches/{quote(branch_name, safe='')}",
+                    allow_not_found=True,
+                )
+                if detail is None:
+                    print(f"  Warning: branch '{branch_name}' not found in {repo_name}, skipping")
+                    continue
                 commit_inner = detail.get("commit", {}).get("commit", {})
 
                 # Extract the commit date (prefer committer, fall back to author).

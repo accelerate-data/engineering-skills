@@ -76,7 +76,7 @@ class TestContentCheckAcrossBranches(unittest.TestCase):
         """A repo whose default branch is README-only but has code on another branch
         must have has_real_content=True (AC: non-default branch real content check)."""
 
-        def rest_router(path):
+        def rest_router(path, **kwargs):
             if "/repos?" in path or "repos?per_page" in path:
                 return make_repos_page(["myrepo"])
             if path.endswith("/branches?per_page=101"):
@@ -104,7 +104,7 @@ class TestContentCheckAcrossBranches(unittest.TestCase):
     def test_noise_only_across_all_branches_flagged_empty(self, mock_rest):
         """A repo where every branch contains only noise files must have has_real_content=False."""
 
-        def rest_router(path):
+        def rest_router(path, **kwargs):
             if "/repos?" in path or "repos?per_page" in path:
                 return make_repos_page(["myrepo"])
             if path.endswith("/branches?per_page=101"):
@@ -133,7 +133,7 @@ class TestContentCheckAcrossBranches(unittest.TestCase):
         """Once a branch with real content is found, tree fetches for remaining branches are skipped."""
         tree_calls = []
 
-        def rest_router(path):
+        def rest_router(path, **kwargs):
             if "/repos?" in path or "repos?per_page" in path:
                 return make_repos_page(["myrepo"])
             if path.endswith("/branches?per_page=101"):
@@ -173,7 +173,7 @@ class TestBranchTruncation(unittest.TestCase):
         must be marked branch_list_truncated=True and routed to manual review."""
         over_100_branches = [{"name": f"branch-{i}"} for i in range(101)]
 
-        def rest_router(path):
+        def rest_router(path, **kwargs):
             if "/repos?" in path or "repos?per_page" in path:
                 return make_repos_page(["bigmono"])
             if path.endswith("/branches?per_page=101"):
@@ -195,7 +195,7 @@ class TestBranchTruncation(unittest.TestCase):
         """Exactly 100 branches (the limit) must NOT set branch_list_truncated."""
         exactly_100 = [{"name": f"branch-{i}"} for i in range(100)]
 
-        def rest_router(path):
+        def rest_router(path, **kwargs):
             if "/repos?" in path or "repos?per_page" in path:
                 return make_repos_page(["mediumrepo"])
             if path.endswith("/branches?per_page=101"):
@@ -245,7 +245,7 @@ class TestLatestCommitTracking(unittest.TestCase):
         """latest_commit and latest_author must reflect the most recent commit
         across all branches, not just the default branch."""
 
-        def rest_router(path):
+        def rest_router(path, **kwargs):
             if "/repos?" in path or "repos?per_page" in path:
                 return make_repos_page(["myrepo"])
             if path.endswith("/branches?per_page=101"):
@@ -277,7 +277,7 @@ class TestRepoPagination(unittest.TestCase):
         page1 = make_repos_page([f"repo-{i}" for i in range(100)])
         page2 = make_repos_page(["repo-100", "repo-101"])
 
-        def rest_router(path):
+        def rest_router(path, **kwargs):
             # Use /orgs/ prefix to distinguish org-repo-listing calls from repo-level calls.
             if "/orgs/" in path and "&page=1&" in path:
                 return page1
@@ -301,7 +301,7 @@ class TestRepoPagination(unittest.TestCase):
         """An org with <100 repos should stop after the first page."""
         page1 = make_repos_page(["alpha", "beta"])
 
-        def rest_router(path):
+        def rest_router(path, **kwargs):
             if "/orgs/" in path and "&page=1&" in path:
                 return page1
             if "/orgs/" in path and "&page=2&" in path:
@@ -369,7 +369,7 @@ class TestBranchNameEncoding(unittest.TestCase):
         so the API sees them as a single path segment, not nested resources."""
         calls = []
 
-        def rest_router(path):
+        def rest_router(path, **kwargs):
             calls.append(path)
             if "/orgs/" in path:
                 return make_repos_page(["myrepo"])
@@ -392,7 +392,58 @@ class TestBranchNameEncoding(unittest.TestCase):
 
 
 # ---------------------------------------------------------------------------
-# 8. all_files completeness
+# 8. Graceful 404 handling for branch detail
+# ---------------------------------------------------------------------------
+
+class TestBranchDetailNotFound(unittest.TestCase):
+
+    @patch("analyze_repos.gh_rest")
+    def test_branch_returning_404_is_skipped_not_crashed(self, mock_rest):
+        """If a branch detail returns None (404), the branch should be skipped
+        without crashing. The repo should still be returned with data from other branches."""
+
+        def rest_router(path, **kwargs):
+            if "/orgs/" in path:
+                return make_repos_page(["myrepo"])
+            if "/branches?per_page=101" in path:
+                return [{"name": "main"}, {"name": "feature%2Fgone"}]
+            if "/branches/main" in path:
+                return make_branch_detail("main", "2026-01-01", "Alice", "tree-main")
+            if "/branches/feature%252Fgone" in path or "/branches/feature%2Fgone" in path:
+                # Simulate 404 — gh_rest returns None for not-found branches
+                return None
+            if "/git/trees/" in path:
+                return make_tree([("README.md", "blob")])
+            return {}
+
+        mock_rest.side_effect = rest_router
+        # Should complete without raising RuntimeError
+        repos = analyze_repos.fetch_all_repos("testorg")
+        self.assertEqual(len(repos), 1)
+        # Data from the surviving branch is still present
+        self.assertEqual(repos[0]["latest_commit"], "2026-01-01")
+
+    @patch("analyze_repos.gh_rest")
+    def test_all_branches_404_results_in_no_commits(self, mock_rest):
+        """A repo where every branch detail 404s should show 'no commits'."""
+
+        def rest_router(path, **kwargs):
+            if "/orgs/" in path:
+                return make_repos_page(["ghostrepo"])
+            if "/branches?per_page=101" in path:
+                return [{"name": "main"}]
+            if "/branches/main" in path:
+                return None  # 404
+            return {}
+
+        mock_rest.side_effect = rest_router
+        repos = analyze_repos.fetch_all_repos("testorg")
+        self.assertEqual(repos[0]["latest_commit"], "no commits")
+        self.assertFalse(repos[0]["has_real_content"])
+
+
+# ---------------------------------------------------------------------------
+# 9. all_files completeness
 # ---------------------------------------------------------------------------
 
 class TestAllFilesCompleteness(unittest.TestCase):
@@ -403,7 +454,7 @@ class TestAllFilesCompleteness(unittest.TestCase):
         seen before the first non-noise file. The early-exit should only gate whether
         the tree is fetched at all — not cut short the entry scan mid-tree."""
 
-        def rest_router(path):
+        def rest_router(path, **kwargs):
             if "/orgs/" in path:
                 return make_repos_page(["myrepo"])
             if "/branches?per_page=101" in path:
