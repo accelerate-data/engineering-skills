@@ -39,102 +39,101 @@ def now():
 def cutoff_date(weeks):
     return (now() - timedelta(weeks=weeks)).strftime("%Y-%m-%d")
 
-def gh_graphql(query, retries=5, backoff=5):
+def gh_rest(path, retries=3, backoff=5):
+    """Call the GitHub REST API via the gh CLI. Returns parsed JSON."""
     for attempt in range(retries):
         result = subprocess.run(
-            ["gh", "api", "graphql", "-f", f"query={query}"],
+            ["gh", "api", path],
             capture_output=True, text=True
         )
         if result.returncode == 0:
-            data = json.loads(result.stdout)
-            if "errors" in data:
-                err = data["errors"][0].get("message", str(data["errors"]))
-                raise RuntimeError(f"GraphQL error: {err}")
-            return data
+            return json.loads(result.stdout)
         err = result.stderr.strip()
         if attempt < retries - 1:
             print(f"  Retry {attempt + 1}/{retries - 1}: {err}, waiting {backoff}s...")
             time.sleep(backoff)
         else:
-            raise RuntimeError(f"GraphQL failed after {retries} attempts: {err}")
+            raise RuntimeError(f"REST API call failed after {retries} attempts: {err}")
 
 
 def fetch_all_repos(org):
-    """Fetch all repos (including archived) with branch commit dates and file trees."""
-    cursor = None
+    """Fetch all repos (including archived) with branch commit dates and file trees.
+
+    Uses the GitHub REST API exclusively to avoid the 502/504 instability of GraphQL.
+    All branches are inspected for real content — analysis stops as soon as real
+    content is found on any branch to minimise API round-trips.
+    """
     repos = []
+    page = 1
 
     while True:
-        after = f', after: "{cursor}"' if cursor else ""
-        query = f"""{{
-          organization(login: "{org}") {{
-            repositories(first: 100{after}) {{
-              totalCount
-              nodes {{
-                name
-                isArchived
-                createdAt
-                refs(refPrefix: "refs/heads/", first: 100) {{
-                  nodes {{
-                    name
-                    target {{
-                      ... on Commit {{
-                        committedDate
-                        author {{ name }}
-                        tree {{
-                          entries {{ name }}
-                        }}
-                      }}
-                    }}
-                  }}
-                  pageInfo {{ hasNextPage }}
-                }}
-              }}
-              pageInfo {{ hasNextPage endCursor }}
-            }}
-          }}
-        }}"""
+        page_repos = gh_rest(f"/orgs/{org}/repos?per_page=100&page={page}&type=all")
+        if not page_repos:
+            break
 
-        response = gh_graphql(query)
-        data = response["data"]["organization"]["repositories"]
+        for repo in page_repos:
+            repo_name = repo["name"]
 
-        for repo in data["nodes"]:
-            refs = repo.get("refs", {})
-            branches = refs.get("nodes", [])
-            branch_list_truncated = refs.get("pageInfo", {}).get("hasNextPage", False)
+            # Fetch up to 101 branches so we can detect the >100 truncation case.
+            branches = gh_rest(f"/repos/{org}/{repo_name}/branches?per_page=101")
+            branch_list_truncated = len(branches) > 100
+            branches = branches[:100]
+
             latest_date = None
             latest_author = "-"
             all_files = set()
+            has_real_content = False
 
             for branch in branches:
-                target = branch.get("target")
-                if not target:
-                    continue
-                date = target.get("committedDate", "")[:10]
+                branch_name = branch["name"]
+                detail = gh_rest(f"/repos/{org}/{repo_name}/branches/{branch_name}")
+                commit_inner = detail.get("commit", {}).get("commit", {})
+
+                # Extract the commit date (prefer committer, fall back to author).
+                raw_date = (
+                    commit_inner.get("committer", {}).get("date")
+                    or commit_inner.get("author", {}).get("date")
+                    or ""
+                )
+                date = raw_date[:10]
+                author = (
+                    commit_inner.get("author", {}).get("name")
+                    or commit_inner.get("committer", {}).get("name")
+                    or "unknown"
+                )
+
                 if date and (latest_date is None or date > latest_date):
                     latest_date = date
-                    latest_author = target.get("author", {}).get("name", "unknown")
-                for entry in target.get("tree", {}).get("entries", []):
-                    all_files.add(entry["name"].lower())
+                    latest_author = author
 
-            real_files = all_files - NOISE_FILES
-            created_at = repo.get("createdAt", "")[:10]
+                # Only fetch the tree if we haven't found real content yet.
+                if not has_real_content:
+                    tree_sha = commit_inner.get("tree", {}).get("sha")
+                    if tree_sha:
+                        tree = gh_rest(f"/repos/{org}/{repo_name}/git/trees/{tree_sha}")
+                        for entry in tree.get("tree", []):
+                            name_lower = entry["path"].lower()
+                            all_files.add(name_lower)
+                            if name_lower not in NOISE_FILES:
+                                has_real_content = True
+                                break
 
+            created_at = (repo.get("created_at") or "")[:10]
             repos.append({
-                "name": repo["name"],
-                "is_archived": repo["isArchived"],
+                "name": repo_name,
+                "is_archived": repo.get("archived", False),
                 "created_at": created_at,
                 "latest_commit": latest_date or "no commits",
                 "latest_author": latest_author,
-                "has_real_content": len(real_files) > 0,
+                "has_real_content": has_real_content,
                 "all_files": sorted(all_files),
                 "no_branches": len(branches) == 0,
                 "branch_list_truncated": branch_list_truncated,
             })
 
-        if not data["pageInfo"]["hasNextPage"]:
+        if len(page_repos) < 100:
             break
-        cursor = data["pageInfo"]["endCursor"]
+        page += 1
 
     return repos
 
