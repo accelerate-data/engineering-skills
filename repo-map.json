@@ -40,7 +40,7 @@
     },
     "eval_harness": {
       "path": "tests/evals/",
-      "description": "Promptfoo harness and deterministic compatibility checks for skills in this repository. Current packages cover the Linear workflow skills, create-feature-request, maintain-github-repos, promptfoo DB gate helper tests, eval coverage reporting, and Codex compatibility."
+      "description": "Promptfoo harness and deterministic compatibility checks for skills in this repository. Current packages cover the Linear workflow skills, create-feature-request, maintain-github-repos, bundled raising-linear-pr promptfoo DB gate helper tests, eval coverage reporting, and Codex compatibility."
     },
     "scripts": {
       "path": "scripts/",
@@ -49,7 +49,7 @@
   },
   "key_directories": {
     "skills/": "All skill content owned by this plugin repo",
-    "tests/evals/": "Promptfoo eval packages, prompts, assertions, promptfoo DB gate helper, and wrapper script for skill regression checks",
+    "tests/evals/": "Promptfoo eval packages, prompts, assertions, and wrapper script for skill regression checks",
     "scripts/": "Repository helper scripts such as worktree setup",
     ".claude-plugin/": "Claude plugin manifest",
     ".codex-plugin/": "Codex plugin manifest"
