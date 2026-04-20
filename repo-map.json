@@ -1,8 +1,12 @@
 {
-  "generated_at": "2026-04-16T00:00:00Z",
+  "generated_at": "2026-04-20T00:00:00Z",
   "repo_root": "engineering-skills",
   "primary_languages": ["Markdown", "JSON", "Shell", "YAML"],
   "package_managers": [
+    {
+      "name": "npm (root wrappers)",
+      "manifest": "package.json"
+    },
     {
       "name": "npm (eval harness)",
       "manifest": "tests/evals/package.json"
@@ -36,7 +40,7 @@
     },
     "eval_harness": {
       "path": "tests/evals/",
-      "description": "Promptfoo harness and deterministic compatibility checks for skills in this repository. Current packages cover the Linear workflow skills, create-feature-request, maintain-github-repos, eval coverage reporting, and Codex compatibility."
+      "description": "Promptfoo harness and deterministic compatibility checks for skills in this repository. Current packages cover the Linear workflow skills, create-feature-request, maintain-github-repos, promptfoo DB gate helper tests, eval coverage reporting, and Codex compatibility."
     },
     "scripts": {
       "path": "scripts/",
@@ -45,24 +49,25 @@
   },
   "key_directories": {
     "skills/": "All skill content owned by this plugin repo",
-    "tests/evals/": "Promptfoo eval packages, prompts, assertions, and wrapper script for skill regression checks",
+    "tests/evals/": "Promptfoo eval packages, prompts, assertions, promptfoo DB gate helper, and wrapper script for skill regression checks",
     "scripts/": "Repository helper scripts such as worktree setup",
     ".claude-plugin/": "Claude plugin manifest",
     ".codex-plugin/": "Codex plugin manifest"
   },
   "commands": {
     "setup_worktree": "./scripts/setup-worktree.sh ../worktrees/<branch-name>",
-    "eval_all": "cd tests/evals && npm run eval",
-    "eval_creating_linear_issue": "cd tests/evals && npm run eval:creating-linear-issue",
-    "eval_creating_linear_issue_routing": "cd tests/evals && npm run eval:creating-linear-issue-routing",
-    "eval_implementing_linear_issue": "cd tests/evals && npm run eval:implementing-linear-issue",
-    "eval_raising_linear_pr": "cd tests/evals && npm run eval:raising-linear-pr",
-    "eval_closing_linear_issue": "cd tests/evals && npm run eval:closing-linear-issue",
-    "eval_maintain_github_repos": "cd tests/evals && npm run eval:maintain-github-repos",
-    "eval_create_feature_request": "cd tests/evals && npm run eval:create-feature-request",
-    "eval_coverage": "cd tests/evals && npm run eval:coverage",
-    "eval_codex_compatibility": "cd tests/evals && npm run eval:codex-compatibility",
-    "eval_view": "cd tests/evals && npm run view"
+    "eval_all": "npm run eval",
+    "eval_creating_linear_issue": "npm run eval:creating-linear-issue",
+    "eval_creating_linear_issue_routing": "npm run eval:creating-linear-issue-routing",
+    "eval_implementing_linear_issue": "npm run eval:implementing-linear-issue",
+    "eval_raising_linear_pr": "npm run eval:raising-linear-pr",
+    "eval_closing_linear_issue": "npm run eval:closing-linear-issue",
+    "eval_maintain_github_repos": "npm run eval:maintain-github-repos",
+    "eval_create_feature_request": "npm run eval:create-feature-request",
+    "eval_coverage": "npm run eval:coverage",
+    "eval_codex_compatibility": "npm run eval:codex-compatibility",
+    "test_promptfoo_db_gate": "npm run test:promptfoo-db-gate",
+    "eval_view": "npm run view"
   },
   "conventions": {
     "skill_location": "All first-party skills live under skills/<skill-name>/",

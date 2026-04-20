@@ -21,8 +21,8 @@ Take completed implementation work across the finish line into review. This skil
 | Step | Requirement |
 |---|---|
 | 1 | Rebase onto default branch |
-| 2 | Check AC status on Linear; if any are unchecked, run implementing-linear-issue quality gates to complete them |
-| 3 | Run post-rebase quality gates (automated validation + evals) |
+| 2 | Check AC status on Linear; check off only already-proven unchecked ACs; stop and hand back to implementation if any AC is unproven or needs code |
+| 3 | Run post-rebase quality gates (automated validation + stale targeted evals) |
 | 4 | Push the prepared implementation branch |
 | 5 | Create or update the PR |
 | 6 | Move the issue to `In Review` |
@@ -39,24 +39,64 @@ Take completed implementation work across the finish line into review. This skil
 
 **Acceptance-criteria gate (run after rebase, before quality gates):**
 
-1. Read the Linear issue and check whether every acceptance criterion is checked off in the main issue requirements section.
-2. If all ACs are checked off, proceed to the quality gate order below.
-3. If any AC is unchecked, incomplete, unproven, or blocked:
-   a. Read `skills/implementing-linear-issue/SKILL.md` and execute the independent-agent quality gates defined there (code review, simplification review, test coverage review, and acceptance-criteria review).
-   b. Resolve any findings from those gates.
-   c. Check off ACs that are now proven complete in the main issue requirements section on Linear.
-   d. If any AC still cannot be completed or proven after running the gates, stop and ask the user how to proceed. Do not proceed to push or PR creation with incomplete ACs.
+1. Read the Linear issue and classify every acceptance criterion in the main issue requirements section:
+   - already checked in Linear;
+   - unchecked but already proven complete by existing committed work and existing evidence;
+   - incomplete, unproven, blocked, or requiring code, test, or docs changes.
+2. If all ACs are already checked, proceed to the quality gate order below.
+3. If an AC is unchecked but already proven complete from existing committed work, check it off in Linear as metadata bookkeeping. Do not edit files or create commits.
+4. If any AC is incomplete, unproven, blocked, or requires code, test, or docs changes, stop before automated validation, evals, push, or PR creation. Hand back to `implementing-linear-issue` with the specific ACs that still need implementation work.
+5. Continue to the quality gate order only when every AC is checked in Linear after this gate.
 
 **Quality gate order:**
 
 1. Re-run the required automated validation for the changed area.
-2. Run the specific promptfoo evals for any changed skill or command.
+2. Run only the stale, targeted promptfoo evals for changed skills or commands, using the promptfoo DB gate below.
 3. Stop if required checks fail or remain unverified.
+
+**Promptfoo eval DB gate:**
+
+Do not run the full promptfoo eval suite by default in this phase. For each candidate eval, decide whether it is stale by comparing promptfoo's latest fully passing DB run with the latest content-relevant Git change for that eval.
+
+1. Build the candidate eval list from changed skills, changed commands, and changed eval infrastructure.
+2. Map each candidate eval command to the files that feed it, for example:
+   - `eval:raising-linear-pr`: `skills/raising-linear-pr/**`, `tests/evals/packages/raising-linear-pr/**`, `tests/evals/prompts/skill-raising-linear-pr.txt`, and shared assertions it depends on.
+   - Shared eval harness changes such as `tests/evals/scripts/promptfoo.sh`, `tests/evals/package.json`, `tests/evals/package-lock.json`, or shared assertion helpers should mark every affected eval stale unless a narrower dependency is clear.
+3. For each candidate eval, run `tests/evals/scripts/promptfoo-db-gate.js` with the eval command, promptfoo eval description, promptfoo DB path, default-branch merge base, `HEAD`, and mapped input paths.
+4. Treat the helper's JSON output as the eval decision evidence. A `skip` decision means the latest fully passing DB run is newer than the latest path-limited content change. A `run` decision means the eval is stale or DB evidence is unavailable.
+5. Run the targeted eval when:
+   - the promptfoo DB is missing, unreadable, or ambiguous;
+   - no fully passing DB run exists for that eval;
+   - the latest content-relevant Git change is newer than the latest fully passing DB run.
+6. Skip the targeted eval only when the latest fully passing DB run is newer than the latest content-relevant Git change.
+7. Print the evidence for every eval decision: eval command, mapped inputs, latest content-relevant change time or "no content-relevant change", latest passing DB run time or "none", and run/skip decision.
+
+Example helper invocation:
+
+```bash
+node tests/evals/scripts/promptfoo-db-gate.js \
+  --command eval:raising-linear-pr \
+  --description "Raising-linear-pr skill — verification, AC completion check, PR creation, and In Review transition" \
+  --db tests/evals/.promptfoo/promptfoo.db \
+  --base "$(git merge-base HEAD origin/main)" \
+  --head HEAD \
+  --path skills/raising-linear-pr \
+  --path tests/evals/packages/raising-linear-pr \
+  --path tests/evals/prompts/skill-raising-linear-pr.txt \
+  --path tests/evals/assertions/check-linear-skill-contract.js
+```
+
+The helper performs the equivalent of this content-relevant Git query internally:
+
+```bash
+git log -1 --format=%cI "$(git merge-base HEAD origin/main)"..HEAD -- <mapped-input-paths>
+```
 
 **Linear rules:**
 
-- Verify that every acceptance criterion is complete and checked off in the main issue requirements section before push or PR creation.
-- If any acceptance criterion remains incomplete after running the AC gate above, stop and ask the user how to proceed. Do not create a duplicate acceptance-criteria section in this phase.
+- Verify that every acceptance criterion is complete and checked off in the main issue requirements section before automated validation, evals, push, or PR creation.
+- Check off only ACs that are already proven by existing committed work and existing evidence.
+- If any acceptance criterion remains incomplete, unproven, blocked, or requires code, test, or docs changes, stop and hand back to `implementing-linear-issue`. Do not create a duplicate acceptance-criteria section in this phase.
 - Preserve the implementation summary format; do not restate the acceptance criteria in the implementation snapshot.
 - Move the issue to `In Review` only after the PR exists.
 
@@ -64,6 +104,9 @@ Take completed implementation work across the finish line into review. This skil
 
 - If the branch is missing the expected implementation commits, stop and hand back to `implementing-linear-issue`.
 - If the worktree is dirty at the start of this phase, stop immediately and hand back to `implementing-linear-issue`.
+- Do not edit files, stage changes, or create code, test, docs, AC-fix, or final implementation commits in this phase.
+- If validation or evals reveal required implementation changes, stop and hand back to `implementing-linear-issue` instead of fixing and committing here.
+- Linear AC checkoff is metadata only; it is not permission to change repository content.
 - Push the feature branch.
 - Create the PR if none exists; otherwise update the existing PR.
 - Include the appropriate issue-linking lines for the actual issue IDs, for example `Fixes ENG-1023`, while preserving any workspace-specific linking convention already in use.
