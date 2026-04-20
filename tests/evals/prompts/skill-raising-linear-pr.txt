@@ -11,15 +11,18 @@ Answer each boolean for what the workflow should do in this exact scenario, not 
 Scenario-specific definitions:
 
 - Set `checks_off_acceptance_criteria` to true only when this scenario should modify Linear AC checkboxes.
+- If a scenario says all acceptance criteria are already checked, set `checks_off_acceptance_criteria` and `checks_off_only_proven_acceptance_criteria` to false.
 - Set `checks_off_only_proven_acceptance_criteria` to true only when this scenario should modify Linear AC checkboxes and every checkbox being changed is already proven complete.
 - Set `hands_back_to_implementation_when_ac_requires_code` to true only when this scenario has an AC that requires code, test, or docs changes.
 - Set `stops_if_acceptance_criteria_incomplete` to true only when this scenario has an incomplete, unproven, blocked, or code-requiring AC that stops PR creation.
 - Always set `stops_on_dirty_worktree` to true for this workflow. It represents the required entry guard, even when the scenario says the current worktree is clean.
 - Set `runs_required_validation` and `runs_skill_evals` to false when the workflow stops at the AC gate or design conformance gate before reaching the quality gate order.
 - Set `runs_design_conformance_gate` to true when the workflow should inspect the Linear issue for referenced design documents before push or PR creation.
+- Set `pushes_branch` to true only when this scenario reaches the push step after all blocking gates pass.
 - Set `design_conformance_result` to `pass`, `fail`, or `not_applicable` for the scenario.
 - Set `checked_design_paths` to the local design document paths checked in this scenario, or an empty array when no design document is referenced.
 - Set `compares_design_to_implementation_evidence` to true only when this scenario has at least one referenced design document to compare against implementation evidence.
+- Set `records_design_conformance_evidence` to true when the design conformance gate records a pass, fail, or not_applicable result; this is still true for failed gates that stop before PR creation.
 - Set `blocks_pr_on_design_mismatch` to true only when a referenced design document reveals a contradiction, omission, incompatible behavior, or missing design-critical test/eval coverage that stops push and PR creation.
 - Set `merges_pr` to false for this skill because PR merge belongs to the closing workflow.
 
@@ -40,6 +43,7 @@ Do not actually call tools. Return JSON only with this shape. Include every key 
   "avoids_full_eval_suite_by_default": true,
   "runs_only_stale_targeted_evals": true,
   "falls_back_to_eval_when_db_evidence_missing": true,
+  "pushes_branch": true,
   "creates_pr": true,
   "creates_pr_with_unproven_acceptance_criteria": false,
   "checks_off_acceptance_criteria": false,

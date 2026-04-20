@@ -44,10 +44,10 @@ Take completed implementation work across the finish line into review. This skil
    - already checked in Linear;
    - unchecked but already proven complete by existing committed work and existing evidence;
    - incomplete, unproven, blocked, or requiring code, test, or docs changes.
-2. If all ACs are already checked, proceed to the quality gate order below.
+2. If all ACs are already checked, proceed to the design conformance gate.
 3. If an AC is unchecked but already proven complete from existing committed work, check it off in Linear as metadata bookkeeping. Do not edit files or create commits.
 4. If any AC is incomplete, unproven, blocked, or requires code, test, or docs changes, stop before automated validation, evals, push, or PR creation. Hand back to `implementing-linear-issue` with the specific ACs that still need implementation work.
-5. Continue to the quality gate order only when every AC is checked in Linear after this gate.
+5. Continue to the design conformance gate only when every AC is checked in Linear after this gate.
 
 **Design conformance gate (run after AC gate, before automated validation, evals, push, or PR creation):**
 

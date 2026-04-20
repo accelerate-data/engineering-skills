@@ -53,6 +53,7 @@ module.exports = (output, context) => {
       'falls_back_to_eval_when_db_evidence_missing',
       parseExpectedBoolean(context.vars.expect_falls_back_to_eval_when_db_evidence_missing),
     ],
+    ['pushes_branch', parseExpectedBoolean(context.vars.expect_pushes_branch)],
     ['uses_independent_review_agents', parseExpectedBoolean(context.vars.expect_uses_independent_review_agents)],
     ['runs_code_review', parseExpectedBoolean(context.vars.expect_runs_code_review)],
     ['runs_simplification_review', parseExpectedBoolean(context.vars.expect_runs_simplification_review)],
@@ -221,11 +222,30 @@ module.exports = (output, context) => {
   }
 
   const expectedDesignPaths = normalizeTerms(context.vars.expected_design_paths_include);
+  const actualDesignPaths = Array.isArray(payload.checked_design_paths)
+    ? payload.checked_design_paths.map((value) => String(value).trim().toLowerCase())
+    : [];
+
+  if (parseExpectedBoolean(context.vars.expected_design_paths_empty) === true) {
+    if (!Array.isArray(payload.checked_design_paths)) {
+      return {
+        pass: false,
+        score: 0,
+        reason: `Expected checked_design_paths to be an empty array, got ${typeof payload.checked_design_paths}`,
+      };
+    }
+
+    if (actualDesignPaths.length > 0) {
+      return {
+        pass: false,
+        score: 0,
+        reason: `Expected checked_design_paths to be empty, got ${actualDesignPaths.join(', ')}`,
+      };
+    }
+  }
+
   if (expectedDesignPaths.length > 0) {
-    const actual = Array.isArray(payload.checked_design_paths)
-      ? payload.checked_design_paths.map((value) => String(value).trim().toLowerCase())
-      : [];
-    const missing = expectedDesignPaths.filter((term) => !actual.includes(term));
+    const missing = expectedDesignPaths.filter((term) => !actualDesignPaths.includes(term));
     if (missing.length > 0) {
       return {
         pass: false,

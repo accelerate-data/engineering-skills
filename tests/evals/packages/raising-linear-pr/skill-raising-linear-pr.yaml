@@ -47,6 +47,7 @@ tests:
       expect_avoids_full_eval_suite_by_default: "true"
       expect_runs_only_stale_targeted_evals: "true"
       expect_falls_back_to_eval_when_db_evidence_missing: "true"
+      expect_pushes_branch: "true"
       expect_creates_pr: "true"
       expect_creates_pr_with_unproven_acceptance_criteria: "false"
       expect_checks_off_acceptance_criteria: "false"
@@ -59,6 +60,7 @@ tests:
       expect_records_design_conformance_evidence: "true"
       expect_blocks_pr_on_design_mismatch: "false"
       expected_design_conformance_result: "not_applicable"
+      expected_design_paths_empty: "true"
       expect_moves_issue_to_in_review: "true"
       expect_merges_pr: "false"
       expect_uses_generic_issue_linking_language: "true"
@@ -84,16 +86,53 @@ tests:
       expect_runs_required_validation: "false"
       expect_runs_skill_evals: "false"
       expect_checks_promptfoo_db_for_latest_passing_eval: "false"
+      expect_pushes_branch: "false"
       expect_creates_pr: "false"
       expect_creates_pr_with_unproven_acceptance_criteria: "false"
-      expect_checks_off_acceptance_criteria: "true"
-      expect_checks_off_only_proven_acceptance_criteria: "true"
       expect_hands_back_to_implementation_when_ac_requires_code: "true"
       expect_stops_if_acceptance_criteria_incomplete: "true"
       expect_runs_design_conformance_gate: "false"
       expect_moves_issue_to_in_review: "false"
       expect_merges_pr: "false"
       required_terms: "proven,implementation,stop,commit"
+
+  - description: "raise-pr — checks off proven ACs then runs design gate before PR"
+    vars:
+      scenario: |-
+        - Implementation commits already exist on the feature branch.
+        - The worktree is clean at entry.
+        - Linear has two acceptance criteria:
+          - AC 1 is already checked.
+          - AC 2 is complete in existing committed work but is not checked in Linear.
+        - No acceptance criteria are incomplete, unproven, blocked, or requiring code/test/docs changes.
+        - The Linear issue description references `docs/design/proven-ac-design.md`.
+        - The referenced design's required behavior is present in committed implementation, tests, targeted evals, and verification notes.
+        - The workflow should check off AC 2 as metadata bookkeeping, then run the design conformance gate before validation, push, or PR creation.
+      expect_enters_plan_mode: "false"
+      expect_creates_checkpoint_commits: "false"
+      expect_creates_final_commit: "false"
+      expect_edits_code_in_pr_phase: "false"
+      expect_stops_on_dirty_worktree: "true"
+      expect_runs_required_validation: "true"
+      expect_runs_skill_evals: "true"
+      expect_checks_promptfoo_db_for_latest_passing_eval: "true"
+      expect_pushes_branch: "true"
+      expect_creates_pr: "true"
+      expect_creates_pr_with_unproven_acceptance_criteria: "false"
+      expect_checks_off_acceptance_criteria: "true"
+      expect_checks_off_only_proven_acceptance_criteria: "true"
+      expect_hands_back_to_implementation_when_ac_requires_code: "false"
+      expect_stops_if_acceptance_criteria_incomplete: "false"
+      expect_runs_design_conformance_gate: "true"
+      expect_supports_local_design_references: "true"
+      expect_compares_design_to_implementation_evidence: "true"
+      expect_records_design_conformance_evidence: "true"
+      expect_blocks_pr_on_design_mismatch: "false"
+      expected_design_conformance_result: "pass"
+      expected_design_paths_include: "docs/design/proven-ac-design.md"
+      expect_moves_issue_to_in_review: "true"
+      expect_merges_pr: "false"
+      required_terms: "proven,check,design,pass,validation,push,pr"
 
   - description: "raise-pr — passes design conformance when referenced local design matches evidence"
     vars:
@@ -113,6 +152,7 @@ tests:
       expect_runs_required_validation: "true"
       expect_runs_skill_evals: "true"
       expect_checks_promptfoo_db_for_latest_passing_eval: "true"
+      expect_pushes_branch: "true"
       expect_creates_pr: "true"
       expect_creates_pr_with_unproven_acceptance_criteria: "false"
       expect_checks_off_acceptance_criteria: "false"
@@ -147,6 +187,7 @@ tests:
       expect_runs_required_validation: "false"
       expect_runs_skill_evals: "false"
       expect_checks_promptfoo_db_for_latest_passing_eval: "false"
+      expect_pushes_branch: "false"
       expect_creates_pr: "false"
       expect_creates_pr_with_unproven_acceptance_criteria: "false"
       expect_checks_off_acceptance_criteria: "false"
@@ -162,7 +203,78 @@ tests:
       expected_design_paths_include: "docs/design/billing-retry.md"
       expect_moves_issue_to_in_review: "false"
       expect_merges_pr: "false"
-      required_terms: "design,docs/design,fail,block,stop,push,pr,implementation,evidence,evals"
+      required_terms: "design,docs/design,fail,block,stop,pr,implementation,evidence,evals"
+
+  - description: "raise-pr — finds design reference in Linear comment evidence"
+    vars:
+      scenario: |-
+        - Implementation commits already exist on the feature branch.
+        - The worktree is clean at entry.
+        - All Linear acceptance criteria are complete and checked.
+        - The Linear issue description does not mention a local design document.
+        - A Linear issue comment references `docs/design/comment-sourced-design.md`.
+        - The referenced design's required behavior is present in committed implementation, tests, targeted evals, and verification notes.
+        - The workflow should inspect Linear comments, record the checked design path, pass design conformance, and continue to validation, evals, push, PR creation, and In Review transition.
+      expect_enters_plan_mode: "false"
+      expect_creates_checkpoint_commits: "false"
+      expect_creates_final_commit: "false"
+      expect_edits_code_in_pr_phase: "false"
+      expect_stops_on_dirty_worktree: "true"
+      expect_runs_required_validation: "true"
+      expect_runs_skill_evals: "true"
+      expect_checks_promptfoo_db_for_latest_passing_eval: "true"
+      expect_pushes_branch: "true"
+      expect_creates_pr: "true"
+      expect_creates_pr_with_unproven_acceptance_criteria: "false"
+      expect_checks_off_acceptance_criteria: "false"
+      expect_checks_off_only_proven_acceptance_criteria: "false"
+      expect_hands_back_to_implementation_when_ac_requires_code: "false"
+      expect_stops_if_acceptance_criteria_incomplete: "false"
+      expect_runs_design_conformance_gate: "true"
+      expect_supports_local_design_references: "true"
+      expect_compares_design_to_implementation_evidence: "true"
+      expect_records_design_conformance_evidence: "true"
+      expect_blocks_pr_on_design_mismatch: "false"
+      expected_design_conformance_result: "pass"
+      expected_design_paths_include: "docs/design/comment-sourced-design.md"
+      expect_moves_issue_to_in_review: "true"
+      expect_merges_pr: "false"
+      required_terms: "design,comment,pass,evidence,pr"
+
+  - description: "raise-pr — records all referenced design document paths"
+    vars:
+      scenario: |-
+        - Implementation commits already exist on the feature branch.
+        - The worktree is clean at entry.
+        - All Linear acceptance criteria are complete and checked.
+        - The Linear issue references both `docs/design/api-contract.md` and `docs/superpowers/specs/2026-04-20-ui-flow-design.md`.
+        - Both referenced designs match the committed implementation, tests, targeted evals, and verification notes.
+        - The workflow must read both design documents, record both checked paths, pass design conformance, and continue to validation, evals, push, PR creation, and In Review transition.
+      expect_enters_plan_mode: "false"
+      expect_creates_checkpoint_commits: "false"
+      expect_creates_final_commit: "false"
+      expect_edits_code_in_pr_phase: "false"
+      expect_stops_on_dirty_worktree: "true"
+      expect_runs_required_validation: "true"
+      expect_runs_skill_evals: "true"
+      expect_checks_promptfoo_db_for_latest_passing_eval: "true"
+      expect_pushes_branch: "true"
+      expect_creates_pr: "true"
+      expect_creates_pr_with_unproven_acceptance_criteria: "false"
+      expect_checks_off_acceptance_criteria: "false"
+      expect_checks_off_only_proven_acceptance_criteria: "false"
+      expect_hands_back_to_implementation_when_ac_requires_code: "false"
+      expect_stops_if_acceptance_criteria_incomplete: "false"
+      expect_runs_design_conformance_gate: "true"
+      expect_supports_local_design_references: "true"
+      expect_compares_design_to_implementation_evidence: "true"
+      expect_records_design_conformance_evidence: "true"
+      expect_blocks_pr_on_design_mismatch: "false"
+      expected_design_conformance_result: "pass"
+      expected_design_paths_include: "docs/design/api-contract.md,docs/superpowers/specs/2026-04-20-ui-flow-design.md"
+      expect_moves_issue_to_in_review: "true"
+      expect_merges_pr: "false"
+      required_terms: "design,docs/design,docs/superpowers/specs,both,pass"
 
   - description: "raise-pr — design gate fails when checked AC content diverges from the design"
     vars:
@@ -185,6 +297,7 @@ tests:
       expect_runs_required_validation: "false"
       expect_runs_skill_evals: "false"
       expect_checks_promptfoo_db_for_latest_passing_eval: "false"
+      expect_pushes_branch: "false"
       expect_creates_pr: "false"
       expect_creates_pr_with_unproven_acceptance_criteria: "false"
       expect_checks_off_acceptance_criteria: "false"
@@ -218,6 +331,7 @@ tests:
       expect_runs_required_validation: "true"
       expect_runs_skill_evals: "true"
       expect_checks_promptfoo_db_for_latest_passing_eval: "true"
+      expect_pushes_branch: "true"
       expect_creates_pr: "true"
       expect_creates_pr_with_unproven_acceptance_criteria: "false"
       expect_checks_off_acceptance_criteria: "false"
@@ -230,6 +344,7 @@ tests:
       expect_records_design_conformance_evidence: "true"
       expect_blocks_pr_on_design_mismatch: "false"
       expected_design_conformance_result: "not_applicable"
+      expected_design_paths_empty: "true"
       expect_moves_issue_to_in_review: "true"
       expect_merges_pr: "false"
       required_terms: "design,not_applicable,evidence,promptfoo,targeted,pr"

@@ -55,6 +55,11 @@ Run promptfoo evals when:
 
 Pure packaging or metadata changes do not require running all evals.
 
+Before raising a PR for any skill change, always run both repository-wide deterministic eval checks even when using a targeted skill eval instead of the full suite:
+
+- `npm run eval:coverage`
+- `npm run eval:codex-compatibility`
+
 ### Eval discipline
 
 - Keep eval ownership with the repository that owns the skill.
