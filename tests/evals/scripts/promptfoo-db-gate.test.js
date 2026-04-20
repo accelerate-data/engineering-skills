@@ -5,7 +5,16 @@ const os = require('node:os');
 const path = require('node:path');
 const test = require('node:test');
 
-const helperPath = path.join(__dirname, 'promptfoo-db-gate.js');
+const helperPath = path.resolve(
+  __dirname,
+  '..',
+  '..',
+  '..',
+  'skills',
+  'raising-linear-pr',
+  'scripts',
+  'promptfoo-db-gate.js',
+);
 
 function run(command, args, options = {}) {
   return execFileSync(command, args, {
@@ -158,4 +167,3 @@ test('runs when promptfoo DB is missing', () => {
   assert.equal(result.reason, 'promptfoo DB is missing');
   assert.equal(result.latestPassingRun, null);
 });
-

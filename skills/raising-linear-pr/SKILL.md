@@ -62,7 +62,7 @@ Do not run the full promptfoo eval suite by default in this phase. For each cand
 2. Map each candidate eval command to the files that feed it, for example:
    - `eval:raising-linear-pr`: `skills/raising-linear-pr/**`, `tests/evals/packages/raising-linear-pr/**`, `tests/evals/prompts/skill-raising-linear-pr.txt`, and shared assertions it depends on.
    - Shared eval harness changes such as `tests/evals/scripts/promptfoo.sh`, `tests/evals/package.json`, `tests/evals/package-lock.json`, or shared assertion helpers should mark every affected eval stale unless a narrower dependency is clear.
-3. For each candidate eval, run `tests/evals/scripts/promptfoo-db-gate.js` with the eval command, promptfoo eval description, promptfoo DB path, default-branch merge base, `HEAD`, and mapped input paths.
+3. For each candidate eval, run the bundled helper at `skills/raising-linear-pr/scripts/promptfoo-db-gate.js` with the eval command, promptfoo eval description, promptfoo DB path, default-branch merge base, `HEAD`, and mapped input paths.
 4. Treat the helper's JSON output as the eval decision evidence. A `skip` decision means the latest fully passing DB run is newer than the latest path-limited content change. A `run` decision means the eval is stale or DB evidence is unavailable.
 5. Run the targeted eval when:
    - the promptfoo DB is missing, unreadable, or ambiguous;
@@ -74,7 +74,7 @@ Do not run the full promptfoo eval suite by default in this phase. For each cand
 Example helper invocation:
 
 ```bash
-node tests/evals/scripts/promptfoo-db-gate.js \
+node skills/raising-linear-pr/scripts/promptfoo-db-gate.js \
   --command eval:raising-linear-pr \
   --description "Raising-linear-pr skill — verification, AC completion check, PR creation, and In Review transition" \
   --db tests/evals/.promptfoo/promptfoo.db \
