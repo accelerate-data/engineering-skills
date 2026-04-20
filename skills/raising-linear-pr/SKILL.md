@@ -77,7 +77,7 @@ Example helper invocation:
 node tests/evals/scripts/promptfoo-db-gate.js \
   --command eval:raising-linear-pr \
   --description "Raising-linear-pr skill — verification, AC completion check, PR creation, and In Review transition" \
-  --db tests/evals/.tmp/promptfoo/promptfoo.db \
+  --db tests/evals/.promptfoo/promptfoo.db \
   --base "$(git merge-base HEAD origin/main)" \
   --head HEAD \
   --path skills/raising-linear-pr \
