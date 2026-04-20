@@ -44,18 +44,18 @@
     },
     "scripts": {
       "path": "scripts/",
-      "description": "Repository helper scripts. setup-worktree.sh prepares a newly created sibling worktree by symlinking .env, allowing direnv, and installing tests/evals dependencies."
+      "description": "Repository helper scripts. worktree.sh creates or reattaches sibling worktrees, symlinks shared local state such as .env and tests/evals/.promptfoo, allows direnv, and bootstraps tests/evals dependencies."
     }
   },
   "key_directories": {
     "skills/": "All skill content owned by this plugin repo",
     "tests/evals/": "Promptfoo eval packages, prompts, assertions, and wrapper script for skill regression checks",
-    "scripts/": "Repository helper scripts such as worktree setup",
+    "scripts/": "Repository helper scripts such as canonical worktree setup",
     ".claude-plugin/": "Claude plugin manifest",
     ".codex-plugin/": "Codex plugin manifest"
   },
   "commands": {
-    "setup_worktree": "./scripts/setup-worktree.sh ../worktrees/<branch-name>",
+    "setup_worktree": "./scripts/worktree.sh <branch-name>",
     "eval_all": "npm run eval",
     "eval_creating_linear_issue": "npm run eval:creating-linear-issue",
     "eval_creating_linear_issue_routing": "npm run eval:creating-linear-issue-routing",
@@ -72,7 +72,7 @@
   "conventions": {
     "skill_location": "All first-party skills live under skills/<skill-name>/",
     "supporting_material": "References, assets, agents, and scripts stay inside the owning skill directory when needed",
-    "worktrees": "Use sibling worktrees at ../worktrees/<branch-name> and run scripts/setup-worktree.sh after creation",
+    "worktrees": "Use sibling worktrees at ../worktrees/<branch-name> via scripts/worktree.sh <branch-name>",
     "local_dev_symlinks": "For direct local use, symlink skills/<skill-name> into ~/.claude/skills/<skill-name> and ~/.codex/skills/<skill-name>",
     "cross_repo_dependencies": "Do not add references that require files outside this repository",
     "codex_repo_guidance": "Codex uses AGENTS.md directly as the repo-local guidance surface; there is no separate Codex adapter file in this repository"

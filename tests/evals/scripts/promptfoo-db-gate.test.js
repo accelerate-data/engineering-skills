@@ -167,3 +167,43 @@ test('runs when promptfoo DB is missing', () => {
   assert.equal(result.reason, 'promptfoo DB is missing');
   assert.equal(result.latestPassingRun, null);
 });
+
+test('uses repo-local .promptfoo database by default', () => {
+  const { repo, base } = createRepo();
+  commitFile(repo, 'skills/example/SKILL.md', 'content\n', 'change skill', '2026-01-02T00:00:00Z');
+  const db = path.join(repo, '.promptfoo', 'promptfoo.db');
+  fs.mkdirSync(path.dirname(db), { recursive: true });
+  createPromptfooDb(db, [
+    {
+      id: 'eval-pass',
+      createdAt: Date.parse('2026-01-03T00:00:00Z'),
+      description: 'Eval description',
+      results: [true, true],
+    },
+  ]);
+
+  const result = JSON.parse(
+    run(
+      'node',
+      [
+        helperPath,
+        '--repo',
+        repo,
+        '--description',
+        'Eval description',
+        '--command',
+        'eval:example',
+        '--base',
+        base,
+        '--head',
+        'HEAD',
+        '--path',
+        'skills/example/SKILL.md',
+      ],
+      { cwd: repo },
+    ),
+  );
+
+  assert.equal(result.decision, 'skip');
+  assert.equal(result.latestPassingRun.evalId, 'eval-pass');
+});
