@@ -53,6 +53,7 @@ module.exports = (output, context) => {
       'falls_back_to_eval_when_db_evidence_missing',
       parseExpectedBoolean(context.vars.expect_falls_back_to_eval_when_db_evidence_missing),
     ],
+    ['pushes_branch', parseExpectedBoolean(context.vars.expect_pushes_branch)],
     ['uses_independent_review_agents', parseExpectedBoolean(context.vars.expect_uses_independent_review_agents)],
     ['runs_code_review', parseExpectedBoolean(context.vars.expect_runs_code_review)],
     ['runs_simplification_review', parseExpectedBoolean(context.vars.expect_runs_simplification_review)],
@@ -78,6 +79,14 @@ module.exports = (output, context) => {
       parseExpectedBoolean(context.vars.expect_hands_back_to_implementation_when_ac_requires_code),
     ],
     ['uses_generic_issue_linking_language', parseExpectedBoolean(context.vars.expect_uses_generic_issue_linking_language)],
+    ['runs_design_conformance_gate', parseExpectedBoolean(context.vars.expect_runs_design_conformance_gate)],
+    ['supports_local_design_references', parseExpectedBoolean(context.vars.expect_supports_local_design_references)],
+    [
+      'compares_design_to_implementation_evidence',
+      parseExpectedBoolean(context.vars.expect_compares_design_to_implementation_evidence),
+    ],
+    ['records_design_conformance_evidence', parseExpectedBoolean(context.vars.expect_records_design_conformance_evidence)],
+    ['blocks_pr_on_design_mismatch', parseExpectedBoolean(context.vars.expect_blocks_pr_on_design_mismatch)],
     ['stops_if_pr_not_merged', parseExpectedBoolean(context.vars.expect_stops_if_pr_not_merged)],
     ['would_close_issue_in_this_scenario', parseExpectedBoolean(context.vars.expect_would_close_issue_in_this_scenario)],
     ['would_do_cleanup_in_this_scenario', parseExpectedBoolean(context.vars.expect_would_do_cleanup_in_this_scenario)],
@@ -165,6 +174,18 @@ module.exports = (output, context) => {
     }
   }
 
+  if (context.vars.expected_design_conformance_result !== undefined) {
+    const expected = String(context.vars.expected_design_conformance_result).trim().toLowerCase();
+    const actual = String(payload.design_conformance_result || '').trim().toLowerCase();
+    if (actual !== expected) {
+      return {
+        pass: false,
+        score: 0,
+        reason: `Expected design_conformance_result=${expected}, got ${actual}`,
+      };
+    }
+  }
+
   const expectedBooleanFields = [
     ['resolves_project_before_asking', parseExpectedBoolean(context.vars.expect_resolves_project_before_asking)],
     ['confirms_critical_fields_with_user', parseExpectedBoolean(context.vars.expect_confirms_critical_fields_with_user)],
@@ -196,6 +217,40 @@ module.exports = (output, context) => {
         pass: false,
         score: 0,
         reason: `Missing resolved_fields_include values: ${missing.join(', ')}`,
+      };
+    }
+  }
+
+  const expectedDesignPaths = normalizeTerms(context.vars.expected_design_paths_include);
+  const actualDesignPaths = Array.isArray(payload.checked_design_paths)
+    ? payload.checked_design_paths.map((value) => String(value).trim().toLowerCase())
+    : [];
+
+  if (parseExpectedBoolean(context.vars.expected_design_paths_empty) === true) {
+    if (!Array.isArray(payload.checked_design_paths)) {
+      return {
+        pass: false,
+        score: 0,
+        reason: `Expected checked_design_paths to be an empty array, got ${typeof payload.checked_design_paths}`,
+      };
+    }
+
+    if (actualDesignPaths.length > 0) {
+      return {
+        pass: false,
+        score: 0,
+        reason: `Expected checked_design_paths to be empty, got ${actualDesignPaths.join(', ')}`,
+      };
+    }
+  }
+
+  if (expectedDesignPaths.length > 0) {
+    const missing = expectedDesignPaths.filter((term) => !actualDesignPaths.includes(term));
+    if (missing.length > 0) {
+      return {
+        pass: false,
+        score: 0,
+        reason: `Missing checked_design_paths values: ${missing.join(', ')}`,
       };
     }
   }

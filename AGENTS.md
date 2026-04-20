@@ -55,11 +55,21 @@ Run promptfoo evals when:
 
 Pure packaging or metadata changes do not require running all evals.
 
+Before raising a PR for any skill change, always run both repository-wide deterministic eval checks even when using a targeted skill eval instead of the full suite:
+
+- `npm run eval:coverage`
+- `npm run eval:codex-compatibility`
+
 ### Eval discipline
 
 - Keep eval ownership with the repository that owns the skill.
 - Do not let cross-repo references leak into skills or eval prompts.
 - Prefer package-local assertions and prompts over shared product-specific helpers.
+
+### Markdown discipline
+
+- All `.md` files should pass `markdownlint` before committing (`markdownlint <file>`).
+- Do not add mid-sentence hard wraps just for line length unless a repo markdownlint config enables `MD013`.
 
 ## Skill Ownership
 
@@ -90,8 +100,9 @@ This repo provides a repo-managed pre-commit hook in `.githooks/pre-commit`.
 Use sibling worktrees at `../worktrees/<branch-name>` relative to the repo root.
 
 - Preserve the full branch name in the path, including prefixes such as `feature/`.
-- After creating the worktree, run `./scripts/setup-worktree.sh ../worktrees/<branch-name>` from the main checkout.
-- `scripts/setup-worktree.sh` derives paths relative to the repository and must stay portable across developers and machines.
+- Use `./scripts/worktree.sh <branch-name>` from the main checkout as the canonical way to create or reattach a worktree and bootstrap local development state.
+- `scripts/worktree.sh` derives paths relative to the repository and must stay portable across developers and machines.
+- The worktree helper symlinks shared local state such as `.env` and `tests/evals/.promptfoo` from the main checkout into sibling worktrees.
 
 ## Skills
 

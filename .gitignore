@@ -22,6 +22,7 @@ Desktop.ini
 
 # Promptfoo / eval harness local artifacts
 tests/evals/node_modules/
+tests/evals/.promptfoo/
 tests/evals/.tmp/
 tests/evals/tmp/
 tests/evals/.cache/

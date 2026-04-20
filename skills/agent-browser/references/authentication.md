@@ -197,6 +197,7 @@ fi
    ```
 
 4. **Use short-lived sessions for CI/CD**
+
    ```bash
    # Don't persist state in CI
    agent-browser open https://app.example.com/login

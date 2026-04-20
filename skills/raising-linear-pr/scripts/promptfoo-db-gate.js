@@ -6,7 +6,7 @@ const path = require('node:path');
 function parseArgs(argv) {
   const args = {
     repo: process.cwd(),
-    db: path.join(process.cwd(), '.tmp/promptfoo/promptfoo.db'),
+    db: path.join(process.cwd(), '.promptfoo/promptfoo.db'),
     head: 'HEAD',
     paths: [],
   };
@@ -178,4 +178,3 @@ if (require.main === module) {
     process.exit(2);
   }
 }
-

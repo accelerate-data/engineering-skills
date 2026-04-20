@@ -23,9 +23,9 @@ Use this skill for repository hygiene work in the `accelerate-data` GitHub organ
 
 1. Preview the proposed actions first:
 
-```bash
-python3 skills/maintain-github-repos/scripts/analyze_repos.py --org accelerate-data --dry-run
-```
+   ```bash
+   python3 skills/maintain-github-repos/scripts/analyze_repos.py --org accelerate-data --dry-run
+   ```
 
 2. Show the proposed `DELETE`, `ARCHIVE`, and `MANUAL REVIEW` groups to the user.
 
@@ -33,9 +33,9 @@ python3 skills/maintain-github-repos/scripts/analyze_repos.py --org accelerate-d
 
 4. Only execute after explicit confirmation:
 
-```bash
-python3 skills/maintain-github-repos/scripts/analyze_repos.py --org accelerate-data --execute
-```
+   ```bash
+   python3 skills/maintain-github-repos/scripts/analyze_repos.py --org accelerate-data --execute
+   ```
 
 ## Execution
 
