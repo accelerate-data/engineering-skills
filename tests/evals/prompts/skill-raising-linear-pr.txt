@@ -4,10 +4,9 @@ Read the skill at `skills/raising-linear-pr/SKILL.md`.
 
 Scenario:
 
-- Implementation is complete.
-- Local changes are ready for commit.
-- Acceptance criteria must already be complete before PR creation. If any are not complete, the workflow must stop and ask.
-- The PR body should link the actual Linear issue IDs rather than using a workspace-specific hardcoded prefix.
+{{scenario}}
+
+Answer each boolean for what the workflow should do in this exact scenario, not whether the skill has that capability in some other scenario. In particular, set `checks_off_acceptance_criteria` to true only when this scenario should modify Linear AC checkboxes.
 
 Do not actually call tools. Return JSON only with this shape:
 
@@ -17,11 +16,20 @@ Do not actually call tools. Return JSON only with this shape:
   "enters_plan_mode": false,
   "creates_checkpoint_commits": false,
   "creates_final_commit": false,
+  "edits_code_in_pr_phase": false,
   "stops_on_dirty_worktree": true,
   "runs_required_validation": true,
   "runs_skill_evals": true,
+  "checks_promptfoo_db_for_latest_passing_eval": true,
+  "compares_eval_runs_to_content_relevant_changes": true,
+  "avoids_full_eval_suite_by_default": true,
+  "runs_only_stale_targeted_evals": true,
+  "falls_back_to_eval_when_db_evidence_missing": true,
   "creates_pr": true,
+  "creates_pr_with_unproven_acceptance_criteria": false,
   "checks_off_acceptance_criteria": false,
+  "checks_off_only_proven_acceptance_criteria": false,
+  "hands_back_to_implementation_when_ac_requires_code": false,
   "stops_if_acceptance_criteria_incomplete": true,
   "moves_issue_to_in_review": true,
   "merges_pr": false,

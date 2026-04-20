@@ -27,17 +27,63 @@ defaultTest:
 tests:
   - description: "raise-pr — reruns PR gates without new local commits and moves issue to In Review"
     vars:
+      scenario: |-
+        - Implementation is complete.
+        - Implementation commits already exist on the feature branch.
+        - The worktree must be clean before entering this workflow; do not create a final implementation commit in this phase.
+        - Acceptance criteria are already complete and checked before PR creation. If any are not complete, the workflow must stop and ask.
+        - Since the acceptance criteria are already checked, this scenario does not require checking off acceptance criteria during the PR phase.
+        - The PR body should link the actual Linear issue IDs rather than using a workspace-specific hardcoded prefix.
       expect_enters_plan_mode: "false"
       expect_creates_checkpoint_commits: "false"
       expect_creates_final_commit: "false"
+      expect_edits_code_in_pr_phase: "false"
       expect_stops_on_dirty_worktree: "true"
       expect_runs_required_validation: "true"
       expect_runs_skill_evals: "true"
+      expect_checks_promptfoo_db_for_latest_passing_eval: "true"
+      expect_compares_eval_runs_to_content_relevant_changes: "true"
+      expect_avoids_full_eval_suite_by_default: "true"
+      expect_runs_only_stale_targeted_evals: "true"
+      expect_falls_back_to_eval_when_db_evidence_missing: "true"
       expect_creates_pr: "true"
+      expect_creates_pr_with_unproven_acceptance_criteria: "false"
       expect_checks_off_acceptance_criteria: "false"
+      expect_checks_off_only_proven_acceptance_criteria: "false"
+      expect_hands_back_to_implementation_when_ac_requires_code: "false"
       expect_stops_if_acceptance_criteria_incomplete: "true"
       expect_moves_issue_to_in_review: "true"
       expect_merges_pr: "false"
       expect_uses_generic_issue_linking_language: "true"
-      required_terms: "rebase,review,dirty,issue,acceptance,stop"
+      required_terms: "review,dirty,issue,acceptance,stop,promptfoo,db,content,relevant,stale,targeted"
       forbidden_terms: "vu-xxx"
+
+  - description: "raise-pr — checks off only proven ACs and hands back if an AC needs implementation"
+    vars:
+      scenario: |-
+        - Implementation commits already exist on the feature branch.
+        - The worktree is clean at entry.
+        - Linear has three acceptance criteria:
+          - AC 1 is already checked.
+          - AC 2 is complete in existing committed work but is not checked in Linear.
+          - AC 3 is not proven complete and would require code or test changes to satisfy.
+        - The workflow must not edit files or create a final implementation commit in this PR phase.
+        - The workflow must not create or update a PR while any AC remains unproven.
+        - The workflow may update Linear metadata for ACs that are already proven by existing committed work.
+      expect_enters_plan_mode: "false"
+      expect_creates_checkpoint_commits: "false"
+      expect_creates_final_commit: "false"
+      expect_edits_code_in_pr_phase: "false"
+      expect_stops_on_dirty_worktree: "true"
+      expect_runs_required_validation: "false"
+      expect_runs_skill_evals: "false"
+      expect_checks_promptfoo_db_for_latest_passing_eval: "false"
+      expect_creates_pr: "false"
+      expect_creates_pr_with_unproven_acceptance_criteria: "false"
+      expect_checks_off_acceptance_criteria: "true"
+      expect_checks_off_only_proven_acceptance_criteria: "true"
+      expect_hands_back_to_implementation_when_ac_requires_code: "true"
+      expect_stops_if_acceptance_criteria_incomplete: "true"
+      expect_moves_issue_to_in_review: "false"
+      expect_merges_pr: "false"
+      required_terms: "proven,unchecked,linear,implementation,stop,commit"
