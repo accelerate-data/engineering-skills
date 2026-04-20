@@ -3,7 +3,7 @@
   "private": true,
   "description": "Promptfoo eval harness for engineering-skills",
   "scripts": {
-    "eval": "npm run eval:creating-linear-issue && npm run eval:creating-linear-issue-routing && npm run eval:implementing-linear-issue && npm run eval:raising-linear-pr && npm run eval:closing-linear-issue && npm run eval:maintain-github-repos && npm run eval:create-feature-request && npm run eval:coverage && npm run eval:codex-compatibility",
+    "eval": "npm run eval:creating-linear-issue && npm run eval:creating-linear-issue-routing && npm run eval:implementing-linear-issue && npm run eval:raising-linear-pr && npm run eval:closing-linear-issue && npm run eval:maintain-github-repos && npm run eval:create-feature-request && npm run test:promptfoo-db-gate && npm run eval:coverage && npm run eval:codex-compatibility",
     "eval:creating-linear-issue": "./scripts/promptfoo.sh eval --no-cache -c packages/creating-linear-issue/skill-creating-linear-issue.yaml",
     "eval:creating-linear-issue-routing": "./scripts/promptfoo.sh eval --no-cache -c packages/creating-linear-issue/skill-creating-linear-issue-routing.yaml",
     "eval:implementing-linear-issue": "./scripts/promptfoo.sh eval --no-cache -c packages/implementing-linear-issue/skill-implementing-linear-issue.yaml",
@@ -13,6 +13,7 @@
     "eval:create-feature-request": "./scripts/promptfoo.sh eval --no-cache -c packages/create-feature-request/skill-create-feature-request.yaml",
     "eval:coverage": "node scripts/check-skill-eval-coverage.js",
     "eval:codex-compatibility": "node scripts/check-codex-compatibility.js",
+    "test:promptfoo-db-gate": "node --test scripts/promptfoo-db-gate.test.js",
     "view": "./scripts/promptfoo.sh view"
   },
   "dependencies": {

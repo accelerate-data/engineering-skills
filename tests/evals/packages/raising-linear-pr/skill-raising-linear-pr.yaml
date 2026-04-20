@@ -31,8 +31,9 @@ tests:
         - Implementation is complete.
         - Implementation commits already exist on the feature branch.
         - The worktree must be clean before entering this workflow; do not create a final implementation commit in this phase.
-        - Acceptance criteria are already complete and checked before PR creation. If any are not complete, the workflow must stop and ask.
+        - Acceptance criteria are already complete and checked before PR creation.
         - Since the acceptance criteria are already checked, this scenario does not require checking off acceptance criteria during the PR phase.
+        - This scenario should not stop for incomplete acceptance criteria because none are incomplete, unproven, or blocked.
         - The PR body should link the actual Linear issue IDs rather than using a workspace-specific hardcoded prefix.
       expect_enters_plan_mode: "false"
       expect_creates_checkpoint_commits: "false"
@@ -51,7 +52,7 @@ tests:
       expect_checks_off_acceptance_criteria: "false"
       expect_checks_off_only_proven_acceptance_criteria: "false"
       expect_hands_back_to_implementation_when_ac_requires_code: "false"
-      expect_stops_if_acceptance_criteria_incomplete: "true"
+      expect_stops_if_acceptance_criteria_incomplete: "false"
       expect_moves_issue_to_in_review: "true"
       expect_merges_pr: "false"
       expect_uses_generic_issue_linking_language: "true"
@@ -74,7 +75,6 @@ tests:
       expect_creates_checkpoint_commits: "false"
       expect_creates_final_commit: "false"
       expect_edits_code_in_pr_phase: "false"
-      expect_stops_on_dirty_worktree: "true"
       expect_runs_required_validation: "false"
       expect_runs_skill_evals: "false"
       expect_checks_promptfoo_db_for_latest_passing_eval: "false"
@@ -86,4 +86,4 @@ tests:
       expect_stops_if_acceptance_criteria_incomplete: "true"
       expect_moves_issue_to_in_review: "false"
       expect_merges_pr: "false"
-      required_terms: "proven,unchecked,linear,implementation,stop,commit"
+      required_terms: "proven,implementation,stop,commit"

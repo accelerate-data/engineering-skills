@@ -6,9 +6,16 @@ Scenario:
 
 {{scenario}}
 
-Answer each boolean for what the workflow should do in this exact scenario, not whether the skill has that capability in some other scenario. In particular, set `checks_off_acceptance_criteria` to true only when this scenario should modify Linear AC checkboxes.
+Answer each boolean for what the workflow should do in this exact scenario, not whether the skill has that capability in some other scenario.
 
-Do not actually call tools. Return JSON only with this shape:
+Scenario-specific definitions:
+
+- Set `checks_off_acceptance_criteria` to true only when this scenario should modify Linear AC checkboxes.
+- Set `hands_back_to_implementation_when_ac_requires_code` to true only when this scenario has an AC that requires code, test, or docs changes.
+- Set `stops_if_acceptance_criteria_incomplete` to true only when this scenario has an incomplete, unproven, blocked, or code-requiring AC that stops PR creation.
+- Set `merges_pr` to false for this skill because PR merge belongs to the closing workflow.
+
+Do not actually call tools. Return JSON only with this shape. Include every key exactly, even when the value is false:
 
 ```json
 {
@@ -30,7 +37,7 @@ Do not actually call tools. Return JSON only with this shape:
   "checks_off_acceptance_criteria": false,
   "checks_off_only_proven_acceptance_criteria": false,
   "hands_back_to_implementation_when_ac_requires_code": false,
-  "stops_if_acceptance_criteria_incomplete": true,
+  "stops_if_acceptance_criteria_incomplete": false,
   "moves_issue_to_in_review": true,
   "merges_pr": false,
   "uses_generic_issue_linking_language": true,

@@ -1,0 +1,20 @@
+{
+  "name": "engineering-skills",
+  "private": true,
+  "description": "Shared plugin-source repository for engineering-team skills.",
+  "scripts": {
+    "eval": "npm --prefix tests/evals run eval",
+    "eval:creating-linear-issue": "npm --prefix tests/evals run eval:creating-linear-issue",
+    "eval:creating-linear-issue-routing": "npm --prefix tests/evals run eval:creating-linear-issue-routing",
+    "eval:implementing-linear-issue": "npm --prefix tests/evals run eval:implementing-linear-issue",
+    "eval:raising-linear-pr": "npm --prefix tests/evals run eval:raising-linear-pr",
+    "eval:closing-linear-issue": "npm --prefix tests/evals run eval:closing-linear-issue",
+    "eval:maintain-github-repos": "npm --prefix tests/evals run eval:maintain-github-repos",
+    "eval:create-feature-request": "npm --prefix tests/evals run eval:create-feature-request",
+    "eval:coverage": "npm --prefix tests/evals run eval:coverage",
+    "eval:codex-compatibility": "npm --prefix tests/evals run eval:codex-compatibility",
+    "test:promptfoo-db-gate": "npm --prefix tests/evals run test:promptfoo-db-gate",
+    "view": "npm --prefix tests/evals run view"
+  }
+}
+

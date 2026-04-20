@@ -62,8 +62,8 @@ Do not run the full promptfoo eval suite by default in this phase. For each cand
 2. Map each candidate eval command to the files that feed it, for example:
    - `eval:raising-linear-pr`: `skills/raising-linear-pr/**`, `tests/evals/packages/raising-linear-pr/**`, `tests/evals/prompts/skill-raising-linear-pr.txt`, and shared assertions it depends on.
    - Shared eval harness changes such as `tests/evals/scripts/promptfoo.sh`, `tests/evals/package.json`, `tests/evals/package-lock.json`, or shared assertion helpers should mark every affected eval stale unless a narrower dependency is clear.
-3. For each candidate eval, find the latest content-relevant change with a path-limited Git query against the default-branch merge base. Do not use unrelated branch commits, README changes, merge commits, or rebase-only timestamp churn as stale-eval evidence.
-4. Query `tests/evals/.tmp/promptfoo/promptfoo.db` for the latest fully passing run of the matching eval. A fully passing run means every persisted `eval_results` row for that `eval_id` has `success = 1`.
+3. For each candidate eval, run `tests/evals/scripts/promptfoo-db-gate.js` with the eval command, promptfoo eval description, promptfoo DB path, default-branch merge base, `HEAD`, and mapped input paths.
+4. Treat the helper's JSON output as the eval decision evidence. A `skip` decision means the latest fully passing DB run is newer than the latest path-limited content change. A `run` decision means the eval is stale or DB evidence is unavailable.
 5. Run the targeted eval when:
    - the promptfoo DB is missing, unreadable, or ambiguous;
    - no fully passing DB run exists for that eval;
@@ -71,29 +71,25 @@ Do not run the full promptfoo eval suite by default in this phase. For each cand
 6. Skip the targeted eval only when the latest fully passing DB run is newer than the latest content-relevant Git change.
 7. Print the evidence for every eval decision: eval command, mapped inputs, latest content-relevant change time or "no content-relevant change", latest passing DB run time or "none", and run/skip decision.
 
-Example content-relevant change query:
+Example helper invocation:
 
 ```bash
-git log -1 --format=%cI "$(git merge-base HEAD origin/main)"..HEAD -- \
-  skills/raising-linear-pr \
-  tests/evals/packages/raising-linear-pr \
-  tests/evals/prompts/skill-raising-linear-pr.txt \
-  tests/evals/assertions/check-linear-skill-contract.js
+node tests/evals/scripts/promptfoo-db-gate.js \
+  --command eval:raising-linear-pr \
+  --description "Raising-linear-pr skill — verification, AC completion check, PR creation, and In Review transition" \
+  --db tests/evals/.tmp/promptfoo/promptfoo.db \
+  --base "$(git merge-base HEAD origin/main)" \
+  --head HEAD \
+  --path skills/raising-linear-pr \
+  --path tests/evals/packages/raising-linear-pr \
+  --path tests/evals/prompts/skill-raising-linear-pr.txt \
+  --path tests/evals/assertions/check-linear-skill-contract.js
 ```
 
-Example latest fully passing promptfoo DB query shape:
+The helper performs the equivalent of this content-relevant Git query internally:
 
 ```bash
-sqlite3 tests/evals/.tmp/promptfoo/promptfoo.db "
-  select e.id, e.created_at
-  from evals e
-  join eval_results r on r.eval_id = e.id
-  where e.description = 'Raising-linear-pr skill — verification, AC completion check, PR creation, and In Review transition'
-  group by e.id
-  having min(r.success) = 1
-  order by e.created_at desc
-  limit 1;
-"
+git log -1 --format=%cI "$(git merge-base HEAD origin/main)"..HEAD -- <mapped-input-paths>
 ```
 
 **Linear rules:**
