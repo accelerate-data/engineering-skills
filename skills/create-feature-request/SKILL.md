@@ -18,19 +18,24 @@ language, enriched with Vibedata product context.
 ### Phase 0: Load Context
 
 In parallel:
+
 1. Fetch both Vibedata context documents from GitHub using `gh`:
+
    ```bash
    gh api repos/accelerate-data/vd-specs-product-vision/contents/vibedata-strategy.md --jq '.content' | base64 -d
    gh api repos/accelerate-data/vd-specs-product-architecture/contents/vibedata-architecture.md --jq '.content' | base64 -d
    ```
+
    If either command fails (authentication error, repo not found, network issue),
    output a **prominent warning**:
-   ```
+
+   ```text
    ⚠ CONTEXT LOAD FAILED: Could not fetch <filename> from GitHub.
      Reason: <error message>
      Impact: Strategic alignment / Architecture impact fields will be omitted.
      Fix: Run `gh auth login` to authenticate the GitHub CLI.
    ```
+
    Then continue — enrichment fields will be omitted rather than blocking.
 
 2. Query Linear for live metadata (all three in parallel):
@@ -73,7 +78,7 @@ from Linear (not hardcoded values) to find the best semantic matches.
 
 Before asking the user anything, output the fully enriched feature request:
 
-```
+```text
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
  FEATURE REQUEST PREVIEW  (Linear → RO)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -101,6 +106,7 @@ Business justification:
 ### Phase 3: Validate (Human Gate)
 
 Ask the user to confirm with two options:
+
 - **Create this request** — proceed to Phase 4
 - **Let me adjust** — user provides changes in natural language; apply changes,
   re-display updated preview, then ask again. Loop until confirmed.
@@ -109,7 +115,7 @@ Ask the user to confirm with two options:
 
 Create the Linear issue with the available Linear issue-creation tool using:
 
-```
+```yaml
 params:
   title: "<title>"
   team: "RO"

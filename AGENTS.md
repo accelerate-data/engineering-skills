@@ -66,6 +66,11 @@ Before raising a PR for any skill change, always run both repository-wide determ
 - Do not let cross-repo references leak into skills or eval prompts.
 - Prefer package-local assertions and prompts over shared product-specific helpers.
 
+### Markdown discipline
+
+- All `.md` files should pass `markdownlint` before committing (`markdownlint <file>`).
+- Do not add mid-sentence hard wraps just for line length unless a repo markdownlint config enables `MD013`.
+
 ## Skill Ownership
 
 This repo owns only the skills that physically live under `skills/`.

@@ -98,7 +98,7 @@ a reviewer.
 Read each reviewer's output file from `$REVIEW_DIR/`. Deduplicate overlapping findings.
 Produce a single verdict:
 
-```
+```text
 ## Intent
 <what the author is trying to achieve>
 
@@ -109,6 +109,7 @@ Produce a single verdict:
 <numbered list, ordered by severity (high → medium → low)>
 
 For each finding:
+
 - **[severity]** Description with file:line references
 - Lens: which reviewer raised it
 - Lens principle: which bundled review lens principle it maps to
@@ -119,6 +120,7 @@ For each finding:
 ```
 
 **Verdict logic:**
+
 - **PASS** — no high-severity findings
 - **CONTESTED** — high-severity findings but reviewers disagree on them
 - **REJECT** — high-severity findings with reviewer consensus
@@ -132,7 +134,7 @@ false positives, overreach, and findings that mistake style for substance.
 
 Append to the verdict:
 
-```
+```text
 ## Lead Judgment
 <for each finding: accept or reject with a one-line rationale>
 ```
