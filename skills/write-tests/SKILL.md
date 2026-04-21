@@ -71,6 +71,8 @@ A test that fails any pillar is worse than no test.
 **REQUIRED SUB-SKILL:** Use `superpowers:test-driven-development` for the RED→GREEN→REFACTOR discipline.
 Apply Khorikov's 4 Pillars as the quality layer within each TDD cycle. Run Phase 0 discovery first — classification quadrant determines test type before writing the first line.
 
+**Phase 0 in TDD mode:** No code exists yet — use the requirement/spec to determine which file will be created and classify it (Domain vs Controller) before writing the first test. Skip git diff and codebase search steps. Khorikov classification applies to the planned code structure. The 5-step workflow runs once per RED→GREEN cycle, not once per file.
+
 ### While-building mode
 
 After each implementation slice, run the test for that slice immediately. If still red after implementation, surface it now — do not accumulate red tests until the end.
@@ -162,7 +164,7 @@ Output a per-export table:
 >
 > **My recommendation: A.** Shall I propose the split?
 
-Apply lifecycle-boundary checks for any export that manages state across time (refs, connections, sessions, caches, subscriptions). See `lifecycle-checklists.md`.
+Apply lifecycle-boundary checks for any export that manages state across time (refs, connections, sessions, caches, subscriptions). See `./lifecycle-checklists.md`.
 
 ---
 
@@ -250,7 +252,7 @@ Full mock rules: `references/mock-rules.md`. Canonical test examples: `reference
 
 **If you find yourself writing `toHaveBeenCalledWith` on an internal helper, stop.** You're coupling to implementation. Find the real observable one layer out.
 
-**Unit tests never use `vi.mock` or `vi.fn`.** If you need them, it's an integration test.
+**In this project's unit tests, never use `vi.mock` or `vi.fn`.** If you need them, it's an integration test. (This is a project convention — not a universal framework rule.)
 
 ---
 
@@ -341,7 +343,7 @@ This aligns with the Planner-Generator-Evaluator pattern: the evaluator must not
 | Asserting on stubs you set up | Circular — testing your own mock setup |
 | `toHaveBeenCalledWith` for internal helper calls | Couples to implementation, breaks on refactor |
 | Mocking managed dependencies (own stores, services, DB) | Tests the mock, not the code |
-| Using `vi.mock` in unit tests | Domain code has no collaborators — if you need a mock, it's integration |
+| Using `vi.mock` in this project's unit tests | Domain code has no collaborators — if you need a mock, it's integration (project convention, not a universal rule) |
 | Ask user "what should I test?" without recommending first | Every question leads with a recommendation |
 | Skipping Step 2 audit | Existing tests may violate standards — audit is mandatory |
 | Asserting current buggy behaviour as "expected" | Protects the bug, not the user |
@@ -357,5 +359,5 @@ This aligns with the Planner-Generator-Evaluator pattern: the evaluator must not
 - `references/mock-rules.md` — managed vs unmanaged, stub vs mock, module-boundary mocking
 - `references/test-examples.md` — canonical file structures by test type
 - `references/audit-checklist.md` — full audit checks + report template
-- `lifecycle-checklists.md` — FE/BE lifecycle boundary checklists (mount/unmount, connection drop, cache eviction, etc.)
+- `./lifecycle-checklists.md` — FE/BE lifecycle boundary checklists (mount/unmount, connection drop, cache eviction, etc.) — lives at the skill root, not inside `references/`
 - `references/testing-standards.md` — full testing standards: 4-outcome formula (True/False Positive/Negative), Classical vs London school, when to delete tests, anti-patterns, and the agent workflow rule in depth
