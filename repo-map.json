@@ -36,7 +36,7 @@
     },
     "skills": {
       "path": "skills/",
-      "description": "Canonical skill directories (11 skills). Each skill owns its SKILL.md and any supporting references, assets, scripts, or agents."
+      "description": "Canonical skill directories (12 skills). Each skill owns its SKILL.md and any supporting references, assets, scripts, or agents."
     },
     "eval_harness": {
       "path": "tests/evals/",

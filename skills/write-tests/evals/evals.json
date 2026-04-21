@@ -1,0 +1,132 @@
+{
+  "skill_name": "write-tests",
+  "evals": [
+    {
+      "id": 1,
+      "name": "audit-over-mocked-integration-test",
+      "prompt": "Please write / audit tests for src/order-service.ts. There's an existing test file next to it. Use the write-tests skill.",
+      "expected_output": "Agent should: (1) classify OrderService as controller, (2) audit the existing over-mocked test file, (3) identify that mockDb mocks a managed dependency and that the tests assert on mock calls (implementation details), (4) recommend a rewrite using in-memory SQLite, (5) lead every question to the user with a clear recommendation.",
+      "fixture_dir": "fixtures/eval-1-audit-over-mocked",
+      "assertions": [
+        {
+          "id": "posts-todo-checklist",
+          "text": "Agent posts the 5-step workflow checklist before diving in",
+          "check": "Look for TodoWrite usage with steps matching the 5-step workflow"
+        },
+        {
+          "id": "performs-audit",
+          "text": "Agent audits the existing test file before proposing new tests (Step 2 is not skipped)",
+          "check": "Output contains an audit section with per-pillar findings for order-service.test.ts"
+        },
+        {
+          "id": "identifies-managed-dep-mock",
+          "text": "Agent identifies mocking mockDb (managed dependency) as a Pillar 2 violation",
+          "check": "Output explicitly calls out that the db mock is a managed dependency and should be real (in-memory SQLite)"
+        },
+        {
+          "id": "identifies-impl-detail-assertions",
+          "text": "Agent identifies toHaveBeenCalled-style assertions as implementation-detail / Pillar 2 violations",
+          "check": "Output calls out toHaveBeenCalled assertions on mockDb.prepare or mockEventBus.emit as brittle"
+        },
+        {
+          "id": "leads-with-recommendation",
+          "text": "When asking the user a question, agent states its recommendation first (not just open-ended)",
+          "check": "At least one user-facing question contains the phrase 'my recommendation' or 'I recommend' or equivalent, followed by an approve/edit prompt"
+        },
+        {
+          "id": "filename-convention-flag",
+          "text": "Agent flags that order-service.test.ts has mocks and should be renamed to order-service.integration.test.ts",
+          "check": "Output mentions renaming the test file to .integration.test.ts OR notes the filename/classification mismatch"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "stateful-hook-with-lifecycle",
+      "prompt": "Please write tests for src/use-poll-status.ts — a React hook that polls an endpoint on an interval. Use the write-tests skill.",
+      "expected_output": "Agent should: (1) classify as controller (stateful, collaborators: fetch, timer), (2) surface lifecycle-boundary scenarios (unmount cleanup, remount behaviour), (3) lead with a recommended list of behaviours, (4) write an integration test mocking only unmanaged deps (fetch, timers), (5) use renderHook + act + unmount to test lifecycle.",
+      "fixture_dir": "fixtures/eval-2-stateful-hook",
+      "assertions": [
+        {
+          "id": "posts-todo-checklist",
+          "text": "Agent posts the 5-step workflow checklist before diving in",
+          "check": "Look for TodoWrite usage or posted checklist matching the 5-step workflow"
+        },
+        {
+          "id": "classifies-as-controller",
+          "text": "Agent classifies usePollStatus as controller, not domain or trivial",
+          "check": "Classification output explicitly marks it controller/integration"
+        },
+        {
+          "id": "surfaces-unmount-cleanup",
+          "text": "Agent proposes an unmount-cleanup lifecycle scenario (interval is cleared on unmount)",
+          "check": "Behaviour list includes a scenario about unmount clearing the interval / stopping the poll"
+        },
+        {
+          "id": "leads-with-recommendation",
+          "text": "Agent presents a recommended behaviour list FIRST rather than asking open-ended 'what do you want to protect?'",
+          "check": "First user-facing question includes a pre-populated behaviour table and says 'approve, edit, or add' or equivalent"
+        },
+        {
+          "id": "mocks-only-unmanaged",
+          "text": "Written test mocks only fetch and timers (unmanaged), not the hook's own state",
+          "check": "Test file uses vi.stubGlobal('fetch') or vi.useFakeTimers but does NOT mock react or the hook's own internals"
+        },
+        {
+          "id": "uses-renderhook-unmount",
+          "text": "Test uses renderHook + unmount to verify cleanup behaviour",
+          "check": "Test file imports renderHook and calls unmount() to verify interval cleanup"
+        },
+        {
+          "id": "filename-convention",
+          "text": "Test file is named use-poll-status.integration.test.ts (has mocks, is integration)",
+          "check": "File suffix is .integration.test.ts"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "name": "domain-with-latent-bug",
+      "prompt": "Please write tests for src/calculate-discount.ts. Use the write-tests skill.",
+      "expected_output": "Agent should: (1) classify as domain (pure function, no collaborators), (2) recommend behaviours covering each tier + edge cases, (3) propose the gold-tier cap as a contract-critical scenario, (4) write a unit test asserting desired behaviour (cap at $500), (5) test fails red when run because of the latent bug, (6) report the bug without fixing source code.",
+      "fixture_dir": "fixtures/eval-3-domain-with-bug",
+      "assertions": [
+        {
+          "id": "classifies-as-domain",
+          "text": "Agent classifies calculateOrderTotal as domain/unit (not controller, not trivial)",
+          "check": "Classification output marks it domain, prescribes unit test (*.test.ts no integration suffix)"
+        },
+        {
+          "id": "no-mocks-in-unit-test",
+          "text": "Unit test file contains no vi.mock, no vi.fn, no mocking at all",
+          "check": "Test file has no 'vi.mock' or 'vi.fn' or 'vi.stub' occurrences"
+        },
+        {
+          "id": "output-based-assertions",
+          "text": "Test uses output-based assertions (expect(result).toBe or toEqual on return values)",
+          "check": "Test file asserts on return values of calculateOrderTotal(...) directly"
+        },
+        {
+          "id": "proposes-gold-cap-scenario",
+          "text": "Agent proposes the gold-tier $500 cap as a behaviour to protect (a contract-critical scenario)",
+          "check": "Behaviour list or scenarios explicitly mentions the gold-tier $500 cap"
+        },
+        {
+          "id": "asserts-desired-not-actual",
+          "text": "For the cap scenario, agent asserts the DESIRED behaviour (discount capped at 500), producing a red test",
+          "check": "Test expects final total = subtotal - 500 when gold tier subtotal * 0.15 > 500, NOT subtotal - subtotal*0.15"
+        },
+        {
+          "id": "red-test-reported",
+          "text": "If the agent ran tests, it reports the red test as a bug discovered (not fixes the code)",
+          "check": "Final report has a 'Bugs discovered' or equivalent section naming the gold-cap bug"
+        },
+        {
+          "id": "leads-with-recommendation",
+          "text": "Agent presents a recommended behaviour list rather than asking open-ended",
+          "check": "User-facing question leads with 'My recommendation' or 'Here are the behaviours I'd protect' or equivalent"
+        }
+      ]
+    }
+  ]
+}

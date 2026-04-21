@@ -4,6 +4,7 @@
     "agent-browser",
     "explaining-code",
     "playwright",
-    "shadcn-ui"
+    "shadcn-ui",
+    "write-tests"
   ]
 }
