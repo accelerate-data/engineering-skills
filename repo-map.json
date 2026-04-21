@@ -40,7 +40,7 @@
     },
     "eval_harness": {
       "path": "tests/evals/",
-      "description": "Promptfoo harness and deterministic compatibility checks for skills in this repository. Current packages cover the Linear workflow skills, create-feature-request, maintain-github-repos, bundled raising-linear-pr promptfoo DB gate helper tests, eval coverage reporting, and Codex compatibility."
+      "description": "Promptfoo harness and deterministic compatibility checks for skills in this repository. Current packages cover the Linear workflow skills, create-feature-request, maintain-github-repos, write-tests, bundled raising-linear-pr promptfoo DB gate helper tests, eval coverage reporting, and Codex compatibility."
     },
     "scripts": {
       "path": "scripts/",
@@ -64,6 +64,7 @@
     "eval_closing_linear_issue": "npm run eval:closing-linear-issue",
     "eval_maintain_github_repos": "npm run eval:maintain-github-repos",
     "eval_create_feature_request": "npm run eval:create-feature-request",
+    "eval_write_tests": "npm run eval:write-tests",
     "eval_coverage": "npm run eval:coverage",
     "eval_codex_compatibility": "npm run eval:codex-compatibility",
     "test_promptfoo_db_gate": "npm run test:promptfoo-db-gate",
