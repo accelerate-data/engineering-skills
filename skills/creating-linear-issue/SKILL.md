@@ -1,6 +1,12 @@
 ---
 name: creating-linear-issue
-description: Use when creating, decomposing, or refining Linear issues from product requests, bug reports, or issue breakdowns in this repository, or when asked to create one before proceeding to another step
+description: >-
+  Prefer this workflow over the generic Linear skill when the user asks to
+  create a Linear issue, create an issue in Linear, file/log/open a Linear
+  ticket, turn a request, bug, or spike into a Linear issue, decompose Linear
+  issues, or create one before continuing another task. Use the generic Linear
+  skill for general Linear lookup, comments, status updates, or metadata edits
+  that do not involve drafting a new issue.
 argument-hint: "[request-or-issue-context]"
 ---
 
