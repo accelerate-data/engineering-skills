@@ -2,7 +2,7 @@
 
 Two axes: **domain significance** (does the code enforce business rules?) and **collaborators** (how many external modules does it call?).
 
-```
+```text
                      Collaborators?
                     Few            Many
                  ┌──────────────┬──────────────────┐

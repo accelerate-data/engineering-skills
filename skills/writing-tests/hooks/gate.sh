@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# write-tests gate: PreToolUse hook that blocks Write/Edit/MultiEdit/NotebookEdit
+# writing-tests gate: PreToolUse hook that blocks Write/Edit/MultiEdit/NotebookEdit
 # on test files unless the transcript contains the '## Approved behaviours' marker.
 #
 # Install (project): add to .claude/settings.json
@@ -9,7 +9,7 @@
 #       {
 #         "matcher": "Write|Edit|MultiEdit|NotebookEdit",
 #         "hooks": [
-#           { "type": "command", "command": "bash ${HOME}/.claude/skills/write-tests/hooks/gate.sh" }
+#           { "type": "command", "command": "bash ${HOME}/.claude/skills/writing-tests/hooks/gate.sh" }
 #         ]
 #       }
 #     ]
@@ -53,9 +53,9 @@ fi
 
 if ! grep -q '## Approved behaviours' "$TRANSCRIPT"; then
   cat >&2 <<'MSG'
-BLOCKED by write-tests gate: about to write a test file without approved behaviours.
+BLOCKED by writing-tests gate: about to write a test file without approved behaviours.
 
-Per the write-tests skill (Step 3), you must post this exact header and get user approval BEFORE writing tests:
+Per the writing-tests skill (Step 3), you must post this exact header and get user approval BEFORE writing tests:
 
     ## Approved behaviours
 

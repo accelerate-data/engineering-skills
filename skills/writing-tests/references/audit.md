@@ -39,7 +39,7 @@ When a source file has colocated tests, audit them against the 4 Pillars before 
 
 ## Test organisation — per behaviour, not per method
 
-```
+```text
 ❌ describe('calculateTotal') → it('test calculateTotal') → it('test with discount')
 ✅ describe('order pricing') → it('applies percentage discount') → it('caps at order total')
 ```
@@ -48,7 +48,7 @@ Per-method tests couple to API surface. Rename the method → all tests break. P
 
 ## Audit report template
 
-```
+```markdown
 **Audit of `{filename}`** ({N} tests)
 
 **4 Pillars:**

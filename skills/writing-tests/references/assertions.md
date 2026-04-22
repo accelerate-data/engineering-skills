@@ -49,6 +49,7 @@ expect(eventBus.emit).toHaveBeenCalledWith('order.placed', { id: order.id });
 **Only valid when:** the outbound call IS the business-observable effect (email sent, event emitted, external webhook).
 
 **Never valid for:**
+
 - Internal helper calls (`expect(calculateSubtotal).toHaveBeenCalledTimes(3)`)
 - Calls into your own modules
 - Verifying stub setup worked (circular)

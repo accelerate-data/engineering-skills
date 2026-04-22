@@ -118,7 +118,7 @@ Use these repo-local skills when requests match:
 - `skills/playwright/SKILL.md` - browser automation workflows
 - `skills/agent-browser/SKILL.md` - browser automation with agent-browser
 - `skills/create-feature-request/SKILL.md` - create a feature request in Linear
-- `skills/write-tests/SKILL.md` - write, audit, or improve unit and integration tests (Khorikov standards)
+- `skills/writing-tests/SKILL.md` - write, audit, or improve unit and integration tests (Khorikov standards)
 
 ## Linear
 

@@ -13,9 +13,8 @@
     "eval:create-feature-request": "npm --prefix tests/evals run eval:create-feature-request",
     "eval:coverage": "npm --prefix tests/evals run eval:coverage",
     "eval:codex-compatibility": "npm --prefix tests/evals run eval:codex-compatibility",
-    "eval:write-tests": "npm --prefix tests/evals run eval:write-tests",
+    "eval:writing-tests": "npm --prefix tests/evals run eval:writing-tests",
     "test:promptfoo-db-gate": "npm --prefix tests/evals run test:promptfoo-db-gate",
     "view": "npm --prefix tests/evals run view"
   }
 }
-

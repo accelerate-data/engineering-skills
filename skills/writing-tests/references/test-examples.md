@@ -28,6 +28,7 @@ describe('parseSSEBuffer', () => {
 ```
 
 **Rules:**
+
 - No `vi.mock`, no `vi.fn()`. If you need them, it's an integration test.
 - Assert on the return value only.
 - One behaviour per `it()`, AAA structure, test body under 15 lines.
@@ -57,6 +58,7 @@ describe('useChatStore.selectMessage', () => {
 ```
 
 **Rules:**
+
 - Assert on `getState()`, never on `set` calls.
 - Reset the store in `beforeEach` — stores persist between tests.
 
@@ -143,6 +145,7 @@ describe('POST /api/domains', () => {
 ```
 
 **Rules:**
+
 - Use in-memory SQLite, not mocks.
 - Assert on response AND real DB state.
 - Don't mock your own services — wire them up for real.
@@ -192,6 +195,7 @@ describe('ConfirmButton', () => {
 ```
 
 **Rules:**
+
 - `userEvent.setup()`, never `fireEvent`.
 - `screen.getByRole` / `getByText`, never query by CSS class.
 - Communication-based on `onConfirm` is valid here — it's the component's outbound contract.

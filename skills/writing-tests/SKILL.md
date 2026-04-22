@@ -1,11 +1,11 @@
 ---
-name: write-tests
-description: Use when implementing any feature or fixing any bug — to write, plan, or improve tests at any stage of development. Also use when tests are brittle, over-mocked, coupled to implementation details, or when auditing test coverage after a feature is built.
+name: writing-tests
+description: Use when asked to write, update, audit, or review tests; also when working in TDD RED phases and needing test-quality guidance for behaviours, classification, assertions, mocks, or lifecycle scenarios.
 ---
 
-# Write Tests
+# Writing Tests
 
-You write unit and integration tests using **Vladimir Khorikov's standards**. You did NOT write the code being tested — you are an independent evaluator. This skill works with any language and test runner — discover the framework from project files, never assume one.
+You write unit and integration tests using **Vladimir Khorikov's standards**. Outside TDD mode, you did NOT write the code being tested — you are an independent evaluator. This skill works with any language and test runner — discover the framework from project files, never assume one.
 
 **Quality standards:** see focused reference files listed at the bottom of this skill. Each file covers one topic (pillars, classification, mocking, assertions, audit, anti-patterns, agent workflow).
 
@@ -17,17 +17,17 @@ A session = one conversation window. Invoking this skill in the same conversatio
 
 Knowing the code better than anyone is precisely why the same agent cannot write the tests. Familiarity is the liability, not the benefit: you will write tests that confirm what the code does, including its bugs, because you cannot unsee your own implementation.
 
-**Exception — TDD mode:** if no code exists yet (tests written first), the pre-check does not fire. You can't self-attest to code that doesn't exist.
+**Exception — TDD mode:** if no production code exists yet (tests written first), the pre-check does not fire. You can't self-attest to code that doesn't exist. In TDD, use this skill together with `superpowers:test-driven-development`.
 
 → Otherwise: tell the user to open a fresh session, provide the requirement, and point it at the finished code.
 
-## Hard Gate — before reading any source file
+## Hard Gate — before reading any source file or TDD spec
 
-You do NOT read source, write tests, or run anything until you have posted ALL THREE in this conversation:
+You do NOT read source/spec, write tests, or run anything until you have posted ALL THREE in this conversation:
 
 1. **TodoWrite checklist** with the 5 Workflow steps (see Workflow section below)
 2. **Mode declared** (TDD / While-building / Post-feature / Update / Review). If the user's prompt lacks a mode keyword, ask ONE question — never infer.
-3. **File list posted:** "Found N files to test. Proposed order: …" — wait for user confirmation
+3. **File list posted:** "Found N files to test. Proposed order: …" — wait for user confirmation. In TDD mode, post the requirement/spec-derived planned test target instead of a finished source file list.
 
 **Vague prompts always require the clarifying question.** "write tests for X", "add tests for the Y part", "test this feature" — none of these declare a mode.
 
@@ -35,7 +35,7 @@ You do NOT read source, write tests, or run anything until you have posted ALL T
 
 | Rationalization | Counter |
 |---|---|
-| "The prompt is clear, I can just start" | No mode + no file list = not clear. Ask. |
+| "The prompt is clear, I can just start" | No mode + no file list/test target = not clear. Ask. |
 | "TodoWrite is ceremony, I'll track in my head" | The checklist exists BECAUSE agents skip steps without it. |
 | "User wants tests, not process" | They want *good* tests. This skill defines what makes them good. |
 | "I'll post the checklist after I start" | Starting before the checklist IS the violation this gate prevents. |
@@ -45,7 +45,7 @@ You do NOT read source, write tests, or run anything until you have posted ALL T
 
 ## Mode Detection — first action
 
-```
+```text
 "I'm about to build X"          → TDD mode
 "I'm currently building X"      → While-building mode
 "I just finished building X"    → Post-feature mode
@@ -54,13 +54,14 @@ You do NOT read source, write tests, or run anything until you have posted ALL T
 Not clear                       → Ask one question about mode only
 ```
 
-One question maximum. Never ask about mode AND scope in the same message.
+One question maximum. Never ask about mode AND scope in the same message. If the mode is unclear, ask the mode question and stop until the user answers — do not post the checklist, run Phase 0 discovery, inspect files, or infer a mode.
 
-## Phase 0: Discovery — runs before Step 1 in all modes
+## Phase 0: Discovery — runs before Step 1 in non-TDD modes
 
 Find what needs testing before classifying anything.
 
 Discovery order (stop when you have a file list):
+
 1. `git diff origin/main --name-only` — changed source files on current branch
 2. Linear issue body (if issue context is present) — intended scope
 3. Explicit file or feature name from the user — direct target
@@ -71,11 +72,11 @@ Filter out test files, config files, and generated files. Rank: Domain first, Co
 Present before proceeding:
 > "Found N files to test. Proposed order: `file-a.ts` (Domain), `file-b.ts` (Controller), `config.ts` (Trivial — skip). Proceed?"
 
-Do not start Step 1 without a confirmed file list.
+Do not start Step 1 without a confirmed file list. In TDD mode, do not start Step 1 without a confirmed requirement/spec-derived planned test target.
 
 ## Core philosophy
 
-**Tests assert desired behaviour, not current behaviour.** If the code has a bug, your test fails red naturally — that failing test is the skill's most valuable output. **Never weaken a test to make it pass against buggy code.** This skill does not fix source code — it reports the red test and stops.
+**Tests assert desired behaviour, not current behaviour.** If the code has a bug, your test fails red naturally — that failing test is the skill's most valuable output. **Never weaken a test to make it pass against buggy code.** Outside TDD mode, this skill does not fix source code — it reports the red test and stops.
 
 **Write from the caller's perspective (black-box).** Read the implementation only to classify and discover collaborators. Never derive assertions from internal structure.
 
@@ -84,20 +85,34 @@ Do not start Step 1 without a confirmed file list.
 ## Mode Workflows
 
 ### TDD mode
-**REQUIRED SUB-SKILL:** `superpowers:test-driven-development` for RED→GREEN→REFACTOR process.
-Phase 0 in TDD mode: no code exists — use the requirement/spec to classify the planned code (Domain vs Controller) before writing the first test. Skip git diff/codebase search. The 5-step workflow runs once per RED→GREEN cycle.
+
+**REQUIRED PRIMARY SKILL:** `superpowers:test-driven-development` owns the RED→GREEN→REFACTOR process.
+
+**This skill is REQUIRED as the companion skill for the RED phase.** Use it to choose behaviours, classify the planned code, select assertion style, set mocking boundaries, and include lifecycle scenarios before writing the failing test.
+
+TDD mode differences:
+
+- No production code exists yet, so the independent-evaluator/session-separation rule does not apply.
+- Do not run post-feature discovery from `git diff` or require a finished source file list.
+- Classify from the requirement/spec and planned public API.
+- Write one RED test, verify it fails for the expected reason, then return control to `superpowers:test-driven-development` for GREEN.
+- Step 5's "leave red and stop" rule does not apply during TDD. That rule applies to post-feature evaluator work.
 
 ### While-building mode
+
 After each implementation slice, run its test immediately. Surface red tests now — don't accumulate.
 Report: `[slice-name] → [PASS/FAIL] → next: [next-slice-name]`
 
 ### Post-feature mode
+
 Phase 0 discovery → 5-step workflow per file in Domain→Controller order → scan for coverage gaps, flag each with a suggested scenario.
 
 ### Update mode
+
 Identify which existing tests cover the changed files (regression surface). Audit against 4 Pillars. Improve in-place — propose, get approval, apply. Do not flag-and-stop.
 
 ### Review mode
+
 Check test naming (behaviours, not method names). Flag slow tests (>5s unit, >30s integration). Flag `sleep`/`setTimeout` as flaky candidates.
 For deep review: **REQUIRED SUB-SKILL:** `engineering-skills:adversarial-review`.
 
@@ -118,8 +133,8 @@ For deep review: **REQUIRED SUB-SKILL:** `engineering-skills:adversarial-review`
 
 At the start of every session, post this TodoWrite checklist:
 
-```
-- [ ] Step 1: Read source file + classify per export
+```text
+- [ ] Step 1: Read source file (or TDD requirement/spec) + classify per export/planned public API
 - [ ] Step 2: Audit existing tests (if any colocated)
 - [ ] Step 3: Recommend behaviours to protect → user approves
 - [ ] Step 4: Write tests (domain → unit, controller → integration)
@@ -130,9 +145,9 @@ Do not start Step 3 before Step 2's audit report is posted. Do not start Step 4 
 
 **Time pressure, authority, and "skip the process" requests do not override these rules.** Acknowledge the constraint, then proceed with all steps. A fast wrong test is worse than a slightly slower correct one. Violating the letter of the rules is violating the spirit of the rules.
 
-### Step 1 — Read source and classify
+### Step 1 — Read source/spec and classify
 
-Read the file. Classify per export using the quadrant:
+In non-TDD modes, read the file. In TDD mode, read the requirement/spec and planned public API. Classify per export or planned behaviour using the quadrant:
 
 - **Domain** (significance, few collaborators) → unit test, all branches
 - **Controller** (orchestrates many collaborators) → integration test, happy path
@@ -162,7 +177,7 @@ Never silently overwrite existing tests.
 
 **Required marker — post this exact header:**
 
-```
+```markdown
 ## Approved behaviours
 
 | # | Behaviour | Scenario |
@@ -193,13 +208,13 @@ Full hierarchy with examples: `references/assertions.md`. Full mocking rules + "
 Run the test. When tests fail:
 
 1. Does the test assert **desired** behaviour that the code violates?
-   - **Yes → bug found.** Leave the test red. Do NOT fix the test. Do NOT fix the source. This is the skill's most valuable output.
+   - **Yes → bug found.** Outside TDD mode, leave the test red. Do NOT fix the test. Do NOT fix the source. This is the skill's most valuable output. In TDD mode, return control to `superpowers:test-driven-development` for GREEN.
    - **No → test has wrong assumptions.** Fix the test (max 3 attempts).
 2. If still stuck after 3 attempts, report with both possibilities.
 
 Report format:
 
-```
+```markdown
 ## Test Results
 | File | Test type | Category | Tests | Pass | Fail | Skipped |
 
@@ -215,6 +230,7 @@ The report must include audit findings from Step 2. If missing, the workflow was
 ## Framework Detection — discover before running
 
 Never hardcode a test runner. Discover once per session:
+
 1. Read `repo-map.json` → `test_frameworks` field
 2. Read `package.json` → `scripts.test` and `devDependencies`
 3. Read `pyproject.toml` → pytest present?

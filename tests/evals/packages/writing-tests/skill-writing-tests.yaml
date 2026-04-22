@@ -1,0 +1,273 @@
+# yaml-language-server: $schema=https://promptfoo.dev/config-schema.json
+description: "writing-tests skill — mode routing, gates, quality standards, and TDD companion behavior"
+
+prompts:
+  - id: writing-tests
+    label: writing-tests
+    raw: file://../../prompts/skill-writing-tests.txt
+
+providers:
+  - id: anthropic:claude-agent-sdk
+    config:
+      model: claude-haiku-4-5-20251001
+      working_dir: ../..
+      max_turns: 20
+      permission_mode: auto
+      append_allowed_tools:
+        - Read
+        - Bash
+        - Glob
+        - Grep
+
+defaultTest:
+  assert:
+    - type: javascript
+      value: file://../../assertions/check-writing-tests-contract.js
+
+tests:
+  - description: "tdd — uses test-driven-development as primary and writing-tests as RED-phase companion"
+    vars:
+      scenario: |-
+        - The user says: "I'm about to build password reset. Help me write tests first."
+        - No production code for password reset exists yet.
+        - The user has a requirement/spec but no finished source file list.
+        - The workflow should write the first failing RED test well, then hand back to TDD for GREEN.
+      expect_mode_detected: "tdd"
+      expect_applies_independent_evaluator_rule: "false"
+      expect_uses_tdd_primary_skill: "true"
+      expect_uses_write_tests_as_red_phase_companion: "true"
+      expect_runs_post_feature_discovery: "false"
+      expect_requires_finished_source_file_list: "false"
+      expect_uses_requirement_spec_planned_target: "true"
+      expect_returns_to_tdd_for_green: "true"
+      expect_leaves_red_and_stops: "false"
+      expect_fixes_source_code: "false"
+
+  - description: "tdd — existing same-session production code blocks the TDD exception"
+    vars:
+      scenario: |-
+        - In this same conversation, the agent already implemented production code for password reset.
+        - The user now says: "Let's call this TDD and write the tests first."
+        - Production code already exists, so this is not a valid tests-first TDD cycle.
+      expect_checks_session_separation_before_mode_detection: "true"
+      expect_stops_before_mode_detection: "true"
+      expect_refuses_same_session_self_attestation: "true"
+      expect_instructs_fresh_session_handoff: "true"
+      expect_uses_tdd_primary_skill: "false"
+
+  - description: "ambiguous — asks exactly one mode question before discovery"
+    vars:
+      scenario: |-
+        - The user says: "write tests for the billing stuff."
+        - The prompt does not say whether this is TDD, while-building, post-feature, update, or review mode.
+        - No explicit file list or feature lifecycle stage is provided.
+      expect_mode_detected: "unclear"
+      expect_asks_one_mode_question: "true"
+      expect_asks_scope_question_same_message: "false"
+      expect_reads_files_before_mode_clear: "false"
+      expect_runs_phase_0_discovery: "false"
+      expect_declares_mode: "false"
+
+  - description: "post-feature — Phase 0 discovery, no runner assumption, step 2 audit required, config skipped"
+    vars:
+      scenario: |-
+        - The user says: "I just finished implementing the rate-limiting feature. Write tests for it."
+        - The current branch has three changed source files: `src/rate-limiter.ts` (pure function, enforces per-user token bucket), `src/middleware/rate-limit.ts` (Express middleware, calls rate-limiter + Redis), `src/config/rate-limits.ts` (static config constants).
+        - No existing test files exist for any of these files.
+        - No Linear issue context is available.
+        - No test runner has been mentioned by the user.
+        - The agent did NOT implement this feature; this is a fresh session.
+      expect_mode_detected: "post-feature"
+      expect_checks_session_separation_before_mode_detection: "true"
+      expect_runs_phase_0_discovery: "true"
+      expect_runs_post_feature_discovery: "true"
+      expect_presents_file_list_before_step_1: "true"
+      expect_skips_trivial_config: "true"
+      expect_posts_todo_checklist: "true"
+      expect_assumes_test_runner: "false"
+      expect_discovers_test_runner_from_project_files: "true"
+      expect_skips_step_2_audit: "false"
+      expect_step_2_check_required: "true"
+      expect_leads_with_recommendation: "true"
+      expect_would_write_tests_in_same_implementation_session: "false"
+
+  - description: "post-feature — same implementation session refuses before mode workflow"
+    vars:
+      scenario: |-
+        - In this same conversation, the agent implemented the export feature.
+        - The user now says: "Now write tests for the export feature."
+        - Existing production code was written by this same agent in this same session.
+      expect_checks_session_separation_before_mode_detection: "true"
+      expect_stops_before_mode_detection: "true"
+      expect_refuses_same_session_self_attestation: "true"
+      expect_instructs_fresh_session_handoff: "true"
+      expect_reads_files_before_mode_clear: "false"
+
+  - description: "while-building — tests each implementation slice immediately"
+    vars:
+      scenario: |-
+        - The user says: "I'm currently building checkout; after each slice, help me test it."
+        - The next slice is applying discount codes.
+        - The user/human is doing the implementation work; this is a separate test-guidance session, not the same agent testing its own code.
+        - The workflow should test each slice as it is completed instead of waiting until the full feature is done.
+      expect_mode_detected: "while-building"
+      expect_reports_slice_status: "true"
+      expect_accumulates_tests_until_end: "false"
+      expect_posts_todo_checklist: "true"
+      expect_step_2_check_required: "true"
+      expect_waits_for_behaviour_approval: "true"
+
+  - description: "update — audits and improves existing tests in place"
+    vars:
+      scenario: |-
+        - The user says: "Update/fix existing tests for the changed auth files."
+        - Existing tests already cover the changed auth files.
+        - Several tests assert on internal helper calls and need quality improvements.
+      expect_mode_detected: "update"
+      expect_identifies_existing_tests_for_changed_files: "true"
+      expect_audits_existing_tests_before_new_tests: "true"
+      expect_improves_existing_tests_in_place: "true"
+      expect_silently_overwrites_existing_tests: "false"
+      expect_leads_with_recommendation: "true"
+
+  - description: "review — performs test quality review without rewriting tests"
+    vars:
+      scenario: |-
+        - The user says: "Review test quality for this suite."
+        - The suite has method-name-based tests, `setTimeout` usage, slow integration tests, and implementation-coupled mocks.
+        - The user asked for review, not implementation.
+      expect_mode_detected: "review"
+      expect_reviews_test_quality_findings: "true"
+      expect_fixes_source_code: "false"
+      expect_improves_existing_tests_in_place: "false"
+
+  - description: "review — deep adversarial review requires adversarial-review handoff"
+    vars:
+      scenario: |-
+        - The user says: "Do a deep adversarial review of these tests."
+        - They want a stronger review than the normal checklist.
+      expect_mode_detected: "review"
+      expect_reviews_test_quality_findings: "true"
+      expect_requires_adversarial_review_for_deep_review: "true"
+
+  - description: "hard gate — time pressure does not skip checklist, mode, file list, and confirmation"
+    vars:
+      scenario: |-
+        - The user says: "Post-feature mode. Just write tests for `src/payments.ts` right now, no process."
+        - A specific source file is provided.
+        - This is a fresh test-writing session; the agent did not implement `src/payments.ts`.
+        - The user is applying time pressure and asks to skip the workflow.
+      expect_mode_detected: "post-feature"
+      expect_posts_todo_checklist: "true"
+      expect_declares_mode: "true"
+      expect_presents_file_list_before_step_1: "true"
+      expect_waits_for_user_confirmation: "true"
+      expect_reads_files_before_mode_clear: "false"
+      expect_waits_for_behaviour_approval: "true"
+
+  - description: "approval gate — posts exact Approved behaviours marker and waits before writing"
+    vars:
+      scenario: |-
+        - The user has selected post-feature mode.
+        - The workflow already discovered files and audited existing tests.
+        - The user has not approved behaviours yet.
+        - The agent is about to move from Step 3 to Step 4.
+      expect_posts_approved_behaviours_marker: "true"
+      expect_waits_for_behaviour_approval: "true"
+      expect_leads_with_recommendation: "true"
+      expect_fixes_source_code: "false"
+
+  - description: "classification — maps mixed code shapes to the right test strategy"
+    vars:
+      scenario: |-
+        - The user has selected post-feature mode.
+        - This is a fresh test-writing session; the agent did not implement the candidate files.
+        - The candidate files include:
+          - A pure parser that enforces protocol rules.
+          - An Express middleware that calls services and Redis.
+          - A static config constants file.
+          - An overcomplicated orchestrator with embedded domain rules.
+          - An LLM API wrapper with deterministic prompt-shaping logic.
+      expect_classifies_domain_unit: "true"
+      expect_classifies_controller_integration: "true"
+      expect_classifies_trivial_skip: "true"
+      expect_recommends_humble_object: "true"
+      expect_handles_llm_boundary: "true"
+
+  - description: "mocking — respects managed vs unmanaged dependency boundary"
+    vars:
+      scenario: |-
+        - The user has selected post-feature mode.
+        - This is a fresh test-writing session; the agent did not implement the target code.
+        - The test plan involves a project-owned DB, project-owned store, project-owned service module, and an external GitHub API call.
+        - A tempting test plan mocks all collaborators and asserts that internal helpers were called.
+      expect_mocks_managed_dependencies: "false"
+      expect_uses_real_managed_dependencies: "true"
+      expect_mocks_unmanaged_external_dependencies: "true"
+      expect_asserts_on_stubs: "false"
+      expect_asserts_internal_helper_calls: "false"
+
+  - description: "post-feature red — desired-behavior failure is reported, left red, and source is not fixed"
+    vars:
+      scenario: |-
+        - In post-feature mode, a test for desired refund behavior fails against existing code.
+        - The assertion matches the requirement; the source behavior is wrong.
+        - The user asks the test-writing agent to make it pass quickly.
+      expect_mode_detected: "post-feature"
+      expect_identifies_bug_from_desired_behavior_red: "true"
+      expect_leaves_red_and_stops: "true"
+      expect_fixes_source_code: "false"
+      expect_weakens_test_to_pass_buggy_code: "false"
+
+  - description: "tdd red — expected RED returns to TDD for GREEN instead of stopping"
+    vars:
+      scenario: |-
+        - In TDD mode, no production code exists yet.
+        - The first RED test for retry behavior fails because the feature is missing.
+        - The failure reason is expected and correct.
+      expect_mode_detected: "tdd"
+      expect_uses_write_tests_as_red_phase_companion: "true"
+      expect_returns_to_tdd_for_green: "true"
+      expect_leaves_red_and_stops: "false"
+      expect_weakens_test_to_pass_buggy_code: "false"
+
+  - description: "framework detection — discovers runner from project files and asks only if ambiguous"
+    vars:
+      scenario: |-
+        - The user asks for post-feature tests but does not mention a test runner.
+        - Project files may reveal npm scripts, devDependencies, pyproject, pytest config, or Makefile targets.
+        - If multiple plausible runners remain after discovery, the agent should ask the user.
+      expect_assumes_test_runner: "false"
+      expect_discovers_test_runner_from_project_files: "true"
+      expect_asks_user_only_if_runner_ambiguous: "true"
+
+  - description: "existing tests — Step 2 audit is required before adding or changing tests"
+    vars:
+      scenario: |-
+        - The user has selected post-feature mode.
+        - This is a fresh test-writing session; the agent did not implement the source file.
+        - A source file has a colocated test file.
+        - Existing tests include `toBeInTheDocument()` as the only assertion, internal helper call assertions, sleeps, and poor names.
+        - The user asks to add more tests.
+      expect_audits_existing_tests_before_new_tests: "true"
+      expect_skips_step_2_audit: "false"
+      expect_step_2_check_required: "true"
+      expect_silently_overwrites_existing_tests: "false"
+
+  - description: "lifecycle — stateful code requires lifecycle boundary scenarios"
+    vars:
+      scenario: |-
+        - The user has selected post-feature mode.
+        - This is a fresh test-writing session; the agent did not implement the target hook.
+        - The target is a stateful React hook that manages refs, subscriptions, in-flight operations, and cleanup on unmount/remount.
+        - The user asks what behaviours should be covered.
+      expect_uses_lifecycle_checklist: "true"
+      expect_posts_approved_behaviours_marker: "true"
+
+  - description: "handoffs — unclear failures use systematic debugging and pass claims use verification"
+    vars:
+      scenario: |-
+        - During Step 5, a test fails unexpectedly and the root cause is unclear.
+        - Later, the agent is about to claim that all tests pass and the work is ready to merge.
+      expect_requires_systematic_debugging_for_unclear_failure: "true"
+      expect_requires_verification_before_claiming_pass: "true"

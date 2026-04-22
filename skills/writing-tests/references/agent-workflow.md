@@ -18,7 +18,7 @@ This aligns with the **Planner-Generator-Evaluator pattern**: the evaluator must
 
 ## Session boundary
 
-A session = one conversation window. Invoking the write-tests skill in the same conversation that wrote the code does NOT create a separate session — you still share the same context and the same blind spots.
+A session = one conversation window. Invoking the writing-tests skill in the same conversation that wrote the code does NOT create a separate session — you still share the same context and the same blind spots.
 
 ## Exception — TDD mode
 
@@ -30,4 +30,4 @@ If no code exists yet (tests written FIRST, then implementation), the rule does 
 
 ## In practice
 
-When `implementing-linear-issue` finishes, do not continue into test-writing in the same session. Hand off. A fresh session invokes `write-tests` with the requirement and the finished code — never the implementation session writing its own tests.
+When `implementing-linear-issue` finishes, do not continue into test-writing in the same session. Hand off. A fresh session invokes `writing-tests` with the requirement and the finished code — never the implementation session writing its own tests.
