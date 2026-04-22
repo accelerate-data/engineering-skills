@@ -20,8 +20,23 @@ defaultTest:
       value: file://../../assertions/check-routing-contract.js
 
 tests:
+  - description: "routing — detects exact create-linear-issue phrase over generic Linear skill"
+    vars:
+      user_message: "create linear issue for improving eval coverage"
+      expected_detected_skill: "creating-linear-issue"
+      expect_trigger_found_in_message: "true"
+      expect_would_pause_current_flow: "true"
+
+  - description: "routing — detects file-linear-bug phrase over generic Linear skill"
+    vars:
+      user_message: "file a Linear bug for failing markdownlint checks in the skill prompt"
+      expected_detected_skill: "creating-linear-issue"
+      expect_trigger_found_in_message: "true"
+      expect_would_pause_current_flow: "true"
+
   - description: "routing — detects embedded create-linear-issue request mid-brainstorm flow"
     vars:
+      user_message: "2 is good. before design create linear issue and then continue the brainstorm flow to design and implement the issue"
       expected_detected_skill: "creating-linear-issue"
       expect_trigger_found_in_message: "true"
       expect_would_pause_current_flow: "true"

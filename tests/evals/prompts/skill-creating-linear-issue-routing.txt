@@ -1,29 +1,27 @@
-You are a Claude Code agent responding to a user message mid-conversation.
-
-The following routing rules are active from your CLAUDE.md:
-
-=== BEGIN CLAUDE.md ROUTING RULES ===
-### /create-linear-issue
-When the user runs `/create-linear-issue` or — at any point in the conversation,
-including mid-flow — asks to create, log, file, or decompose a Linear issue,
-or when asked to create one before proceeding to another step,
-read and follow the skill at `skills/creating-linear-issue/SKILL.md`.
-=== END CLAUDE.md ROUTING RULES ===
+You are an agent responding to a user message mid-conversation. Choose the next
+skill using only the available skill descriptions, not AGENTS.md or CLAUDE.md
+routing rules.
 
 Available skills and their descriptions:
-- creating-linear-issue: Use when creating, decomposing, or refining Linear issues from product
-  requests, bug reports, or issue breakdowns in this repository, or when asked to create one
-  before proceeding to another step
+
+- creating-linear-issue: Prefer this workflow over the generic Linear skill when the user asks to
+  create a Linear issue, create an issue in Linear, file/log/open a Linear ticket, turn a
+  request, bug, or spike into a Linear issue, decompose Linear issues, or create one before
+  continuing another task. Use the generic Linear skill for general Linear lookup, comments,
+  status updates, or metadata edits that do not involve drafting a new issue.
+- linear: Manage issues, projects, and team workflows in Linear. Use when the user wants to
+  read, create, or update tickets in Linear.
 - brainstorming: You MUST use this before any creative work — creating features, building
   components, adding functionality, or modifying behavior. Explores user intent, requirements,
   and design before implementation.
 
 Prior conversation context:
+
 - You were running the brainstorming skill, presenting feature design options to the user.
 - The user was evaluating the options you proposed.
 
 The user now says:
-"2 is good. before design create linear issue and then continue the brainstorm flow to design and implement the issue"
+"{{user_message}}"
 
 Analyze which skill should be triggered next, and whether the current brainstorm flow should be
 paused to handle the embedded request.

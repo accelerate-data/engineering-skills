@@ -36,11 +36,11 @@
     },
     "skills": {
       "path": "skills/",
-      "description": "Canonical skill directories (11 skills). Each skill owns its SKILL.md and any supporting references, assets, scripts, or agents."
+      "description": "Canonical skill directories (12 skills). Each skill owns its SKILL.md and any supporting references, assets, scripts, or agents."
     },
     "eval_harness": {
       "path": "tests/evals/",
-      "description": "Promptfoo harness and deterministic compatibility checks for skills in this repository. Current packages cover the Linear workflow skills, create-feature-request, maintain-github-repos, bundled raising-linear-pr promptfoo DB gate helper tests, eval coverage reporting, and Codex compatibility."
+      "description": "Promptfoo harness and deterministic compatibility checks for skills in this repository. Current packages cover the Linear workflow skills, create-feature-request, maintain-github-repos, writing-tests, bundled raising-linear-pr promptfoo DB gate helper tests, eval coverage reporting, and Codex compatibility."
     },
     "scripts": {
       "path": "scripts/",
@@ -64,6 +64,7 @@
     "eval_closing_linear_issue": "npm run eval:closing-linear-issue",
     "eval_maintain_github_repos": "npm run eval:maintain-github-repos",
     "eval_create_feature_request": "npm run eval:create-feature-request",
+    "eval_writing_tests": "npm run eval:writing-tests",
     "eval_coverage": "npm run eval:coverage",
     "eval_codex_compatibility": "npm run eval:codex-compatibility",
     "test_promptfoo_db_gate": "npm run test:promptfoo-db-gate",

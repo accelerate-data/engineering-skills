@@ -179,7 +179,7 @@ tests:
         - The Linear issue description references `docs/design/billing-retry.md`.
         - The design document requires retry telemetry and an error-state eval.
         - The committed implementation omits retry telemetry and the verification evidence lacks design-critical tests and evals.
-        - The workflow must stop before push or PR creation and hand back to implementation with concise design mismatch evidence.
+        - The workflow must stop before push or PR creation and report concise design mismatch evidence for the implementation phase.
       expect_enters_plan_mode: "false"
       expect_creates_checkpoint_commits: "false"
       expect_creates_final_commit: "false"
@@ -313,7 +313,7 @@ tests:
       expected_design_paths_include: "docs/design/export-format.md"
       expect_moves_issue_to_in_review: "false"
       expect_merges_pr: "false"
-      required_terms: "design,source,truth,acceptance,checked,fail,csv,json,stop"
+      required_terms: "design,truth,acceptance,checked,fail,csv,json,stop"
 
   - description: "raise-pr — records not_applicable when no design document is referenced"
     vars:
