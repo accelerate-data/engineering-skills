@@ -25,7 +25,8 @@ This repository is a single plugin source repo, not a marketplace repo.
 │   ├── maintain-github-repos/
 │   ├── playwright/
 │   ├── raising-linear-pr/
-│   └── shadcn-ui/
+│   ├── shadcn-ui/
+│   └── writing-tests/
 └── README.md
 ```
 
@@ -119,14 +120,17 @@ npm run eval:codex-compatibility
 
 ## Current Skills
 
-- `adversarial-review`
-- `agent-browser`
-- `closing-linear-issue`
-- `create-feature-request`
-- `creating-linear-issue`
-- `explaining-code`
-- `implementing-linear-issue`
-- `maintain-github-repos`
-- `playwright`
-- `raising-linear-pr`
-- `shadcn-ui`
+| Skill | Purpose |
+| --- | --- |
+| [`adversarial-review`](./skills/adversarial-review) | Adversarial code review using the opposite model (Claude spawns Codex, Codex spawns Claude) to challenge large diffs from distinct critical lenses. |
+| [`agent-browser`](./skills/agent-browser) | Browser automation CLI for AI agents: navigate, fill forms, click, screenshot, scrape, or test web apps programmatically. |
+| [`closing-linear-issue`](./skills/closing-linear-issue) | Merge, close, and clean up branches and worktrees after a Linear issue's PR has been reviewed. |
+| [`create-feature-request`](./skills/create-feature-request) | Log a feature request into the Roadmap (RO) team in Linear from free-form natural language. |
+| [`creating-linear-issue`](./skills/creating-linear-issue) | Draft or refine a Linear issue — preferred over the generic Linear skill for new-issue creation and decomposition. |
+| [`explaining-code`](./skills/explaining-code) | Explain code with analogies, ASCII diagrams, and step-by-step walkthroughs with gotchas. |
+| [`implementing-linear-issue`](./skills/implementing-linear-issue) | Implement an approved Linear issue: branch/worktree setup, plan approval, checkpoint commits, quality gates — stops before the PR phase. |
+| [`maintain-github-repos`](./skills/maintain-github-repos) | Hygiene for `accelerate-data` GitHub org: decide which stale `dev*`/`scratch*` repos to archive or delete. |
+| [`playwright`](./skills/playwright) | Drive a real browser from the terminal via `playwright-cli` for navigation, form-filling, snapshots, screenshots, and UI-flow debugging. |
+| [`raising-linear-pr`](./skills/raising-linear-pr) | PR-phase workflow after implementation: verification rerun, AC completion check, push, PR creation, and `In Review` transition. |
+| [`shadcn-ui`](./skills/shadcn-ui) | shadcn/ui + Tailwind CSS 4 component work: adding primitives, customizing variants, building layouts. |
+| [`writing-tests`](./skills/writing-tests) | Write, update, audit, or review unit and integration tests using Vladimir Khorikov's standards. |
