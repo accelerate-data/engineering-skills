@@ -9,9 +9,10 @@ Workflow contract:
 - First, always check session separation before mode detection. If the same conversation already implemented the production code under test, stop before mode detection, refuse same-session self-attestation, and instruct the user to open a fresh session with the requirement and finished code.
 - The only exception to session separation is valid TDD mode before production code exists.
 - If mode is unclear, ask exactly one mode question and stop. Do not post a checklist, run discovery, read files, infer a mode, or ask scope in the same message.
-- In every clear mode, post the TodoWrite checklist before starting workflow work.
+- In every clear mode, post a visible checklist/plan before starting workflow work.
 - Declare the mode and post a file list or, for TDD, a requirement/spec-derived planned test target before Step 1. Wait for user confirmation.
-- Time pressure, specific file names, and requests to skip process do not remove the checklist, mode declaration, file/target list, confirmation, Step 2 audit, or Step 3 behaviour approval gates.
+- In TDD mode, the workflow may read the user-provided requirement/spec before posting the planned test target, but must not read implementation files.
+- Time pressure, specific file names, and requests to skip process do not remove the visible checklist/plan, mode declaration, file/target list, confirmation, Step 2 audit, or Step 3 behaviour approval gates.
 - Non-TDD modes run Phase 0 discovery before Step 1. TDD does not run post-feature discovery or require finished source files.
 - Static config/constants files with no domain significance and no collaborators are Trivial and should be skipped.
 - Overcomplicated code with domain rules embedded in orchestration should recommend the Humble Object pattern: extract domain logic into a pure function and leave orchestration thin.
@@ -20,7 +21,9 @@ Workflow contract:
 - Step 3 must lead with a recommendation and post the exact marker `## Approved behaviours`. Do not start Step 4 until the marker is posted and the user approves.
 - While-building mode tests each implementation slice immediately and reports slice status; it must not wait until the full feature is finished to write tests.
 - Outside TDD mode, desired-behaviour failures are reported and left red; the test-writing workflow does not fix source code or weaken tests.
-- In TDD mode, use `superpowers:test-driven-development` as the primary process skill and `writing-tests` as the RED-phase companion. After the expected RED failure, return to TDD for GREEN.
+- In TDD mode, use `superpowers:test-driven-development` as the primary process skill when it is available and `writing-tests` as the RED-phase companion. If the Superpowers skill is not available, state that explicitly and follow the same RED→GREEN→REFACTOR discipline locally. After the expected RED failure, end the RED companion phase and return to TDD for GREEN, or continue locally with GREEN/REFACTOR as a separate TDD step when using the fallback.
+- For skill, slash-command, and agent-prompt artifacts, hand authoring quality to `superpowers:writing-skills`; `writing-tests` owns eval coverage, pressure scenarios, and structured contract assertions.
+- Load detailed references progressively: workflow gates from `references/workflow.md`; classification from `references/classification.md`; audit from `references/audit.md`; assertion and mocking rules only when writing tests.
 
 Answer each field for what the workflow should do in this exact scenario, not whether the skill has that capability in some other scenario.
 
@@ -29,15 +32,24 @@ Scenario-specific definitions:
 - Set `mode_detected` to one of: `tdd`, `while-building`, `post-feature`, `update`, `review`, or `unclear`.
 - When `mode_detected` is `unclear`, set file/discovery/workflow fields to false unless the scenario explicitly says the user has answered the mode question.
 - When a scenario says the same conversation/session already implemented existing production code, set `stops_before_mode_detection`, `refuses_same_session_self_attestation`, and `instructs_fresh_session_handoff` to true.
-- In valid TDD mode with no production code, set `uses_tdd_primary_skill` and `uses_write_tests_as_red_phase_companion` to true.
+- In valid TDD mode with no production code, set `uses_write_tests_as_red_phase_companion` to true.
+- Set `uses_tdd_primary_skill` to true when `superpowers:test-driven-development` is available for the TDD workflow.
+- Set `uses_tdd_local_fallback` to true when `superpowers:test-driven-development` is not available and the workflow continues locally with RED→GREEN→REFACTOR discipline.
+- Set `uses_writing_skills_handoff` to true when the artifact under test is a skill, slash command, or agent prompt and authoring quality belongs to `superpowers:writing-skills`.
+- Set `treats_evals_as_tests_for_agent_artifacts` to true when skill, slash-command, or agent-prompt behavior should be verified with evals.
+- Set `requires_eval_contract_tests` to true when the scenario asks for tests for a skill, slash command, or agent prompt.
 - Set `runs_post_feature_discovery` to false for TDD mode because TDD uses requirement/spec-derived planned test targets instead of `git diff` discovery.
-- Set `leaves_red_and_stops` to true only when post-feature/update/review evaluator work finds a desired-behavior failure in existing code and must not fix source.
+- Set `leaves_red_and_stops` to true only when post-feature/update/review evaluator work finds a desired-behavior failure in existing code and must not fix source. Set it to false for TDD expected RED failures because TDD proceeds to GREEN instead of stopping as an evaluator.
 - Set `returns_to_tdd_for_green` to true only in TDD mode after a RED test fails for the expected reason.
+- Set `fixes_source_code` to false for TDD RED companion work. A later GREEN step may change production code, but the `writing-tests` RED companion itself does not.
 - Set `applies_independent_evaluator_rule` to false only for valid TDD-before-production-code scenarios.
 - Set `requires_finished_source_file_list` to false in TDD mode because no finished source file exists yet.
+- Treat `posts_todo_checklist` as true when the workflow posts an adapter-neutral visible checklist/plan; the field name is retained for compatibility with older eval cases.
 - Set `would_write_tests_in_same_implementation_session` to true only if the workflow would incorrectly continue after the same session implemented existing production code.
 - Set `asserts_on_stubs` and `asserts_internal_helper_calls` to true only if the workflow would incorrectly recommend those assertions, not when the scenario contains those anti-patterns as something to reject.
+- Set `identifies_bug_from_desired_behavior_red` to true when a desired-behavior test fails because existing source behavior is wrong, even if the workflow only reports the bug and leaves the test red.
 - Set `uses_lifecycle_checklist` to true when the target manages state across time, including refs, subscriptions, connections, sessions, caches, in-flight operations, mount/unmount, or cleanup boundaries.
+- Set `reviews_test_quality_findings` to true in review mode when the workflow audits tests and reports quality findings without editing tests or source.
 - Set `requires_adversarial_review_for_deep_review` to true only when the scenario asks for deep/adversarial test review.
 - Set `requires_systematic_debugging_for_unclear_failure` to true only when a test fails unexpectedly and the root cause is unclear.
 - Set `requires_verification_before_claiming_pass` to true only when the scenario is about claiming all tests pass or readiness to merge.
@@ -65,7 +77,11 @@ Do not actually call tools. Return JSON only with this shape. Include every key 
   "uses_requirement_spec_planned_target": false,
   "waits_for_user_confirmation": true,
   "uses_tdd_primary_skill": false,
+  "uses_tdd_local_fallback": false,
+  "uses_writing_skills_handoff": false,
   "uses_write_tests_as_red_phase_companion": false,
+  "treats_evals_as_tests_for_agent_artifacts": false,
+  "requires_eval_contract_tests": false,
   "returns_to_tdd_for_green": false,
   "leaves_red_and_stops": false,
   "fixes_source_code": false,

@@ -1,5 +1,5 @@
 # yaml-language-server: $schema=https://promptfoo.dev/config-schema.json
-description: "writing-tests skill — mode routing, gates, quality standards, and TDD companion behavior"
+description: "writing-tests skill — progressive discovery, mode routing, gates, quality standards, and TDD companion behavior"
 
 prompts:
   - id: writing-tests
@@ -25,21 +25,41 @@ defaultTest:
       value: file://../../assertions/check-writing-tests-contract.js
 
 tests:
-  - description: "tdd — uses test-driven-development as primary and writing-tests as RED-phase companion"
+  - description: "tdd — uses test-driven-development as primary when available and writing-tests as RED-phase companion"
     vars:
       scenario: |-
         - The user says: "I'm about to build password reset. Help me write tests first."
         - No production code for password reset exists yet.
+        - `superpowers:test-driven-development` is available in this session.
         - The user has a requirement/spec but no finished source file list.
         - The workflow should write the first failing RED test well, then hand back to TDD for GREEN.
       expect_mode_detected: "tdd"
       expect_applies_independent_evaluator_rule: "false"
       expect_uses_tdd_primary_skill: "true"
+      expect_uses_tdd_local_fallback: "false"
       expect_uses_write_tests_as_red_phase_companion: "true"
       expect_runs_post_feature_discovery: "false"
       expect_requires_finished_source_file_list: "false"
       expect_uses_requirement_spec_planned_target: "true"
-      expect_returns_to_tdd_for_green: "true"
+      expect_leaves_red_and_stops: "false"
+      expect_fixes_source_code: "false"
+
+  - description: "tdd — falls back locally when test-driven-development skill is unavailable"
+    vars:
+      scenario: |-
+        - The user says: "I'm about to build password reset. Help me write tests first."
+        - No production code for password reset exists yet.
+        - `superpowers:test-driven-development` is not available in this session.
+        - The user has a requirement/spec but no finished source file list.
+        - The workflow should state the missing Superpowers skill, write the first failing RED test well, then continue locally into GREEN using RED→GREEN→REFACTOR discipline.
+      expect_mode_detected: "tdd"
+      expect_applies_independent_evaluator_rule: "false"
+      expect_uses_tdd_primary_skill: "false"
+      expect_uses_tdd_local_fallback: "true"
+      expect_uses_write_tests_as_red_phase_companion: "true"
+      expect_runs_post_feature_discovery: "false"
+      expect_requires_finished_source_file_list: "false"
+      expect_uses_requirement_spec_planned_target: "true"
       expect_leaves_red_and_stops: "false"
       expect_fixes_source_code: "false"
 
@@ -54,6 +74,7 @@ tests:
       expect_refuses_same_session_self_attestation: "true"
       expect_instructs_fresh_session_handoff: "true"
       expect_uses_tdd_primary_skill: "false"
+      expect_uses_tdd_local_fallback: "false"
 
   - description: "ambiguous — asks exactly one mode question before discovery"
     vars:
@@ -150,6 +171,18 @@ tests:
       expect_reviews_test_quality_findings: "true"
       expect_requires_adversarial_review_for_deep_review: "true"
 
+  - description: "agent artifacts — skill authoring hands off to writing-skills and evals are tests"
+    vars:
+      scenario: |-
+        - The user says: "Update mode: I'm editing a skill, a slash command, and an agent prompt."
+        - They ask what tests are needed for these process artifacts.
+        - `superpowers:writing-skills` is available in this session.
+        - The workflow should hand skill-authoring quality to writing-skills while treating evals as the tests owned by writing-tests.
+      expect_mode_detected: "update"
+      expect_uses_writing_skills_handoff: "true"
+      expect_treats_evals_as_tests_for_agent_artifacts: "true"
+      expect_requires_eval_contract_tests: "true"
+
   - description: "hard gate — time pressure does not skip checklist, mode, file list, and confirmation"
     vars:
       scenario: |-
@@ -223,9 +256,12 @@ tests:
     vars:
       scenario: |-
         - In TDD mode, no production code exists yet.
+        - `superpowers:test-driven-development` is available in this session.
         - The first RED test for retry behavior fails because the feature is missing.
         - The failure reason is expected and correct.
       expect_mode_detected: "tdd"
+      expect_uses_tdd_primary_skill: "true"
+      expect_uses_tdd_local_fallback: "false"
       expect_uses_write_tests_as_red_phase_companion: "true"
       expect_returns_to_tdd_for_green: "true"
       expect_leaves_red_and_stops: "false"
