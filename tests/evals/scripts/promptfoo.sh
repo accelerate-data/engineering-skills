@@ -20,5 +20,6 @@ if [ -f "$REPO_ROOT/.env" ]; then
 fi
 
 export PROMPTFOO_CACHE_PATH="$PROMPTFOO_CACHE_DIR"
+export PROMPTFOO_CONFIG_DIR
 
 exec "$NODE_BIN" "$SCRIPT_DIR/node_modules/promptfoo/dist/src/entrypoint.js" "$@"
