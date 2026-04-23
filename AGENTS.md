@@ -42,6 +42,14 @@ Read `repo-map.json` for the current file layout, key modules, and commands inst
 
 Update stale guidance in the same change that introduces the structural change.
 
+Claude and Codex plugin manifests must keep the same plugin name and version.
+When plugin content or metadata changes, bump both manifest versions together and
+run `npm run validate:plugin-manifests`.
+
+This repository is licensed under Elastic License 2.0 (`ELv2`). The bundled
+Playwright license at `skills/playwright/LICENSE.txt` is upstream third-party
+content and must remain unchanged unless that vendored upstream license changes.
+
 ## Testing
 
 ### When to run evals
