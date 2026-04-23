@@ -20,6 +20,10 @@ This repository is a single plugin source repo, not a marketplace repo.
 │   ├── closing-linear-issue/
 │   ├── create-feature-request/
 │   ├── creating-linear-issue/
+│   ├── e2e-adding-scenario/
+│   ├── e2e-authoring-feature-file/
+│   ├── e2e-extending-step-vocabulary/
+│   ├── e2e-regenerating-from-guide/
 │   ├── explaining-code/
 │   ├── implementing-linear-issue/
 │   ├── maintain-github-repos/
@@ -183,6 +187,10 @@ upstream Microsoft Playwright Apache 2.0 license.
 | [`closing-linear-issue`](./skills/closing-linear-issue) | Merge, close, and clean up branches and worktrees after a Linear issue's PR has been reviewed. |
 | [`create-feature-request`](./skills/create-feature-request) | Log a feature request into the Roadmap (RO) team in Linear from free-form natural language. |
 | [`creating-linear-issue`](./skills/creating-linear-issue) | Draft or refine a Linear issue — preferred over the generic Linear skill for new-issue creation and decomposition. |
+| [`e2e-adding-scenario`](./skills/e2e-adding-scenario) | Append BDD scenarios to an existing `.feature` file in a Playwright+Claude e2e harness. Set `E2E_HARNESS_ROOT` when running from outside the harness. |
+| [`e2e-authoring-feature-file`](./skills/e2e-authoring-feature-file) | Author a new `.feature` file from scratch in a Playwright+Claude e2e harness. Set `E2E_HARNESS_ROOT` when running from outside the harness. |
+| [`e2e-extending-step-vocabulary`](./skills/e2e-extending-step-vocabulary) | Add a missing step pattern to `steps/*.md` in a Playwright+Claude e2e harness. Set `E2E_HARNESS_ROOT` when running from outside the harness. |
+| [`e2e-regenerating-from-guide`](./skills/e2e-regenerating-from-guide) | Regenerate a `.feature` file from its user-guide source page via `./generate-features.sh`. Set `E2E_HARNESS_ROOT` when running from outside the harness. |
 | [`explaining-code`](./skills/explaining-code) | Explain code with analogies, ASCII diagrams, and step-by-step walkthroughs with gotchas. |
 | [`implementing-linear-issue`](./skills/implementing-linear-issue) | Implement an approved Linear issue: branch/worktree setup, plan approval, checkpoint commits, quality gates — stops before the PR phase. |
 | [`maintain-github-repos`](./skills/maintain-github-repos) | Hygiene for `accelerate-data` GitHub org: decide which stale `dev*`/`scratch*` repos to archive or delete. |

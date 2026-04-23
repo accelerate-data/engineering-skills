@@ -141,7 +141,7 @@ Do each step in order. Do not skip.
 2. `MAPPINGS` contains the `settings/domains.md → settings/domain-crud.feature` pair → the file is guide-backed. PLAN warns that hand-edits will be overwritten next time the guide is regenerated, and offers (a) edit the guide + hand off, or (b) proceed as hand-edit. User picks (b).
 3. Read `domain-crud.feature` — note its `Background:` and existing scenarios; do NOT restate them in the APPEND BLOCK.
 4. `$E2E_APP_SRC` is not set. Derive `$APP_SRC = dirname(dirname($DATABASE_PATH))` from `{harness_root}/.env`. Verify the `$APP_SRC` directory itself is readable — do NOT check for specific subdirectories (layouts vary). Reference paths by variable name only.
-5. Explore `$APP_SRC` to find where UI labels, routes, and schema live. For this project: grep the frontend tree for the exact label `Archived` and the archive icon; locate the schema file and verify the `data_domains` archived column if a DB assertion is wanted.
+5. Explore `$APP_SRC` to find where UI labels, routes, and schema live. Search the frontend tree for the exact label text and any associated icon; search schema files for a column tracking the state under test. Do NOT assume specific table or column names — derive them from `$APP_SRC`.
 6. Read `steps/*.md`. `ui-actions.md` has `I click the "{label}" icon button`; `ui-assertions.md` has `I should see text "{text}"`.
 7. Draft the APPEND BLOCK:
 

@@ -69,3 +69,18 @@ tests:
         - The features/marketplace/ directory does NOT exist yet (brand-new category).
       expect_confirms_new_category_with_user: "true"
       expect_no_hardcoded_app_path: "true"
+
+  - description: "E2E_APP_SRC set — skips DATABASE_PATH gate and proceeds to author"
+    vars:
+      scenario: |-
+        - E2E_HARNESS_ROOT is set to /home/user/e2e-test-harness.
+        - E2E_APP_SRC is set to /home/user/app.
+        - The harness .env exists but DATABASE_PATH is NOT set (commented out).
+        - The user says: "Create a new feature file for features/billing/invoices.feature."
+        - features/billing/invoices.feature does NOT exist yet.
+        - No sibling .feature file exists in features/billing/.
+        - steps/ui-actions.md and steps/ui-assertions.md contain relevant step patterns.
+      expect_uses_e2e_app_src_when_set: "true"
+      expect_halts_on_missing_database_path: "false"
+      expect_includes_teardown_scenario: "true"
+      expect_no_hardcoded_app_path: "true"
