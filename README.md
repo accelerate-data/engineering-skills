@@ -82,6 +82,23 @@ Repeat that pattern for any other skill in this repo. The symlink name should ma
 - Do not add `superpowers` here. That stays in its own repository and is installed separately.
 - Keep skill assets, scripts, references, and agents inside the owning skill directory.
 - Avoid cross-repo relative paths. A plugin install is expected to be self-contained.
+- Keep `.claude-plugin/plugin.json` and `.codex-plugin/plugin.json` on the same plugin name and version.
+- This plugin source repo is licensed under Elastic License 2.0 (`ELv2`). The bundled Playwright license remains under its upstream Apache 2.0 license.
+
+### Plugin Metadata Validation
+
+```bash
+npm run validate:plugin-manifests
+npm run check:plugin-version
+npm run test:validators
+```
+
+Use those commands after changing plugin metadata, skills, docs that affect
+plugin packaging, or the repository license. `check:plugin-version` compares the
+shared Claude/Codex plugin version against `origin/main`.
+
+Codex CLI marketplace registration is performed against a marketplace repo/root,
+not directly against this plugin source repo.
 
 ### Git Hooks
 
@@ -117,6 +134,18 @@ npm run eval:closing-linear-issue
 npm run eval:maintain-github-repos
 npm run eval:codex-compatibility
 ```
+
+Metadata-only changes do not require running the full promptfoo eval suite, but
+the deterministic compatibility checks remain available through the commands
+above when skill content or Codex compatibility changes.
+
+## License
+
+This repository is licensed under Elastic License 2.0. See [LICENSE](./LICENSE).
+
+Third-party bundled content keeps its own license. In particular,
+[`skills/playwright/LICENSE.txt`](./skills/playwright/LICENSE.txt) remains the
+upstream Microsoft Playwright Apache 2.0 license.
 
 ## Current Skills
 

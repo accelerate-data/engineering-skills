@@ -15,6 +15,9 @@
     "eval:codex-compatibility": "npm --prefix tests/evals run eval:codex-compatibility",
     "eval:writing-tests": "npm --prefix tests/evals run eval:writing-tests",
     "test:promptfoo-db-gate": "npm --prefix tests/evals run test:promptfoo-db-gate",
+    "validate:plugin-manifests": "python3 scripts/validate_plugin_manifests.py",
+    "check:plugin-version": "python3 scripts/check_plugin_version_bump.py --base-ref origin/main",
+    "test:validators": "python3 -m unittest discover -s tests",
     "view": "npm --prefix tests/evals run view"
   }
 }
