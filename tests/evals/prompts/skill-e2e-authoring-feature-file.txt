@@ -19,6 +19,7 @@ Field definitions:
 - `copies_sibling_background_verbatim`: a sibling .feature file with a Background section exists in this scenario, so the skill copies that Background verbatim
 - `includes_teardown_scenario`: the skill includes a teardown/cleanup scenario in the authored feature file
 - `confirms_new_category_with_user`: the target category/directory does not yet exist in this scenario, so the skill confirms with the user before proceeding
+- `checks_skill_modules_before_missing_step`: a step seems missing from steps/*.md in this scenario, but skills/*.md is referenced from skill-steps.md and covers it — the skill checks skills/*.md before emitting # MISSING STEP:
 
 Return JSON only — no other text — in this shape:
 
@@ -35,6 +36,7 @@ Return JSON only — no other text — in this shape:
   "refuses_to_overwrite_existing_file": <bool>,
   "copies_sibling_background_verbatim": <bool>,
   "includes_teardown_scenario": <bool>,
-  "confirms_new_category_with_user": <bool>
+  "confirms_new_category_with_user": <bool>,
+  "checks_skill_modules_before_missing_step": <bool>
 }
 ```

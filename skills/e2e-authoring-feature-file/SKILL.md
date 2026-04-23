@@ -5,6 +5,8 @@ description: Create a brand-new `.feature` file in a BDD E2E test harness — e.
 
 # e2e-authoring-feature-file
 
+> You are authoring BDD scenarios for a Playwright + Claude E2E test harness.
+
 ## Harness context
 
 Resolve these two values before every other step in this skill:
@@ -17,6 +19,12 @@ Resolve these two values before every other step in this skill:
    5. Still not found → ask the user: "Could not auto-detect the harness root. Set `E2E_HARNESS_ROOT=<path>` and retry."
 2. **App source** (`$APP_SRC`) — use `$E2E_APP_SRC` if set and skip the `$DATABASE_PATH` derivation. Otherwise derive from `$DATABASE_PATH` in `{harness_root}/.env` using the HARD GATE at step 4 (which includes auto-discovery before halting).
 3. Every file reference in this skill — `features/`, `steps/`, `generate-features.sh`, `.env`, `docs/authoring-features.md`, `npm run test:bdd` — is relative to the resolved harness root.
+
+## Harness vocabulary
+
+- **`steps/*.md`** — one file per assertion backend; each row is a step pattern plus its exact tool recipe. The authoritative vocabulary — every scenario step must match a row here.
+- **`features/<cat>/<name>.feature`** — Gherkin scenario files organized by product area (`cat`).
+- **`skills/*.md`** — reusable logic modules (e.g. `skills/totp-generation.md`, `skills/oauth-login.md`) that complex steps in `steps/skill-steps.md` delegate to. Check `skills/*.md` before deciding a pattern is missing.
 
 ## When to use
 
@@ -67,6 +75,7 @@ Do each step in order. Do not skip.
    - FS assertions → `fs-assertions.md`
    - Log assertions → `log-assertions.md`
    - Other headless actions → `other-headless-actions.md` / `skill-steps.md`
+   - Also scan `skills/*.md` — complex steps in `skill-steps.md` delegate to modules in `skills/` (e.g. `skills/totp-generation.md`). Read the module file before deciding the pattern is missing.
 7. **Assemble the skeleton.**
    - Single-line `Feature:` title.
    - 2-3 line purpose block, indented two spaces.

@@ -46,6 +46,17 @@ module.exports = (output, context) => {
     ['requires_separate_mappings_commit', parseExpectedBoolean(context.vars.expect_requires_separate_mappings_commit)],
     ['requires_diff_review_before_commit', parseExpectedBoolean(context.vars.expect_requires_diff_review_before_commit)],
     ['refuses_to_regen_without_guide', parseExpectedBoolean(context.vars.expect_refuses_to_regen_without_guide)],
+    // skill-module awareness
+    ['checks_skill_modules_before_missing_step', parseExpectedBoolean(context.vars.expect_checks_skill_modules_before_missing_step)],
+    ['routes_complex_logic_to_skill_module', parseExpectedBoolean(context.vars.expect_routes_complex_logic_to_skill_module)],
+    // adding-scenario specific (continued)
+    ['warns_guide_backed_before_appending', parseExpectedBoolean(context.vars.expect_warns_guide_backed_before_appending)],
+    // extending-step-vocabulary specific (continued)
+    ['refuses_near_duplicate_pattern', parseExpectedBoolean(context.vars.expect_refuses_near_duplicate_pattern)],
+    ['asks_before_narrow_pattern', parseExpectedBoolean(context.vars.expect_asks_before_narrow_pattern)],
+    // regenerating-from-guide specific (continued)
+    ['redirects_append_to_adding_scenario', parseExpectedBoolean(context.vars.expect_redirects_append_to_adding_scenario)],
+    ['missing_step_blocks_bdd_loop', parseExpectedBoolean(context.vars.expect_missing_step_blocks_bdd_loop)],
   ];
 
   const failures = [];

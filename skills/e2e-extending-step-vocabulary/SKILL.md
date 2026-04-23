@@ -5,6 +5,8 @@ description: Add a missing step pattern to `steps/*.md` when a `.feature` draft 
 
 # e2e-extending-step-vocabulary
 
+> You are authoring BDD scenarios for a Playwright + Claude E2E test harness.
+
 ## Harness context
 
 Resolve these values before every other step in this skill:
@@ -16,6 +18,11 @@ Resolve these values before every other step in this skill:
    4. If filesystem access is available, scan common sibling paths (list `~/Documents/`, `~/projects/`, and similar for a directory containing `features/` + `steps/`).
    5. Still not found → ask the user: "Could not auto-detect the harness root. Set `E2E_HARNESS_ROOT=<path>` and retry."
 2. All file references in this skill — `steps/`, `docs/assertion-backends.md` — are relative to the resolved harness root.
+
+## Harness vocabulary
+
+- **`steps/*.md`** — one markdown table per assertion backend; each row is a step pattern plus its exact tool recipe. This skill edits these files to add new patterns.
+- **`skills/*.md`** — reusable logic modules for complex operations (e.g. `skills/totp-generation.md`, `skills/oauth-login.md`). When a new step requires multi-step logic that warrants reuse, propose it as a `skills/<module>.md` file and route via `steps/skill-steps.md` rather than inlining the full recipe into the step row.
 
 ## When to use
 
@@ -69,6 +76,7 @@ Do each step in order. Do not skip.
    - `fs` → `steps/fs-assertions.md`
    - `log` → `steps/log-assertions.md`
    - `other` → `steps/other-headless-actions.md` (or `steps/skill-steps.md` when the step delegates to a skill file)
+   - For steps requiring multi-step reusable logic (TOTP, OAuth, etc.): check whether a `skills/<module>.md` already exists. If adding a new module is appropriate, propose the `skills/<module>.md` file alongside the `steps/skill-steps.md` entry.
 2. **Refusal gates.** Stop and refuse if any of the following hold. Emit PLAN with the refusal rationale and no PROPOSED ENTRY:
    - **Cross-backend** — the request mixes two backends in one step (e.g. UI click + DB verify). Invariant: one backend per step. Ask the caller to split into two steps and stop.
    - **Ambiguous** — the same natural-language wording could map to two or more distinct tool commands. Propose at least two disambiguated alternatives and ask the caller to pick before you draft.

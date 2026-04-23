@@ -91,3 +91,29 @@ tests:
       expect_runs_generate_script_not_manual_gherkin: "true"
       expect_requires_diff_review_before_commit: "true"
       expect_no_hardcoded_app_path: "true"
+
+  - description: "append redirect — quick-append request redirects to e2e-adding-scenario with overwrite warning"
+    vars:
+      scenario: |-
+        - E2E_HARNESS_ROOT is set to /home/user/e2e-test-harness.
+        - The harness .env contains: DATABASE_PATH=/home/user/app/data/db.sqlite
+        - generate-features.sh contains MAPPINGS entry: "settings/domains.md:settings/domain-crud.feature".
+        - features/settings/domain-crud.feature exists and is guide-backed.
+        - The user says: "Quickly append one scenario to features/settings/domain-crud.feature for the archive flow."
+      expect_redirects_append_to_adding_scenario: "true"
+      expect_runs_generate_script_not_manual_gherkin: "false"
+      expect_no_hardcoded_app_path: "true"
+
+  - description: "MISSING STEP blocks BDD — handoff to extending-step-vocabulary before BDD runs"
+    vars:
+      scenario: |-
+        - E2E_HARNESS_ROOT is set to /home/user/e2e-test-harness.
+        - The harness .env contains: DATABASE_PATH=/home/user/app/data/db.sqlite
+        - The user says: "Regenerate features/settings/notifications.feature from the guide."
+        - $APP_SRC/docs/user-guide/settings/notifications.md exists and is non-empty.
+        - generate-features.sh contains the MAPPINGS pair for settings/notifications.md.
+        - ./generate-features.sh ran and the output contains: "# MISSING STEP: verify the Slack workspace is connected".
+      expect_missing_step_blocks_bdd_loop: "true"
+      expect_runs_generate_script_not_manual_gherkin: "true"
+      expect_no_hardcoded_app_path: "true"
+      expect_halts_on_missing_database_path: "false"

@@ -5,6 +5,8 @@ description: Regenerate or create a `.feature` file from its paired user-guide p
 
 # e2e-regenerating-from-guide
 
+> You are authoring BDD scenarios for a Playwright + Claude E2E test harness.
+
 ## Harness context
 
 Resolve these two values before every other step in this skill:
@@ -17,6 +19,14 @@ Resolve these two values before every other step in this skill:
    5. Still not found → ask the user: "Could not auto-detect the harness root. Set `E2E_HARNESS_ROOT=<path>` and retry."
 2. **App source** (`$APP_SRC`) — use `$E2E_APP_SRC` if set and skip the `$DATABASE_PATH` derivation. Otherwise derive from `$DATABASE_PATH` in `{harness_root}/.env` using the HARD GATE at step 1 (which includes auto-discovery before halting).
 3. Every file reference in this skill — `features/`, `steps/`, `generate-features.sh`, `.env` — is relative to the resolved harness root. The user guide path `$APP_SRC/docs/user-guide/**/*.md` is relative to the resolved app source root.
+
+## Harness vocabulary
+
+- **`steps/*.md`** — one file per assertion backend; the authoritative step vocabulary used by the generator.
+- **`features/<cat>/<name>.feature`** — Gherkin scenario files the generator writes.
+- **`generate-features.sh`** — script that reads a user-guide page from `$APP_SRC/docs/user-guide/` and regenerates the paired `.feature` file via an LLM call.
+- **`MAPPINGS`** — array inside `generate-features.sh` pairing `"<area>/<topic>.md:<cat>/<name>.feature"`. A `.feature` file in MAPPINGS is guide-backed.
+- **`skills/*.md`** — reusable logic modules (e.g. TOTP generation, OAuth flows) referenced from `steps/skill-steps.md`. The generator is aware of these; they do not need separate handling.
 
 ## When to use
 

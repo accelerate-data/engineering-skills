@@ -88,3 +88,44 @@ tests:
       expect_halts_on_missing_database_path: "false"
       expect_appends_not_replaces: "true"
       expect_no_hardcoded_app_path: "true"
+
+  - description: "skill-module awareness — checks skills/*.md before declaring a step missing"
+    vars:
+      scenario: |-
+        - E2E_HARNESS_ROOT is set to /home/user/e2e-test-harness.
+        - The harness .env contains: DATABASE_PATH=/home/user/app/data/db.sqlite
+        - The target feature file features/auth/login.feature exists.
+        - The user says: "Add a scenario that logs in with TOTP two-factor authentication."
+        - steps/skill-steps.md exists and references skills/totp-generation.md for TOTP code generation.
+        - skills/totp-generation.md exists and describes a reusable TOTP step pattern.
+        - No standalone TOTP step exists in any other steps/*.md file.
+      expect_checks_skill_modules_before_missing_step: "true"
+      expect_emits_missing_step_comment: "false"
+      expect_no_hardcoded_app_path: "true"
+
+  - description: "RUN_ID tagging — data literals carry {{RUN_ID}}, UI chrome does not"
+    vars:
+      scenario: |-
+        - E2E_HARNESS_ROOT is set to /home/user/e2e-test-harness.
+        - The harness .env contains: DATABASE_PATH=/home/user/app/data/db.sqlite
+        - The target feature file features/domains/domain-crud.feature exists.
+        - The user says: "Add a scenario that creates a domain named 'Test Domain' and verifies it appears in the list."
+        - steps/ui-actions.md has a "fill the {field} field with {value}" pattern.
+        - steps/ui-assertions.md has an "I should see text {text}" pattern.
+        - The "Add Data Domain" button already exists in the product; it is UI chrome, not test data.
+      expect_emits_run_id_on_data_literals: "true"
+      expect_no_hardcoded_app_path: "true"
+      expect_appends_not_replaces: "true"
+      expect_halts_on_missing_database_path: "false"
+
+  - description: "guide-backed warning — MAPPINGS entry present, warns before appending"
+    vars:
+      scenario: |-
+        - E2E_HARNESS_ROOT is set to /home/user/e2e-test-harness.
+        - The harness .env contains: DATABASE_PATH=/home/user/app/data/db.sqlite
+        - The target feature file features/settings/domain-crud.feature exists.
+        - generate-features.sh contains MAPPINGS entry: "settings/domains.md:settings/domain-crud.feature".
+        - The user says: "Add a quick scenario for the domain archive flow to domain-crud.feature."
+      expect_warns_guide_backed_before_appending: "true"
+      expect_no_hardcoded_app_path: "true"
+      expect_halts_on_missing_database_path: "false"

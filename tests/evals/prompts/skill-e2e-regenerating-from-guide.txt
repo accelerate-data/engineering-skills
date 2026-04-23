@@ -17,6 +17,8 @@ Field definitions:
 - `refuses_to_regen_without_guide`: the guide file does not exist in this scenario, so the skill refuses to invoke ./generate-features.sh
 - `emits_run_id_on_data_literals`: the skill embeds {{RUN_ID}} in seeded data literals in any example output
 - `no_hardcoded_app_path`: the skill never writes a hardcoded absolute path in its output (uses $APP_SRC, $DATABASE_PATH, etc.)
+- `redirects_append_to_adding_scenario`: the user asked to append a single scenario to a guide-backed .feature file in this scenario, so the skill redirects to e2e-adding-scenario with a regen-overwrite warning instead of invoking ./generate-features.sh
+- `missing_step_blocks_bdd_loop`: the regenerated .feature contains # MISSING STEP: comments in this scenario, so the skill stops the BDD loop and hands off to e2e-extending-step-vocabulary before running BDD
 
 Return JSON only — no other text — in this shape:
 
@@ -31,6 +33,8 @@ Return JSON only — no other text — in this shape:
   "requires_diff_review_before_commit": <bool>,
   "refuses_to_regen_without_guide": <bool>,
   "emits_run_id_on_data_literals": <bool>,
-  "no_hardcoded_app_path": <bool>
+  "no_hardcoded_app_path": <bool>,
+  "redirects_append_to_adding_scenario": <bool>,
+  "missing_step_blocks_bdd_loop": <bool>
 }
 ```

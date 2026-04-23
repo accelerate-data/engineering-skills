@@ -17,6 +17,9 @@ Field definitions:
 - `uses_step_vocabulary_only`: reserved for alignment with other BDD skills — set true unless this skill is inventing steps rather than adding to vocabulary
 - `emits_missing_step_comment`: a needed step pattern is absent and the skill emits a # MISSING STEP: comment
 - `no_hardcoded_app_path`: the skill never writes a hardcoded absolute path in its output
+- `routes_complex_logic_to_skill_module`: the requested step requires multi-step reusable logic (e.g. TOTP generation) — the skill proposes a skills/<module>.md entry routed via steps/skill-steps.md rather than inlining the full recipe into the step row
+- `refuses_near_duplicate_pattern`: an existing entry in the target steps/*.md file already covers the same assertion semantics in this scenario, so the skill refuses and points to the existing pattern instead of adding a synonym
+- `asks_before_narrow_pattern`: the requested pattern would only be used in one scenario in one .feature file in this scenario, so the skill asks the caller whether to simplify instead of adding bespoke vocabulary
 
 Return JSON only — no other text — in this shape:
 
@@ -31,6 +34,9 @@ Return JSON only — no other text — in this shape:
   "emits_run_id_on_data_literals": <bool>,
   "uses_step_vocabulary_only": <bool>,
   "emits_missing_step_comment": <bool>,
-  "no_hardcoded_app_path": <bool>
+  "no_hardcoded_app_path": <bool>,
+  "routes_complex_logic_to_skill_module": <bool>,
+  "refuses_near_duplicate_pattern": <bool>,
+  "asks_before_narrow_pattern": <bool>
 }
 ```

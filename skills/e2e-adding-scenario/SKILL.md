@@ -5,6 +5,8 @@ description: Append or extend scenarios in an existing `.feature` file in a BDD 
 
 # e2e-adding-scenario
 
+> You are authoring BDD scenarios for a Playwright + Claude E2E test harness.
+
 ## Harness context
 
 Resolve these two values before every other step in this skill:
@@ -17,6 +19,13 @@ Resolve these two values before every other step in this skill:
    5. Still not found → ask the user: "Could not auto-detect the harness root. Set `E2E_HARNESS_ROOT=<path>` and retry."
 2. **App source** (`$APP_SRC`) — use `$E2E_APP_SRC` if set and skip the `$DATABASE_PATH` derivation. Otherwise derive from `$DATABASE_PATH` in `{harness_root}/.env` using the HARD GATE at step 4 (which includes auto-discovery before halting).
 3. Every file reference in this skill — `features/`, `steps/`, `generate-features.sh`, `.env`, `npm run test:bdd` — is relative to the resolved harness root.
+
+## Harness vocabulary
+
+- **`steps/*.md`** — one file per assertion backend (`ui-actions`, `ui-assertions`, `db-assertions`, etc.); each row is a step pattern plus its exact tool recipe. The authoritative vocabulary — every scenario step must match a row here.
+- **`features/<cat>/<name>.feature`** — Gherkin scenario files organized by product area (`cat`).
+- **`skills/*.md`** — reusable logic modules (e.g. `skills/totp-generation.md`, `skills/oauth-login.md`) that complex steps in `steps/skill-steps.md` delegate to. Check `skills/*.md` before deciding a pattern is missing.
+- **`MAPPINGS`** — array in `generate-features.sh` pairing `"<area>/<topic>.md:<cat>/<name>.feature"`. A `.feature` file in MAPPINGS is guide-backed; hand-edits will be overwritten on the next regen.
 
 ## When to use
 
@@ -74,6 +83,7 @@ Do each step in order. Do not skip.
    - FS assertions → `fs-assertions.md`
    - Log assertions → `log-assertions.md`
    - Other headless actions → `other-headless-actions.md` / `skill-steps.md`
+   - Also scan `skills/*.md` — complex steps in `skill-steps.md` delegate to modules in `skills/` (e.g. `skills/totp-generation.md`). Read the module file before deciding the pattern is missing.
 7. **Draft scenarios.**
    - One user-observable checkpoint per scenario. Prefer a single `Then` at the end. Split multi-checkpoint requests into multiple scenarios; the only allowed exception is a UI-truth + DB-truth pair confirming the same write (note the pairing in PLAN).
    - Tag every data literal with `{{RUN_ID}}`. UI chrome stays as the app renders it.

@@ -84,3 +84,34 @@ tests:
       expect_halts_on_missing_database_path: "false"
       expect_includes_teardown_scenario: "true"
       expect_no_hardcoded_app_path: "true"
+
+  - description: "skill-module awareness — checks skills/*.md before declaring a TOTP step missing"
+    vars:
+      scenario: |-
+        - E2E_HARNESS_ROOT is set to /home/user/e2e-test-harness.
+        - The harness .env contains: DATABASE_PATH=/home/user/app/data/db.sqlite
+        - The user says: "Create features/auth/totp-login.feature covering 2FA TOTP login."
+        - features/auth/totp-login.feature does NOT exist yet.
+        - A sibling file features/auth/sso-login.feature exists with a Background section.
+        - steps/skill-steps.md exists and references skills/totp-generation.md.
+        - skills/totp-generation.md exists and covers TOTP code generation.
+        - No standalone TOTP step exists in any other steps/*.md file.
+      expect_checks_skill_modules_before_missing_step: "true"
+      expect_emits_missing_step_comment: "false"
+      expect_includes_teardown_scenario: "true"
+      expect_no_hardcoded_app_path: "true"
+
+  - description: "RUN_ID tagging — data literals carry {{RUN_ID}}, UI chrome does not"
+    vars:
+      scenario: |-
+        - E2E_HARNESS_ROOT is set to /home/user/e2e-test-harness.
+        - The harness .env contains: DATABASE_PATH=/home/user/app/data/db.sqlite
+        - The user says: "Create features/domains/domain-create.feature. Include a scenario that creates a domain named 'Test Domain'."
+        - features/domains/domain-create.feature does NOT exist yet.
+        - A sibling file features/domains/domain-settings.feature exists with a Background section.
+        - steps/ui-actions.md and steps/ui-assertions.md contain relevant step patterns.
+        - The "Create Domain" button is existing product chrome; "Test Domain" is the user-typed data.
+      expect_emits_run_id_on_data_literals: "true"
+      expect_includes_teardown_scenario: "true"
+      expect_no_hardcoded_app_path: "true"
+      expect_halts_on_missing_database_path: "false"
