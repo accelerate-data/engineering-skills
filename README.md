@@ -115,6 +115,22 @@ chmod +x .githooks/pre-commit
 
 Promptfoo evals for skills in this repository live under [`tests/evals/`](./tests/evals).
 
+Validated OpenCode POC setup for `AD-19`:
+
+```bash
+curl -fsSL https://opencode.ai/install | bash
+opencode auth login
+cd tests/evals
+npm install
+```
+
+The currently validated Phase 1 provider path is:
+
+- `promptfoo@0.121.7`
+- `@opencode-ai/sdk@1.14.21`
+- `provider_id: opencode`
+- `model: qwen3.6-plus`
+
 Run them from the harness directory:
 
 ```bash
@@ -123,15 +139,26 @@ npm install
 npm run eval
 ```
 
+Validated targeted POC command:
+
+```bash
+cd tests/evals
+npm run eval:creating-linear-issue
+```
+
 Individual suites:
 
 ```bash
 cd tests/evals
 npm run eval:creating-linear-issue
+npm run eval:creating-linear-issue-routing
 npm run eval:implementing-linear-issue
 npm run eval:raising-linear-pr
 npm run eval:closing-linear-issue
 npm run eval:maintain-github-repos
+npm run eval:create-feature-request
+npm run eval:writing-tests
+npm run eval:coverage
 npm run eval:codex-compatibility
 ```
 
