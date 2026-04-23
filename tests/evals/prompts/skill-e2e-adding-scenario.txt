@@ -11,6 +11,8 @@ Field definitions:
 - `resolves_harness_root_from_env_var`: the skill uses E2E_HARNESS_ROOT (which IS set in this scenario) to locate the harness
 - `falls_back_to_cwd_when_env_not_set`: the skill falls back to CWD as the harness root because E2E_HARNESS_ROOT is NOT set in this scenario
 - `uses_e2e_app_src_when_set`: E2E_APP_SRC is set in this scenario so the skill uses it directly, skipping the DATABASE_PATH derivation
+- `halts_on_unreadable_e2e_app_src`: E2E_APP_SRC is set in this scenario but points to an unreadable or missing directory, so the skill halts instead of authoring Gherkin
+- `auto_discovery_avoids_expanded_app_path`: DATABASE_PATH is unavailable but app-root auto-discovery succeeds, and the skill avoids printing the expanded absolute app path in output
 - `emits_run_id_on_data_literals`: the skill embeds {{RUN_ID}} in seeded data literals in the scenario output
 - `uses_step_vocabulary_only`: the skill only uses step patterns from steps/*.md and does not invent new steps
 - `emits_missing_step_comment`: a required step pattern is absent from steps/*.md in this scenario, so the skill emits a # MISSING STEP: comment
@@ -29,6 +31,8 @@ Return JSON only — no other text — in this shape:
   "resolves_harness_root_from_env_var": <bool>,
   "falls_back_to_cwd_when_env_not_set": <bool>,
   "uses_e2e_app_src_when_set": <bool>,
+  "halts_on_unreadable_e2e_app_src": <bool>,
+  "auto_discovery_avoids_expanded_app_path": <bool>,
   "emits_run_id_on_data_literals": <bool>,
   "uses_step_vocabulary_only": <bool>,
   "emits_missing_step_comment": <bool>,

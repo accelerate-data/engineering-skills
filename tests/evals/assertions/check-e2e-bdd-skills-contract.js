@@ -23,6 +23,8 @@ module.exports = (output, context) => {
     ['resolves_harness_root_from_env_var', parseExpectedBoolean(context.vars.expect_resolves_harness_root_from_env_var)],
     ['falls_back_to_cwd_when_env_not_set', parseExpectedBoolean(context.vars.expect_falls_back_to_cwd_when_env_not_set)],
     ['uses_e2e_app_src_when_set', parseExpectedBoolean(context.vars.expect_uses_e2e_app_src_when_set)],
+    ['halts_on_unreadable_e2e_app_src', parseExpectedBoolean(context.vars.expect_halts_on_unreadable_e2e_app_src)],
+    ['auto_discovery_avoids_expanded_app_path', parseExpectedBoolean(context.vars.expect_auto_discovery_avoids_expanded_app_path)],
     ['emits_run_id_on_data_literals', parseExpectedBoolean(context.vars.expect_emits_run_id_on_data_literals)],
     ['uses_step_vocabulary_only', parseExpectedBoolean(context.vars.expect_uses_step_vocabulary_only)],
     ['emits_missing_step_comment', parseExpectedBoolean(context.vars.expect_emits_missing_step_comment)],
@@ -57,6 +59,7 @@ module.exports = (output, context) => {
     // regenerating-from-guide specific (continued)
     ['redirects_append_to_adding_scenario', parseExpectedBoolean(context.vars.expect_redirects_append_to_adding_scenario)],
     ['missing_step_blocks_bdd_loop', parseExpectedBoolean(context.vars.expect_missing_step_blocks_bdd_loop)],
+    ['classifies_mapping_present_feature_absent_as_create', parseExpectedBoolean(context.vars.expect_classifies_mapping_present_feature_absent_as_create)],
   ];
 
   const failures = [];

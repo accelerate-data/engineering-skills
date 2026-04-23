@@ -7,17 +7,18 @@ prompts:
     raw: file://../../prompts/skill-e2e-adding-scenario.txt
 
 providers:
-  - id: anthropic:claude-agent-sdk
+  - id: opencode:sdk
     config:
-      model: claude-haiku-4-5-20251001
+      baseUrl: http://127.0.0.1:4096
+      apiKey: promptfoo-local-baseurl-placeholder
       working_dir: ../..
       max_turns: 20
-      permission_mode: auto
-      append_allowed_tools:
-        - Read
-        - Bash
-        - Glob
-        - Grep
+      tools:
+        read: true
+        grep: true
+        glob: true
+        list: true
+        bash: true
 
 defaultTest:
   assert:
@@ -88,6 +89,33 @@ tests:
       expect_halts_on_missing_database_path: "false"
       expect_appends_not_replaces: "true"
       expect_no_hardcoded_app_path: "true"
+
+  - description: "halt — E2E_APP_SRC set but unreadable"
+    vars:
+      scenario: |-
+        - E2E_HARNESS_ROOT is set to /home/user/e2e-test-harness.
+        - E2E_APP_SRC is set to /home/user/missing-app, but that directory is not readable.
+        - The harness .env contains no DATABASE_PATH.
+        - The target feature file features/domains/domain-crud.feature exists.
+        - The user says: "Add a scenario that verifies the domain list shows newly created domains."
+      expect_uses_e2e_app_src_when_set: "true"
+      expect_halts_on_unreadable_e2e_app_src: "true"
+      expect_halts_on_missing_database_path: "false"
+      expect_appends_not_replaces: "false"
+
+  - description: "auto-discovery — DATABASE_PATH missing but one app root found without printing absolute path"
+    vars:
+      scenario: |-
+        - E2E_HARNESS_ROOT is set to /home/user/e2e-test-harness.
+        - E2E_APP_SRC is not set.
+        - The harness .env exists but DATABASE_PATH is commented out.
+        - App-root auto-discovery finds exactly one readable sibling app root containing package.json and src/.
+        - The target feature file features/domains/domain-crud.feature exists.
+        - The user says: "Add a scenario that verifies the domain list shows newly created domains."
+      expect_halts_on_missing_database_path: "false"
+      expect_auto_discovery_avoids_expanded_app_path: "true"
+      expect_no_hardcoded_app_path: "true"
+      expect_appends_not_replaces: "true"
 
   - description: "skill-module awareness — checks skills/*.md before declaring a step missing"
     vars:

@@ -2,11 +2,11 @@
 
 Resolve `$APP_SRC` before planning any regeneration.
 
-**Bypass:** if `$E2E_APP_SRC` is set, use it directly — skip the derivation and halt conditions below entirely.
+**Override:** if `$E2E_APP_SRC` is set, use it as the `$APP_SRC` candidate and skip `$DATABASE_PATH` derivation. Do **not** skip source verification: when filesystem access is available, verify that `$E2E_APP_SRC` is a readable directory. If it is not readable, HALT with the source-verification message.
 
 **Derivation:** read `{harness_root}/.env` (or `.env.example` only if `.env` is absent).
 
-```
+```text
 $APP_SRC = dirname(dirname($DATABASE_PATH))
 ```
 
@@ -18,8 +18,8 @@ If `$DATABASE_PATH` is unset, empty, commented-out, or missing from `.env`, **tr
 
 1. List sibling directories of the harness root and immediate parent directories.
 2. Look for a directory containing `package.json` plus a source tree (`src/`, `app/`, `lib/`, or similar indicators of a web/app project).
-3. **One clear candidate found** → use it as `$APP_SRC` and emit a note: "Auto-detected `$APP_SRC` as `<path>`. Set `E2E_APP_SRC=<path>` to make this explicit next time."
-4. **Multiple candidates found** → ask the user: "Found multiple candidate app roots: [list with the heuristic that matched each]. Which should I use as `$APP_SRC`? Or set `E2E_APP_SRC=<path>` directly."
+3. **One clear candidate found** → use it as `$APP_SRC` and emit a note: "Auto-detected a readable `$APP_SRC` candidate from sibling app-root discovery. Set `E2E_APP_SRC` explicitly next time to make this deterministic."
+4. **Multiple candidates found** → ask the user: "Found multiple candidate app roots by sibling app-root discovery. Which should I use as `$APP_SRC`? Or set `E2E_APP_SRC` directly." Describe each candidate by directory name plus the heuristic that matched it; do not print absolute paths.
 5. **No candidate found** → proceed to the HALT below.
 
 ## HALT conditions

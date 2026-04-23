@@ -48,8 +48,8 @@ Regenerate a `.feature` file from its user-guide source page. Triggers:
 Emit a PLAN section (no FILE BLOCK — this skill does not author Gherkin directly; `./generate-features.sh` writes the file). The PLAN has four parts, in this order:
 
 1. **Classification** — state the mode (`CREATE` or `UPDATE`) with a one-line reason:
-   - `CREATE`: target `.feature` does NOT exist (MAPPINGS entry may or may not exist).
-   - `UPDATE`: target `.feature` exists AND MAPPINGS already contains the pair.
+   - `CREATE`: target `.feature` does NOT exist, regardless of whether MAPPINGS already contains the pair.
+   - `UPDATE`: target `.feature` exists.
 2. **MAPPINGS state** — quote the relevant line(s). If the pair is missing, state the exact line to INSERT and the alphabetical slot it goes into (between which two existing entries). Commit the `generate-features.sh` edit as a SEPARATE commit BEFORE regen so reviewers can see the MAPPINGS change in isolation.
 3. **Regen command** — the literal `./generate-features.sh <area>/<topic>.md` invocation (run from the harness root). Use the guide path (first half of the MAPPINGS pair), never the feature path.
 4. **Diff review template** — after regen returns, `git diff features/<area>/<name>.feature` (or `git status` for create mode). Summarize scenarios added / changed / removed. Dropped scenarios are called out explicitly and require user confirmation before the regen commit lands.
@@ -71,8 +71,8 @@ Do each step in order. Do not skip.
 1. **Resolve `$APP_SRC` — HARD GATE.** Load `references/app-src-gate.md` and execute it. On halt, the halt notice is your entire output — no PLAN, no MAPPINGS edit, no `./generate-features.sh` invocation.
 2. **Confirm the guide exists** at `$APP_SRC/docs/user-guide/<area>/<topic>.md`. If it does NOT exist, STOP and offer the user two branches: (a) hand off to `doc-skills:write-user-guide` to author the guide first, or (b) hand off to `e2e-authoring-feature-file` for the hand-edit path. Do NOT invoke `./generate-features.sh` without a guide.
 3. **Check `MAPPINGS`.** Grep `MAPPINGS=(` in `{harness_root}/generate-features.sh` for a line matching the guide path. Report mode:
-   - Pair present AND target `.feature` exists → `UPDATE` mode.
-   - Pair present AND target `.feature` absent → `UPDATE` mode with create-on-disk (rare; still a regen).
+   - Pair present AND target `.feature` exists → `UPDATE` mode with unchanged MAPPINGS.
+   - Pair present AND target `.feature` absent → `CREATE` mode with unchanged MAPPINGS.
    - Pair absent → `CREATE` mode; INSERT the `"<area>/<topic>.md:<cat>/<name>.feature"` line ALPHABETICALLY into the MAPPINGS array (between the two existing entries that bracket it). Commit the `generate-features.sh` edit as a SEPARATE commit with a message like `chore(features): map <area>/<topic>.md → <cat>/<name>.feature` BEFORE regen.
 4. **Run `./generate-features.sh <area>/<topic>.md`** (from the harness root). Use the guide path (left side of the MAPPINGS pair). The script writes the `.feature` file directly. Capture stdout for the MISSING-STEP log.
 5. **Review the diff.**
@@ -122,7 +122,7 @@ Do each step in order. Do not skip.
 2. Confirm the guide exists at `$APP_SRC/docs/user-guide/settings/notifications.md`. It does — proceed.
 3. Grep `MAPPINGS=(` in `{harness_root}/generate-features.sh`. No pair for `settings/notifications.md` — this is CREATE mode. Insert the new pair into its alphabetical slot among the `settings/` entries. Commit separately:
 
-   ```
+   ```text
    chore(features): map settings/notifications.md → settings/notifications.feature
    ```
 

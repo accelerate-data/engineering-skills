@@ -163,6 +163,10 @@ npm run eval:maintain-github-repos
 npm run eval:create-feature-request
 npm run eval:writing-tests
 npm run eval:coverage
+npm run eval:e2e-adding-scenario
+npm run eval:e2e-authoring-feature-file
+npm run eval:e2e-extending-step-vocabulary
+npm run eval:e2e-regenerating-from-guide
 npm run eval:codex-compatibility
 ```
 
