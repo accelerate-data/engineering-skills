@@ -7,12 +7,18 @@ prompts:
     raw: file://../../prompts/skill-creating-linear-issue-routing.txt
 
 providers:
-  - id: anthropic:claude-agent-sdk
+  - id: opencode:sdk
     config:
-      model: claude-haiku-4-5-20251001
+      provider_id: opencode
+      model: qwen3.6-plus
       working_dir: ../..
       max_turns: 1
-      permission_mode: auto
+      tools:
+        read: true
+        grep: true
+        glob: true
+        list: true
+        bash: true
 
 defaultTest:
   assert:
