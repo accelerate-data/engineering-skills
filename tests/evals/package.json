@@ -18,7 +18,7 @@
     "view": "./scripts/promptfoo.sh view"
   },
   "dependencies": {
-    "@opencode-ai/sdk": "1.4.3",
-    "promptfoo": "0.121.4"
+    "@opencode-ai/sdk": "1.14.21",
+    "promptfoo": "0.121.7"
   }
 }
