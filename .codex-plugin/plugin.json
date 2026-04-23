@@ -1,7 +1,7 @@
 {
   "name": "engineering-skills",
   "description": "Shared engineering-team skills for code review, issue workflow, UI work, and browser automation.",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "author": {
     "name": "Accelerate Data"
   },
