@@ -1,0 +1,78 @@
+# yaml-language-server: $schema=https://promptfoo.dev/config-schema.json
+description: "e2e-regenerating-from-guide skill — DATABASE_PATH gate, guide existence check, MAPPINGS separate commit, diff review, and no manual Gherkin"
+
+prompts:
+  - id: e2e-regenerating-from-guide
+    label: e2e-regenerating-from-guide
+    raw: file://../../prompts/skill-e2e-regenerating-from-guide.txt
+
+providers:
+  - id: anthropic:claude-agent-sdk
+    config:
+      model: claude-haiku-4-5-20251001
+      working_dir: ../..
+      max_turns: 20
+      permission_mode: auto
+      append_allowed_tools:
+        - Read
+        - Bash
+        - Glob
+        - Grep
+
+defaultTest:
+  assert:
+    - type: javascript
+      value: file://../../assertions/check-e2e-bdd-skills-contract.js
+
+tests:
+  - description: "happy path — UPDATE mode, runs generate script, requires diff review"
+    vars:
+      scenario: |-
+        - E2E_HARNESS_ROOT is set to /home/user/e2e-test-harness.
+        - The harness .env contains: DATABASE_PATH=/home/user/app/data/db.sqlite
+        - The user says: "The settings/notifications.md guide changed. Regenerate features/settings/notifications.feature."
+        - $APP_SRC/docs/user-guide/settings/notifications.md exists and is non-empty.
+        - generate-features.sh already contains the MAPPINGS pair: "settings/notifications.md:settings/notifications.feature".
+        - features/settings/notifications.feature exists with 4 scenarios.
+      expect_resolves_harness_root_from_env_var: "true"
+      expect_halts_on_missing_database_path: "false"
+      expect_runs_generate_script_not_manual_gherkin: "true"
+      expect_requires_diff_review_before_commit: "true"
+      expect_requires_separate_mappings_commit: "false"
+      expect_no_hardcoded_app_path: "true"
+
+  - description: "halt — DATABASE_PATH missing from .env and E2E_APP_SRC not set"
+    vars:
+      scenario: |-
+        - E2E_HARNESS_ROOT is not set. CWD is /home/user/e2e-test-harness which contains features/ and steps/.
+        - The harness .env exists but DATABASE_PATH line is absent entirely.
+        - E2E_APP_SRC is not set.
+        - The user says: "Regenerate features/settings/notifications.feature from the guide."
+      expect_halts_on_missing_database_path: "true"
+      expect_falls_back_to_cwd_when_env_not_set: "true"
+      expect_no_hardcoded_app_path: "true"
+
+  - description: "no guide — refuses to run generate script when guide file is missing"
+    vars:
+      scenario: |-
+        - E2E_HARNESS_ROOT is set to /home/user/e2e-test-harness.
+        - The harness .env contains: DATABASE_PATH=/home/user/app/data/db.sqlite
+        - The user says: "Regenerate features/plugins/plugin-crud.feature."
+        - $APP_SRC/docs/user-guide/plugins/plugin-crud.md does NOT exist.
+      expect_refuses_to_regen_without_guide: "true"
+      expect_runs_generate_script_not_manual_gherkin: "false"
+      expect_no_hardcoded_app_path: "true"
+
+  - description: "CREATE mode — new MAPPINGS pair committed separately before regen"
+    vars:
+      scenario: |-
+        - E2E_HARNESS_ROOT is set to /home/user/e2e-test-harness.
+        - The harness .env contains: DATABASE_PATH=/home/user/app/data/db.sqlite
+        - The user says: "Create features/marketplace/listings.feature from the marketplace/listings.md guide."
+        - $APP_SRC/docs/user-guide/marketplace/listings.md exists and is non-empty.
+        - generate-features.sh does NOT contain a MAPPINGS pair for marketplace/listings.md yet.
+        - features/marketplace/listings.feature does NOT exist yet.
+      expect_runs_generate_script_not_manual_gherkin: "true"
+      expect_requires_separate_mappings_commit: "true"
+      expect_no_hardcoded_app_path: "true"
+      expect_halts_on_missing_database_path: "false"

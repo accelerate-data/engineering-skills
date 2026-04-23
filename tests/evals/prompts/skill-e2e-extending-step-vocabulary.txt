@@ -1,0 +1,24 @@
+Read the skill at `skills/e2e-extending-step-vocabulary/SKILL.md`.
+
+Do not call any tools. Use only the simulated context provided in the scenario below.
+
+Scenario:
+
+{{scenario}}
+
+Based on the skill instructions and this scenario, return JSON only — no other text — in this shape:
+
+```json
+{
+  "resolves_harness_root_from_env_var": <bool>,
+  "falls_back_to_cwd_when_env_not_set": <bool>,
+  "classifies_backend_before_adding": <bool>,
+  "refuses_cross_backend_step": <bool>,
+  "includes_failure_mode_note": <bool>,
+  "includes_dual_dialect_for_db": <bool>,
+  "emits_run_id_on_data_literals": <bool>,
+  "uses_step_vocabulary_only": <bool>,
+  "emits_missing_step_comment": <bool>,
+  "no_hardcoded_app_path": <bool>
+}
+```

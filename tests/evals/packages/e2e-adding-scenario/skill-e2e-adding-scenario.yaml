@@ -1,0 +1,77 @@
+# yaml-language-server: $schema=https://promptfoo.dev/config-schema.json
+description: "e2e-adding-scenario skill — harness root resolution, append-not-replace, vocabulary enforcement, and handoff behavior"
+
+prompts:
+  - id: e2e-adding-scenario
+    label: e2e-adding-scenario
+    raw: file://../../prompts/skill-e2e-adding-scenario.txt
+
+providers:
+  - id: anthropic:claude-agent-sdk
+    config:
+      model: claude-haiku-4-5-20251001
+      working_dir: ../..
+      max_turns: 20
+      permission_mode: auto
+      append_allowed_tools:
+        - Read
+        - Bash
+        - Glob
+        - Grep
+
+defaultTest:
+  assert:
+    - type: javascript
+      value: file://../../assertions/check-e2e-bdd-skills-contract.js
+
+tests:
+  - description: "happy path — E2E_HARNESS_ROOT set, appends scenario without emitting Feature heading"
+    vars:
+      scenario: |-
+        - E2E_HARNESS_ROOT is set to /home/user/e2e-test-harness.
+        - The harness .env contains: DATABASE_PATH=/home/user/app/data/db.sqlite
+        - The target feature file features/domains/domain-crud.feature exists with 3 scenarios.
+        - The user says: "Add a scenario that verifies the domain delete confirmation dialog appears before deletion."
+        - steps/ui-actions.md contains a step pattern for "I click the button {label}".
+        - steps/ui-assertions.md contains a step pattern for "I should see {text} on the page".
+      expect_resolves_harness_root_from_env_var: "true"
+      expect_appends_not_replaces: "true"
+      expect_refuses_to_emit_feature_heading: "true"
+      expect_uses_step_vocabulary_only: "true"
+      expect_no_hardcoded_app_path: "true"
+      expect_halts_on_missing_database_path: "false"
+
+  - description: "halt — DATABASE_PATH missing from .env and E2E_APP_SRC not set"
+    vars:
+      scenario: |-
+        - E2E_HARNESS_ROOT is not set. CWD is /home/user/e2e-test-harness which contains features/ and steps/.
+        - The harness .env exists but DATABASE_PATH is commented out: # DATABASE_PATH=
+        - E2E_APP_SRC is not set.
+        - The user says: "Add a scenario to features/domains/domain-crud.feature for the soft-delete flow."
+      expect_halts_on_missing_database_path: "true"
+      expect_falls_back_to_cwd_when_env_not_set: "true"
+      expect_no_hardcoded_app_path: "true"
+
+  - description: "handoff — target feature file does not exist, route to authoring skill"
+    vars:
+      scenario: |-
+        - E2E_HARNESS_ROOT is set to /home/user/e2e-test-harness.
+        - The harness .env contains: DATABASE_PATH=/home/user/app/data/db.sqlite
+        - The user says: "Add a scenario to features/billing/invoices.feature."
+        - features/billing/invoices.feature does NOT exist in the harness.
+      expect_handoffs_to_authoring_when_file_missing: "true"
+      expect_appends_not_replaces: "true"
+      expect_no_hardcoded_app_path: "true"
+
+  - description: "vocabulary gap — emits MISSING STEP comment instead of inventing a step"
+    vars:
+      scenario: |-
+        - E2E_HARNESS_ROOT is set to /home/user/e2e-test-harness.
+        - The harness .env contains: DATABASE_PATH=/home/user/app/data/db.sqlite
+        - The target feature file features/domains/domain-crud.feature exists.
+        - The user says: "Add a scenario that checks the WebSocket notification appears after domain creation."
+        - No step pattern for WebSocket notification exists in any steps/*.md file.
+      expect_emits_missing_step_comment: "true"
+      expect_uses_step_vocabulary_only: "true"
+      expect_no_hardcoded_app_path: "true"
+      expect_halts_on_missing_database_path: "false"

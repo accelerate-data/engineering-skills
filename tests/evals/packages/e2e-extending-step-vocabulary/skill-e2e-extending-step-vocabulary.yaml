@@ -1,0 +1,64 @@
+# yaml-language-server: $schema=https://promptfoo.dev/config-schema.json
+description: "e2e-extending-step-vocabulary skill — backend classification, cross-backend refusal, failure mode, dual DB dialect, and RUN_ID examples"
+
+prompts:
+  - id: e2e-extending-step-vocabulary
+    label: e2e-extending-step-vocabulary
+    raw: file://../../prompts/skill-e2e-extending-step-vocabulary.txt
+
+providers:
+  - id: anthropic:claude-agent-sdk
+    config:
+      model: claude-haiku-4-5-20251001
+      working_dir: ../..
+      max_turns: 20
+      permission_mode: auto
+      append_allowed_tools:
+        - Read
+        - Bash
+        - Glob
+        - Grep
+
+defaultTest:
+  assert:
+    - type: javascript
+      value: file://../../assertions/check-e2e-bdd-skills-contract.js
+
+tests:
+  - description: "happy path — DB step with dual dialect and RUN_ID example"
+    vars:
+      scenario: |-
+        - E2E_HARNESS_ROOT is set to /home/user/e2e-test-harness.
+        - The user says: "I need a step: 'the database should have a domain named {name} with status {status}'."
+        - steps/db-assertions.md exists and has several existing DB assertion patterns using {DB_CMD}.
+        - No existing pattern covers domain name + status combination.
+        - The step pattern is reusable across multiple feature files in features/domains/.
+      expect_classifies_backend_before_adding: "true"
+      expect_includes_failure_mode_note: "true"
+      expect_includes_dual_dialect_for_db: "true"
+      expect_emits_run_id_on_data_literals: "true"
+      expect_no_hardcoded_app_path: "true"
+      expect_resolves_harness_root_from_env_var: "true"
+
+  - description: "cross-backend refusal — step mixes UI click and DB assertion"
+    vars:
+      scenario: |-
+        - E2E_HARNESS_ROOT is set to /home/user/e2e-test-harness.
+        - The user says: "Add a step that clicks the Delete button AND verifies the domain is removed from the database."
+        - The requested step combines a UI action (browser click) with a DB assertion in a single step.
+      expect_refuses_cross_backend_step: "true"
+      expect_classifies_backend_before_adding: "true"
+      expect_no_hardcoded_app_path: "true"
+
+  - description: "CWD fallback — E2E_HARNESS_ROOT not set, CWD is the harness"
+    vars:
+      scenario: |-
+        - E2E_HARNESS_ROOT is not set.
+        - CWD is /home/user/e2e-test-harness and it contains features/ and steps/ directories.
+        - The user says: "Add a log assertion step: 'the server log should contain {text}'."
+        - steps/log-assertions.md exists and has similar grep-based patterns.
+        - The step is reusable across multiple feature files.
+      expect_falls_back_to_cwd_when_env_not_set: "true"
+      expect_classifies_backend_before_adding: "true"
+      expect_includes_failure_mode_note: "true"
+      expect_no_hardcoded_app_path: "true"

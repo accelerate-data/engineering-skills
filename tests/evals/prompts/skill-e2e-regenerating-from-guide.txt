@@ -1,0 +1,24 @@
+Read the skill at `skills/e2e-regenerating-from-guide/SKILL.md`.
+
+Do not call any tools. Use only the simulated context provided in the scenario below.
+
+Scenario:
+
+{{scenario}}
+
+Based on the skill instructions and this scenario, return JSON only — no other text — in this shape:
+
+```json
+{
+  "halts_on_missing_database_path": <bool>,
+  "resolves_harness_root_from_env_var": <bool>,
+  "falls_back_to_cwd_when_env_not_set": <bool>,
+  "uses_e2e_app_src_when_set": <bool>,
+  "runs_generate_script_not_manual_gherkin": <bool>,
+  "requires_separate_mappings_commit": <bool>,
+  "requires_diff_review_before_commit": <bool>,
+  "refuses_to_regen_without_guide": <bool>,
+  "emits_run_id_on_data_literals": <bool>,
+  "no_hardcoded_app_path": <bool>
+}
+```

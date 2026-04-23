@@ -1,0 +1,73 @@
+# yaml-language-server: $schema=https://promptfoo.dev/config-schema.json
+description: "e2e-authoring-feature-file skill — harness root resolution, overwrite guard, background copying, teardown, and new-category confirmation"
+
+prompts:
+  - id: e2e-authoring-feature-file
+    label: e2e-authoring-feature-file
+    raw: file://../../prompts/skill-e2e-authoring-feature-file.txt
+
+providers:
+  - id: anthropic:claude-agent-sdk
+    config:
+      model: claude-haiku-4-5-20251001
+      working_dir: ../..
+      max_turns: 20
+      permission_mode: auto
+      append_allowed_tools:
+        - Read
+        - Bash
+        - Glob
+        - Grep
+
+defaultTest:
+  assert:
+    - type: javascript
+      value: file://../../assertions/check-e2e-bdd-skills-contract.js
+
+tests:
+  - description: "happy path — authors new feature file with sibling Background and teardown"
+    vars:
+      scenario: |-
+        - E2E_HARNESS_ROOT is set to /home/user/e2e-test-harness.
+        - The harness .env contains: DATABASE_PATH=/home/user/app/data/db.sqlite
+        - The user says: "Create a new feature file for features/domains/domain-crud.feature."
+        - features/domains/domain-crud.feature does NOT exist yet.
+        - A sibling file features/domains/domain-settings.feature exists with a Background section.
+        - steps/ui-actions.md and steps/ui-assertions.md contain relevant step patterns.
+      expect_resolves_harness_root_from_env_var: "true"
+      expect_refuses_to_overwrite_existing_file: "true"
+      expect_copies_sibling_background_verbatim: "true"
+      expect_includes_teardown_scenario: "true"
+      expect_no_hardcoded_app_path: "true"
+      expect_halts_on_missing_database_path: "false"
+
+  - description: "halt — DATABASE_PATH missing from .env and E2E_APP_SRC not set"
+    vars:
+      scenario: |-
+        - E2E_HARNESS_ROOT is not set. CWD is /home/user/e2e-test-harness which contains features/ and steps/.
+        - The harness .env exists but has no DATABASE_PATH entry at all.
+        - E2E_APP_SRC is not set.
+        - The user says: "Author a new feature file for the billing module."
+      expect_halts_on_missing_database_path: "true"
+      expect_falls_back_to_cwd_when_env_not_set: "true"
+      expect_no_hardcoded_app_path: "true"
+
+  - description: "overwrite guard — refuses to overwrite an existing feature file"
+    vars:
+      scenario: |-
+        - E2E_HARNESS_ROOT is set to /home/user/e2e-test-harness.
+        - The harness .env contains: DATABASE_PATH=/home/user/app/data/db.sqlite
+        - The user says: "Create features/domains/domain-crud.feature."
+        - features/domains/domain-crud.feature already exists with 5 scenarios.
+      expect_refuses_to_overwrite_existing_file: "true"
+      expect_no_hardcoded_app_path: "true"
+
+  - description: "new category — confirms with user before creating a brand-new feature directory"
+    vars:
+      scenario: |-
+        - E2E_HARNESS_ROOT is set to /home/user/e2e-test-harness.
+        - The harness .env contains: DATABASE_PATH=/home/user/app/data/db.sqlite
+        - The user says: "Create a feature file for features/marketplace/listings.feature."
+        - The features/marketplace/ directory does NOT exist yet (brand-new category).
+      expect_confirms_new_category_with_user: "true"
+      expect_no_hardcoded_app_path: "true"
