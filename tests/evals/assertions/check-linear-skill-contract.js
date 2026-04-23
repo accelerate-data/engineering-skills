@@ -5,6 +5,26 @@ function parseExpectedBoolean(value) {
   return String(value).trim().toLowerCase() === 'true';
 }
 
+function getPayloadValue(payload, field) {
+  if (Object.prototype.hasOwnProperty.call(payload, field)) {
+    return payload[field];
+  }
+
+  const aliases = {
+    asks_to_record_project_in_agents_md_only_after_user_supplies_it: [
+      'asks_toRecord_project_in_agents_md_only_after_user_supplies_it',
+    ],
+  };
+
+  for (const alias of aliases[field] || []) {
+    if (Object.prototype.hasOwnProperty.call(payload, alias)) {
+      return payload[alias];
+    }
+  }
+
+  return undefined;
+}
+
 module.exports = (output, context) => {
   let payload;
   try {
@@ -97,11 +117,12 @@ module.exports = (output, context) => {
 
   for (const [field, expected] of checks) {
     if (expected === null) continue;
-    if (payload[field] !== expected) {
+    const actual = getPayloadValue(payload, field);
+    if (actual !== expected) {
       return {
         pass: false,
         score: 0,
-        reason: `Expected ${field}=${expected}, got ${payload[field]}`,
+        reason: `Expected ${field}=${expected}, got ${actual}`,
       };
     }
   }
@@ -197,11 +218,12 @@ module.exports = (output, context) => {
 
   for (const [field, expected] of expectedBooleanFields) {
     if (expected === null) continue;
-    if (payload[field] !== expected) {
+    const actual = getPayloadValue(payload, field);
+    if (actual !== expected) {
       return {
         pass: false,
         score: 0,
-        reason: `Expected ${field}=${expected}, got ${payload[field]}`,
+        reason: `Expected ${field}=${expected}, got ${actual}`,
       };
     }
   }

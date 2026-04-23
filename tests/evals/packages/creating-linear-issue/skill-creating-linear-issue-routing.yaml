@@ -9,8 +9,8 @@ prompts:
 providers:
   - id: opencode:sdk
     config:
-      provider_id: opencode
-      model: qwen3.6-plus
+      baseUrl: http://127.0.0.1:4096
+      apiKey: promptfoo-local-baseurl-placeholder
       working_dir: ../..
       max_turns: 1
       tools:
