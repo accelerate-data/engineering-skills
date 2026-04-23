@@ -18,11 +18,7 @@
     "view": "./scripts/promptfoo.sh view"
   },
   "dependencies": {
-    "@anthropic-ai/claude-agent-sdk": "^0.2.94",
-    "@anthropic-ai/claude-code": "^2.1.92",
+    "@opencode-ai/sdk": "latest",
     "promptfoo": "latest"
-  },
-  "overrides": {
-    "@anthropic-ai/sdk": ">=0.81.0"
   }
 }
