@@ -7,17 +7,18 @@ prompts:
     raw: file://../../prompts/skill-creating-linear-issue.txt
 
 providers:
-  - id: anthropic:claude-agent-sdk
+  - id: opencode:sdk
     config:
-      model: claude-haiku-4-5-20251001
+      provider_id: openrouter
+      model: anthropic/claude-sonnet-4.5
       working_dir: ../..
       max_turns: 20
-      permission_mode: auto
-      append_allowed_tools:
-        - Read
-        - Bash
-        - Glob
-        - Grep
+      tools:
+        read: true
+        grep: true
+        glob: true
+        list: true
+        bash: true
 
 defaultTest:
   assert:
