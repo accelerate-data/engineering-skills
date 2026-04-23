@@ -48,6 +48,7 @@ tests:
         - E2E_HARNESS_ROOT is not set. CWD is /home/user/e2e-test-harness which contains features/ and steps/.
         - The harness .env exists but DATABASE_PATH line is absent entirely.
         - E2E_APP_SRC is not set.
+        - App-root auto-discovery finds no readable sibling or parent app root.
         - The user says: "Regenerate features/settings/notifications.feature from the guide."
       expect_halts_on_missing_database_path: "true"
       expect_falls_back_to_cwd_when_env_not_set: "true"

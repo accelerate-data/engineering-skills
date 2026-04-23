@@ -10,10 +10,10 @@ Field definitions:
 - `halts_on_missing_database_path`: the skill stops and emits a halt notice because DATABASE_PATH is missing or commented out in this scenario's .env
 - `resolves_harness_root_from_env_var`: the skill uses E2E_HARNESS_ROOT (which IS set in this scenario) to locate the harness
 - `falls_back_to_cwd_when_env_not_set`: the skill falls back to CWD as the harness root because E2E_HARNESS_ROOT is NOT set in this scenario
-- `uses_e2e_app_src_when_set`: E2E_APP_SRC is set in this scenario so the skill uses it directly, skipping the DATABASE_PATH derivation
+- `uses_e2e_app_src_when_set`: E2E_APP_SRC is set in this scenario so the skill selects that app-source branch immediately, skips DATABASE_PATH derivation, and this remains `true` even if the path is later found unreadable and causes a halt
 - `halts_on_unreadable_e2e_app_src`: E2E_APP_SRC is set in this scenario but points to an unreadable or missing directory, so the skill halts instead of authoring Gherkin
 - `auto_discovery_avoids_expanded_app_path`: DATABASE_PATH is unavailable but app-root auto-discovery succeeds, and the skill avoids printing the expanded absolute app path in output
-- `emits_run_id_on_data_literals`: the skill embeds {{RUN_ID}} in seeded data literals in the scenario output
+- `emits_run_id_on_data_literals`: the skill embeds the literal RUN_ID marker in seeded data literals in the scenario output
 - `uses_step_vocabulary_only`: the skill only uses step patterns from steps/*.md and does not invent new steps
 - `emits_missing_step_comment`: a required step pattern is absent from steps/*.md in this scenario, so the skill emits a # MISSING STEP: comment
 - `no_hardcoded_app_path`: the skill never writes a hardcoded absolute path in its output
@@ -22,6 +22,8 @@ Field definitions:
 - `includes_teardown_scenario`: the skill includes a teardown/cleanup scenario in the authored feature file
 - `confirms_new_category_with_user`: the target category/directory does not yet exist in this scenario, so the skill confirms with the user before proceeding
 - `checks_skill_modules_before_missing_step`: a step seems missing from steps/*.md in this scenario, but skills/*.md is referenced from skill-steps.md and covers it — the skill checks skills/*.md before emitting # MISSING STEP:
+
+Always return every field in the schema below as a boolean. If a field's condition does not apply in this scenario, set it to `false` rather than omitting it.
 
 Return JSON only — no other text — in this shape:
 
