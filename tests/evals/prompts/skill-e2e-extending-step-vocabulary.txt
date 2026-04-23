@@ -1,4 +1,4 @@
-Use the Read tool to read the skill at `skills/e2e-extending-step-vocabulary/SKILL.md`. Then, without calling any other tools, use only the simulated context provided in the scenario below to determine how the skill would behave.
+Use the Read tool to read `skills/e2e-extending-step-vocabulary/SKILL.md` and all files under `skills/e2e-extending-step-vocabulary/references/`. Then, without calling any other tools, use only the simulated context provided in the scenario below to determine how the skill would behave.
 
 Scenario:
 

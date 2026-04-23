@@ -1,6 +1,6 @@
 ---
 name: e2e-adding-scenario
-description: Use when the user asks to add, append, or extend scenarios in an existing `.feature` file in a BDD E2E test harness — e.g. "add a scenario for X to the domain-crud feature", "cover Y in intent-creation.feature", or "the BDD run missed Z in settings/foo.feature". Works from any repo when `E2E_HARNESS_ROOT` points to the harness. Do NOT use for creating a brand-new `.feature` file or for adding step patterns to `steps/*.md`.
+description: Append or extend scenarios in an existing `.feature` file in a BDD E2E test harness — e.g. "add a scenario for X to the domain-crud feature", "cover Y in intent-creation.feature". Works from any repo when `E2E_HARNESS_ROOT` points to the harness.
 ---
 
 # e2e-adding-scenario
@@ -9,8 +9,13 @@ description: Use when the user asks to add, append, or extend scenarios in an ex
 
 Resolve these two values before every other step in this skill:
 
-1. **Harness root** — use `$E2E_HARNESS_ROOT` if set. Otherwise treat the current working directory as the harness root. If the CWD does not contain `features/` and `steps/` directories, emit one note: "Tip: set `E2E_HARNESS_ROOT=<path-to-harness>` for cross-repo use." Then continue.
-2. **App source** (`$APP_SRC`) — use `$E2E_APP_SRC` if set and skip the `$DATABASE_PATH` derivation. Otherwise derive from `$DATABASE_PATH` in `{harness_root}/.env` using the HARD GATE at step 4 (unchanged logic).
+1. **Harness root** — resolve in this order, stopping at the first match:
+   1. `$E2E_HARNESS_ROOT` env var → use directly.
+   2. CWD — if it contains `features/` and `steps/` subdirectories → use it.
+   3. Scan parent directories (up to 3 levels up) for a directory containing `features/` + `steps/` → use the first match.
+   4. If filesystem access is available, scan common sibling paths (list `~/Documents/`, `~/projects/`, and similar for a directory containing `features/` + `steps/`).
+   5. Still not found → ask the user: "Could not auto-detect the harness root. Set `E2E_HARNESS_ROOT=<path>` and retry."
+2. **App source** (`$APP_SRC`) — use `$E2E_APP_SRC` if set and skip the `$DATABASE_PATH` derivation. Otherwise derive from `$DATABASE_PATH` in `{harness_root}/.env` using the HARD GATE at step 4 (which includes auto-discovery before halting).
 3. Every file reference in this skill — `features/`, `steps/`, `generate-features.sh`, `.env`, `npm run test:bdd` — is relative to the resolved harness root.
 
 ## When to use
@@ -54,23 +59,7 @@ Do each step in order. Do not skip.
    - Offer in PLAN: (a) edit the user guide + hand off to `e2e-regenerating-from-guide`, or (b) proceed as a hand-edit (accept overwrite risk).
    - Draft the APPEND BLOCK only if the user picks (b), or if task instructions direct a fallback hand-edit.
 3. **Read the target file.** Note its existing `Background:` and sibling scenarios so your new ones match style — granularity, step wording, indentation, quoting — but do NOT restate them.
-4. **Resolve `$APP_SRC` — HARD GATE.** If `$E2E_APP_SRC` is set, use it directly and skip this gate. Otherwise: read `{harness_root}/.env` (or `{harness_root}/.env.example` if `.env` is unavailable). Derive `$APP_SRC = dirname(dirname($DATABASE_PATH))`. Reference source paths by variable name only; never write the expanded value.
-
-   **HALT immediately — do not produce any Gherkin, PLAN action items beyond the halt notice, or APPEND BLOCK — if either of these is true:**
-   1. `$DATABASE_PATH` is unset, empty, or a blank string in `.env`. (This is the primary gate signal — it is always checkable from `.env` alone, with no disk access.)
-   2. You have disk access AND the derived `$APP_SRC` directory is not readable. (Runtime-only check — skip when you do not have tool access to the filesystem.)
-
-   **Do NOT check for specific subdirectories** like `src/client/`, `prisma/schema.prisma`, or `src/server/`. Project layouts vary (some use `src/` flat, some use drizzle instead of prisma, some use `app/` or `lib/`). The gate only confirms that `$APP_SRC` itself is a real readable directory. The agent discovers the actual layout when reading source in step 5; if a specific file you need can't be found, emit `# LABEL UNVERIFIED: <desc>` per the never-invent rule — do NOT halt again.
-
-   When `.env` provides a non-empty `DATABASE_PATH` and you are in a planning-only context with no filesystem access, treat the derivation as provisional and continue — but require the runtime invocation to re-verify condition 2 before `npm run test:bdd` runs.
-
-   When the derived `$APP_SRC` path doesn't exist on disk (e.g. `.env` has a relative path that's valid from the main repo but not from a worktree), the HALT message should tell the user the derived path and ask them to adjust `.env` (or set `E2E_APP_SRC` directly) so `$APP_SRC` resolves. Do NOT ask a clarifying question to proceed — the gate is binary: source readable → proceed; not readable → HALT with guidance.
-
-   On halt, report to the user:
-
-   > "Source verification failed: \<which condition\>. Set `DATABASE_PATH` in `{harness_root}/.env` so `$APP_SRC` resolves to a readable app source checkout, or set `E2E_APP_SRC` directly. I will not author scenarios against unverified source — product labels, routes, and schema must be grounded in the codebase, not guessed."
-
-   Do NOT proceed. Do NOT assume labels "by convention" from siblings. Do NOT emit an APPEND BLOCK with placeholder labels. A sibling `.feature` uses one vocabulary of labels; the target scenario may need labels that do not appear in any sibling, and the only grounded source for those is the real product tree under `$APP_SRC`.
+4. **Resolve `$APP_SRC` — HARD GATE.** Load `references/app-src-gate.md` and execute it. On halt, the halt notice is your entire output — no PLAN, no APPEND BLOCK.
 5. **Read source context from `$APP_SRC`.** Explore `$APP_SRC` for the files you need — do NOT assume a specific layout. Projects vary: some use `src/client/`, some use `src/` directly, some use `app/` or `components/`. ORMs vary: prisma, drizzle, typeorm. Find:
    - **UI labels** — search the frontend tree (grep for a known sibling label first to locate the right directory, then search near that for the label you need).
    - **API routes** — search server/router/controller files for route definitions.
@@ -95,13 +84,7 @@ Do each step in order. Do not skip.
 8. **Handle missing steps.** If the draft contains any `# MISSING STEP:` comments, note the handoff in PLAN to `e2e-extending-step-vocabulary` with the list of gaps, and plan to resume at step 7 once the patterns exist.
 9. **Handle DB / FS pre-state.** If any scenario asserts pre-existing state, state in PLAN that `fixtures/<name>.sql` (or matching FS fixture) must contain the seeded rows with `{{RUN_ID}}` in every data literal. Create or extend the fixture as needed — never seed ad-hoc inside the scenario body.
 10. **Append, do not replace.** The APPEND BLOCK is positioned above any teardown / cleanup scenario in the target file. Do **not** delete, weaken, or rewrite existing assertions to make the file green. If an existing assertion is failing, refuse in PLAN and escalate to the user — "fix by deletion" is forbidden.
-11. **BDD green loop (at runtime) — run now, do not defer.** Immediately after the APPEND BLOCK is written to disk, invoke BDD and monitor it:
-
-    - **Command form (critical):** `npm run test:bdd -- <cat>/<name> > /tmp/bdd-<cat>-<name>.log 2>&1 &` in the background (run from the harness root), OR run via the runtime's `run_in_background` option — but in both cases redirect directly to a log file. Do NOT use `| tail -N` or any other pipe on the command — pipes buffer until the whole pipeline exits, which can make a backgrounded invocation look silent for many minutes. A direct `> file 2>&1` redirect captures output line-by-line as BDD emits it.
-    - **Poll progress every ~5 minutes** while it runs. Use `wc -l /tmp/bdd-<cat>-<name>.log && tail -40 /tmp/bdd-<cat>-<name>.log` to report current scenario count and the last-seen step. A BDD run can take 5–20+ min depending on scenario count; do not sit silently. If the log hasn't grown between polls, check whether the process is still alive (`ps aux | grep test:bdd`).
-    - **Exception:** if the user explicitly said *"don't run BDD"*, *"just produce the scenario"*, or *"skip validation"*, respect that and stop after the APPEND BLOCK.
-    - **On each red result:** diagnose from the log → fix the scenario (without weakening assertions) → rerun. After **5 red iterations**, stop and escalate to the user with the last failure output.
-    - **On completion:** report final pass/fail count, any fixture or step-vocabulary gaps encountered, and which log file holds the full output.
+11. **BDD green loop (at runtime) — run now, do not defer.** Immediately after the APPEND BLOCK is written to disk, load `references/bdd-run-loop.md` and follow it, substituting `<cat>/<name>` for this feature. Skip if the user explicitly said "don't run BDD", "just produce the scenario", or "skip validation".
 12. **Report (at runtime).** List scenarios added, fixtures touched, `# MISSING STEP:` handoffs, and the final BDD status. Do not raise a PR.
 
 ## Invariants
@@ -186,3 +169,8 @@ You do NOT proceed to draft the scenario. You do NOT borrow a "Refresh" label fr
 ```
 
 Flag this in PLAN: "PLAN includes a `# LABEL UNVERIFIED:` marker — the reviewer must resolve the label against the product before this scenario can run. The Refresh button may not exist in the product at all; if so, the scenario should be dropped rather than re-labelled."
+
+## Reference Index
+
+- `references/app-src-gate.md` — source verification gate: `$APP_SRC` derivation, auto-discovery fallback, halt conditions and message
+- `references/bdd-run-loop.md` — BDD run loop: command form, polling, red-iteration limit, completion report

@@ -1,6 +1,6 @@
 ---
 name: e2e-regenerating-from-guide
-description: Use when a product surface is documented at `$APP_SRC/docs/user-guide/**/*.md` and the user wants regenerable, diff-reviewable BDD `.feature` coverage — e.g. "regenerate features/settings/domain-crud.feature from the guide", "the Notifications guide changed, refresh the .feature", "add a guide-backed feature for the Plugins panel". Works from any repo when `E2E_HARNESS_ROOT` points to the harness. Do NOT use for hand-written auth / workflow features (use `e2e-authoring-feature-file`), for appending a quick scenario to an existing file (use `e2e-adding-scenario`), or for adding a step pattern to `steps/*.md` (use `e2e-extending-step-vocabulary`).
+description: Regenerate or create a `.feature` file from its paired user-guide page at `$APP_SRC/docs/user-guide/**/*.md` — e.g. "regenerate features/settings/domain-crud.feature from the guide", "the Notifications guide changed, refresh the .feature". Works from any repo when `E2E_HARNESS_ROOT` points to the harness.
 ---
 
 # e2e-regenerating-from-guide
@@ -9,8 +9,13 @@ description: Use when a product surface is documented at `$APP_SRC/docs/user-gui
 
 Resolve these two values before every other step in this skill:
 
-1. **Harness root** — use `$E2E_HARNESS_ROOT` if set. Otherwise treat the current working directory as the harness root. If the CWD does not contain `features/` and `steps/` directories, emit one note: "Tip: set `E2E_HARNESS_ROOT=<path-to-harness>` for cross-repo use." Then continue.
-2. **App source** (`$APP_SRC`) — use `$E2E_APP_SRC` if set and skip the `$DATABASE_PATH` derivation. Otherwise derive from `$DATABASE_PATH` in `{harness_root}/.env` using the HARD GATE at step 1 (unchanged logic).
+1. **Harness root** — resolve in this order, stopping at the first match:
+   1. `$E2E_HARNESS_ROOT` env var → use directly.
+   2. CWD — if it contains `features/` and `steps/` subdirectories → use it.
+   3. Scan parent directories (up to 3 levels up) for a directory containing `features/` + `steps/` → use the first match.
+   4. If filesystem access is available, scan common sibling paths (list `~/Documents/`, `~/projects/`, and similar for a directory containing `features/` + `steps/`).
+   5. Still not found → ask the user: "Could not auto-detect the harness root. Set `E2E_HARNESS_ROOT=<path>` and retry."
+2. **App source** (`$APP_SRC`) — use `$E2E_APP_SRC` if set and skip the `$DATABASE_PATH` derivation. Otherwise derive from `$DATABASE_PATH` in `{harness_root}/.env` using the HARD GATE at step 1 (which includes auto-discovery before halting).
 3. Every file reference in this skill — `features/`, `steps/`, `generate-features.sh`, `.env` — is relative to the resolved harness root. The user guide path `$APP_SRC/docs/user-guide/**/*.md` is relative to the resolved app source root.
 
 ## When to use
@@ -53,25 +58,7 @@ Write the PLAN in plain prose with backticks for code-like tokens (paths, comman
 
 Do each step in order. Do not skip.
 
-1. **Resolve `$APP_SRC` — HARD GATE.** If `$E2E_APP_SRC` is set, use it directly and skip this gate. Otherwise: read `{harness_root}/.env` (or `{harness_root}/.env.example` only if `.env` is absent). Derive `$APP_SRC = dirname(dirname($DATABASE_PATH))`. Reference paths by variable name only — never expand the literal in output.
-
-   **HALT immediately — produce ONLY the halt notice below; do NOT write a PLAN, a MAPPINGS edit, or any `./generate-features.sh` invocation — if ANY of these is true:**
-   1. `$DATABASE_PATH` is unset, empty, a blank string, or commented-out in `.env`. Check: grep for an uncommented `DATABASE_PATH=<non-empty>` line; absence = HALT. **This gate is iron-clad** — it requires only reading the `.env` content, no filesystem access needed. "Planning-only context" or "evaluation context" is NOT a license to skip this gate. No `DATABASE_PATH` in the `.env` input → HALT.
-   2. You have filesystem access AND the derived `$APP_SRC` directory is not readable.
-
-   **Do NOT check for specific subdirectories** like `src/client/`, `prisma/schema.prisma`, or `docs/user-guide/`. Project layouts vary. The gate only confirms that `$APP_SRC` itself is a real readable directory. The guide path (step 2) is verified separately.
-
-   Gate 2 only applies when you have tool access to read the filesystem. In planning-only contexts with no filesystem access and a valid `.env`, treat the derivation as provisional and continue — but emit a reviewer note that gate 2 must be re-verified at runtime before `./generate-features.sh` runs.
-
-   When the derived `$APP_SRC` path doesn't exist on disk, the HALT message should tell the user the derived path and ask them to adjust `.env` (or set `E2E_APP_SRC` directly) so `$APP_SRC` resolves. Do NOT ask a clarifying question to proceed — the gate is binary: source readable → proceed; not readable → HALT with guidance.
-
-   If `DATABASE_URL` is set without `DATABASE_PATH`, refuse (remote env) and escalate — distinct condition, still HALT.
-
-   On HARD-GATE halt, produce ONLY:
-
-   > "Source verification failed: \<which condition\>. Set `DATABASE_PATH` in `{harness_root}/.env` so `$APP_SRC` resolves to a readable app source checkout, or set `E2E_APP_SRC` directly. I will not plan a regeneration against unverified source — the guide path itself lives under `$APP_SRC/docs/user-guide/**`, and the generator reads product source for label grounding. Both require a resolved `$APP_SRC`."
-
-   Emit the halt notice and STOP. Do not follow it with a PLAN, a MAPPINGS insertion, a `./generate-features.sh` command, or a diff-review template.
+1. **Resolve `$APP_SRC` — HARD GATE.** Load `references/app-src-gate.md` and execute it. On halt, the halt notice is your entire output — no PLAN, no MAPPINGS edit, no `./generate-features.sh` invocation.
 2. **Confirm the guide exists** at `$APP_SRC/docs/user-guide/<area>/<topic>.md`. If it does NOT exist, STOP and offer the user two branches: (a) hand off to `doc-skills:write-user-guide` to author the guide first, or (b) hand off to `e2e-authoring-feature-file` for the hand-edit path. Do NOT invoke `./generate-features.sh` without a guide.
 3. **Check `MAPPINGS`.** Grep `MAPPINGS=(` in `{harness_root}/generate-features.sh` for a line matching the guide path. Report mode:
    - Pair present AND target `.feature` exists → `UPDATE` mode.
@@ -143,3 +130,7 @@ Do each step in order. Do not skip.
 > `features/settings/domain-crud.feature` is guide-backed (MAPPINGS: `settings/domains.md:settings/domain-crud.feature`). Any hand-appended scenario will be OVERWRITTEN on the next `./generate-features.sh settings/domains.md` run. If the new scenario belongs in the guide, edit `$APP_SRC/docs/user-guide/settings/domains.md` and regenerate. If it belongs only in the test harness (e.g. a flake-guard), use `e2e-adding-scenario` and mark it with a `# HAND-EDIT:` header so the regen preserves it.
 
 No `./generate-features.sh` invocation in this branch — append is `e2e-adding-scenario`'s job.
+
+## Reference Index
+
+- `references/app-src-gate.md` — source verification gate: `$APP_SRC` derivation, auto-discovery fallback, halt conditions and message

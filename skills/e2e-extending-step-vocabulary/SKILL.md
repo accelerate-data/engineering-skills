@@ -1,6 +1,6 @@
 ---
 name: e2e-extending-step-vocabulary
-description: Use when a BDD E2E `.feature` draft needs a step pattern that does not yet exist in `steps/*.md` — triggered by a `# MISSING STEP:` comment or by the agent detecting a pattern gap. Adds the new entry to the correct `steps/*.md` file with an exact tool-call recipe that matches neighbor format. Works from any repo when `E2E_HARNESS_ROOT` points to the harness. Do NOT use for drafting scenarios (use `e2e-adding-scenario`), for creating a brand-new `.feature` (use `e2e-authoring-feature-file`), or for regenerating from a user guide (use `e2e-regenerating-from-guide`) — this skill only edits `steps/*.md`.
+description: Add a missing step pattern to `steps/*.md` when a `.feature` draft contains a `# MISSING STEP:` comment or the agent detects a vocabulary gap. Works from any repo when `E2E_HARNESS_ROOT` points to the harness.
 ---
 
 # e2e-extending-step-vocabulary
@@ -9,7 +9,12 @@ description: Use when a BDD E2E `.feature` draft needs a step pattern that does 
 
 Resolve these values before every other step in this skill:
 
-1. **Harness root** — use `$E2E_HARNESS_ROOT` if set. Otherwise treat the current working directory as the harness root. If the CWD does not contain `features/` and `steps/` directories, emit one note: "Tip: set `E2E_HARNESS_ROOT=<path-to-harness>` for cross-repo use." Then continue.
+1. **Harness root** — resolve in this order, stopping at the first match:
+   1. `$E2E_HARNESS_ROOT` env var → use directly.
+   2. CWD — if it contains `features/` and `steps/` subdirectories → use it.
+   3. Scan parent directories (up to 3 levels up) for a directory containing `features/` + `steps/` → use the first match.
+   4. If filesystem access is available, scan common sibling paths (list `~/Documents/`, `~/projects/`, and similar for a directory containing `features/` + `steps/`).
+   5. Still not found → ask the user: "Could not auto-detect the harness root. Set `E2E_HARNESS_ROOT=<path>` and retry."
 2. All file references in this skill — `steps/`, `docs/assertion-backends.md` — are relative to the resolved harness root.
 
 ## When to use
@@ -71,13 +76,7 @@ Do each step in order. Do not skip.
 3. **Reusability check.** If the pattern is likely to be used in exactly one scenario in one `.feature` file, flag it and propose a rewrite that uses existing vocabulary. Ask the caller whether to simplify the scenario instead of adding bespoke grammar. Do not emit the PROPOSED ENTRY until the caller picks. If the caller insists, proceed.
 4. **Read 2–3 neighbors** in the target file. Match their format exactly — table layout, backtick conventions, sectioning (Given / When / Then), placeholder naming (e.g. `{name}`, `{domain}`, `{path}`), and any file-specific conventions (`{DB_CMD}`, `$DFS_BEARER`, `{LOG_DIR}`). The PROPOSED ENTRY must look like it was written by whoever wrote the neighbors.
 5. **Draft the pattern line.** Replace every value that should vary with a `{placeholder}` token named after its role (`{name}`, `{column}`, `{value}`, `{path}`, `{owner}`, `{repo}`, etc.). Quote strings the caller types (`"{name}"`) to match the file's quoting convention. Match Gherkin tense and keyword cues: actions are imperative (`I click ...`), assertions are declarative (`the database should ...`, `the file ... should exist`).
-6. **Draft the exact recipe.** Spell out the literal tool call with placeholder substitution visible.
-   - DB: `{DB_CMD}` placeholder OR both `sqlite3 "$DATABASE_PATH" "<SQL>"` and `psql "$DATABASE_URL" -t -A -c "<SQL>"` with the exact query and the assertion on the result (`> 0`, `= {n}`, `!= ""`).
-   - UI: `browser_snapshot` first, then `browser_click` / `browser_drag` / `browser_fill_form` on the returned ref. Do NOT use `browser_evaluate` or `browser_wait_for`. Use `browser_run_code` with an explicit polling loop when a wait is required.
-   - Log: local `grep '{text}' $DATA_DIR/logs/server*.log`; remote `az storage file download --share-name logs --path server*.log --dest /tmp/ && grep '{text}' /tmp/server*.log`. Glob `server*.log` to catch rotated files. Fail immediately on 0 matches.
-   - FS: local `test -d "{path}"` / `test -f "{path}"` / `grep -l ... "{path}"`; remote `az storage directory exists` / `az storage file exists` / `az storage file download` + grep.
-   - Fabric/OneLake: `curl -H "Authorization: Bearer $DFS_BEARER" "https://onelake.dfs.fabric.microsoft.com/{WS}/{LH}/..."`. Resolve WS/LH IDs from the intent row via `{DB_CMD}` beforehand. Fail immediately if `$DFS_BEARER` is unset or HTTP status is not 200.
-   - GitHub: `gh api repos/{owner}/{repo}/...` — check `gh auth status` before the first API call in a feature; FAIL immediately on auth failure.
+6. **Draft the exact recipe.** Load `references/backend-recipes.md` for per-backend recipe format, required conventions, disallowed tools, and env-var conventions. Spell out the literal tool call with placeholder substitution visible — no "use the appropriate command" placeholders.
 7. **Draft the failure-mode note.** A one-liner stating: no retry on miss, no silent fallback to alternative sources, FAIL immediately on the first miss. This matches the existing convention in `log-assertions.md` and `other-headless-actions.md`.
 8. **Draft the `{{RUN_ID}}` example.** Show one concrete Gherkin line calling the pattern with `{{RUN_ID}}` embedded in any data literal the test seeds (e.g. `Then the database should have a domain named "e2e-domain-{{RUN_ID}}"`). Do not tag UI chrome with `{{RUN_ID}}`.
 9. **Insert alphabetically** (or into the nearest logical group matching the target file's existing organization — `Given` / `When` / `Then` blocks, or a thematic sub-section like `## Fabric CLI`). If the file's existing entries are not strictly alphabetical, keep the insertion close to the correct alphabetical slot within its block without reordering unrelated entries.
@@ -93,12 +92,11 @@ Do each step in order. Do not skip.
 | No retry on miss | **Hard** | Every recipe states FAIL immediately on first miss. No loops around failing assertions, no fallback to a different backend or command. |
 | No disallowed tools | **Hard** | The recipe never uses `browser_evaluate` or `browser_wait_for`. Use `browser_run_code` with an explicit polling loop when a wait is required. |
 | Dual-dialect for DB | **Hard** | DB recipes use the `{DB_CMD}` placeholder OR document both `sqlite3 "$DATABASE_PATH"` and `psql "$DATABASE_URL"` invocations. Never one dialect only. |
-| Environment-aware variants | **Hard** | Log and FS recipes document BOTH the local and remote (`az storage`) variants where applicable. |
+| Environment-aware variants | **Hard** | Log and FS recipes document BOTH the local and remote variants where applicable (see `references/backend-recipes.md`). |
 | Pattern uniqueness | **Hard** | Near-duplicate synonyms are refused — pointer to the existing pattern only. |
 | `{{RUN_ID}}` in data examples | **Hard** | When the pattern's placeholders touch seeded data, the example call embeds `{{RUN_ID}}`. |
 | Snapshot-first UI | **Hard** | UI recipes call `browser_snapshot` before any action and use refs from the snapshot. |
-| `$DFS_BEARER` pre-minted | **Hard** | Fabric/OneLake recipes reuse `$DFS_BEARER`; never self-mint via `az account get-access-token`. |
-| Path hygiene | **Hard** | No hardcoded absolute paths in any recipe or example. Reference `$APP_SRC`, `$DATABASE_PATH`, `$DATA_DIR`, `$DOMAINS_PATH`, `$TMP_DIR` by variable name. |
+| Path hygiene | **Hard** | No hardcoded absolute paths in any recipe or example. Reference paths via env vars (`$APP_SRC`, `$DATABASE_PATH`, and other harness-defined vars) by variable name only. |
 | Ask-first for narrow patterns | **Hard** | One-feature-only patterns trigger a simplification ask before the entry is emitted. |
 | Neighbor-format match | **Hard** | The PROPOSED ENTRY mirrors the target file's existing row format, backticking, and section placement. |
 
@@ -154,3 +152,7 @@ Do each step in order. Do not skip.
 ```gherkin
 Then the database intent in domain "e2e-domain-{{RUN_ID}}" should have column "description" containing "{{RUN_ID}}"
 ```
+
+## Reference Index
+
+- `references/backend-recipes.md` — per-backend recipe format: UI snapshot-first, DB dual-dialect, log/FS local+remote variants, GitHub auth, and custom backend conventions
