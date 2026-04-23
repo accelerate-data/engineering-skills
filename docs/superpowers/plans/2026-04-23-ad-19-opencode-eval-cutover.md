@@ -4,7 +4,7 @@
 
 **Goal:** Prove that this repository's Promptfoo skill evals can run through `opencode:sdk` with equivalent contract coverage, starting with one representative suite and expanding only after manual validation.
 
-**Architecture:** Execute the migration in three phases. Phase 1 ports one representative eval suite plus the shared harness dependencies and gets automated checks green. Phase 2 manually validates the exact OpenCode/OpenRouter setup and documents what worked. Phase 3 ports the remaining suites using the same pattern with minimal drift.
+**Architecture:** Execute the migration in three phases. Phase 1 ports one representative eval suite plus the shared harness dependencies and gets automated checks green. Phase 2 manually validates the exact OpenCode setup and documents what worked. Phase 3 ports the remaining suites using the same pattern with minimal drift.
 
 **Tech Stack:** Markdown, YAML, JSON, shell, Promptfoo, OpenCode SDK, npm
 
@@ -20,7 +20,7 @@
 | `tests/evals/packages/creating-linear-issue/skill-creating-linear-issue.yaml` | Modify | 1 | POC provider migration to `opencode:sdk` |
 | `tests/evals/prompts/skill-creating-linear-issue.txt` | Inspect, modify if needed | 1 | Keep POC prompt provider-neutral |
 | `tests/evals/assertions/check-linear-skill-contract.js` | Inspect, modify if needed | 1 | Keep POC contract strict while removing provider-specific assumptions only if necessary |
-| `README.md` | Modify | 2 | Document the validated OpenCode/OpenRouter setup and targeted POC command |
+| `README.md` | Modify | 2 | Document the validated OpenCode setup and targeted POC command |
 | `repo-map.json` | Modify only if stale | 2 or 3 | Refresh eval harness notes only when the documented setup or command surface materially changes |
 | `tests/evals/packages/creating-linear-issue/skill-creating-linear-issue-routing.yaml` | Modify | 3 | Port provider config using the proven Phase 1 pattern |
 | `tests/evals/packages/implementing-linear-issue/skill-implementing-linear-issue.yaml` | Modify | 3 | Port provider config using the proven Phase 1 pattern |
@@ -49,8 +49,8 @@ Use one repo-standard OpenCode provider shape for the POC suite:
 providers:
   - id: opencode:sdk
     config:
-      provider_id: openrouter
-      model: anthropic/claude-sonnet-4.5
+      provider_id: opencode
+      model: qwen3.6-plus
       working_dir: ../..
       max_turns: 20
       tools:
@@ -69,7 +69,7 @@ Phase 1 rules:
 
 - `read`, `grep`, `glob`, `list`, and `bash` are the only enabled tools.
 - `edit` and `write` stay disabled during the POC.
-- `openrouter` is the default provider under test, not a permanent repo policy until Phase 2 manual validation says it is acceptable.
+- `opencode` is the provider under test and the intended direct provider path unless Phase 2 manual validation disproves it.
 - Do not touch any non-POC suite YAML in Phase 1.
 
 ## Phase 1: POC + Automated Validation
@@ -101,8 +101,8 @@ In `tests/evals/package.json`, replace the eval-harness dependencies block with:
 
 ```json
 "dependencies": {
-  "@opencode-ai/sdk": "latest",
-  "promptfoo": "latest"
+  "@opencode-ai/sdk": "1.14.21",
+  "promptfoo": "0.121.7"
 }
 ```
 
@@ -130,7 +130,7 @@ Check that `tests/evals/scripts/promptfoo.sh` still only needs to:
 - load repo-root `.env`
 - execute Promptfoo's entrypoint
 
-Do not add provider-specific shell logic unless OpenCode startup fails without it.
+Do not add provider-specific shell logic unless OpenCode startup fails without it. The wrapper must export `PROMPTFOO_CONFIG_DIR` so eval runs persist to the repo-owned `tests/evals/.promptfoo/promptfoo.db` instead of falling back to `~/.promptfoo`.
 
 - [ ] **Step 5: Commit the Phase 1 harness change**
 
@@ -174,8 +174,8 @@ with:
 providers:
   - id: opencode:sdk
     config:
-      provider_id: openrouter
-      model: anthropic/claude-sonnet-4.5
+      provider_id: opencode
+      model: qwen3.6-plus
       working_dir: ../..
       max_turns: 20
       tools:
@@ -261,7 +261,7 @@ Phase 1 is complete only if all of the following are true:
 - `npm run eval:creating-linear-issue` passes
 - `npm run eval:coverage` passes
 - `npm run eval:codex-compatibility` passes
-- OpenCode/OpenRouter auth is stable enough that the passing run is repeatable
+- OpenCode auth is stable enough that the passing run is repeatable
 - no non-POC eval package YAML was modified
 
 If any item fails, stop. Do not start Phase 2 or Phase 3.
@@ -277,7 +277,7 @@ If any item fails, stop. Do not start Phase 2 or Phase 3.
 
 - [ ] **Step 1: Manually rerun the POC flow with the intended credentials**
 
-Run the same POC suite from a clean shell with the actual OpenCode/OpenRouter configuration intended for daily use:
+Run the same POC suite from a clean shell with the actual OpenCode configuration intended for daily use:
 
 ```bash
 cd tests/evals
@@ -304,7 +304,7 @@ npm install
 Document:
 
 - that the Phase 1 POC uses `opencode:sdk`
-- that `openrouter` is the currently validated provider
+- that `provider_id: opencode` with `model: qwen3.6-plus` is the currently validated provider configuration
 - the exact targeted command: `npm run eval:creating-linear-issue`
 
 - [ ] **Step 3: Update `repo-map.json` only if the harness notes are stale**
@@ -441,7 +441,7 @@ git commit -m "test: cut over remaining evals to opencode"
 1. OpenCode tool naming is lowercase (`read`, `grep`, `glob`, `list`, `bash`) while some prompts or assertions may assume Claude-style capitalization.
 2. Response style may drift without behavior drift; assertion edits must normalize wording, not relax the contract.
 3. `bash: true` can introduce side effects. Keep `external_directory: deny`, avoid `edit`/`write`, and do not parallelize the rollout blindly if Promptfoo state becomes noisy.
-4. `openrouter` is under evaluation in Phase 1 and Phase 2. Do not lock it in across the repo until the manual test confirms it is acceptable.
+4. Promptfoo must be pointed at the repo-owned config directory. If `PROMPTFOO_CONFIG_DIR` is not exported, cost and token persistence silently fall back to `~/.promptfoo` and the worktree symlinked `.promptfoo` is unused.
 
 ## Current Doc References
 
