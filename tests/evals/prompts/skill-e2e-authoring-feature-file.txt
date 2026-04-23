@@ -1,12 +1,26 @@
-Read the skill at `skills/e2e-authoring-feature-file/SKILL.md`.
-
-Do not call any tools. Use only the simulated context provided in the scenario below.
+Use the Read tool to read the skill at `skills/e2e-authoring-feature-file/SKILL.md`. Then, without calling any other tools, use only the simulated context provided in the scenario below to determine how the skill would behave.
 
 Scenario:
 
 {{scenario}}
 
-Based on the skill instructions and this scenario, return JSON only — no other text — in this shape:
+For each field below, set `true` if the skill WOULD do that in this specific scenario, `false` if it would NOT do that in this specific scenario.
+
+Field definitions:
+- `halts_on_missing_database_path`: the skill stops and emits a halt notice because DATABASE_PATH is missing or commented out in this scenario's .env
+- `resolves_harness_root_from_env_var`: the skill uses E2E_HARNESS_ROOT (which IS set in this scenario) to locate the harness
+- `falls_back_to_cwd_when_env_not_set`: the skill falls back to CWD as the harness root because E2E_HARNESS_ROOT is NOT set in this scenario
+- `uses_e2e_app_src_when_set`: E2E_APP_SRC is set in this scenario so the skill uses it directly, skipping the DATABASE_PATH derivation
+- `emits_run_id_on_data_literals`: the skill embeds {{RUN_ID}} in seeded data literals in the scenario output
+- `uses_step_vocabulary_only`: the skill only uses step patterns from steps/*.md and does not invent new steps
+- `emits_missing_step_comment`: a required step pattern is absent from steps/*.md in this scenario, so the skill emits a # MISSING STEP: comment
+- `no_hardcoded_app_path`: the skill never writes a hardcoded absolute path in its output
+- `refuses_to_overwrite_existing_file`: the target .feature file already exists in this scenario, so the skill refuses to overwrite it
+- `copies_sibling_background_verbatim`: a sibling .feature file with a Background section exists in this scenario, so the skill copies that Background verbatim
+- `includes_teardown_scenario`: the skill includes a teardown/cleanup scenario in the authored feature file
+- `confirms_new_category_with_user`: the target category/directory does not yet exist in this scenario, so the skill confirms with the user before proceeding
+
+Return JSON only — no other text — in this shape:
 
 ```json
 {

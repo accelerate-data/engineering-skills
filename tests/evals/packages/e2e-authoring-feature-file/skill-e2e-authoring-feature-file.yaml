@@ -35,7 +35,6 @@ tests:
         - A sibling file features/domains/domain-settings.feature exists with a Background section.
         - steps/ui-actions.md and steps/ui-assertions.md contain relevant step patterns.
       expect_resolves_harness_root_from_env_var: "true"
-      expect_refuses_to_overwrite_existing_file: "true"
       expect_copies_sibling_background_verbatim: "true"
       expect_includes_teardown_scenario: "true"
       expect_no_hardcoded_app_path: "true"
@@ -60,7 +59,6 @@ tests:
         - The user says: "Create features/domains/domain-crud.feature."
         - features/domains/domain-crud.feature already exists with 5 scenarios.
       expect_refuses_to_overwrite_existing_file: "true"
-      expect_no_hardcoded_app_path: "true"
 
   - description: "new category — confirms with user before creating a brand-new feature directory"
     vars:

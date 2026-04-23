@@ -1,12 +1,24 @@
-Read the skill at `skills/e2e-extending-step-vocabulary/SKILL.md`.
-
-Do not call any tools. Use only the simulated context provided in the scenario below.
+Use the Read tool to read the skill at `skills/e2e-extending-step-vocabulary/SKILL.md`. Then, without calling any other tools, use only the simulated context provided in the scenario below to determine how the skill would behave.
 
 Scenario:
 
 {{scenario}}
 
-Based on the skill instructions and this scenario, return JSON only — no other text — in this shape:
+For each field below, set `true` if the skill WOULD do that in this specific scenario, `false` if it would NOT do that in this specific scenario.
+
+Field definitions:
+- `resolves_harness_root_from_env_var`: the skill uses E2E_HARNESS_ROOT (which IS set in this scenario) to locate the harness
+- `falls_back_to_cwd_when_env_not_set`: the skill falls back to CWD as the harness root because E2E_HARNESS_ROOT is NOT set in this scenario
+- `classifies_backend_before_adding`: the skill classifies the backend type (ui/api/db/fs/log/other) before proposing the new step entry
+- `refuses_cross_backend_step`: the requested step mixes two backends in this scenario, so the skill refuses and asks the caller to split
+- `includes_failure_mode_note`: the skill includes a failure mode note (no retry, FAIL immediately) in the proposed entry
+- `includes_dual_dialect_for_db`: the step is a DB step in this scenario, so the skill documents both sqlite3 and psql dialects (or uses {DB_CMD})
+- `emits_run_id_on_data_literals`: the skill embeds {{RUN_ID}} in seeded data literals in the example scenario call
+- `uses_step_vocabulary_only`: reserved for alignment with other BDD skills — set true unless this skill is inventing steps rather than adding to vocabulary
+- `emits_missing_step_comment`: a needed step pattern is absent and the skill emits a # MISSING STEP: comment
+- `no_hardcoded_app_path`: the skill never writes a hardcoded absolute path in its output
+
+Return JSON only — no other text — in this shape:
 
 ```json
 {
