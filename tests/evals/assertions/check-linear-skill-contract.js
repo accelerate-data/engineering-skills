@@ -261,17 +261,30 @@ module.exports = (output, context) => {
   }
 
   const expectedResolvedFields = normalizeTerms(context.vars.expected_resolved_fields_include);
-  if (expectedResolvedFields.length > 0) {
+  const forbiddenResolvedFields = normalizeTerms(context.vars.forbidden_resolved_fields_include);
+  if (expectedResolvedFields.length > 0 || forbiddenResolvedFields.length > 0) {
     const actual = Array.isArray(payload.resolved_fields_include)
       ? payload.resolved_fields_include.map((value) => String(value).trim().toLowerCase())
       : [];
-    const missing = expectedResolvedFields.filter((term) => !actual.includes(term));
-    if (missing.length > 0) {
-      return {
-        pass: false,
-        score: 0,
-        reason: `Missing resolved_fields_include values: ${missing.join(', ')}`,
-      };
+    if (expectedResolvedFields.length > 0) {
+      const missing = expectedResolvedFields.filter((term) => !actual.includes(term));
+      if (missing.length > 0) {
+        return {
+          pass: false,
+          score: 0,
+          reason: `Missing resolved_fields_include values: ${missing.join(', ')}`,
+        };
+      }
+    }
+    if (forbiddenResolvedFields.length > 0) {
+      const present = forbiddenResolvedFields.filter((term) => actual.includes(term));
+      if (present.length > 0) {
+        return {
+          pass: false,
+          score: 0,
+          reason: `Forbidden resolved_fields_include values present: ${present.join(', ')}`,
+        };
+      }
     }
   }
 

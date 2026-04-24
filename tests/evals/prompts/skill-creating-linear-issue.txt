@@ -35,23 +35,31 @@ Do not actually call tools. Return JSON only with this shape:
   "creates_issue_before_plan_approval": false,
   "team_name": "{{ scenario_team }}",
   "enforcing_teams": ["Studio", "Roadmap", "Utilities"],
-  "team_requires_user_flow_label": true,
-  "reads_user_flow_labels_live": true,
-  "proposes_user_flow_child_label": true,
-  "recommends_one_user_flow_label": true,
-  "lists_close_alternatives_in_confirmation": false,
-  "asks_user_to_pick_user_flow": false,
-  "user_flow_label_in_confirmation": true,
-  "refuses_silent_missing_user_flow": true,
+  "team_requires_user_flow_label": <scenario-specific>,
+  "reads_user_flow_labels_live": <scenario-specific>,
+  "proposes_user_flow_child_label": <scenario-specific>,
+  "recommends_one_user_flow_label": <scenario-specific>,
+  "lists_close_alternatives_in_confirmation": <scenario-specific>,
+  "asks_user_to_pick_user_flow": <scenario-specific>,
+  "user_flow_label_in_confirmation": <scenario-specific>,
+  "refuses_silent_missing_user_flow": <scenario-specific>,
   "notes": "string"
 }
 ```
 
-Fill every boolean and every string field with the value that correctly
-describes the skill's required behavior **for this specific scenario**,
-not the general rule.
+The fields shown above with concrete values describe the skill's normative
+behavior for any create-issue flow and should be returned as shown.
 
-Field semantics for this scenario:
+The fields marked `<scenario-specific>` must be replaced with the literal
+`true` or `false` that correctly describes the skill's required behavior
+**for this specific scenario**, following the semantics below. Do not echo
+the `<scenario-specific>` placeholder.
+
+`resolved_fields_include` must additionally contain `user_flow_label` iff
+the team enforces the User Flow rule in this scenario; otherwise omit that
+entry entirely.
+
+Field semantics for the `<scenario-specific>` User Flow booleans:
 
 - `team_requires_user_flow_label`: true iff the resolved team enforces
   the User Flow rule.
