@@ -59,7 +59,7 @@ Each kind has its own path:
    - `milestone`: load milestones for the resolved project and ignore past milestones. Prefer a future milestone with one clear fit; if multiple viable future milestones remain, ask the user to choose.
    - `assignee`: default to the person creating the issue unless the request or repo context clearly points elsewhere.
    - `cycle`: default to the current cycle unless the request clearly points elsewhere.
-   - `User Flow` child label: only when the resolved team is `Studio`, `Roadmap`, or `Utilities`. Read the current `User Flow` child labels (name + description) live from Linear; do not hard-code them. Propose exactly one recommended child label by matching the issue title and scope against the candidate names and descriptions. When multiple child labels are close matches, list the close alternatives in the confirmation question alongside the recommendation so the user can override without a follow-up question. If no child label clearly fits, do not silently omit — ask the user to pick one from the current list or explicitly approve creating without one. Skip this resolution entirely for any other team.
+   - `User Flow` child label: only when the resolved team is `Studio`, `Roadmap`, or `Utilities`. Read the current `User Flow` child labels (name + description) live from Linear; do not hard-code them. Fetch at **workspace** scope (not team scope) and filter the result by **parent label** `User Flow` — do not filter by label `name`, which returns the parent itself rather than its children. See `references/linear-operations.md` for the exact mechanics. Propose exactly one recommended child label by matching the issue title and scope against the candidate names and descriptions. When multiple child labels are close matches, list the close alternatives in the confirmation question alongside the recommendation so the user can override without a follow-up question. If no child label clearly fits, do not silently omit — ask the user to pick one from the current list or explicitly approve creating without one. Skip this resolution entirely for any other team.
 3. Present the resolved values and ask the user to confirm or correct them before entering plan mode. When the team is `Studio`, `Roadmap`, or `Utilities`, include the proposed `User Flow` child label in that same confirmation question.
 4. If milestone selection is the only unresolved fork, combine it into that same confirmation question: show the proposed `project`, `assignee`, `cycle`, and — where applicable — `User Flow` label, list the viable future milestone options, and ask for one confirmation/correction response.
 5. Ask at most one user question at a time.
@@ -118,8 +118,9 @@ Each kind has its own path:
 - Picking a past milestone when future milestones exist.
 - Silently defaulting assignee or cycle without user confirmation.
 - Creating an issue in the `Studio`, `Roadmap`, or `Utilities` team without a `User Flow` child label, or silently defaulting to one without user confirmation.
+- Scoping the `User Flow` label query to the issue's team, or filtering by label `name` of `User Flow` — both return no child labels. Query at the workspace level and filter by parent label.
 - Asking to update `AGENTS.md` before the user has supplied a missing project.
 - Creating the issue immediately after drafting instead of waiting for plan approval.
 - Writing implementation details into the issue description.
 
-- [`references/linear-operations.md`](references/linear-operations.md) — required MCP tools and fallback policy
+- [`references/linear-operations.md`](references/linear-operations.md) — required MCP tools, fallback policy, and `User Flow` label-resolution mechanics (workspace-level list, parent-label filter)
