@@ -70,13 +70,14 @@ Return one valid JSON object with exactly these keys:
 - `searches_codebase_first`
 - `enters_plan_mode`
 - `issue_kind`
-- `has_distinct_paths`
+- `uses_distinct_issue_kind_paths`
 - `resolves_project_before_asking`
 - `confirms_critical_fields_with_user`
 - `resolved_fields_include`
 - `assignee_default`
 - `cycle_default`
-- `milestone_strategy`
+- `ignores_past_milestones`
+- `asks_user_to_choose_milestone`
 - `asks_to_record_project_in_agents_md_only_after_user_supplies_it`
 - `creates_issue_before_plan_approval`
 - `team_name`
@@ -99,6 +100,14 @@ Field meanings:
   must resolve or explicitly except them before issue creation.
 - `assignee_default` and `cycle_default` report the skill's default values
   when the request does not explicitly provide those fields.
+- `uses_distinct_issue_kind_paths` is true when the workflow classifies the
+  request using the skill's distinct `feature`, `bug`, and `spike`
+  classification table before drafting the issue. It is not about whether the
+  issue should be decomposed into multiple implementation paths.
+- `ignores_past_milestones` is true when the workflow excludes past
+  milestones from the available milestone choices.
+- `asks_user_to_choose_milestone` is true when more than one viable future
+  milestone remains and the workflow asks the user to choose one.
 - `asks_to_record_project_in_agents_md_only_after_user_supplies_it` is true
   only when repo guidance lacks the project and the user supplies it during
   the workflow. It is false when the simulated repo guidance already provides

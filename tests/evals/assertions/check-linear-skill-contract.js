@@ -33,6 +33,15 @@ function getPayloadValue(payload, field) {
   return undefined;
 }
 
+function normalizeResolvedField(value) {
+  const normalized = String(value).trim().toLowerCase().replace(/[\s-]+/g, '_');
+  const aliases = {
+    user_flow: 'user_flow_label',
+    user_flow_child_label: 'user_flow_label',
+  };
+  return aliases[normalized] || normalized;
+}
+
 module.exports = (output, context) => {
   if (context.vars.expected_detected_skill !== undefined) {
     return checkRoutingContract(output, context);
@@ -157,6 +166,8 @@ module.exports = (output, context) => {
       'refuses_silent_missing_user_flow',
       parseExpectedBoolean(context.vars.expect_refuses_silent_missing_user_flow),
     ],
+    ['ignores_past_milestones', parseExpectedBoolean(context.vars.expect_ignores_past_milestones)],
+    ['asks_user_to_choose_milestone', parseExpectedBoolean(context.vars.expect_asks_user_to_choose_milestone)],
   ];
 
   for (const [field, expected] of checks) {
@@ -194,13 +205,13 @@ module.exports = (output, context) => {
     }
   }
 
-  if (context.vars.expect_has_distinct_paths !== undefined) {
-    const expected = parseExpectedBoolean(context.vars.expect_has_distinct_paths);
-    if (payload.has_distinct_paths !== expected) {
+  if (context.vars.expect_uses_distinct_issue_kind_paths !== undefined) {
+    const expected = parseExpectedBoolean(context.vars.expect_uses_distinct_issue_kind_paths);
+    if (payload.uses_distinct_issue_kind_paths !== expected) {
       return {
         pass: false,
         score: 0,
-        reason: `Expected has_distinct_paths=${expected}, got ${payload.has_distinct_paths}`,
+        reason: `Expected uses_distinct_issue_kind_paths=${expected}, got ${payload.uses_distinct_issue_kind_paths}`,
       };
     }
   }
@@ -215,7 +226,7 @@ module.exports = (output, context) => {
     const expected = String(expectedRaw).trim().toLowerCase();
     const actual = String(payload[field] || '').trim().toLowerCase();
     const aliases = {
-      creator: ['creator', 'requester', 'issue-creator', 'issue creator', 'current_user', 'current user'],
+      creator: ['creator', 'requester', 'issue-creator', 'issue_creator', 'issue creator', 'current_user', 'current user'],
       current: ['current', 'current_cycle', 'current cycle'],
     };
     const accepted = aliases[expected] || [expected];
@@ -286,9 +297,7 @@ module.exports = (output, context) => {
   const forbiddenResolvedFields = normalizeTerms(context.vars.forbidden_resolved_fields_include);
   if (expectedResolvedFields.length > 0 || forbiddenResolvedFields.length > 0) {
     const actual = Array.isArray(payload.resolved_fields_include)
-      ? payload.resolved_fields_include.map((value) =>
-          String(value).trim().toLowerCase().replace(/^user_flow_child_label$/, 'user_flow_label'),
-        )
+      ? payload.resolved_fields_include.map(normalizeResolvedField)
       : [];
     if (expectedResolvedFields.length > 0) {
       const missing = expectedResolvedFields.filter((term) => !actual.includes(term));

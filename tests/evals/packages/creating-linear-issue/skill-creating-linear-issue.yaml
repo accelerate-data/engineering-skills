@@ -28,12 +28,13 @@ defaultTest:
     expect_searches_codebase_first: "true"
     expect_enters_plan_mode: "true"
     expected_issue_kind: "feature"
-    expect_has_distinct_paths: "true"
+    expect_uses_distinct_issue_kind_paths: "true"
     expect_resolves_project_before_asking: "true"
     expect_confirms_critical_fields_with_user: "true"
     expected_assignee_default: "creator"
     expected_cycle_default: "current"
-    expected_milestone_strategy: "future-only"
+    expect_ignores_past_milestones: "true"
+    expect_asks_user_to_choose_milestone: "true"
     expect_asks_to_record_project_in_agents_md_only_after_user_supplies_it: "false"
     required_terms: "feature,milestone,project,current,creator,assignee,cycle,user_flow"
     forbidden_terms: "creates_issue_before_plan_approval\":true"
@@ -41,7 +42,7 @@ defaultTest:
 tests:
   - description: "Studio happy path — multiple close User Flow matches, one recommended"
     vars:
-      user_request: "Create a Linear issue for improving eval coverage for the engineering skills plugin."
+      user_request: "Create a Linear issue for adding automated regression eval scenarios to the engineering skills plugin."
       scenario_team: "Studio"
       scenario_project: "Engineering Skills"
       user_flow_scenario_note: |

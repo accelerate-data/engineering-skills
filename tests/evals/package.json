@@ -21,6 +21,7 @@
     "eval:codex-compatibility": "node scripts/check-codex-compatibility.js",
     "test:opencode-cli-provider": "node --test scripts/opencode-cli-provider.test.js",
     "test:eval-harness-contract": "node --test scripts/eval-harness-contract.test.js",
+    "test:linear-skill-contract": "node --test scripts/linear-skill-contract.test.js",
     "test:promptfoo-db-gate": "node --test scripts/promptfoo-db-gate.test.js",
     "view": "./scripts/promptfoo.sh view"
   },
