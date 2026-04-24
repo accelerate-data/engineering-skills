@@ -22,7 +22,49 @@ install at the same corporate `client_id` and `client_secret`.
 Use a local credential file. This keeps the credentials in the location the CLI
 expects and avoids requiring each shell session to export environment variables.
 
-1. Obtain the `client_secret.json` file for the corporate OAuth client.
+1. Use the example `client_secret.json` file in this folder as a template.
+2. Get the corporate `client_id` and `client_secret` from
+   [1Password](https://share.1password.com/s#_AUjKOXUgfyf427FM-Tbfg1F-dqrfvmU5iykmNhBRjQ).
+   If the link does not work, email `hb@acceleratedata.ai`.
+3. Replace the example `client_id` and `client_secret` values in the template.
+4. Create the local config directory:
+
+   ```sh
+   mkdir -p ~/.config/gws
+   ```
+
+5. Save the completed file at this exact path:
+
+   ```text
+   ~/.config/gws/client_secret.json
+   ```
+
+## Alternative Setup
+
+If a file-based setup is not suitable, get the corporate `client_id` and
+`client_secret` from
+[1Password](https://share.1password.com/s#_AUjKOXUgfyf427FM-Tbfg1F-dqrfvmU5iykmNhBRjQ).
+If the link does not work, email `hb@acceleratedata.ai`.
+
+Then export the credentials through the shell or a local `.env` file:
+
+```sh
+export GOOGLE_WORKSPACE_CLI_CLIENT_ID="your_corp_id_here"
+export GOOGLE_WORKSPACE_CLI_CLIENT_SECRET="your_corp_secret_here"
+```
+
+Use this option only when the local environment reliably loads those variables
+before `gws` commands run.
+
+## Example Credential File
+
+The `client_secret.json` file in this folder is an example template. It is safe
+to commit because its `client_id` and `client_secret` values are placeholders.
+
+To use it:
+
+1. Replace the placeholder `client_id` and `client_secret` values with the
+   corporate values from 1Password.
 2. Create the local config directory:
 
    ```sh
@@ -34,19 +76,6 @@ expects and avoids requiring each shell session to export environment variables.
    ```text
    ~/.config/gws/client_secret.json
    ```
-
-## Alternative Setup
-
-If a file-based setup is not suitable, export the credentials through the shell
-or a local `.env` file:
-
-```sh
-export GOOGLE_WORKSPACE_CLI_CLIENT_ID="your_corp_id_here"
-export GOOGLE_WORKSPACE_CLI_CLIENT_SECRET="your_corp_secret_here"
-```
-
-Use this option only when the local environment reliably loads those variables
-before `gws` commands run.
 
 ## Login Flow
 
