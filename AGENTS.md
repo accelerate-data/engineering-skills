@@ -120,6 +120,7 @@ Use these repo-local skills when requests match:
 - `skills/implementing-linear-issue/SKILL.md` - implement a Linear issue
 - `skills/raising-linear-pr/SKILL.md` - run the PR phase for a completed issue
 - `skills/closing-linear-issue/SKILL.md` - merge, close, and clean up after review
+- `skills/yolo/SKILL.md` - single-shot flow: create issue, implement, and raise PR in one invocation
 - `skills/adversarial-review/SKILL.md` - run adversarial code review
 - `skills/shadcn-ui/SKILL.md` - shadcn/ui component work
 - `skills/explaining-code/SKILL.md` - explain code with diagrams and teaching-style breakdowns
