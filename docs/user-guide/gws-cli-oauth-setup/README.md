@@ -56,27 +56,6 @@ export GOOGLE_WORKSPACE_CLI_CLIENT_SECRET="your_corp_secret_here"
 Use this option only when the local environment reliably loads those variables
 before `gws` commands run.
 
-## Example Credential File
-
-The `client_secret.json` file in this folder is an example template. It is safe
-to commit because its `client_id` and `client_secret` values are placeholders.
-
-To use it:
-
-1. Replace the placeholder `client_id` and `client_secret` values with the
-   corporate values from 1Password.
-2. Create the local config directory:
-
-   ```sh
-   mkdir -p ~/.config/gws
-   ```
-
-3. Save the file at this exact path:
-
-   ```text
-   ~/.config/gws/client_secret.json
-   ```
-
 ## Login Flow
 
 After configuring credentials, run the login command with only the services the
@@ -123,7 +102,6 @@ team on one method to avoid inconsistent setup.
 
 ## Operating Notes
 
-- Do not commit `client_secret.json` to source control.
 - Rotate and redistribute the corporate OAuth client secret according to the
   organization's credential management policy.
 - Re-run `gws auth login` after credential rotation, scope changes, or OAuth
