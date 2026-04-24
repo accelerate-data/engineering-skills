@@ -459,11 +459,60 @@ nascent and intentionally have `#N/A` today).
 
 **`user-flows/status/README.md`** — README updates:
 
-- Add a new short section **"Authoring a flow spec"** between
-  *Linear Tagging* and *Ownership*. Content: points at the
-  `authoring-flow-spec` skill and the `/author-flow-spec` command;
-  notes that the resulting spec file now lives in the target GitHub repo
-  at `docs/functional/<canonical-id>/README.md`, not in this repo.
+- Add a new section **"Authoring a flow spec"** between the
+  *Linear Tagging* section (line 38) and the *Ownership* section (line 42),
+  preceded by the existing `---` horizontal rule after Linear Tagging and
+  followed by a new `---` before Ownership.
+- The inserted section mirrors the tone and structure of the existing
+  *"How to Update Your Status"* section (brief intro → "How to run" bullets
+  → "What it does" numbered list → pointer to skill).
+
+Exact markdown to insert:
+
+```markdown
+## Authoring a Flow Spec
+
+Flow specs no longer live in this repo. They now live in each flow's
+target GitHub repo (per the `repo` column in the User-Flows-Details Sheet)
+at `docs/functional/<Canonical ID>/README.md`.
+
+Use the `authoring-flow-spec` skill in the
+[engineering-skills plugin](https://github.com/accelerate-data/engineering-skills)
+to author or update a flow spec. It reads the Sheet, verifies you are in
+the right repo, drafts from the canonical template, pressure-tests the
+draft via the superpowers brainstorming skill, and writes the result to
+the correct path.
+
+**How to run:**
+
+- Command fallback: `/author-flow-spec <canonical-id>` (positional).
+- Natural-language triggers also fire the skill — e.g.
+  *"draft a flow spec for <id>"*, *"write a PRD for <id>"*,
+  *"author the functional spec for <id>"*.
+
+**What it does:**
+
+1. Confirms `gws` is logged in and you are inside one of the four target
+   repos (`studio`, `skill-builder`, `domain-cicd`, `migration-utility`).
+2. Looks up the canonical ID in the Sheet for `repo`, `category`, `title`,
+   and `persona`.
+3. Verifies the repo you are in matches the Sheet's `repo` column.
+4. Drafts the spec against the bundled flow-spec template.
+5. Hands off to `superpowers:brainstorming` to pressure-test the draft
+   section by section.
+6. Writes to `<repo>/docs/functional/<canonical-id>/README.md` — or
+   `NN-<child-slug>.md` if the ID is a child composite.
+7. Offers to commit; you decide when.
+
+For the full behavior contract, see the
+[`authoring-flow-spec`](https://github.com/accelerate-data/engineering-skills/tree/main/skills/authoring-flow-spec)
+skill.
+```
+
+After insertion, the section order in `status/README.md` becomes: Objective →
+Status Definitions → Linear Tagging → **Authoring a Flow Spec** (new) →
+Ownership → How to Update Your Status → Rules → Commands → Canonical source →
+Files → Changelog rule → Scope.
 
 ### Commit F — changelog
 
