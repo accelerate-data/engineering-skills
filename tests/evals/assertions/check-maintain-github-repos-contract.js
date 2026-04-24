@@ -22,8 +22,14 @@ module.exports = (output, context) => {
     ['mentions_accelerate_data_only', parseExpectedBoolean(context.vars.expect_mentions_accelerate_data_only)],
     ['requires_dry_run_before_execute', parseExpectedBoolean(context.vars.expect_requires_dry_run_before_execute)],
     ['requires_user_confirmation_before_execute', parseExpectedBoolean(context.vars.expect_requires_user_confirmation_before_execute)],
-    ['requires_full_bulk_set_approval', parseExpectedBoolean(context.vars.expect_requires_full_bulk_set_approval)],
-    ['stops_on_partial_approval', parseExpectedBoolean(context.vars.expect_stops_on_partial_approval)],
+    ['requires_exact_scope_confirmation', parseExpectedBoolean(context.vars.expect_requires_exact_scope_confirmation)],
+    ['supports_archive_only_execution', parseExpectedBoolean(context.vars.expect_supports_archive_only_execution)],
+    ['supports_delete_only_execution', parseExpectedBoolean(context.vars.expect_supports_delete_only_execution)],
+    ['supports_selected_delete_execution', parseExpectedBoolean(context.vars.expect_supports_selected_delete_execution)],
+    [
+      'stops_on_unsupported_partial_approval',
+      parseExpectedBoolean(context.vars.expect_stops_on_unsupported_partial_approval),
+    ],
     ['includes_dev_repo_delete_rule', parseExpectedBoolean(context.vars.expect_includes_dev_repo_delete_rule)],
     [
       'uses_activity_not_archive_timestamp_for_scratch_delete',

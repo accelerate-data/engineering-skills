@@ -475,5 +475,116 @@ class TestAllFilesCompleteness(unittest.TestCase):
         self.assertIn(".gitignore", all_files, ".gitignore should be in all_files")
 
 
+# ---------------------------------------------------------------------------
+# 10. Partial execution modes
+# ---------------------------------------------------------------------------
+
+class TestPartialExecutionModes(unittest.TestCase):
+
+    def _repo(self, name):
+        return {
+            "name": name,
+            "is_archived": False,
+            "created_at": "2020-01-01",
+            "latest_commit": "2026-01-01",
+            "latest_author": "Dev",
+            "has_real_content": True,
+            "all_files": [],
+            "no_branches": False,
+            "branch_list_truncated": False,
+            "reason": "test reason",
+        }
+
+    @patch("analyze_repos.execute_actions")
+    @patch("analyze_repos.classify_repos")
+    @patch("analyze_repos.fetch_all_repos")
+    @patch("sys.argv", ["analyze_repos.py", "--org", "testorg", "--execute", "--archive-only"])
+    def test_execute_archive_only_skips_delete_actions(self, mock_fetch, mock_classify, mock_execute):
+        delete_repo = self._repo("delete-me")
+        archive_repo = self._repo("archive-me")
+        mock_fetch.return_value = [delete_repo, archive_repo]
+        mock_classify.return_value = ([delete_repo], [archive_repo], [], [])
+
+        analyze_repos.main()
+
+        mock_execute.assert_called_once_with([], [archive_repo], "testorg")
+
+    @patch("analyze_repos.execute_actions")
+    @patch("analyze_repos.classify_repos")
+    @patch("analyze_repos.fetch_all_repos")
+    @patch("sys.argv", ["analyze_repos.py", "--org", "testorg", "--execute", "--delete-only"])
+    def test_execute_delete_only_skips_archive_actions(self, mock_fetch, mock_classify, mock_execute):
+        delete_repo = self._repo("delete-me")
+        archive_repo = self._repo("archive-me")
+        mock_fetch.return_value = [delete_repo, archive_repo]
+        mock_classify.return_value = ([delete_repo], [archive_repo], [], [])
+
+        analyze_repos.main()
+
+        mock_execute.assert_called_once_with([delete_repo], [], "testorg")
+
+    @patch("analyze_repos.execute_actions")
+    @patch("analyze_repos.classify_repos")
+    @patch("analyze_repos.fetch_all_repos")
+    @patch(
+        "sys.argv",
+        [
+            "analyze_repos.py",
+            "--org",
+            "testorg",
+            "--execute",
+            "--delete-repo",
+            "delete-one",
+            "--delete-repo",
+            "delete-two",
+        ],
+    )
+    def test_execute_delete_repo_cherry_picks_named_delete_actions(
+        self, mock_fetch, mock_classify, mock_execute
+    ):
+        delete_one = self._repo("delete-one")
+        delete_two = self._repo("delete-two")
+        delete_three = self._repo("delete-three")
+        archive_repo = self._repo("archive-me")
+        mock_fetch.return_value = [delete_one, delete_two, delete_three, archive_repo]
+        mock_classify.return_value = (
+            [delete_one, delete_two, delete_three],
+            [archive_repo],
+            [],
+            [],
+        )
+
+        analyze_repos.main()
+
+        mock_execute.assert_called_once_with([delete_one, delete_two], [], "testorg")
+
+    @patch("analyze_repos.execute_actions")
+    @patch("analyze_repos.classify_repos")
+    @patch("analyze_repos.fetch_all_repos")
+    @patch(
+        "sys.argv",
+        [
+            "analyze_repos.py",
+            "--org",
+            "testorg",
+            "--execute",
+            "--delete-repo",
+            "not-proposed",
+        ],
+    )
+    def test_execute_delete_repo_rejects_names_not_in_delete_list(
+        self, mock_fetch, mock_classify, mock_execute
+    ):
+        delete_repo = self._repo("delete-me")
+        mock_fetch.return_value = [delete_repo]
+        mock_classify.return_value = ([delete_repo], [], [], [])
+
+        with self.assertRaises(SystemExit) as raised:
+            analyze_repos.main()
+
+        self.assertEqual(raised.exception.code, 2)
+        mock_execute.assert_not_called()
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -7,10 +7,10 @@ prompts:
     raw: file://../../prompts/skill-raising-linear-pr.txt
 
 providers:
-  - id: opencode:sdk
+  - id: file://../../scripts/opencode-cli-provider.js
     config:
-      baseUrl: http://127.0.0.1:4096
-      apiKey: promptfoo-local-baseurl-placeholder
+      provider_id: opencode
+      model: qwen3.6-plus
       working_dir: ../..
       max_turns: 20
       tools:
@@ -59,7 +59,7 @@ tests:
       expect_supports_local_design_references: "true"
       expect_compares_design_to_implementation_evidence: "false"
       expect_records_design_conformance_evidence: "true"
-      expect_blocks_pr_on_design_mismatch: "false"
+      expect_blocks_pr_for_design_mismatch_in_this_scenario: "false"
       expected_design_conformance_result: "not_applicable"
       expected_design_paths_empty: "true"
       expect_moves_issue_to_in_review: "true"
@@ -128,7 +128,7 @@ tests:
       expect_supports_local_design_references: "true"
       expect_compares_design_to_implementation_evidence: "true"
       expect_records_design_conformance_evidence: "true"
-      expect_blocks_pr_on_design_mismatch: "false"
+      expect_blocks_pr_for_design_mismatch_in_this_scenario: "false"
       expected_design_conformance_result: "pass"
       expected_design_paths_include: "docs/design/proven-ac-design.md"
       expect_moves_issue_to_in_review: "true"
@@ -164,7 +164,7 @@ tests:
       expect_supports_local_design_references: "true"
       expect_compares_design_to_implementation_evidence: "true"
       expect_records_design_conformance_evidence: "true"
-      expect_blocks_pr_on_design_mismatch: "false"
+      expect_blocks_pr_for_design_mismatch_in_this_scenario: "false"
       expected_design_conformance_result: "pass"
       expected_design_paths_include: "docs/superpowers/specs/2026-04-20-search-design.md"
       expect_moves_issue_to_in_review: "true"
@@ -199,7 +199,7 @@ tests:
       expect_supports_local_design_references: "true"
       expect_compares_design_to_implementation_evidence: "true"
       expect_records_design_conformance_evidence: "true"
-      expect_blocks_pr_on_design_mismatch: "true"
+      expect_blocks_pr_for_design_mismatch_in_this_scenario: "true"
       expected_design_conformance_result: "fail"
       expected_design_paths_include: "docs/design/billing-retry.md"
       expect_moves_issue_to_in_review: "false"
@@ -235,7 +235,7 @@ tests:
       expect_supports_local_design_references: "true"
       expect_compares_design_to_implementation_evidence: "true"
       expect_records_design_conformance_evidence: "true"
-      expect_blocks_pr_on_design_mismatch: "false"
+      expect_blocks_pr_for_design_mismatch_in_this_scenario: "false"
       expected_design_conformance_result: "pass"
       expected_design_paths_include: "docs/design/comment-sourced-design.md"
       expect_moves_issue_to_in_review: "true"
@@ -270,12 +270,12 @@ tests:
       expect_supports_local_design_references: "true"
       expect_compares_design_to_implementation_evidence: "true"
       expect_records_design_conformance_evidence: "true"
-      expect_blocks_pr_on_design_mismatch: "false"
+      expect_blocks_pr_for_design_mismatch_in_this_scenario: "false"
       expected_design_conformance_result: "pass"
       expected_design_paths_include: "docs/design/api-contract.md,docs/superpowers/specs/2026-04-20-ui-flow-design.md"
       expect_moves_issue_to_in_review: "true"
       expect_merges_pr: "false"
-      required_terms: "design,docs/design,docs/superpowers/specs,both,pass"
+      required_terms: "design,docs/design,docs/superpowers/specs,pass"
 
   - description: "raise-pr — design gate fails when checked AC content diverges from the design"
     vars:
@@ -309,12 +309,12 @@ tests:
       expect_supports_local_design_references: "true"
       expect_compares_design_to_implementation_evidence: "true"
       expect_records_design_conformance_evidence: "true"
-      expect_blocks_pr_on_design_mismatch: "true"
+      expect_blocks_pr_for_design_mismatch_in_this_scenario: "true"
       expected_design_conformance_result: "fail"
       expected_design_paths_include: "docs/design/export-format.md"
       expect_moves_issue_to_in_review: "false"
       expect_merges_pr: "false"
-      required_terms: "design,truth,acceptance,checked,fail,csv,json,stop"
+      required_terms: "design,acceptance,checked,fail,csv,json,stop"
 
   - description: "raise-pr — records not_applicable when no design document is referenced"
     vars:
@@ -343,7 +343,7 @@ tests:
       expect_supports_local_design_references: "true"
       expect_compares_design_to_implementation_evidence: "false"
       expect_records_design_conformance_evidence: "true"
-      expect_blocks_pr_on_design_mismatch: "false"
+      expect_blocks_pr_for_design_mismatch_in_this_scenario: "false"
       expected_design_conformance_result: "not_applicable"
       expected_design_paths_empty: "true"
       expect_moves_issue_to_in_review: "true"

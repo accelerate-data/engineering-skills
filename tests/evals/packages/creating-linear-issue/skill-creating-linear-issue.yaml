@@ -1,5 +1,5 @@
 # yaml-language-server: $schema=https://promptfoo.dev/config-schema.json
-description: "Creating-linear-issue skill — clarification and planning before issue creation"
+description: "Creating-linear-issue skill — clarification, planning, and routing before issue creation"
 
 prompts:
   - id: creating-linear-issue
@@ -7,10 +7,10 @@ prompts:
     raw: file://../../prompts/skill-creating-linear-issue.txt
 
 providers:
-  - id: opencode:sdk
+  - id: file://../../scripts/opencode-cli-provider.js
     config:
-      baseUrl: http://127.0.0.1:4096
-      apiKey: promptfoo-local-baseurl-placeholder
+      provider_id: opencode
+      model: qwen3.6-plus
       working_dir: ../..
       max_turns: 20
       tools:
@@ -28,12 +28,13 @@ defaultTest:
     expect_searches_codebase_first: "true"
     expect_enters_plan_mode: "true"
     expected_issue_kind: "feature"
-    expect_has_distinct_paths: "true"
+    expect_uses_distinct_issue_kind_paths: "true"
     expect_resolves_project_before_asking: "true"
     expect_confirms_critical_fields_with_user: "true"
     expected_assignee_default: "creator"
     expected_cycle_default: "current"
-    expected_milestone_strategy: "future-only"
+    expect_ignores_past_milestones: "true"
+    expect_asks_user_to_choose_milestone: "true"
     expect_asks_to_record_project_in_agents_md_only_after_user_supplies_it: "false"
     required_terms: "feature,milestone,project,current,creator,assignee,cycle,user_flow"
     forbidden_terms: "creates_issue_before_plan_approval\":true"
@@ -41,11 +42,11 @@ defaultTest:
 tests:
   - description: "Studio happy path — multiple close User Flow matches, one recommended"
     vars:
-      user_request: "Create a Linear issue for improving eval coverage for the engineering skills plugin."
+      user_request: "Create a Linear issue for adding automated regression eval scenarios to the engineering skills plugin."
       scenario_team: "Studio"
       scenario_project: "Engineering Skills"
       user_flow_scenario_note: |
-        The Studio team uses a `User Flow` parent label with child labels describing product flows. Three child labels are close matches for this issue's scope; the best recommendation clearly wins on name + description match, but the other two are close enough that the confirmation question should list them as overridable alternatives.
+        The Studio team uses a `User Flow` parent label with child labels describing product flows. Three child labels are close matches for this issue's scope; one child label has the strongest name and description match, while the other two are plausible but weaker matches.
       expected_resolved_fields_include: "user_flow_label"
       expect_team_requires_user_flow_label: "true"
       expect_reads_user_flow_labels_live: "true"
@@ -63,7 +64,7 @@ tests:
       scenario_team: "Roadmap"
       scenario_project: "Product Roadmap"
       user_flow_scenario_note: |
-        The Roadmap team uses a `User Flow` parent label with child labels describing product flows. Exactly one child label clearly matches this issue's scope. The Studio and Utilities teams also enforce this rule on the same basis.
+        The Roadmap team uses a `User Flow` parent label with child labels describing product flows. Exactly one child label clearly matches this issue's scope.
       expected_resolved_fields_include: "user_flow_label"
       expect_team_requires_user_flow_label: "true"
       expect_reads_user_flow_labels_live: "true"
@@ -81,7 +82,7 @@ tests:
       scenario_team: "Studio"
       scenario_project: "Engineering Skills"
       user_flow_scenario_note: |
-        The Studio team uses a `User Flow` parent label with child labels describing product flows. None of the current child labels match the issue title or scope. The skill must not silently omit the label; it must ask the user to pick one from the current list or explicitly approve creating without one.
+        The Studio team uses a `User Flow` parent label with child labels describing product flows. None of the current child labels match the issue title or scope.
       expected_resolved_fields_include: "user_flow_label"
       expect_team_requires_user_flow_label: "true"
       expect_reads_user_flow_labels_live: "true"
@@ -95,11 +96,11 @@ tests:
 
   - description: "GTM non-enforcing team — User Flow resolution must be skipped"
     vars:
-      user_request: "Create a Linear issue for planning next quarter's go-to-market campaign."
+      user_request: "Create a Linear issue for adding a go-to-market campaign planning checklist to the launch dashboard."
       scenario_team: "GTM"
       scenario_project: "Q3 Campaigns"
       user_flow_scenario_note: |
-        The workspace has a `User Flow` parent label, but the GTM team does not enforce the User Flow child-label rule. The skill must skip User Flow resolution entirely for this team and not include a User Flow label in the field-confirmation question.
+        The workspace has a `User Flow` parent label, but the GTM team does not enforce the User Flow child-label rule.
       forbidden_resolved_fields_include: "user_flow_label"
       expect_team_requires_user_flow_label: "false"
       expect_reads_user_flow_labels_live: "false"
@@ -110,3 +111,24 @@ tests:
       expect_user_flow_label_in_confirmation: "false"
       expect_refuses_silent_missing_user_flow: "false"
       required_terms: "feature,milestone,project,current,creator,assignee,cycle,user_flow,gtm"
+
+  - description: "routing — detects exact create-linear-issue phrase over generic Linear skill"
+    vars:
+      user_message: "create linear issue for improving eval coverage"
+      expected_detected_skill: "creating-linear-issue"
+      expect_trigger_found_in_message: "true"
+      expect_would_pause_current_flow: "true"
+
+  - description: "routing — detects file-linear-bug phrase over generic Linear skill"
+    vars:
+      user_message: "file a Linear bug for failing markdownlint checks in the skill prompt"
+      expected_detected_skill: "creating-linear-issue"
+      expect_trigger_found_in_message: "true"
+      expect_would_pause_current_flow: "true"
+
+  - description: "routing — detects embedded create-linear-issue request mid-brainstorm flow"
+    vars:
+      user_message: "2 is good. before design create linear issue and then continue the brainstorm flow to design and implement the issue"
+      expected_detected_skill: "creating-linear-issue"
+      expect_trigger_found_in_message: "true"
+      expect_would_pause_current_flow: "true"

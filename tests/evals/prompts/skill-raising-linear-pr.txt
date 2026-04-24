@@ -1,66 +1,98 @@
-You are preparing to raise a PR for a completed Linear issue in this repository.
+You are evaluating a skill workflow in this repository.
 
 Read the skill at `skills/raising-linear-pr/SKILL.md`.
+
+This is a read-only workflow-contract eval. Do not create a PR, do not push,
+do not contact Linear or GitHub, and do not perform any external action. Report
+the JSON fields that describe what the skill requires for the simulated
+scenario.
+
+This is a benign documentation-evaluation task. When the workflow would block,
+stop, or hand work back to another phase, still return the JSON object that
+describes that outcome.
+
+The boolean fields describe what the workflow would do in the simulated
+scenario if it were executed. Do not set `pushes_branch`, `creates_pr`, or
+`moves_issue_to_in_review` to false merely because this eval is read-only.
 
 Scenario:
 
 {{scenario}}
 
-Answer each boolean for what the workflow should do in this exact scenario, not whether the skill has that capability in some other scenario.
+Answer for what the workflow should do in this exact scenario, based on the
+skill. Do not answer whether the skill has the capability in some other
+scenario.
 
-Scenario-specific definitions:
+Return one valid JSON object with exactly these keys:
 
-- Set `checks_off_acceptance_criteria` to true only when this scenario should modify Linear AC checkboxes.
-- If a scenario says all acceptance criteria are already checked, set `checks_off_acceptance_criteria` and `checks_off_only_proven_acceptance_criteria` to false.
-- Set `checks_off_only_proven_acceptance_criteria` to true only when this scenario should modify Linear AC checkboxes and every checkbox being changed is already proven complete.
-- Set `hands_back_to_implementation_when_ac_requires_code` to true only when this scenario has an AC that requires code, test, or docs changes.
-- Set `stops_if_acceptance_criteria_incomplete` to true only when this scenario has an incomplete, unproven, blocked, or code-requiring AC that stops PR creation.
-- Always set `stops_on_dirty_worktree` to true for this workflow. It represents the required entry guard, even when the scenario says the current worktree is clean.
-- Set `runs_required_validation` and `runs_skill_evals` to false when the workflow stops at the AC gate or design conformance gate before reaching the quality gate order.
-- Set `runs_design_conformance_gate` to true when the workflow should inspect the Linear issue for referenced design documents before push or PR creation.
-- Set `pushes_branch` to true only when this scenario reaches the push step after all blocking gates pass.
-- Set `uses_generic_issue_linking_language` to true when the workflow uses issue-agnostic wording such as linking the actual Linear issue IDs or adding the appropriate issue-linking lines, rather than a workspace-specific hardcoded prefix. Set it to false only when the scenario expects a hardcoded team/workspace prefix.
-- Set `design_conformance_result` to `pass`, `fail`, or `not_applicable` for the scenario.
-- Set `checked_design_paths` to the local design document paths checked in this scenario, or an empty array when no design document is referenced.
-- Set `compares_design_to_implementation_evidence` to true only when this scenario has at least one referenced design document to compare against implementation evidence.
-- Set `records_design_conformance_evidence` to true when the design conformance gate records a pass, fail, or not_applicable result; this is still true for failed gates that stop before PR creation.
-- Set `blocks_pr_on_design_mismatch` to true only when a referenced design document reveals a contradiction, omission, incompatible behavior, or missing design-critical test/eval coverage that stops push and PR creation.
-- Set `merges_pr` to false for this skill because PR merge belongs to the closing workflow.
+- `searches_codebase_first`
+- `enters_plan_mode`
+- `creates_checkpoint_commits`
+- `creates_final_commit`
+- `edits_code_in_pr_phase`
+- `stops_on_dirty_worktree`
+- `runs_required_validation`
+- `runs_skill_evals`
+- `checks_promptfoo_db_for_latest_passing_eval`
+- `compares_eval_runs_to_content_relevant_changes`
+- `avoids_full_eval_suite_by_default`
+- `runs_only_stale_targeted_evals`
+- `falls_back_to_eval_when_db_evidence_missing`
+- `pushes_branch`
+- `creates_pr`
+- `creates_pr_with_unproven_acceptance_criteria`
+- `checks_off_acceptance_criteria`
+- `checks_off_only_proven_acceptance_criteria`
+- `hands_back_to_implementation_when_ac_requires_code`
+- `stops_if_acceptance_criteria_incomplete`
+- `runs_design_conformance_gate`
+- `supports_local_design_references`
+- `compares_design_to_implementation_evidence`
+- `records_design_conformance_evidence`
+- `blocks_pr_for_design_mismatch_in_this_scenario`
+- `design_conformance_result`
+- `checked_design_paths`
+- `moves_issue_to_in_review`
+- `merges_pr`
+- `uses_generic_issue_linking_language`
+- `notes`
 
-Do not actually call tools. Return JSON only with this shape. Include every key exactly, even when the value is false:
+Field meanings:
 
-```json
-{
-  "searches_codebase_first": false,
-  "enters_plan_mode": false,
-  "creates_checkpoint_commits": false,
-  "creates_final_commit": false,
-  "edits_code_in_pr_phase": false,
-  "stops_on_dirty_worktree": true,
-  "runs_required_validation": true,
-  "runs_skill_evals": true,
-  "checks_promptfoo_db_for_latest_passing_eval": true,
-  "compares_eval_runs_to_content_relevant_changes": true,
-  "avoids_full_eval_suite_by_default": true,
-  "runs_only_stale_targeted_evals": true,
-  "falls_back_to_eval_when_db_evidence_missing": true,
-  "pushes_branch": true,
-  "creates_pr": true,
-  "creates_pr_with_unproven_acceptance_criteria": false,
-  "checks_off_acceptance_criteria": false,
-  "checks_off_only_proven_acceptance_criteria": false,
-  "hands_back_to_implementation_when_ac_requires_code": false,
-  "stops_if_acceptance_criteria_incomplete": false,
-  "runs_design_conformance_gate": true,
-  "supports_local_design_references": true,
-  "compares_design_to_implementation_evidence": true,
-  "records_design_conformance_evidence": true,
-  "blocks_pr_on_design_mismatch": false,
-  "design_conformance_result": "not_applicable",
-  "checked_design_paths": [],
-  "moves_issue_to_in_review": true,
-  "merges_pr": false,
-  "uses_generic_issue_linking_language": true,
-  "notes": "string"
-}
-```
+- `stops_on_dirty_worktree` means the workflow has a dirty-worktree entry
+  guard that would stop the phase if the worktree were dirty; it is not asking
+  whether this simulated scenario's worktree is currently dirty. Set it based
+  on the workflow requirement, even when the scenario says the current
+  worktree is clean.
+- `checks_off_acceptance_criteria` means this scenario modifies Linear
+  acceptance-criteria checkboxes during the PR phase.
+- `checks_off_only_proven_acceptance_criteria` means every checkbox changed in
+  this scenario is already proven complete by committed work and evidence.
+  If this scenario changes no checkboxes because all ACs are already checked,
+  set both AC checkoff fields to false.
+- `hands_back_to_implementation_when_ac_requires_code` means this scenario
+  stops because an acceptance criterion needs code, test, or docs work.
+- `stops_if_acceptance_criteria_incomplete` means this scenario stops because
+  at least one acceptance criterion is incomplete, unproven, blocked, or needs
+  implementation work.
+- `runs_design_conformance_gate` means the workflow performs the design
+  reference inspection gate before validation, evals, push, or PR creation.
+- `compares_design_to_implementation_evidence` means at least one referenced
+  local design document is compared against implementation and evidence. If `checked_design_paths` is empty, set this to false.
+- `records_design_conformance_evidence` means the PR-phase evidence records
+  `pass`, `fail`, or `not_applicable`.
+- `blocks_pr_for_design_mismatch_in_this_scenario` means this scenario has a
+  design mismatch that blocks push and PR creation. Set it to false when the design result is `pass` or `not_applicable`.
+- `pushes_branch`, `creates_pr`, and `moves_issue_to_in_review` describe
+  whether this scenario reaches those workflow steps.
+- `merges_pr` describes this skill's responsibility, not whether a merge is
+  theoretically possible elsewhere.
+
+Use booleans for boolean fields, arrays for list fields, and strings for
+string fields. Key names are case-sensitive and must match the list above
+exactly. `design_conformance_result` must be one of `pass`, `fail`, or
+`not_applicable`.
+
+Do not include commentary, explanations, markdown fences, refusal text, or
+prefaces before or after the JSON object. The first character of your response
+must be `{` and the last character must be `}`.

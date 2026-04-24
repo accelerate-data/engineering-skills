@@ -275,7 +275,30 @@ def main():
     parser.add_argument("--org", default=ORG, help="GitHub org name")
     parser.add_argument("--dry-run", action="store_true", help="Show actions without executing")
     parser.add_argument("--execute", action="store_true", help="Execute archive/delete actions after confirmation")
+    action_scope = parser.add_mutually_exclusive_group()
+    action_scope.add_argument(
+        "--archive-only",
+        action="store_true",
+        help="With --execute, apply only proposed archive actions",
+    )
+    action_scope.add_argument(
+        "--delete-only",
+        action="store_true",
+        help="With --execute, apply only proposed delete actions",
+    )
+    parser.add_argument(
+        "--delete-repo",
+        action="append",
+        default=[],
+        metavar="NAME",
+        help="With --execute, delete a specific repo from the proposed delete list; repeat for multiple repos",
+    )
     args = parser.parse_args()
+
+    if args.delete_only and args.delete_repo:
+        parser.error("--delete-only cannot be combined with --delete-repo")
+    if args.archive_only and args.delete_repo:
+        parser.error("--archive-only cannot be combined with --delete-repo; run archive-only and selected deletes separately")
 
     print(f"Fetching all repos from {args.org}...")
     repos = fetch_all_repos(args.org)
@@ -293,11 +316,29 @@ def main():
         return
 
     if args.execute:
-        print("\nExecuting actions...")
-        execute_actions(to_delete, to_archive, args.org)
+        if args.delete_repo:
+            delete_by_name = {r["name"]: r for r in to_delete}
+            missing = [name for name in args.delete_repo if name not in delete_by_name]
+            if missing:
+                parser.error(
+                    "--delete-repo names must be in the current proposed DELETE list: "
+                    + ", ".join(missing)
+                )
+            selected_delete = [delete_by_name[name] for name in args.delete_repo]
+            print("\nExecuting selected delete actions only...")
+            execute_actions(selected_delete, [], args.org)
+        elif args.archive_only:
+            print("\nExecuting archive actions only...")
+            execute_actions([], to_archive, args.org)
+        elif args.delete_only:
+            print("\nExecuting delete actions only...")
+            execute_actions(to_delete, [], args.org)
+        else:
+            print("\nExecuting actions...")
+            execute_actions(to_delete, to_archive, args.org)
         print("\nDone.")
     else:
-        print("\nRun with --execute to apply these changes, or --dry-run to preview without changes.")
+        print("\nRun with --execute to apply these changes, or add --archive-only, --delete-only, or --delete-repo NAME for a partial action set.")
 
 
 if __name__ == "__main__":

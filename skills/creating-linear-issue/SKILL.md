@@ -28,7 +28,7 @@ Turn a request into a clear Linear issue only after codebase review, field resol
 |---|---|
 | 0 | Classify first: `feature`, `bug`, or `spike` |
 | 1 | Search the codebase and existing Linear issues first |
-| 2 | Resolve `project`, `milestone`, `assignee`, `cycle`, and — for Studio, Roadmap, and Utilities teams — a `User Flow` child label before asking the user |
+| 2 | Resolve `project`, `milestone`, `assignee`, `cycle`, and — only for Studio, Roadmap, and Utilities teams — a `User Flow` child label before asking the user |
 | 3 | Confirm resolved fields with the user in one question; ask follow-up questions only for unresolved forks |
 | 4 | Enter plan mode and show the full issue draft plan before creating anything |
 | 5 | Create or update the issue only after plan approval |
@@ -37,30 +37,40 @@ Turn a request into a clear Linear issue only after codebase review, field resol
 
 **Tool contract:** use the available Linear MCP tools needed for issue, project, milestone, cycle, label, and comment operations in this workflow. Retry once on tool failure, then stop and report the exact failing step.
 
-**Critical fields are mandatory:** every issue creation flow must resolve and confirm `project`, `milestone`, `assignee`, and `cycle`. When the resolved team is `Studio`, `Roadmap`, or `Utilities`, a single `User Flow` child label is also a critical mandatory field.
+**Critical fields are mandatory:** every issue creation flow must resolve and confirm `project`, `milestone`, `assignee`, and `cycle`. When the resolved Linear team is `Studio`, `Roadmap`, or `Utilities`, a single `User Flow` child label is also a critical mandatory field. For every other team, `User Flow` is not a critical field even when the workspace contains a `User Flow` parent label.
+
+Defaults are resolved values. When `assignee` defaults to the issue creator and `cycle` defaults to the current cycle, include those values in the resolved field set and the confirmation question; do not report them as unassigned just because the user omitted them.
 
 **Classification is required before planning:**
 
-- `feature` for net-new functionality or capability changes
-- `bug` for regressions, defects, broken behavior, or incorrect output
-- `spike` for research, design, investigation, or documentation-driven discovery work
-
-Each kind has its own path:
-
-- `feature` path: user outcome, scope, acceptance criteria, and rollout constraints
-- `bug` path: symptom, impact, repro, severity, and fix acceptance criteria
-- `spike` path: question to answer, research boundary, deliverable, and exit criteria
+| Kind | Use when | Issue must capture |
+|---|---|---|
+| `feature` | Net-new functionality or capability changes | User outcome, scope, acceptance criteria, rollout constraints |
+| `bug` | Regression, defect, broken behavior, or incorrect output | Symptom, impact, repro, severity, fix acceptance criteria |
+| `spike` | Research, design, investigation, or documentation-driven discovery | Question to answer, research boundary, deliverable, exit criteria |
 
 **Clarification protocol:**
 
 1. Search the codebase first.
 2. Resolve the critical fields before asking the user:
-   - `project`: check `AGENTS.md` first for durable repo guidance. If it gives one clear project, use that provisional choice. If not, inspect Linear projects and repo context. If still unresolved, ask the user.
-   - `milestone`: load milestones for the resolved project and ignore past milestones. Prefer a future milestone with one clear fit; if multiple viable future milestones remain, ask the user to choose.
-   - `assignee`: default to the person creating the issue unless the request or repo context clearly points elsewhere.
-   - `cycle`: default to the current cycle unless the request clearly points elsewhere.
-   - `User Flow` child label: only when the resolved team is `Studio`, `Roadmap`, or `Utilities`. Read the current `User Flow` child labels (name + description) live from Linear; do not hard-code them. Fetch at **workspace** scope (not team scope) and filter the result by **parent label** `User Flow` — do not filter by label `name`, which returns the parent itself rather than its children. See `references/linear-operations.md` for the exact mechanics. Propose exactly one recommended child label by matching the issue title and scope against the candidate names and descriptions. When multiple child labels are close matches, list the close alternatives in the confirmation question alongside the recommendation so the user can override without a follow-up question. If no child label clearly fits, do not silently omit — ask the user to pick one from the current list or explicitly approve creating without one. Skip this resolution entirely for any other team.
-3. Present the resolved values and ask the user to confirm or correct them before entering plan mode. When the team is `Studio`, `Roadmap`, or `Utilities`, include the proposed `User Flow` child label in that same confirmation question.
+
+   | Field | Resolution rule | If unresolved |
+   |---|---|---|
+   | `project` | Check `AGENTS.md` first. If it gives one clear project, use that provisional choice; otherwise inspect Linear projects and repo context. | Ask the user. |
+   | `milestone` | Load milestones for the resolved project. Ignore past milestones. Prefer one clear future milestone. | If multiple viable future milestones remain, ask the user to choose. |
+   | `assignee` | Default to the issue creator unless the request or repo context clearly points elsewhere. | Ask only when context conflicts. |
+   | `cycle` | Default to the current cycle unless the request clearly points elsewhere. | Ask only when context conflicts. |
+   | `User Flow` child label | Required only for `Studio`, `Roadmap`, and `Utilities`. Apply the decision table below. | Ask for a child label or explicit exception when required and no clear match exists. |
+
+   | User Flow case | Rule |
+   |---|---|
+   | Team is not `Studio`, `Roadmap`, or `Utilities` | Skip `User Flow` resolution entirely: do not read child labels, recommend alternatives, or include a `User Flow` field in confirmation. |
+   | Team is `Studio`, `Roadmap`, or `Utilities` | Read current child labels live from Linear; never hard-code them. For exact query mechanics, read `references/linear-operations.md`. |
+   | One clear match | Propose exactly one recommended child label by matching issue title and scope against candidate names and descriptions. |
+   | Multiple close matches | Recommend one label and list close alternatives in the same confirmation question so the user can override. |
+   | No clear match | Ask the user to pick from current child labels or explicitly approve creating without one. |
+   | Enforcing team exception | Never silently omit the label; confirmation must include a selected/recommended child label or explicit exception approval. |
+3. Present the resolved values and ask the user to confirm or correct them before entering plan mode. The single confirmation question must include `project`, `milestone` or viable future milestone choices, `assignee`, `cycle`, and, when the team is `Studio`, `Roadmap`, or `Utilities`, the proposed `User Flow` child label or the explicit exception choice.
 4. If milestone selection is the only unresolved fork, combine it into that same confirmation question: show the proposed `project`, `assignee`, `cycle`, and — where applicable — `User Flow` label, list the viable future milestone options, and ask for one confirmation/correction response.
 5. Ask at most one user question at a time.
 6. If the project was missing from `AGENTS.md` and the user supplies it, ask after that answer whether they want the durable project mapping added to `AGENTS.md`.

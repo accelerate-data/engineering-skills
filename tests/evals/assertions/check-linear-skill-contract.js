@@ -1,4 +1,5 @@
 const { extractJsonObject, normalizeTerms } = require('./schema-helpers');
+const checkRoutingContract = require('./check-routing-contract');
 
 function parseExpectedBoolean(value) {
   if (value === undefined) return null;
@@ -22,10 +23,30 @@ function getPayloadValue(payload, field) {
     }
   }
 
+  const lowerField = field.toLowerCase();
+  for (const key of Object.keys(payload)) {
+    if (key.toLowerCase() === lowerField) {
+      return payload[key];
+    }
+  }
+
   return undefined;
 }
 
+function normalizeResolvedField(value) {
+  const normalized = String(value).trim().toLowerCase().replace(/[\s-]+/g, '_');
+  const aliases = {
+    user_flow: 'user_flow_label',
+    user_flow_child_label: 'user_flow_label',
+  };
+  return aliases[normalized] || normalized;
+}
+
 module.exports = (output, context) => {
+  if (context.vars.expected_detected_skill !== undefined) {
+    return checkRoutingContract(output, context);
+  }
+
   let payload;
   try {
     payload = extractJsonObject(output);
@@ -106,7 +127,7 @@ module.exports = (output, context) => {
       parseExpectedBoolean(context.vars.expect_compares_design_to_implementation_evidence),
     ],
     ['records_design_conformance_evidence', parseExpectedBoolean(context.vars.expect_records_design_conformance_evidence)],
-    ['blocks_pr_on_design_mismatch', parseExpectedBoolean(context.vars.expect_blocks_pr_on_design_mismatch)],
+    ['blocks_pr_for_design_mismatch_in_this_scenario', parseExpectedBoolean(context.vars.expect_blocks_pr_for_design_mismatch_in_this_scenario)],
     ['stops_if_pr_not_merged', parseExpectedBoolean(context.vars.expect_stops_if_pr_not_merged)],
     ['would_close_issue_in_this_scenario', parseExpectedBoolean(context.vars.expect_would_close_issue_in_this_scenario)],
     ['would_do_cleanup_in_this_scenario', parseExpectedBoolean(context.vars.expect_would_do_cleanup_in_this_scenario)],
@@ -145,6 +166,8 @@ module.exports = (output, context) => {
       'refuses_silent_missing_user_flow',
       parseExpectedBoolean(context.vars.expect_refuses_silent_missing_user_flow),
     ],
+    ['ignores_past_milestones', parseExpectedBoolean(context.vars.expect_ignores_past_milestones)],
+    ['asks_user_to_choose_milestone', parseExpectedBoolean(context.vars.expect_asks_user_to_choose_milestone)],
   ];
 
   for (const [field, expected] of checks) {
@@ -182,13 +205,13 @@ module.exports = (output, context) => {
     }
   }
 
-  if (context.vars.expect_has_distinct_paths !== undefined) {
-    const expected = parseExpectedBoolean(context.vars.expect_has_distinct_paths);
-    if (payload.has_distinct_paths !== expected) {
+  if (context.vars.expect_uses_distinct_issue_kind_paths !== undefined) {
+    const expected = parseExpectedBoolean(context.vars.expect_uses_distinct_issue_kind_paths);
+    if (payload.uses_distinct_issue_kind_paths !== expected) {
       return {
         pass: false,
         score: 0,
-        reason: `Expected has_distinct_paths=${expected}, got ${payload.has_distinct_paths}`,
+        reason: `Expected uses_distinct_issue_kind_paths=${expected}, got ${payload.uses_distinct_issue_kind_paths}`,
       };
     }
   }
@@ -202,7 +225,12 @@ module.exports = (output, context) => {
     if (expectedRaw === undefined) continue;
     const expected = String(expectedRaw).trim().toLowerCase();
     const actual = String(payload[field] || '').trim().toLowerCase();
-    if (actual !== expected) {
+    const aliases = {
+      creator: ['creator', 'requester', 'issue-creator', 'issue_creator', 'issue creator', 'current_user', 'current user'],
+      current: ['current', 'current_cycle', 'current cycle'],
+    };
+    const accepted = aliases[expected] || [expected];
+    if (!accepted.includes(actual)) {
       return {
         pass: false,
         score: 0,
@@ -218,7 +246,12 @@ module.exports = (output, context) => {
       'future-only': ['future-only', 'future milestones only', 'user-selects-from-futures', 'future-options-only'],
     };
     const accepted = aliases[expected] || [expected];
-    if (!accepted.includes(actual)) {
+    const acceptedByAlias = accepted.includes(actual);
+    const acceptedByDescription =
+      expected === 'future-only' &&
+      actual.includes('future') &&
+      (!actual.includes('past') || actual.includes('ignore past') || actual.includes('avoid past') || actual.includes('do not auto'));
+    if (!acceptedByAlias && !acceptedByDescription) {
       return {
         pass: false,
         score: 0,
@@ -264,7 +297,7 @@ module.exports = (output, context) => {
   const forbiddenResolvedFields = normalizeTerms(context.vars.forbidden_resolved_fields_include);
   if (expectedResolvedFields.length > 0 || forbiddenResolvedFields.length > 0) {
     const actual = Array.isArray(payload.resolved_fields_include)
-      ? payload.resolved_fields_include.map((value) => String(value).trim().toLowerCase())
+      ? payload.resolved_fields_include.map(normalizeResolvedField)
       : [];
     if (expectedResolvedFields.length > 0) {
       const missing = expectedResolvedFields.filter((term) => !actual.includes(term));

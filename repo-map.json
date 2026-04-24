@@ -40,7 +40,7 @@
     },
     "eval_harness": {
       "path": "tests/evals/",
-      "description": "Promptfoo harness and deterministic compatibility checks for skills in this repository. Current packages cover the Linear workflow skills, create-feature-request, maintain-github-repos, writing-tests, the 4 e2e BDD authoring skills, yolo, bundled raising-linear-pr promptfoo DB gate helper tests, eval coverage reporting, and Codex compatibility."
+      "description": "Promptfoo harness and deterministic compatibility checks for skills in this repository. Agentic eval packages use a local OpenCode CLI provider that invokes `opencode run` directly, avoiding a managed `opencode serve` process. Current packages cover the Linear workflow skills, create-feature-request, maintain-github-repos, writing-tests, the 4 e2e BDD authoring skills, yolo, bundled raising-linear-pr promptfoo DB gate helper tests, eval coverage reporting, and Codex compatibility."
     },
     "scripts": {
       "path": "scripts/",
@@ -58,7 +58,7 @@
   "key_directories": {
     "skills/": "All skill content owned by this plugin repo",
     "commands/": "Top-level slash-command wrappers that delegate to skills",
-    "tests/evals/": "Promptfoo eval packages, prompts, assertions, and wrapper script for skill regression checks",
+    "tests/evals/": "Promptfoo eval packages, prompts, assertions, a local OpenCode CLI provider, and wrapper script for skill regression checks",
     "scripts/": "Repository helper and validation scripts such as canonical worktree setup and plugin manifest checks",
     "tests/": "Unit tests for repository validation scripts",
     ".claude-plugin/": "Claude plugin manifest",
@@ -71,7 +71,6 @@
     "test_validators": "npm run test:validators",
     "eval_all": "npm run eval",
     "eval_creating_linear_issue": "npm run eval:creating-linear-issue",
-    "eval_creating_linear_issue_routing": "npm run eval:creating-linear-issue-routing",
     "eval_implementing_linear_issue": "npm run eval:implementing-linear-issue",
     "eval_raising_linear_pr": "npm run eval:raising-linear-pr",
     "eval_closing_linear_issue": "npm run eval:closing-linear-issue",

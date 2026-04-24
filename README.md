@@ -131,12 +131,12 @@ cd tests/evals
 npm install
 ```
 
-The currently validated Phase 1 provider path is:
+The currently validated provider path is:
 
 - `promptfoo@0.121.7`
-- `@opencode-ai/sdk@1.14.21`
-- `provider_id: opencode`
-- `model: qwen3.6-plus`
+- local Promptfoo provider: `tests/evals/scripts/opencode-cli-provider.js`
+- OpenCode CLI via `opencode run`
+- `model: gpt-5-nano`
 
 Run them from the harness directory:
 
