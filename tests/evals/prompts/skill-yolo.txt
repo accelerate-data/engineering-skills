@@ -1,0 +1,25 @@
+You are preparing to run the yolo skill for a user who says:
+"yolo — add a config flag to disable the onboarding banner for existing users"
+
+Read the skill at `skills/yolo/SKILL.md`.
+
+This is a workflow-order and boundary check. Even though you must not actually call tools
+here, analyze the skill and report what the correct workflow execution order must be.
+
+Do not actually call tools. Return JSON only with this shape:
+
+```json
+{
+  "runs_creating_linear_issue_first": true,
+  "runs_implementing_linear_issue_second": true,
+  "runs_raising_linear_pr_third": true,
+  "stops_after_pr_raised": true,
+  "does_not_merge_or_close": true,
+  "preserves_quality_gates_from_implementing": true,
+  "surfaces_recovery_instruction_on_phase2_failure": true,
+  "surfaces_recovery_instruction_on_phase3_failure": true,
+  "notes": "string"
+}
+```
+
+Use every key exactly once.
