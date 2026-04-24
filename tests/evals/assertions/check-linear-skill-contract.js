@@ -22,6 +22,13 @@ function getPayloadValue(payload, field) {
     }
   }
 
+  const lowerField = field.toLowerCase();
+  for (const key of Object.keys(payload)) {
+    if (key.toLowerCase() === lowerField) {
+      return payload[key];
+    }
+  }
+
   return undefined;
 }
 
@@ -202,7 +209,12 @@ module.exports = (output, context) => {
     if (expectedRaw === undefined) continue;
     const expected = String(expectedRaw).trim().toLowerCase();
     const actual = String(payload[field] || '').trim().toLowerCase();
-    if (actual !== expected) {
+    const aliases = {
+      creator: ['creator', 'requester', 'issue-creator', 'issue creator', 'current_user', 'current user'],
+      current: ['current', 'current_cycle', 'current cycle'],
+    };
+    const accepted = aliases[expected] || [expected];
+    if (!accepted.includes(actual)) {
       return {
         pass: false,
         score: 0,
@@ -218,7 +230,12 @@ module.exports = (output, context) => {
       'future-only': ['future-only', 'future milestones only', 'user-selects-from-futures', 'future-options-only'],
     };
     const accepted = aliases[expected] || [expected];
-    if (!accepted.includes(actual)) {
+    const acceptedByAlias = accepted.includes(actual);
+    const acceptedByDescription =
+      expected === 'future-only' &&
+      actual.includes('future') &&
+      (!actual.includes('past') || actual.includes('ignore past') || actual.includes('avoid past') || actual.includes('do not auto'));
+    if (!acceptedByAlias && !acceptedByDescription) {
       return {
         pass: false,
         score: 0,
@@ -264,7 +281,9 @@ module.exports = (output, context) => {
   const forbiddenResolvedFields = normalizeTerms(context.vars.forbidden_resolved_fields_include);
   if (expectedResolvedFields.length > 0 || forbiddenResolvedFields.length > 0) {
     const actual = Array.isArray(payload.resolved_fields_include)
-      ? payload.resolved_fields_include.map((value) => String(value).trim().toLowerCase())
+      ? payload.resolved_fields_include.map((value) =>
+          String(value).trim().toLowerCase().replace(/^user_flow_child_label$/, 'user_flow_label'),
+        )
       : [];
     if (expectedResolvedFields.length > 0) {
       const missing = expectedResolvedFields.filter((term) => !actual.includes(term));

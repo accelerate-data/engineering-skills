@@ -10,7 +10,7 @@ providers:
   - id: file://../../scripts/opencode-cli-provider.js
     config:
       provider_id: opencode
-      model: gpt-5-nano
+      model: qwen3.6-plus
       working_dir: ../..
       max_turns: 20
       tools:
@@ -45,7 +45,7 @@ tests:
       scenario_team: "Studio"
       scenario_project: "Engineering Skills"
       user_flow_scenario_note: |
-        The Studio team uses a `User Flow` parent label with child labels describing product flows. Three child labels are close matches for this issue's scope; the best recommendation clearly wins on name + description match, but the other two are close enough that the confirmation question should list them as overridable alternatives.
+        The Studio team uses a `User Flow` parent label with child labels describing product flows. Three child labels are close matches for this issue's scope; one child label has the strongest name and description match, while the other two are plausible but weaker matches.
       expected_resolved_fields_include: "user_flow_label"
       expect_team_requires_user_flow_label: "true"
       expect_reads_user_flow_labels_live: "true"
@@ -63,7 +63,7 @@ tests:
       scenario_team: "Roadmap"
       scenario_project: "Product Roadmap"
       user_flow_scenario_note: |
-        The Roadmap team uses a `User Flow` parent label with child labels describing product flows. Exactly one child label clearly matches this issue's scope. The Studio and Utilities teams also enforce this rule on the same basis.
+        The Roadmap team uses a `User Flow` parent label with child labels describing product flows. Exactly one child label clearly matches this issue's scope.
       expected_resolved_fields_include: "user_flow_label"
       expect_team_requires_user_flow_label: "true"
       expect_reads_user_flow_labels_live: "true"
@@ -81,7 +81,7 @@ tests:
       scenario_team: "Studio"
       scenario_project: "Engineering Skills"
       user_flow_scenario_note: |
-        The Studio team uses a `User Flow` parent label with child labels describing product flows. None of the current child labels match the issue title or scope. The skill must not silently omit the label; it must ask the user to pick one from the current list or explicitly approve creating without one.
+        The Studio team uses a `User Flow` parent label with child labels describing product flows. None of the current child labels match the issue title or scope.
       expected_resolved_fields_include: "user_flow_label"
       expect_team_requires_user_flow_label: "true"
       expect_reads_user_flow_labels_live: "true"
@@ -95,11 +95,11 @@ tests:
 
   - description: "GTM non-enforcing team — User Flow resolution must be skipped"
     vars:
-      user_request: "Create a Linear issue for planning next quarter's go-to-market campaign."
+      user_request: "Create a Linear issue for adding a go-to-market campaign planning checklist to the launch dashboard."
       scenario_team: "GTM"
       scenario_project: "Q3 Campaigns"
       user_flow_scenario_note: |
-        The workspace has a `User Flow` parent label, but the GTM team does not enforce the User Flow child-label rule. The skill must skip User Flow resolution entirely for this team and not include a User Flow label in the field-confirmation question.
+        The workspace has a `User Flow` parent label, but the GTM team does not enforce the User Flow child-label rule.
       forbidden_resolved_fields_include: "user_flow_label"
       expect_team_requires_user_flow_label: "false"
       expect_reads_user_flow_labels_live: "false"

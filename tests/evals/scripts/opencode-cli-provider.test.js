@@ -32,7 +32,7 @@ test('callApi invokes opencode run with configured model and prompt', async () =
     id: 'opencode:cli',
     config: {
       provider_id: 'opencode',
-      model: 'gpt-5-nano',
+      model: 'qwen3.6-plus',
       working_dir: '../..',
       agent: 'build',
     },
@@ -50,7 +50,7 @@ test('callApi invokes opencode run with configured model and prompt', async () =
   assert.deepEqual(calls[0].args, [
     'run',
     '--model',
-    'opencode/gpt-5-nano',
+    'opencode/qwen3.6-plus',
     '--agent',
     'build',
     'Read the skill and summarize it.',
@@ -65,7 +65,7 @@ test('callApi returns stderr when opencode exits non-zero', async () => {
   const provider = new OpenCodeCliProvider({
     config: {
       provider_id: 'opencode',
-      model: 'gpt-5-nano',
+      model: 'qwen3.6-plus',
     },
     spawnImpl: () => createSpawnResult({ code: 1, stderr: 'model unavailable' }),
   });
@@ -79,7 +79,7 @@ test('callApi treats stderr-only successful exits as errors', async () => {
   const provider = new OpenCodeCliProvider({
     config: {
       provider_id: 'opencode',
-      model: 'gpt-5-nano',
+      model: 'qwen3.6-plus',
     },
     spawnImpl: () => createSpawnResult({ code: 0, stderr: 'model not found' }),
   });
@@ -108,7 +108,7 @@ test('callApi terminates opencode when Promptfoo aborts the request', async () =
   const provider = new OpenCodeCliProvider({
     config: {
       provider_id: 'opencode',
-      model: 'gpt-5-nano',
+      model: 'qwen3.6-plus',
     },
     spawnImpl: () => {
       spawnedChild = new EventEmitter();

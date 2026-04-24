@@ -1,6 +1,10 @@
-You are preparing to create a Linear issue in this repository.
+You are evaluating a skill workflow in this repository.
 
 Read the skill at `skills/creating-linear-issue/SKILL.md`.
+
+This is a read-only workflow-contract eval. Do not create a Linear issue,
+do not contact Linear, and do not perform any external action. Report the
+JSON fields that describe what the skill requires for the simulated scenario.
 
 Do not inspect the live `AGENTS.md` file for this eval. Use the simulated
 `AGENTS.md` facts in the scenario below as the repository guidance state.
@@ -17,81 +21,78 @@ Scenario:
 - User Flow label context: {{ user_flow_scenario_note }}
 - Enforcing teams for the User Flow rule: `Studio`, `Roadmap`, `Utilities`. Other teams (e.g. `Accelerate Data`, `GTM`) do not enforce it.
 
-Do not actually call tools. Return JSON only with this shape:
+Answer for what the workflow should do in this exact scenario, based on the
+skill and simulated repo guidance. Do not answer whether the skill has the
+capability in some other scenario.
 
-```json
-{
-  "searches_codebase_first": true,
-  "enters_plan_mode": true,
-  "issue_kind": "feature",
-  "has_distinct_paths": true,
-  "resolves_project_before_asking": true,
-  "confirms_critical_fields_with_user": true,
-  "resolved_fields_include": ["project", "milestone", "assignee", "cycle"],
-  "assignee_default": "creator",
-  "cycle_default": "current",
-  "milestone_strategy": "future-only",
-  "asks_to_record_project_in_agents_md_only_after_user_supplies_it": false,
-  "creates_issue_before_plan_approval": false,
-  "team_name": "{{ scenario_team }}",
-  "enforcing_teams": ["Studio", "Roadmap", "Utilities"],
-  "team_requires_user_flow_label": <scenario-specific>,
-  "reads_user_flow_labels_live": <scenario-specific>,
-  "proposes_user_flow_child_label": <scenario-specific>,
-  "recommends_one_user_flow_label": <scenario-specific>,
-  "lists_close_alternatives_in_confirmation": <scenario-specific>,
-  "asks_user_to_pick_user_flow": <scenario-specific>,
-  "user_flow_label_in_confirmation": <scenario-specific>,
-  "refuses_silent_missing_user_flow": <scenario-specific>,
-  "notes": "string"
-}
-```
+Return one valid JSON object with exactly these keys:
 
-The fields shown above with concrete values describe the skill's normative
-behavior for any create-issue flow and should be returned as shown.
+- `searches_codebase_first`
+- `enters_plan_mode`
+- `issue_kind`
+- `has_distinct_paths`
+- `resolves_project_before_asking`
+- `confirms_critical_fields_with_user`
+- `resolved_fields_include`
+- `assignee_default`
+- `cycle_default`
+- `milestone_strategy`
+- `asks_to_record_project_in_agents_md_only_after_user_supplies_it`
+- `creates_issue_before_plan_approval`
+- `team_name`
+- `enforcing_teams`
+- `team_requires_user_flow_label`
+- `reads_user_flow_labels_live`
+- `proposes_user_flow_child_label`
+- `recommends_one_user_flow_label`
+- `lists_close_alternatives_in_confirmation`
+- `asks_user_to_pick_user_flow`
+- `user_flow_label_in_confirmation`
+- `refuses_silent_missing_user_flow`
+- `notes`
 
-The fields marked `<scenario-specific>` must be replaced with the literal
-`true` or `false` that correctly describes the skill's required behavior
-**for this specific scenario**, following the semantics below. Do not echo
-the `<scenario-specific>` placeholder.
+Field meanings:
 
-`resolved_fields_include` must additionally contain `user_flow_label` iff
-the team enforces the User Flow rule in this scenario; otherwise omit that
-entry entirely.
+- `resolved_fields_include` lists field names, not field values.
+  Defaulted fields count as resolved when the skill specifies a default.
+  Unresolved-but-mandatory fields also belong in this list when the workflow
+  must resolve or explicitly except them before issue creation.
+- `assignee_default` and `cycle_default` report the skill's default values
+  when the request does not explicitly provide those fields.
+- `asks_to_record_project_in_agents_md_only_after_user_supplies_it` is true
+  only when repo guidance lacks the project and the user supplies it during
+  the workflow. It is false when the simulated repo guidance already provides
+  a clear project.
+- Fields whose names start with `proposes_`, `recommends_`, `lists_`,
+  `asks_`, `reads_`, `team_requires_`, `user_flow_label_in_confirmation`,
+  or `refuses_` are booleans.
+- `proposes_user_flow_child_label` means the scenario has a clear enough
+  matching `User Flow` child label for the workflow to propose a label.
+- `recommends_one_user_flow_label` means the workflow singles out one child
+  label as its recommendation.
+- `lists_close_alternatives_in_confirmation` means the same confirmation
+  question includes weaker close-match alternatives the user may choose
+  instead of the recommendation.
+- `asks_user_to_pick_user_flow` means no child label clearly fits and the
+  workflow asks the user to pick a current child label or approve an exception.
+- `user_flow_label_in_confirmation` means the confirmation question contains
+  a specific proposed or selected `User Flow` child label.
+- `refuses_silent_missing_user_flow` means the workflow does not silently
+  create the issue without resolving the required `User Flow` label or
+  getting explicit exception approval.
+  For enforcing teams, this remains true even when the workflow can recommend
+  a clear `User Flow` child label.
+- When the resolved team does not enforce the `User Flow` rule, the workflow
+  skips `User Flow` child-label resolution entirely for that scenario; all
+  fields describing reading, proposing, recommending, listing, asking for, or
+  confirming a `User Flow` child label should be false.
+- Put any concrete label names or rationale in `notes`; do not put label
+  names in boolean fields.
 
-Field semantics for the `<scenario-specific>` User Flow booleans:
+Use booleans for boolean fields, arrays for list fields, and strings for
+string fields. Key names are case-sensitive and must match the list above
+exactly. `issue_kind` must be one of `feature`, `bug`, or `spike`.
 
-- `team_requires_user_flow_label`: true iff the resolved team enforces
-  the User Flow rule.
-- `reads_user_flow_labels_live`: true iff the skill reads the child-label
-  list live from Linear in this scenario. False when the team does not
-  enforce the rule.
-- `proposes_user_flow_child_label`: true iff in this scenario the skill
-  presents a specific recommended child label (a good match exists).
-  False when no label clearly fits and the skill must ask the user
-  instead, and false when the team does not enforce the rule.
-- `recommends_one_user_flow_label`: true iff the skill singles out one
-  child label as the recommendation in this scenario. False when no
-  label clearly fits or the team does not enforce the rule.
-- `lists_close_alternatives_in_confirmation`: true iff the confirmation
-  question lists additional close-match alternatives alongside the
-  recommendation in this scenario. False when there are no close
-  alternatives, no label fits, or the team does not enforce the rule.
-- `asks_user_to_pick_user_flow`: true iff no child label clearly fits
-  in this scenario and the skill explicitly asks the user to pick one
-  (or approve an exception). False when a clear recommendation exists
-  or the team does not enforce the rule.
-- `user_flow_label_in_confirmation`: true iff a specific proposed User
-  Flow label appears in the single field-confirmation question in this
-  scenario. False when no label is proposed (the skill is asking the
-  user to pick, or the team does not enforce the rule).
-- `refuses_silent_missing_user_flow`: true iff the skill refuses to
-  silently create the issue without a User Flow label in this scenario.
-  False when the team does not enforce the rule.
-- `resolved_fields_include`: must contain `user_flow_label` iff the
-  team enforces the rule in this scenario.
-
-`proposes_user_flow_child_label` and `asks_user_to_pick_user_flow` are
-mutually exclusive — at most one can be true in any scenario.
-
-Use a single concrete value for `issue_kind`: `feature`, `bug`, or `spike`.
+Do not include commentary, explanations, markdown fences, refusal text, or
+prefaces before or after the JSON object. The first character of your response
+must be `{` and the last character must be `}`.
