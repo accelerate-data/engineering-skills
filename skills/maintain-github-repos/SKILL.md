@@ -29,7 +29,10 @@ Use this skill for repository hygiene work in the `accelerate-data` GitHub organ
 
 2. Show the proposed `DELETE`, `ARCHIVE`, and `MANUAL REVIEW` groups to the user.
 
-3. Ask whether the user approves the full proposed bulk action set before making changes.
+3. Ask what the user approves before making changes:
+   - Full proposed bulk action set.
+   - Archive-only subset.
+   - Delete-only subset.
 
 4. Only execute after explicit confirmation:
 
@@ -37,13 +40,25 @@ Use this skill for repository hygiene work in the `accelerate-data` GitHub organ
    python3 skills/maintain-github-repos/scripts/analyze_repos.py --org accelerate-data --execute
    ```
 
+   For partial execution:
+
+   ```bash
+   python3 skills/maintain-github-repos/scripts/analyze_repos.py --org accelerate-data --execute --archive-only
+   python3 skills/maintain-github-repos/scripts/analyze_repos.py --org accelerate-data --execute --delete-only
+   python3 skills/maintain-github-repos/scripts/analyze_repos.py --org accelerate-data --execute --delete-repo scratch-old-spike --delete-repo dev-old-test
+   ```
+
 ## Execution
 
-- `--execute` applies every proposed action from the current analysis run.
+- `--execute` applies every proposed action from the current analysis run by default.
+- `--execute --archive-only` applies only proposed archive actions and skips delete actions.
+- `--execute --delete-only` applies only proposed delete actions and skips archive actions.
+- `--execute --delete-repo NAME` deletes only named repos from the current proposed `DELETE` list. Repeat `--delete-repo` for multiple repos.
 - Archive actions use GitHub archive operations. Delete actions use GitHub delete operations.
 - Manual-review repos are not archived or deleted by `--execute`.
-- Do not run `--execute` until the user has reviewed the proposed `DELETE` and `ARCHIVE` lists and confirmed that the full set is safe.
-- If the user wants partial approval or exclusions, stop. This skill is only for reviewing and running the full bulk action set safely.
+- Do not run any execute command until the user has reviewed the proposed `DELETE` and `ARCHIVE` lists and confirmed the exact scope.
+- If the user wants delete cherry-picking, use `--delete-repo` and include only repos that appeared in the current proposed `DELETE` list.
+- If the user wants archive cherry-picking or arbitrary exclusions, stop. This skill supports only full, archive-only, delete-only, or selected-delete execution from the current analysis.
 
 ## Threshold Changes
 
