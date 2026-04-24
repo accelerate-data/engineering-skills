@@ -1,0 +1,99 @@
+# yaml-language-server: $schema=https://promptfoo.dev/config-schema.json
+description: "e2e-extending-step-vocabulary skill — backend classification, cross-backend refusal, failure mode, dual DB dialect, and RUN_ID examples"
+
+prompts:
+  - id: e2e-extending-step-vocabulary
+    label: e2e-extending-step-vocabulary
+    raw: file://../../prompts/skill-e2e-extending-step-vocabulary.txt
+
+providers:
+  - id: opencode:sdk
+    config:
+      baseUrl: http://127.0.0.1:4096
+      apiKey: promptfoo-local-baseurl-placeholder
+      working_dir: ../..
+      max_turns: 20
+      tools:
+        read: true
+        grep: true
+        glob: true
+        list: true
+        bash: true
+
+defaultTest:
+  assert:
+    - type: javascript
+      value: file://../../assertions/check-e2e-bdd-skills-contract.js
+
+tests:
+  - description: "happy path — DB step with dual dialect and RUN_ID example"
+    vars:
+      scenario: |-
+        - E2E_HARNESS_ROOT is set to /home/user/e2e-test-harness.
+        - The user says: "I need a step: 'the database should have a domain named {name} with status {status}'."
+        - steps/db-assertions.md exists and has several existing DB assertion patterns using {DB_CMD}.
+        - No existing pattern covers domain name + status combination.
+        - The step pattern is reusable across multiple feature files in features/domains/.
+      expect_classifies_backend_before_adding: "true"
+      expect_includes_failure_mode_note: "true"
+      expect_includes_dual_dialect_for_db: "true"
+      expect_emits_run_id_on_data_literals: "true"
+      expect_no_hardcoded_app_path: "true"
+      expect_resolves_harness_root_from_env_var: "true"
+
+  - description: "cross-backend refusal — step mixes UI click and DB assertion"
+    vars:
+      scenario: |-
+        - E2E_HARNESS_ROOT is set to /home/user/e2e-test-harness.
+        - The user says: "Add a step that clicks the Delete button AND verifies the domain is removed from the database."
+        - The requested step combines a UI action (browser click) with a DB assertion in a single step.
+      expect_refuses_cross_backend_step: "true"
+      expect_classifies_backend_before_adding: "true"
+      expect_no_hardcoded_app_path: "true"
+
+  - description: "CWD fallback — E2E_HARNESS_ROOT not set, CWD is the harness"
+    vars:
+      scenario: |-
+        - E2E_HARNESS_ROOT is not set.
+        - CWD is /home/user/e2e-test-harness and it contains features/ and steps/ directories.
+        - The user says: "Add a log assertion step: 'the server log should contain {text}'."
+        - steps/log-assertions.md exists and has similar grep-based patterns.
+        - The step is reusable across multiple feature files.
+      expect_falls_back_to_cwd_when_env_not_set: "true"
+      expect_classifies_backend_before_adding: "true"
+      expect_includes_failure_mode_note: "true"
+      expect_no_hardcoded_app_path: "true"
+
+  - description: "skill-module routing — complex TOTP logic goes to skills/ module not inline recipe"
+    vars:
+      scenario: |-
+        - E2E_HARNESS_ROOT is set to /home/user/e2e-test-harness.
+        - The user says: "Add a step: 'I log in using TOTP two-factor authentication with secret {secret}'."
+        - The step requires generating a time-based OTP (get current time, compute HMAC, extract digits) — multi-step reusable logic.
+        - steps/skill-steps.md exists and has patterns for delegating to skill modules.
+        - No skills/totp-generation.md exists yet.
+      expect_routes_complex_logic_to_skill_module: "true"
+      expect_classifies_backend_before_adding: "true"
+      expect_no_hardcoded_app_path: "true"
+
+  - description: "near-duplicate refusal — existing pattern covers same semantics, no synonym added"
+    vars:
+      scenario: |-
+        - E2E_HARNESS_ROOT is set to /home/user/e2e-test-harness.
+        - The user says: "Add a step: 'the database should contain a domain with name {name}'."
+        - steps/db-assertions.md already has the pattern: 'the database should have a domain named "{name}"'.
+        - The existing pattern checks the same table, same column, same assertion logic — just different wording.
+      expect_refuses_near_duplicate_pattern: "true"
+      expect_classifies_backend_before_adding: "true"
+      expect_no_hardcoded_app_path: "true"
+
+  - description: "narrowness check — one-feature-only pattern triggers ask-first before adding"
+    vars:
+      scenario: |-
+        - E2E_HARNESS_ROOT is set to /home/user/e2e-test-harness.
+        - The user says: "Add a step: 'the Notifications panel digest interval should be set to Weekly'."
+        - The step hardcodes a specific product label and value that would only appear in features/settings/notifications.feature.
+        - No other .feature file would ever need this exact assertion.
+      expect_asks_before_narrow_pattern: "true"
+      expect_classifies_backend_before_adding: "true"
+      expect_no_hardcoded_app_path: "true"

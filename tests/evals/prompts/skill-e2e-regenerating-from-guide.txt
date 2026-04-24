@@ -1,0 +1,48 @@
+Use the Read tool to read `skills/e2e-regenerating-from-guide/SKILL.md` and all files under `skills/e2e-regenerating-from-guide/references/`. Then, without calling any other tools, use only the simulated context provided in the scenario below to determine how the skill would behave.
+
+Scenario:
+
+{{scenario}}
+
+For each field below, set `true` if the skill WOULD do that in this specific scenario, `false` if it would NOT do that in this specific scenario.
+
+Field definitions:
+- `halts_on_missing_database_path`: the skill stops and emits a halt notice because DATABASE_PATH is missing or commented out in this scenario's .env
+- `resolves_harness_root_from_env_var`: the skill uses E2E_HARNESS_ROOT (which IS set in this scenario) to locate the harness
+- `falls_back_to_cwd_when_env_not_set`: the skill falls back to CWD as the harness root because E2E_HARNESS_ROOT is NOT set in this scenario
+- `uses_e2e_app_src_when_set`: E2E_APP_SRC is set in this scenario so the skill selects that app-source branch immediately, skips DATABASE_PATH derivation, and this remains `true` even if the path is later found unreadable and causes a halt
+- `halts_on_unreadable_e2e_app_src`: E2E_APP_SRC is set in this scenario but points to an unreadable or missing directory, so the skill halts instead of planning regeneration
+- `auto_discovery_avoids_expanded_app_path`: DATABASE_PATH is unavailable but app-root auto-discovery succeeds, and the skill avoids printing the expanded absolute app path in output
+- `runs_generate_script_not_manual_gherkin`: the skill runs ./generate-features.sh rather than hand-writing Gherkin in this scenario
+- `requires_separate_mappings_commit`: a new MAPPINGS pair must be added in this scenario, so the skill commits that change separately before running the generate script
+- `requires_diff_review_before_commit`: the .feature file already exists (UPDATE mode) in this scenario, so the skill requires a git diff review before the regen commit
+- `refuses_to_regen_without_guide`: the guide file does not exist in this scenario, so the skill refuses to invoke ./generate-features.sh
+- `emits_run_id_on_data_literals`: the skill embeds the literal RUN_ID marker in seeded data literals in any example output
+- `no_hardcoded_app_path`: the skill never writes a hardcoded absolute path in its output (uses $APP_SRC, $DATABASE_PATH, etc.)
+- `redirects_append_to_adding_scenario`: the user asked to append a single scenario to a guide-backed .feature file in this scenario, so the skill redirects to e2e-adding-scenario with a regen-overwrite warning instead of invoking ./generate-features.sh
+- `missing_step_blocks_bdd_loop`: the regenerated .feature contains # MISSING STEP: comments in this scenario, so the skill stops the BDD loop and hands off to e2e-extending-step-vocabulary before running BDD
+- `classifies_mapping_present_feature_absent_as_create`: MAPPINGS already contains the guide-feature pair but the target .feature file is absent, so the skill classifies the run as CREATE mode with unchanged MAPPINGS
+
+Always return every field in the schema below as a boolean. If a field's condition does not apply in this scenario, set it to `false` rather than omitting it.
+
+Return JSON only — no other text — in this shape:
+
+```json
+{
+  "halts_on_missing_database_path": <bool>,
+  "resolves_harness_root_from_env_var": <bool>,
+  "falls_back_to_cwd_when_env_not_set": <bool>,
+  "uses_e2e_app_src_when_set": <bool>,
+  "halts_on_unreadable_e2e_app_src": <bool>,
+  "auto_discovery_avoids_expanded_app_path": <bool>,
+  "runs_generate_script_not_manual_gherkin": <bool>,
+  "requires_separate_mappings_commit": <bool>,
+  "requires_diff_review_before_commit": <bool>,
+  "refuses_to_regen_without_guide": <bool>,
+  "emits_run_id_on_data_literals": <bool>,
+  "no_hardcoded_app_path": <bool>,
+  "redirects_append_to_adding_scenario": <bool>,
+  "missing_step_blocks_bdd_loop": <bool>,
+  "classifies_mapping_present_feature_absent_as_create": <bool>
+}
+```

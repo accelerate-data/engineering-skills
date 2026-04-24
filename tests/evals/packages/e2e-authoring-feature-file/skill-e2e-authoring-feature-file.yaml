@@ -1,0 +1,133 @@
+# yaml-language-server: $schema=https://promptfoo.dev/config-schema.json
+description: "e2e-authoring-feature-file skill — harness root resolution, overwrite guard, background copying, teardown, and new-category confirmation"
+
+prompts:
+  - id: e2e-authoring-feature-file
+    label: e2e-authoring-feature-file
+    raw: file://../../prompts/skill-e2e-authoring-feature-file.txt
+
+providers:
+  - id: opencode:sdk
+    config:
+      baseUrl: http://127.0.0.1:4096
+      apiKey: promptfoo-local-baseurl-placeholder
+      working_dir: ../..
+      max_turns: 20
+      tools:
+        read: true
+        grep: true
+        glob: true
+        list: true
+        bash: true
+
+defaultTest:
+  assert:
+    - type: javascript
+      value: file://../../assertions/check-e2e-bdd-skills-contract.js
+
+tests:
+  - description: "happy path — authors new feature file with sibling Background and teardown"
+    vars:
+      scenario: |-
+        - E2E_HARNESS_ROOT is set to /home/user/e2e-test-harness.
+        - The harness .env contains: DATABASE_PATH=/home/user/app/data/db.sqlite
+        - The user says: "Create a new feature file for features/domains/domain-crud.feature."
+        - features/domains/domain-crud.feature does NOT exist yet.
+        - A sibling file features/domains/domain-settings.feature exists with a Background section.
+        - steps/ui-actions.md and steps/ui-assertions.md contain relevant step patterns.
+      expect_resolves_harness_root_from_env_var: "true"
+      expect_copies_sibling_background_verbatim: "true"
+      expect_includes_teardown_scenario: "true"
+      expect_no_hardcoded_app_path: "true"
+      expect_halts_on_missing_database_path: "false"
+
+  - description: "halt — DATABASE_PATH missing from .env and E2E_APP_SRC not set"
+    vars:
+      scenario: |-
+        - E2E_HARNESS_ROOT is not set. CWD is /home/user/e2e-test-harness which contains features/ and steps/.
+        - The harness .env exists but has no DATABASE_PATH entry at all.
+        - E2E_APP_SRC is not set.
+        - App-root auto-discovery finds no readable sibling or parent app root.
+        - The user says: "Author a new feature file for the billing module."
+      expect_halts_on_missing_database_path: "true"
+      expect_falls_back_to_cwd_when_env_not_set: "true"
+      expect_no_hardcoded_app_path: "true"
+
+  - description: "overwrite guard — refuses to overwrite an existing feature file"
+    vars:
+      scenario: |-
+        - E2E_HARNESS_ROOT is set to /home/user/e2e-test-harness.
+        - The harness .env contains: DATABASE_PATH=/home/user/app/data/db.sqlite
+        - The user says: "Create features/domains/domain-crud.feature."
+        - features/domains/domain-crud.feature already exists with 5 scenarios.
+      expect_refuses_to_overwrite_existing_file: "true"
+
+  - description: "new category — confirms with user before creating a brand-new feature directory"
+    vars:
+      scenario: |-
+        - E2E_HARNESS_ROOT is set to /home/user/e2e-test-harness.
+        - The harness .env contains: DATABASE_PATH=/home/user/app/data/db.sqlite
+        - The user says: "Create a feature file for features/marketplace/listings.feature."
+        - The features/marketplace/ directory does NOT exist yet (brand-new category).
+      expect_confirms_new_category_with_user: "true"
+      expect_no_hardcoded_app_path: "true"
+
+  - description: "E2E_APP_SRC set — skips DATABASE_PATH gate and proceeds to author"
+    vars:
+      scenario: |-
+        - E2E_HARNESS_ROOT is set to /home/user/e2e-test-harness.
+        - E2E_APP_SRC is set to /home/user/app.
+        - The harness .env exists but DATABASE_PATH is NOT set (commented out).
+        - The user says: "Create a new feature file for features/billing/invoices.feature."
+        - features/billing/invoices.feature does NOT exist yet.
+        - No sibling .feature file exists in features/billing/.
+        - steps/ui-actions.md and steps/ui-assertions.md contain relevant step patterns.
+      expect_uses_e2e_app_src_when_set: "true"
+      expect_halts_on_missing_database_path: "false"
+      expect_includes_teardown_scenario: "true"
+      expect_no_hardcoded_app_path: "true"
+
+  - description: "halt — E2E_APP_SRC set but unreadable"
+    vars:
+      scenario: |-
+        - E2E_HARNESS_ROOT is set to /home/user/e2e-test-harness.
+        - E2E_APP_SRC is set to /home/user/missing-app, but that directory is not readable.
+        - The harness .env contains no DATABASE_PATH.
+        - The user says: "Create a new feature file for features/billing/invoices.feature."
+        - features/billing/invoices.feature does NOT exist yet.
+      expect_uses_e2e_app_src_when_set: "true"
+      expect_halts_on_unreadable_e2e_app_src: "true"
+      expect_halts_on_missing_database_path: "false"
+      expect_includes_teardown_scenario: "false"
+      expect_no_hardcoded_app_path: "true"
+
+  - description: "skill-module awareness — checks skills/*.md before declaring a TOTP step missing"
+    vars:
+      scenario: |-
+        - E2E_HARNESS_ROOT is set to /home/user/e2e-test-harness.
+        - The harness .env contains: DATABASE_PATH=/home/user/app/data/db.sqlite
+        - The user says: "Create features/auth/totp-login.feature covering 2FA TOTP login."
+        - features/auth/totp-login.feature does NOT exist yet.
+        - A sibling file features/auth/sso-login.feature exists with a Background section.
+        - steps/skill-steps.md exists and references skills/totp-generation.md.
+        - skills/totp-generation.md exists and covers TOTP code generation.
+        - No standalone TOTP step exists in any other steps/*.md file.
+      expect_checks_skill_modules_before_missing_step: "true"
+      expect_emits_missing_step_comment: "false"
+      expect_includes_teardown_scenario: "true"
+      expect_no_hardcoded_app_path: "true"
+
+  - description: "RUN_ID tagging — data literals carry {{RUN_ID}}, UI chrome does not"
+    vars:
+      scenario: |-
+        - E2E_HARNESS_ROOT is set to /home/user/e2e-test-harness.
+        - The harness .env contains: DATABASE_PATH=/home/user/app/data/db.sqlite
+        - The user says: "Create features/domains/domain-create.feature. Include a scenario that creates a domain named 'Test Domain'."
+        - features/domains/domain-create.feature does NOT exist yet.
+        - A sibling file features/domains/domain-settings.feature exists with a Background section.
+        - steps/ui-actions.md and steps/ui-assertions.md contain relevant step patterns.
+        - The "Create Domain" button is existing product chrome; "Test Domain" is the user-typed data.
+      expect_emits_run_id_on_data_literals: "true"
+      expect_includes_teardown_scenario: "true"
+      expect_no_hardcoded_app_path: "true"
+      expect_halts_on_missing_database_path: "false"
