@@ -1,0 +1,57 @@
+# yaml-language-server: $schema=https://promptfoo.dev/config-schema.json
+description: "Yolo skill — routing trigger detection"
+
+prompts:
+  - id: yolo-routing
+    label: yolo-routing
+    raw: file://../../prompts/skill-yolo-routing.txt
+
+providers:
+  - id: opencode:sdk
+    config:
+      baseUrl: http://127.0.0.1:4096
+      apiKey: promptfoo-local-baseurl-placeholder
+      working_dir: ../..
+      max_turns: 1
+      tools:
+        read: true
+        grep: true
+        glob: true
+        list: true
+        bash: true
+
+defaultTest:
+  assert:
+    - type: javascript
+      value: file://../../assertions/check-routing-contract.js
+
+tests:
+  - description: "routing — detects yolo from explicit yolo shorthand"
+    vars:
+      user_message: "yolo this — add dark mode toggle to the settings page"
+      expected_detected_skill: "yolo"
+      expect_trigger_found_in_message: "true"
+
+  - description: "routing — detects yolo from single-shot phrasing"
+    vars:
+      user_message: "do it all in one shot — create the issue, implement it, and raise the PR"
+      expected_detected_skill: "yolo"
+      expect_trigger_found_in_message: "true"
+
+  - description: "routing — does not trigger yolo for create-only request"
+    vars:
+      user_message: "create a linear issue for adding dark mode"
+      expected_detected_skill: "creating-linear-issue"
+      expect_trigger_found_in_message: "true"
+
+  - description: "routing — does not trigger yolo when issue already exists"
+    vars:
+      user_message: "the issue is already filed as AD-45, go ahead and implement it"
+      expected_detected_skill: "implementing-linear-issue"
+      expect_trigger_found_in_message: "true"
+
+  - description: "routing — does not trigger yolo when implementation is done"
+    vars:
+      user_message: "implementation is done, raise the PR"
+      expected_detected_skill: "raising-linear-pr"
+      expect_trigger_found_in_message: "true"

@@ -1,0 +1,30 @@
+# yaml-language-server: $schema=https://promptfoo.dev/config-schema.json
+description: "Yolo skill — workflow order and phase boundary checks"
+
+prompts:
+  - id: yolo
+    label: yolo
+    raw: file://../../prompts/skill-yolo.txt
+
+providers:
+  - id: opencode:sdk
+    config:
+      baseUrl: http://127.0.0.1:4096
+      apiKey: promptfoo-local-baseurl-placeholder
+      working_dir: ../..
+      max_turns: 5
+      tools:
+        read: true
+        grep: true
+        glob: true
+        list: true
+        bash: true
+
+defaultTest:
+  assert:
+    - type: javascript
+      value: file://../../assertions/check-yolo-contract.js
+
+tests:
+  - description: "yolo — chains all 3 phases in order, stops at PR, preserves quality gates"
+    vars: {}

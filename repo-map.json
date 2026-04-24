@@ -36,11 +36,11 @@
     },
     "skills": {
       "path": "skills/",
-      "description": "Canonical skill directories (16 skills). Each skill owns its SKILL.md and any supporting references, assets, scripts, or agents."
+      "description": "Canonical skill directories (17 skills). Each skill owns its SKILL.md and any supporting references, assets, scripts, or agents."
     },
     "eval_harness": {
       "path": "tests/evals/",
-      "description": "Promptfoo harness and deterministic compatibility checks for skills in this repository. Current packages cover the Linear workflow skills, create-feature-request, maintain-github-repos, writing-tests, the 4 e2e BDD authoring skills, bundled raising-linear-pr promptfoo DB gate helper tests, eval coverage reporting, and Codex compatibility."
+      "description": "Promptfoo harness and deterministic compatibility checks for skills in this repository. Current packages cover the Linear workflow skills, create-feature-request, maintain-github-repos, writing-tests, the 4 e2e BDD authoring skills, yolo, bundled raising-linear-pr promptfoo DB gate helper tests, eval coverage reporting, and Codex compatibility."
     },
     "scripts": {
       "path": "scripts/",
@@ -77,6 +77,8 @@
     "eval_e2e_authoring_feature_file": "npm run eval:e2e-authoring-feature-file",
     "eval_e2e_extending_step_vocabulary": "npm run eval:e2e-extending-step-vocabulary",
     "eval_e2e_regenerating_from_guide": "npm run eval:e2e-regenerating-from-guide",
+    "eval_yolo": "npm run eval:yolo",
+    "eval_yolo_routing": "npm run eval:yolo-routing",
     "eval_coverage": "npm run eval:coverage",
     "eval_codex_compatibility": "npm run eval:codex-compatibility",
     "test_promptfoo_db_gate": "npm run test:promptfoo-db-gate",
