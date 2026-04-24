@@ -14,9 +14,12 @@ This repository is a single plugin source repo, not a marketplace repo.
 .
 ├── .claude-plugin/plugin.json
 ├── .codex-plugin/plugin.json
+├── commands/
+│   └── author-flow-spec.md
 ├── skills/
 │   ├── adversarial-review/
 │   ├── agent-browser/
+│   ├── authoring-flow-spec/
 │   ├── closing-linear-issue/
 │   ├── create-feature-request/
 │   ├── creating-linear-issue/
@@ -188,6 +191,7 @@ upstream Microsoft Playwright Apache 2.0 license.
 | --- | --- |
 | [`adversarial-review`](./skills/adversarial-review) | Adversarial code review using the opposite model (Claude spawns Codex, Codex spawns Claude) to challenge large diffs from distinct critical lenses. |
 | [`agent-browser`](./skills/agent-browser) | Browser automation CLI for AI agents: navigate, fill forms, click, screenshot, scrape, or test web apps programmatically. |
+| [`authoring-flow-spec`](./skills/authoring-flow-spec) | Author a behavior-focused Vibedata user-flow spec from a canonical ID in the User-Flows-Details Sheet; writes to the target repo's `docs/functional/<id>/README.md`. |
 | [`closing-linear-issue`](./skills/closing-linear-issue) | Merge, close, and clean up branches and worktrees after a Linear issue's PR has been reviewed. |
 | [`create-feature-request`](./skills/create-feature-request) | Log a feature request into the Roadmap (RO) team in Linear from free-form natural language. |
 | [`creating-linear-issue`](./skills/creating-linear-issue) | Draft or refine a Linear issue — preferred over the generic Linear skill for new-issue creation and decomposition. |

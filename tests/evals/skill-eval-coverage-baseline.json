@@ -2,6 +2,7 @@
   "uncovered_skills": [
     "adversarial-review",
     "agent-browser",
+    "authoring-flow-spec",
     "explaining-code",
     "playwright",
     "shadcn-ui"

@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-04-20T00:00:00Z",
+  "generated_at": "2026-04-24T00:00:00Z",
   "repo_root": "engineering-skills",
   "primary_languages": ["Markdown", "JSON", "Shell", "YAML"],
   "package_managers": [
@@ -36,7 +36,7 @@
     },
     "skills": {
       "path": "skills/",
-      "description": "Canonical skill directories (17 skills). Each skill owns its SKILL.md and any supporting references, assets, scripts, or agents."
+      "description": "Canonical skill directories (18 skills). Each skill owns its SKILL.md and any supporting references, assets, scripts, or agents."
     },
     "eval_harness": {
       "path": "tests/evals/",
@@ -49,10 +49,15 @@
     "validator_tests": {
       "path": "tests/",
       "description": "Unit tests for repository validation scripts."
+    },
+    "commands": {
+      "path": "commands/",
+      "description": "Top-level slash-command wrappers. Thin delegators to the skills under skills/. First entry: /author-flow-spec → authoring-flow-spec skill."
     }
   },
   "key_directories": {
     "skills/": "All skill content owned by this plugin repo",
+    "commands/": "Top-level slash-command wrappers that delegate to skills",
     "tests/evals/": "Promptfoo eval packages, prompts, assertions, and wrapper script for skill regression checks",
     "scripts/": "Repository helper and validation scripts such as canonical worktree setup and plugin manifest checks",
     "tests/": "Unit tests for repository validation scripts",
