@@ -275,7 +275,7 @@ tests:
       expected_design_paths_include: "docs/design/api-contract.md,docs/superpowers/specs/2026-04-20-ui-flow-design.md"
       expect_moves_issue_to_in_review: "true"
       expect_merges_pr: "false"
-      required_terms: "design,docs/design,docs/superpowers/specs,both,pass"
+      required_terms: "design,docs/design,docs/superpowers/specs,pass"
 
   - description: "raise-pr — design gate fails when checked AC content diverges from the design"
     vars:

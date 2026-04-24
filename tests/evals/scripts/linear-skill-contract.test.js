@@ -87,3 +87,19 @@ test('raising-linear-pr design source-of-truth scenario is not gated on the lite
   assert.equal(packageYaml.includes('required_terms: "design,truth,acceptance,checked,fail,csv,json,stop"'), false);
   assert.equal(packageYaml.includes('required_terms: "design,acceptance,checked,fail,csv,json,stop"'), true);
 });
+
+test('raising-linear-pr multi-design scenario is not gated on the literal word both', () => {
+  const packageYaml = fs.readFileSync(
+    path.join(EVAL_ROOT, 'packages/raising-linear-pr/skill-raising-linear-pr.yaml'),
+    'utf8',
+  );
+
+  assert.equal(packageYaml.includes('required_terms: "design,docs/design,docs/superpowers/specs,both,pass"'), false);
+  assert.equal(packageYaml.includes('required_terms: "design,docs/design,docs/superpowers/specs,pass"'), true);
+});
+
+test('raising-linear-pr prompt disambiguates not_applicable design comparison', () => {
+  const prompt = fs.readFileSync(path.join(EVAL_ROOT, 'prompts/skill-raising-linear-pr.txt'), 'utf8');
+
+  assert.equal(prompt.includes('If `checked_design_paths` is empty, set this to false.'), true);
+});

@@ -78,7 +78,7 @@ Field meanings:
 - `runs_design_conformance_gate` means the workflow performs the design
   reference inspection gate before validation, evals, push, or PR creation.
 - `compares_design_to_implementation_evidence` means at least one referenced
-  local design document is compared against implementation and evidence.
+  local design document is compared against implementation and evidence. If `checked_design_paths` is empty, set this to false.
 - `records_design_conformance_evidence` means the PR-phase evidence records
   `pass`, `fail`, or `not_applicable`.
 - `blocks_pr_for_design_mismatch_in_this_scenario` means this scenario has a
