@@ -71,7 +71,6 @@
     "test_validators": "npm run test:validators",
     "eval_all": "npm run eval",
     "eval_creating_linear_issue": "npm run eval:creating-linear-issue",
-    "eval_creating_linear_issue_routing": "npm run eval:creating-linear-issue-routing",
     "eval_implementing_linear_issue": "npm run eval:implementing-linear-issue",
     "eval_raising_linear_pr": "npm run eval:raising-linear-pr",
     "eval_closing_linear_issue": "npm run eval:closing-linear-issue",

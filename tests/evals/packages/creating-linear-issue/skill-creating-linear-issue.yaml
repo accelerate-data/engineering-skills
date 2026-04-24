@@ -1,5 +1,5 @@
 # yaml-language-server: $schema=https://promptfoo.dev/config-schema.json
-description: "Creating-linear-issue skill — clarification and planning before issue creation"
+description: "Creating-linear-issue skill — clarification, planning, and routing before issue creation"
 
 prompts:
   - id: creating-linear-issue
@@ -110,3 +110,24 @@ tests:
       expect_user_flow_label_in_confirmation: "false"
       expect_refuses_silent_missing_user_flow: "false"
       required_terms: "feature,milestone,project,current,creator,assignee,cycle,user_flow,gtm"
+
+  - description: "routing — detects exact create-linear-issue phrase over generic Linear skill"
+    vars:
+      user_message: "create linear issue for improving eval coverage"
+      expected_detected_skill: "creating-linear-issue"
+      expect_trigger_found_in_message: "true"
+      expect_would_pause_current_flow: "true"
+
+  - description: "routing — detects file-linear-bug phrase over generic Linear skill"
+    vars:
+      user_message: "file a Linear bug for failing markdownlint checks in the skill prompt"
+      expected_detected_skill: "creating-linear-issue"
+      expect_trigger_found_in_message: "true"
+      expect_would_pause_current_flow: "true"
+
+  - description: "routing — detects embedded create-linear-issue request mid-brainstorm flow"
+    vars:
+      user_message: "2 is good. before design create linear issue and then continue the brainstorm flow to design and implement the issue"
+      expected_detected_skill: "creating-linear-issue"
+      expect_trigger_found_in_message: "true"
+      expect_would_pause_current_flow: "true"

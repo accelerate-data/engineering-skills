@@ -1,4 +1,5 @@
 const { extractJsonObject, normalizeTerms } = require('./schema-helpers');
+const checkRoutingContract = require('./check-routing-contract');
 
 function parseExpectedBoolean(value) {
   if (value === undefined) return null;
@@ -33,6 +34,10 @@ function getPayloadValue(payload, field) {
 }
 
 module.exports = (output, context) => {
+  if (context.vars.expected_detected_skill !== undefined) {
+    return checkRoutingContract(output, context);
+  }
+
   let payload;
   try {
     payload = extractJsonObject(output);
