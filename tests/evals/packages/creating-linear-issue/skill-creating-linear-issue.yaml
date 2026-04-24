@@ -24,19 +24,89 @@ defaultTest:
   assert:
     - type: javascript
       value: file://../../assertions/check-linear-skill-contract.js
+  vars:
+    expect_searches_codebase_first: "true"
+    expect_enters_plan_mode: "true"
+    expected_issue_kind: "feature"
+    expect_has_distinct_paths: "true"
+    expect_resolves_project_before_asking: "true"
+    expect_confirms_critical_fields_with_user: "true"
+    expected_assignee_default: "creator"
+    expected_cycle_default: "current"
+    expected_milestone_strategy: "future-only"
+    expect_asks_to_record_project_in_agents_md_only_after_user_supplies_it: "false"
+    required_terms: "feature,milestone,project,current,creator,assignee,cycle,user_flow"
+    forbidden_terms: "creates_issue_before_plan_approval\":true"
 
 tests:
-  - description: "create-issue — resolves project defaults, confirms critical fields, and keeps planning gate"
+  - description: "Studio happy path — multiple close User Flow matches, one recommended"
     vars:
-      expect_searches_codebase_first: "true"
-      expect_enters_plan_mode: "true"
-      expected_issue_kind: "feature"
-      expect_has_distinct_paths: "true"
-      expect_resolves_project_before_asking: "true"
-      expect_confirms_critical_fields_with_user: "true"
-      expected_assignee_default: "creator"
-      expected_cycle_default: "current"
-      expected_milestone_strategy: "future-only"
-      expect_asks_to_record_project_in_agents_md_only_after_user_supplies_it: "false"
-      required_terms: "feature,milestone,project,current,creator,assignee,cycle"
-      forbidden_terms: "creates_issue_before_plan_approval\":true"
+      user_request: "Create a Linear issue for improving eval coverage for the engineering skills plugin."
+      scenario_team: "Studio"
+      scenario_project: "Engineering Skills"
+      user_flow_scenario_note: |
+        The Studio team uses a `User Flow` parent label with child labels describing product flows. Three child labels are close matches for this issue's scope; the best recommendation clearly wins on name + description match, but the other two are close enough that the confirmation question should list them as overridable alternatives.
+      expected_resolved_fields_include: "user_flow_label"
+      expect_team_requires_user_flow_label: "true"
+      expect_reads_user_flow_labels_live: "true"
+      expect_proposes_user_flow_child_label: "true"
+      expect_recommends_one_user_flow_label: "true"
+      expect_lists_close_alternatives_in_confirmation: "true"
+      expect_asks_user_to_pick_user_flow: "false"
+      expect_user_flow_label_in_confirmation: "true"
+      expect_refuses_silent_missing_user_flow: "true"
+      required_terms: "feature,milestone,project,current,creator,assignee,cycle,user_flow,studio"
+
+  - description: "Roadmap enforcement — non-Studio enforcing team with a clear User Flow match"
+    vars:
+      user_request: "Create a Linear issue for adding a quarterly roadmap view to the internal dashboard."
+      scenario_team: "Roadmap"
+      scenario_project: "Product Roadmap"
+      user_flow_scenario_note: |
+        The Roadmap team uses a `User Flow` parent label with child labels describing product flows. Exactly one child label clearly matches this issue's scope. The Studio and Utilities teams also enforce this rule on the same basis.
+      expected_resolved_fields_include: "user_flow_label"
+      expect_team_requires_user_flow_label: "true"
+      expect_reads_user_flow_labels_live: "true"
+      expect_proposes_user_flow_child_label: "true"
+      expect_recommends_one_user_flow_label: "true"
+      expect_lists_close_alternatives_in_confirmation: "false"
+      expect_asks_user_to_pick_user_flow: "false"
+      expect_user_flow_label_in_confirmation: "true"
+      expect_refuses_silent_missing_user_flow: "true"
+      required_terms: "feature,milestone,project,current,creator,assignee,cycle,user_flow,roadmap"
+
+  - description: "Studio no-fit — no child label matches, skill must ask user"
+    vars:
+      user_request: "Create a Linear issue to add a new admin-only config toggle for disabling the legacy footer banner in the internal console."
+      scenario_team: "Studio"
+      scenario_project: "Engineering Skills"
+      user_flow_scenario_note: |
+        The Studio team uses a `User Flow` parent label with child labels describing product flows. None of the current child labels match the issue title or scope. The skill must not silently omit the label; it must ask the user to pick one from the current list or explicitly approve creating without one.
+      expected_resolved_fields_include: "user_flow_label"
+      expect_team_requires_user_flow_label: "true"
+      expect_reads_user_flow_labels_live: "true"
+      expect_proposes_user_flow_child_label: "false"
+      expect_recommends_one_user_flow_label: "false"
+      expect_lists_close_alternatives_in_confirmation: "false"
+      expect_asks_user_to_pick_user_flow: "true"
+      expect_user_flow_label_in_confirmation: "false"
+      expect_refuses_silent_missing_user_flow: "true"
+      required_terms: "feature,milestone,project,current,creator,assignee,cycle,user_flow,studio"
+
+  - description: "GTM non-enforcing team — User Flow resolution must be skipped"
+    vars:
+      user_request: "Create a Linear issue for planning next quarter's go-to-market campaign."
+      scenario_team: "GTM"
+      scenario_project: "Q3 Campaigns"
+      user_flow_scenario_note: |
+        The workspace has a `User Flow` parent label, but the GTM team does not enforce the User Flow child-label rule. The skill must skip User Flow resolution entirely for this team and not include a User Flow label in the field-confirmation question.
+      forbidden_resolved_fields_include: "user_flow_label"
+      expect_team_requires_user_flow_label: "false"
+      expect_reads_user_flow_labels_live: "false"
+      expect_proposes_user_flow_child_label: "false"
+      expect_recommends_one_user_flow_label: "false"
+      expect_lists_close_alternatives_in_confirmation: "false"
+      expect_asks_user_to_pick_user_flow: "false"
+      expect_user_flow_label_in_confirmation: "false"
+      expect_refuses_silent_missing_user_flow: "false"
+      required_terms: "feature,milestone,project,current,creator,assignee,cycle,user_flow,gtm"
