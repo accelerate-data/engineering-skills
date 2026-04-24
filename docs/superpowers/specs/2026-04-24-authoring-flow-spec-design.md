@@ -181,7 +181,7 @@ version: 0.1.0
   target repos; canonical ID exists in Sheet (or user has scheduled to add it).
 - `## Workflow` — the 9 numbered phases (below).
 - `## Cross-skill handoffs`:
-  - `superpowers:brainstorming` — pressure-test the draft (Phase 6).
+  - `superpowers:brainstorming` — pressure-test the draft (Phase 7).
   - `superpowers:verification-before-completion` — before declaring the spec
     complete, confirm all placeholders resolved.
   - `engineering-skills:raising-linear-pr` — suggested next step if the flow
@@ -204,11 +204,11 @@ version: 0.1.0
   altitude test (from the template's authoring prompt), the "must NOT document"
   list, the three legitimate-cite exception classes, the business-rules-vs-
   invariants distinction, the events/observability kind-level rule. Skill
-  agents consult this file during Phase 5 (scaffold) and Phase 7 (self-review).
+  agents consult this file during Phase 6 (scaffold) and Phase 8 (self-review).
 
 ---
 
-## Skill workflow (9 phases)
+## Skill workflow (10 phases)
 
 ### Phase 0 — Precondition check
 
@@ -271,7 +271,35 @@ version: 0.1.0
   frontmatter list. If either is missing, abort with *"Author the parent flow
   `<parent-id>` first (and add `<child-id>` to its `sub-flows:` list)."*
 
-### Phase 5 — Draft the scaffold
+### Phase 5 — Gather reference material
+
+Before drafting, the skill asks the author what existing context should
+shape the spec:
+
+> *"Before I draft, are there any existing documents I should read?
+> For example: prior flow specs (same repo or archived under
+> `vd-specs-product-architecture/user-flows/_archive/flows/`), design
+> docs or architecture proposals, Linear issues, Granola meeting
+> transcripts, Google Docs or Sheets with PRD / requirement context,
+> or existing code that implements part of the behavior."*
+
+The skill accepts any combination of:
+
+- File paths (reads via `Read`).
+- Linear issue IDs (via `mcp__claude_ai_Linear__get_issue`).
+- Granola meeting IDs / titles (via `mcp__claude_ai_Granola__*`).
+- Google Doc / Sheet IDs (via `gws docs documents get`,
+  `gws sheets spreadsheets values get`).
+- URLs (via `mcp__read-website-fast__read_website`; `WebFetch` fallback).
+- *"None"* — proceed to Phase 6 with no added material.
+
+For each source, the skill extracts only behaviorally-relevant content
+(no implementation detail, UI copy, or retry mechanics) and builds a
+short internal digest (4–8 bullets). That digest feeds Phase 6's
+scaffold and frames Phase 7's brainstorming arc. The draft paraphrases
+into behavioral language — it never copies verbatim prose.
+
+### Phase 6 — Draft the scaffold
 
 - Load `references/flow-spec-template.md`.
 - Decide shape (standalone / parent / child) from Phase 2 + 2a signals + any
@@ -285,9 +313,12 @@ version: 0.1.0
     omitted for standalone/child
   - `last-reviewed: <today>`
 - Emit all required template sections with short placeholder prompts
-  (e.g., `[describe the goal]`) that Phase 6 will close out.
+  (e.g., `[describe the goal]`) that Phase 7 will close out. Incorporate
+  the Phase 5 reference-material digest: any behavioral signal the digest
+  captured should appear as a populated section (not a placeholder) or
+  as a tagged Open Question.
 
-### Phase 6 — Hand off to `superpowers:brainstorming`
+### Phase 7 — Hand off to `superpowers:brainstorming`
 
 - Invoke `Skill("superpowers:brainstorming")` with context:
   > *"The draft flow spec lives at `<path>`. Pressure-test it section by
@@ -297,7 +328,7 @@ version: 0.1.0
   > Questions → ask one at a time, edit draft inline after each answer."*
 - Wait for brainstorming to return control.
 
-### Phase 7 — Self-review
+### Phase 8 — Self-review
 
 - Scan for placeholders (`TBD`, `TODO`, `[describe…]`).
 - Check internal consistency: do Main flow steps and Success outcome align?
@@ -312,7 +343,7 @@ version: 0.1.0
   Open Questions are either resolved or have a specific resolution path.
 - Apply fixes inline. Single pass; do not re-loop.
 
-### Phase 8 — Write output and offer commit
+### Phase 9 — Write output and offer commit
 
 - `mkdir -p <repo-root>/docs/functional/<canonical-id>/` (or
   `<parent-id>/` for child).
@@ -630,7 +661,7 @@ All new `.md` files (SKILL.md, command, four references) must pass
   in C (typo, legacy value) will render a broken URL. The Sheet schema should
   keep data validation on column C to the four-repo enum.
 - **`gws` token expiry mid-workflow.** Phase 0 catches this at start, but a
-  long brainstorming session in Phase 6 could outlive the token. If Phase 8
+  long brainstorming session in Phase 7 could outlive the token. If Phase 9
   fails on `gws` re-read (there shouldn't be one, but defensively), the skill
   surfaces the exact re-auth command — no silent retry loops.
 - **Orphaned references.** Any document outside the two repos touched here

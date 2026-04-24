@@ -609,7 +609,7 @@ Write this content to `skills/authoring-flow-spec/references/writing-the-draft.m
 # Writing the Draft — Altitude Discipline
 
 The authoring-flow-spec skill enforces the template's altitude rules during
-Phase 5 (scaffold) and Phase 7 (self-review). This file is the concise
+Phase 6 (scaffold) and Phase 8 (self-review). This file is the concise
 reference the skill consults when writing or reviewing a section.
 
 ## The altitude test (applied to every paragraph)
@@ -700,7 +700,7 @@ prs_opened, terminal_state."* That's functional-spec detail.
 - List only questions that are genuinely unresolved.
 - Tag each `[product]` or `[design]`.
 - Design-tagged questions stay as Open Questions through spec finalization.
-- Product-tagged questions should be resolved during Phase 6 brainstorming.
+- Product-tagged questions should be resolved during Phase 7 brainstorming.
 ```
 
 - [ ] **Step 2: Run markdownlint**
@@ -853,7 +853,43 @@ If the target file already exists, read it and ask the author:
 
 Otherwise, proceed to draft.
 
-### Phase 5 — Draft the scaffold
+### Phase 5 — Gather reference material
+
+Before drafting, ask the author what existing context should shape the
+flow spec:
+
+> *"Before I draft, are there any existing documents I should read? For
+> example: prior flow specs (same repo or archived under*
+> *`vd-specs-product-architecture/user-flows/_archive/flows/`), design*
+> *docs or architecture proposals, Linear issues, Granola meeting*
+> *transcripts, Google Docs or Sheets with PRD / requirement context, or*
+> *existing code that implements part of the behavior."*
+
+Collect whatever the author provides:
+
+- **File paths** (inside any of the relevant repos) → `Read` them.
+- **Linear issue IDs** (e.g., `VD-123`) → fetch via the available Linear
+  tool (`mcp__claude_ai_Linear__get_issue`).
+- **Granola meeting IDs or titles** → fetch via the Granola tools
+  (`mcp__claude_ai_Granola__get_meeting_transcript`, etc.).
+- **Google Doc / Sheet IDs** → fetch via the `gws` CLI (e.g.,
+  `gws docs documents get`, `gws sheets spreadsheets values get`).
+- **URLs (GitHub, public web)** → fetch via
+  `mcp__read-website-fast__read_website` (fall back to `WebFetch` on
+  failure).
+- **Nothing offered** → proceed to Phase 6 with no additional material.
+
+For each source, extract only the content that shapes the behavioral
+spec — ignore implementation detail, UI copy, retry policies, and
+anything below the altitude line per
+`references/writing-the-draft.md`. Build a short internal digest
+(4–8 bullets) summarizing the behavioral signals found. Use the digest
+to populate Phase 6's scaffold and to frame Phase 7's brainstorming arc.
+
+Do not copy verbatim prose into the draft. Paraphrase into behavioral
+language.
+
+### Phase 6 — Draft the scaffold
 
 Load `references/flow-spec-template.md` and `references/writing-the-draft.md`.
 Decide shape from Phase 2 / 2a signals and any author input about sub-flows.
@@ -869,9 +905,12 @@ Emit frontmatter:
 - `last-reviewed: <today's date>` (`date +%Y-%m-%d`).
 
 Emit every required template section with short placeholder prompts
-(e.g., `[describe the goal]`) that Phase 6 will close.
+(e.g., `[describe the goal]`) that Phase 7 will close. Incorporate the
+Phase 5 reference-material digest: any behavioral signal it captured
+should appear as a populated section (not a placeholder) or as a tagged
+Open Question.
 
-### Phase 6 — Hand off to `superpowers:brainstorming`
+### Phase 7 — Hand off to `superpowers:brainstorming`
 
 Invoke `Skill("superpowers:brainstorming")` with the following context:
 
@@ -883,7 +922,7 @@ Invoke `Skill("superpowers:brainstorming")` with the following context:
 
 Wait for brainstorming to return control before proceeding.
 
-### Phase 7 — Self-review
+### Phase 8 — Self-review
 
 Apply the altitude test per `references/writing-the-draft.md` to every
 paragraph. Check for:
@@ -900,7 +939,7 @@ paragraph. Check for:
 
 Fix inline. Single pass; do not re-loop.
 
-### Phase 8 — Write output and offer commit
+### Phase 9 — Write output and offer commit
 
 1. `mkdir -p <repo-root>/docs/functional/<canonical-id>/` (or `<parent-id>/`
    for a child).
@@ -939,7 +978,7 @@ The skill refuses the following, citing `references/flow-spec-template.md`:
 
 | When | Invoke |
 |---|---|
-| Phase 6 (pressure-test the draft) | `superpowers:brainstorming` |
+| Phase 7 (pressure-test the draft) | `superpowers:brainstorming` |
 | Before claiming the spec is complete | `superpowers:verification-before-completion` |
 | Author asks to open a Linear PR after the spec lands | `engineering-skills:raising-linear-pr` |
 | Author asks for the design spec or implementation plan | Redirect — those link back to the flow spec; produce the flow spec first |
@@ -947,11 +986,12 @@ The skill refuses the following, citing `references/flow-spec-template.md`:
 ## References
 
 - `references/flow-spec-template.md` — canonical template, folder-per-ID
-  layout. Loaded in Phase 5 (scaffold) and Phase 7 (self-review).
+  layout. Loaded in Phase 6 (scaffold) and Phase 8 (self-review).
 - `references/flow-spec-template-rationalization.md` — rationale behind the
   template's structure. Human-oriented; maintainers only.
 - `references/sheet-interop.md` — `gws` command patterns for Phase 1
-  (candidate listing) and Phase 2 (row fetch).
+  (candidate listing), Phase 2 (row fetch), and any Google Doc / Sheet
+  fetches surfaced by Phase 5 (reference gathering).
 - `references/writing-the-draft.md` — altitude test, legitimate-cite
   classes, business-rules-vs-invariants distinction, events/observability
   kind-level rule.
@@ -1322,7 +1362,7 @@ Full design spec at [`docs/superpowers/specs/2026-04-24-authoring-flow-spec-desi
 - [x] `markdownlint` clean on all new `.md` files
 - [x] `npm run eval:coverage` passes
 - [x] `npm run eval:codex-compatibility` passes
-- [ ] Reviewer: spot-check `SKILL.md` Phase 0–8 workflow against the design spec
+- [ ] Reviewer: spot-check `SKILL.md` Phase 0–9 workflow against the design spec
 - [ ] Reviewer: verify the command delegates correctly and contains no scope beyond delegation
 - [ ] Post-merge: integration test from inside `studio` or `skill-builder`
 
@@ -1799,20 +1839,32 @@ Expected:
 - Phase 3 confirms the repo match.
 - Phase 4 confirms no existing file at `docs/functional/<canonical-id>/README.md`.
 
-- [ ] **Step 5: Verify Phase 5 draft includes all required template sections**
+- [ ] **Step 5: Verify Phase 5 (reference gathering) runs**
+
+Expected: the skill asks whether there are existing documents to read
+(prior specs, Linear issues, Granola transcripts, design docs, etc.).
+Provide at least one reference (e.g., a path to an archived flow file
+under `vd-specs-product-architecture/user-flows/_archive/flows/` that
+relates behaviorally) and confirm the skill reads it. Then answer "none"
+to end the reference-gathering loop and move to Phase 6.
+
+- [ ] **Step 6: Verify Phase 6 draft includes all required template sections**
 
 Check the draft file contains frontmatter with `id`, `title`, `persona`,
 `last-reviewed`, plus sections: Goal, Scope, Preconditions, Trigger, Primary
 actor, Inputs, Outputs, Success outcome, Terminal outcomes, Main flow.
+Verify behavioral signals from the reference read in Step 5 appear as
+populated sections or tagged Open Questions — not as `[describe…]`
+placeholders.
 
-- [ ] **Step 6: Step through brainstorming (Phase 6)**
+- [ ] **Step 7: Step through brainstorming (Phase 7)**
 
 Answer 2–3 questions to verify the hand-off to `superpowers:brainstorming`
 works.
 
-- [ ] **Step 7: Let the skill write the file and verify path**
+- [ ] **Step 8: Let the skill write the file and verify path**
 
-After Phase 8 writes, confirm:
+After Phase 9 writes, confirm:
 
 ```bash
 ls <studio-root>/docs/functional/<canonical-id>/README.md
@@ -1820,9 +1872,9 @@ ls <studio-root>/docs/functional/<canonical-id>/README.md
 
 Expected: file exists.
 
-- [ ] **Step 8: Answer `n` to the commit prompt** — we are testing, not shipping.
+- [ ] **Step 9: Answer `n` to the commit prompt** — we are testing, not shipping.
 
-- [ ] **Step 9: Clean up — discard the test file**
+- [ ] **Step 10: Clean up — discard the test file**
 
 ```bash
 rm -rf <studio-root>/docs/functional/<canonical-id>/
@@ -1940,7 +1992,7 @@ After implementing this plan, verify:
 - [ ] `ls /Users/shwetanksheel/scratch/ad-plugins/engineering-skills/commands/` includes `author-flow-spec.md`.
 - [ ] Sheet column L on row 2 renders a working GitHub URL (spot check).
 - [ ] Sheet column L on a row with `#N/A` in column C renders the literal text `pending repo assignment`.
-- [ ] Running `/author-flow-spec <known-id>` inside a target repo reaches Phase 6 (brainstorming) successfully.
+- [ ] Running `/author-flow-spec <known-id>` inside a target repo reaches Phase 7 (brainstorming) successfully, after Phase 5 (reference gathering) has asked for existing docs.
 - [ ] Both PRs merged in the correct order: engineering-skills first, vd-specs-* second.
 
 ---
