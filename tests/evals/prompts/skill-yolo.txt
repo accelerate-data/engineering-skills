@@ -1,10 +1,16 @@
 You are preparing to run the yolo skill for a user who says:
 "yolo — add a config flag to disable the onboarding banner for existing users"
 
-Read the skill at `skills/yolo/SKILL.md`.
+The yolo skill chains three sub-skill workflows in sequence:
+1. creating-linear-issue — creates the Linear issue
+2. implementing-linear-issue — implements the code (including all quality gates: code review, simplification review, test coverage review, AC review)
+3. raising-linear-pr — rebases, pushes, creates the PR, moves issue to In Review
 
-This is a workflow-order and boundary check. Even though you must not actually call tools
-here, analyze the skill and report what the correct workflow execution order must be.
+The skill stops after the PR is raised. It does not merge or close the issue.
+On Phase 2 failure, the skill surfaces: "Resume with /engineering-skills:implementing-linear-issue <issue-id>"
+On Phase 3 failure, the skill surfaces: "Resume with /engineering-skills:raising-linear-pr"
+
+This is a workflow-order and boundary check. Report what the correct execution behavior must be.
 
 Do not actually call tools. Return JSON only with this shape:
 

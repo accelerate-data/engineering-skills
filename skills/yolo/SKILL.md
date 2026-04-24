@@ -82,11 +82,3 @@ On success emit: `✅ PR raised — awaiting review.`
 Stop after Phase 3. Do not merge. Do not close the issue. Do not run `closing-linear-issue`.
 
 The next step is human: review and approve the PR, then run `/engineering-skills:closing-linear-issue` after merge.
-
-## Common Mistakes
-
-- Skipping quality gates inside Phase 2 — all gates run in full, same as standalone `implementing-linear-issue`.
-- Merging or closing the issue — this skill stops at PR raised.
-- Using this skill when the issue already exists — start from Phase 2 directly.
-- Not surfacing exact recovery instructions when a phase fails mid-flow.
-- Treating this skill as an override for sub-skill rules — sub-skill rules apply in full.
