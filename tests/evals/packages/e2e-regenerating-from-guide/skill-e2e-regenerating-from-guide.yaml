@@ -7,10 +7,10 @@ prompts:
     raw: file://../../prompts/skill-e2e-regenerating-from-guide.txt
 
 providers:
-  - id: opencode:sdk
+  - id: file://../../scripts/opencode-cli-provider.js
     config:
-      baseUrl: http://127.0.0.1:4096
-      apiKey: promptfoo-local-baseurl-placeholder
+      provider_id: opencode
+      model: qwen3.6-plus
       working_dir: ../..
       max_turns: 20
       tools:
