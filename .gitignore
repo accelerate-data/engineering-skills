@@ -20,6 +20,9 @@ Desktop.ini
 .env.*
 !.envrc
 
+# Local OAuth credentials
+client_secret.json
+
 # Promptfoo / eval harness local artifacts
 tests/evals/node_modules/
 tests/evals/.promptfoo

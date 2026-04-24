@@ -141,5 +141,8 @@ All Linear issues for this repository must be created in the **Internal-IT** pro
 ## Conventions
 
 - Keep all skill directories under `skills/`.
+- Put design docs under `docs/design/`.
+- Put user guides under `docs/user-guide/`.
+- Put implementation plans under `docs/plan/`.
 - Keep eval prompts and assertions self-contained under `tests/evals/`.
 - Avoid adding repo-specific styling, product assumptions, or external path dependencies to shared skills.

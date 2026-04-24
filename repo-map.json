@@ -91,6 +91,9 @@
   },
   "conventions": {
     "skill_location": "All first-party skills live under skills/<skill-name>/",
+    "design_docs": "Design documents live under docs/design/",
+    "user_guides": "User-facing guides live under docs/user-guide/",
+    "implementation_plans": "Implementation plans live under docs/plan/",
     "supporting_material": "References, assets, agents, and scripts stay inside the owning skill directory when needed",
     "worktrees": "Use sibling worktrees at ../worktrees/<branch-name> via scripts/worktree.sh <branch-name>",
     "local_dev_symlinks": "For direct local use, symlink skills/<skill-name> into ~/.claude/skills/<skill-name> and ~/.codex/skills/<skill-name>",
