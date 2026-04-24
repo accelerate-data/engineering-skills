@@ -38,5 +38,5 @@ tests:
       expected_cycle_default: "current"
       expected_milestone_strategy: "future-only"
       expect_asks_to_record_project_in_agents_md_only_after_user_supplies_it: "false"
-      required_terms: "feature,milestone,project,current,creator,assignee,cycle"
+      required_terms: "feature,milestone,project,current,creator,assignee,cycle,user_flow,studio,roadmap,utilities"
       forbidden_terms: "creates_issue_before_plan_approval\":true"

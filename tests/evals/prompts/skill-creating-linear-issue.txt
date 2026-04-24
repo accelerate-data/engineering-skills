@@ -8,11 +8,13 @@ Do not inspect the live `AGENTS.md` file for this eval. Use the simulated
 Scenario:
 
 - The user asks: "Create a Linear issue for improving eval coverage for the engineering skills plugin."
+- The resolved Linear team is `Studio`.
 - Codebase review could answer some scoping details.
 - Simulated `AGENTS.md` contains enough durable repo context to resolve the likely Linear project as `Engineering Skills`.
 - There are two viable future milestone choices and one past milestone.
 - No explicit assignee or cycle was provided.
 - The request should be classified before drafting the issue.
+- The `Studio` team uses a `User Flow` parent label with child labels describing product flows. The scenario issue's scope clearly matches one child flow label. The `Roadmap` and `Utilities` teams also enforce this rule; the `Accelerate Data` and `GTM` teams do not.
 
 Do not actually call tools. Return JSON only with this shape:
 
@@ -24,12 +26,19 @@ Do not actually call tools. Return JSON only with this shape:
   "has_distinct_paths": true,
   "resolves_project_before_asking": true,
   "confirms_critical_fields_with_user": true,
-  "resolved_fields_include": ["project", "milestone", "assignee", "cycle"],
+  "resolved_fields_include": ["project", "milestone", "assignee", "cycle", "user_flow_label"],
   "assignee_default": "creator",
   "cycle_default": "current",
   "milestone_strategy": "future-only",
   "asks_to_record_project_in_agents_md_only_after_user_supplies_it": false,
   "creates_issue_before_plan_approval": false,
+  "team_name": "Studio",
+  "enforcing_teams": ["Studio", "Roadmap", "Utilities"],
+  "team_requires_user_flow_label": true,
+  "reads_user_flow_labels_live": true,
+  "proposes_user_flow_child_label": true,
+  "user_flow_label_in_confirmation": true,
+  "refuses_silent_missing_user_flow": true,
   "notes": "string"
 }
 ```
