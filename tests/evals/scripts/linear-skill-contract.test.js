@@ -63,3 +63,27 @@ test('creating-linear-issue eval contract names issue-kind classification paths 
   assert.equal(packageYaml.includes('expect_uses_distinct_issue_kind_paths: "true"'), true);
   assert.equal(prompt.includes('uses_distinct_issue_kind_paths'), true);
 });
+
+test('raising-linear-pr eval contract names scenario-specific design mismatch blocking', () => {
+  const packageYaml = fs.readFileSync(
+    path.join(EVAL_ROOT, 'packages/raising-linear-pr/skill-raising-linear-pr.yaml'),
+    'utf8',
+  );
+  const prompt = fs.readFileSync(path.join(EVAL_ROOT, 'prompts/skill-raising-linear-pr.txt'), 'utf8');
+
+  assert.equal(packageYaml.includes('expect_blocks_pr_on_design_mismatch'), false);
+  assert.equal(prompt.includes('blocks_pr_on_design_mismatch'), false);
+  assert.equal(packageYaml.includes('expect_blocks_pr_for_design_mismatch_in_this_scenario'), true);
+  assert.equal(prompt.includes('blocks_pr_for_design_mismatch_in_this_scenario'), true);
+  assert.equal(prompt.includes('Set it to false when the design result is `pass` or `not_applicable`.'), true);
+});
+
+test('raising-linear-pr design source-of-truth scenario is not gated on the literal word truth', () => {
+  const packageYaml = fs.readFileSync(
+    path.join(EVAL_ROOT, 'packages/raising-linear-pr/skill-raising-linear-pr.yaml'),
+    'utf8',
+  );
+
+  assert.equal(packageYaml.includes('required_terms: "design,truth,acceptance,checked,fail,csv,json,stop"'), false);
+  assert.equal(packageYaml.includes('required_terms: "design,acceptance,checked,fail,csv,json,stop"'), true);
+});

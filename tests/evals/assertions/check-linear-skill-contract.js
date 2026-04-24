@@ -127,7 +127,7 @@ module.exports = (output, context) => {
       parseExpectedBoolean(context.vars.expect_compares_design_to_implementation_evidence),
     ],
     ['records_design_conformance_evidence', parseExpectedBoolean(context.vars.expect_records_design_conformance_evidence)],
-    ['blocks_pr_on_design_mismatch', parseExpectedBoolean(context.vars.expect_blocks_pr_on_design_mismatch)],
+    ['blocks_pr_for_design_mismatch_in_this_scenario', parseExpectedBoolean(context.vars.expect_blocks_pr_for_design_mismatch_in_this_scenario)],
     ['stops_if_pr_not_merged', parseExpectedBoolean(context.vars.expect_stops_if_pr_not_merged)],
     ['would_close_issue_in_this_scenario', parseExpectedBoolean(context.vars.expect_would_close_issue_in_this_scenario)],
     ['would_do_cleanup_in_this_scenario', parseExpectedBoolean(context.vars.expect_would_do_cleanup_in_this_scenario)],

@@ -49,7 +49,7 @@ Return one valid JSON object with exactly these keys:
 - `supports_local_design_references`
 - `compares_design_to_implementation_evidence`
 - `records_design_conformance_evidence`
-- `blocks_pr_on_design_mismatch`
+- `blocks_pr_for_design_mismatch_in_this_scenario`
 - `design_conformance_result`
 - `checked_design_paths`
 - `moves_issue_to_in_review`
@@ -81,8 +81,8 @@ Field meanings:
   local design document is compared against implementation and evidence.
 - `records_design_conformance_evidence` means the PR-phase evidence records
   `pass`, `fail`, or `not_applicable`.
-- `blocks_pr_on_design_mismatch` means a design mismatch blocks push and PR
-  creation in this scenario.
+- `blocks_pr_for_design_mismatch_in_this_scenario` means this scenario has a
+  design mismatch that blocks push and PR creation. Set it to false when the design result is `pass` or `not_applicable`.
 - `pushes_branch`, `creates_pr`, and `moves_issue_to_in_review` describe
   whether this scenario reaches those workflow steps.
 - `merges_pr` describes this skill's responsibility, not whether a merge is
