@@ -113,6 +113,38 @@ module.exports = (output, context) => {
     ['merges_pr', parseExpectedBoolean(context.vars.expect_merges_pr)],
     ['closes_issue', parseExpectedBoolean(context.vars.expect_closes_issue)],
     ['does_cleanup', parseExpectedBoolean(context.vars.expect_does_cleanup)],
+    [
+      'team_requires_user_flow_label',
+      parseExpectedBoolean(context.vars.expect_team_requires_user_flow_label),
+    ],
+    [
+      'reads_user_flow_labels_live',
+      parseExpectedBoolean(context.vars.expect_reads_user_flow_labels_live),
+    ],
+    [
+      'proposes_user_flow_child_label',
+      parseExpectedBoolean(context.vars.expect_proposes_user_flow_child_label),
+    ],
+    [
+      'recommends_one_user_flow_label',
+      parseExpectedBoolean(context.vars.expect_recommends_one_user_flow_label),
+    ],
+    [
+      'lists_close_alternatives_in_confirmation',
+      parseExpectedBoolean(context.vars.expect_lists_close_alternatives_in_confirmation),
+    ],
+    [
+      'asks_user_to_pick_user_flow',
+      parseExpectedBoolean(context.vars.expect_asks_user_to_pick_user_flow),
+    ],
+    [
+      'user_flow_label_in_confirmation',
+      parseExpectedBoolean(context.vars.expect_user_flow_label_in_confirmation),
+    ],
+    [
+      'refuses_silent_missing_user_flow',
+      parseExpectedBoolean(context.vars.expect_refuses_silent_missing_user_flow),
+    ],
   ];
 
   for (const [field, expected] of checks) {
