@@ -10,7 +10,7 @@ providers:
   - id: file://../../scripts/opencode-cli-provider.js
     config:
       provider_id: opencode
-      model: qwen3.6-plus
+      model: gpt-5-nano
       working_dir: ../..
       max_turns: 5
       tools:
@@ -26,15 +26,18 @@ defaultTest:
       value: file://../../assertions/check-maintain-github-repos-contract.js
 
 tests:
-  - description: "maintain-github-repos — uses repo-local script, stays org-specific, and requires preview plus confirmation before execute"
+  - description: "maintain-github-repos — uses repo-local script, stays org-specific, and requires preview plus scoped confirmation before execute"
     vars:
       expected_script_path: "skills/maintain-github-repos/scripts/analyze_repos.py"
       expect_uses_repo_local_script_path: "true"
       expect_mentions_accelerate_data_only: "true"
       expect_requires_dry_run_before_execute: "true"
       expect_requires_user_confirmation_before_execute: "true"
-      expect_requires_full_bulk_set_approval: "true"
-      expect_stops_on_partial_approval: "true"
+      expect_requires_exact_scope_confirmation: "true"
+      expect_supports_archive_only_execution: "true"
+      expect_supports_delete_only_execution: "true"
+      expect_supports_selected_delete_execution: "true"
+      expect_stops_on_unsupported_partial_approval: "true"
       expect_includes_dev_repo_delete_rule: "true"
       expect_uses_activity_not_archive_timestamp_for_scratch_delete: "true"
       expect_flags_large_branch_count_for_manual_review: "true"

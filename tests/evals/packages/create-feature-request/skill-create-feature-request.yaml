@@ -10,7 +10,7 @@ providers:
   - id: file://../../scripts/opencode-cli-provider.js
     config:
       provider_id: opencode
-      model: qwen3.6-plus
+      model: gpt-5-nano
       working_dir: ../..
       max_turns: 8
       tools:

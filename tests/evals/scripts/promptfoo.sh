@@ -9,7 +9,8 @@ OPENCODE_XDG_ROOT="$SCRIPT_DIR/.promptfoo/opencode-runtime"
 mkdir -p \
   "$SCRIPT_DIR/.promptfoo" \
   "$SCRIPT_DIR/.cache/promptfoo" \
-  "$OPENCODE_XDG_ROOT/state"
+  "$OPENCODE_XDG_ROOT/state" \
+  "$OPENCODE_XDG_ROOT/data"
 
 # Load .env from repo root if present so evals inherit the same model credentials
 # as local development without writing secrets into Promptfoo configs.
@@ -21,6 +22,7 @@ fi
 
 export PROMPTFOO_CACHE_PATH="$SCRIPT_DIR/.cache/promptfoo"
 export PROMPTFOO_CONFIG_DIR="$SCRIPT_DIR/.promptfoo"
+export XDG_DATA_HOME="$OPENCODE_XDG_ROOT/data"
 export XDG_STATE_HOME="$OPENCODE_XDG_ROOT/state"
 
 exec "$NODE_BIN" "$SCRIPT_DIR/node_modules/promptfoo/dist/src/entrypoint.js" "$@"

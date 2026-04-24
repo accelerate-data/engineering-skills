@@ -4,6 +4,7 @@ const path = require('node:path');
 const EVAL_ROOT = path.resolve(__dirname, '..');
 const REPO_ROOT = path.resolve(EVAL_ROOT, '..', '..');
 const DEFAULT_STATE_HOME = path.join(EVAL_ROOT, '.promptfoo', 'opencode-runtime', 'state');
+const DEFAULT_DATA_HOME = path.join(EVAL_ROOT, '.promptfoo', 'opencode-runtime', 'data');
 
 class OpenCodeCliProvider {
   constructor(options = {}) {
@@ -37,6 +38,7 @@ class OpenCodeCliProvider {
           cwd: path.resolve(EVAL_ROOT, this.config.working_dir || '../..'),
           env: {
             ...process.env,
+            XDG_DATA_HOME: process.env.XDG_DATA_HOME || DEFAULT_DATA_HOME,
             XDG_STATE_HOME: process.env.XDG_STATE_HOME || DEFAULT_STATE_HOME,
           },
           signal: callOptions.abortSignal,
@@ -93,6 +95,10 @@ function runOpenCode(args, options) {
       const output = Buffer.concat(stdout).toString('utf8');
       const errorOutput = Buffer.concat(stderr).toString('utf8').trim();
       if (code === 0) {
+        if (!output.trim() && errorOutput) {
+          finish(reject, new Error(errorOutput));
+          return;
+        }
         finish(resolve, output);
         return;
       }

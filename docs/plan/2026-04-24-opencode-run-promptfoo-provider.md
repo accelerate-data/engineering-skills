@@ -4,7 +4,7 @@
 
 **Goal:** Replace the Promptfoo eval harness dependency on `opencode serve` with a custom Promptfoo provider that invokes `opencode run` directly.
 
-**Architecture:** Keep `tests/evals/scripts/promptfoo.sh` as the single eval entrypoint, but remove all OpenCode server lifecycle management from it. Each eval package will use a local JavaScript provider file that shells out to `opencode run --model opencode/qwen3.6-plus --agent build <prompt>` and returns stdout to Promptfoo for the existing JavaScript assertions.
+**Architecture:** Keep `tests/evals/scripts/promptfoo.sh` as the single eval entrypoint, but remove all OpenCode server lifecycle management from it. Each eval package will use a local JavaScript provider file that shells out to `opencode run --model opencode/gpt-5-nano --agent build <prompt>` and returns stdout to Promptfoo for the existing JavaScript assertions.
 
 **Tech Stack:** Promptfoo `0.121.7`, OpenCode CLI `1.14.x`, Node.js CommonJS provider modules, shell wrapper scripts, repository-local Promptfoo artifact directories.
 
@@ -72,7 +72,7 @@ test('callApi invokes opencode run with configured model and prompt', async () =
     id: 'opencode:cli',
     config: {
       provider_id: 'opencode',
-      model: 'qwen3.6-plus',
+      model: 'gpt-5-nano',
       working_dir: '../..',
       agent: 'build',
     },
@@ -90,7 +90,7 @@ test('callApi invokes opencode run with configured model and prompt', async () =
   assert.deepEqual(calls[0].args, [
     'run',
     '--model',
-    'opencode/qwen3.6-plus',
+    'opencode/gpt-5-nano',
     '--agent',
     'build',
     'Read the skill and summarize it.',
@@ -104,7 +104,7 @@ test('callApi returns stderr when opencode exits non-zero', async () => {
   const provider = new OpenCodeCliProvider({
     config: {
       provider_id: 'opencode',
-      model: 'qwen3.6-plus',
+      model: 'gpt-5-nano',
     },
     spawnImpl: () => createSpawnResult({ code: 1, stderr: 'model unavailable' }),
   });
@@ -133,7 +133,7 @@ test('callApi terminates opencode when Promptfoo aborts the request', async () =
   const provider = new OpenCodeCliProvider({
     config: {
       provider_id: 'opencode',
-      model: 'qwen3.6-plus',
+      model: 'gpt-5-nano',
     },
     spawnImpl: () => {
       spawnedChild = new EventEmitter();
@@ -420,7 +420,7 @@ function replaceProviderBlock(text, filePath) {
     '  - id: file://../../scripts/opencode-cli-provider.js',
     '    config:',
     '      provider_id: opencode',
-    '      model: qwen3.6-plus',
+    '      model: gpt-5-nano',
   ].join('\n');
 
   const next = text.replace(
