@@ -122,7 +122,6 @@ Use these repo-local skills when requests match:
 - `skills/adversarial-review/SKILL.md` - run adversarial code review
 - `skills/authoring-flow-spec/SKILL.md` - author a Vibedata user-flow specification from a canonical ID in the User-Flows-Details Sheet
 - `skills/explaining-code/SKILL.md` - explain code with diagrams and teaching-style breakdowns
-- `skills/agent-browser/SKILL.md` - browser automation with agent-browser
 - `skills/create-feature-request/SKILL.md` - create a feature request in Linear
 - `skills/code-simplifier/SKILL.md` - simplify recently modified code while preserving behavior
 - `skills/writing-tests/SKILL.md` - write, audit, or improve unit and integration tests (Khorikov standards)

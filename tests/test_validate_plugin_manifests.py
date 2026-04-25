@@ -11,7 +11,7 @@ from scripts.validate_plugin_manifests import validate
 def write_manifest(root: Path, relative_path: str, **overrides: object) -> None:
     manifest = {
         "name": "engineering-skills",
-        "description": "Shared engineering-team skills for code review, issue workflow, UI work, and browser automation.",
+        "description": "Shared engineering-team skills for code review, issue workflow, code simplification, and testing.",
         "version": "1.0.7",
         "author": {"name": "Accelerate Data"},
         "repository": "https://github.com/accelerate-data/engineering-skills",

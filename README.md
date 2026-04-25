@@ -18,7 +18,6 @@ This repository is a single plugin source repo, not a marketplace repo.
 │   └── author-flow-spec.md
 ├── skills/
 │   ├── adversarial-review/
-│   ├── agent-browser/
 │   ├── authoring-flow-spec/
 │   ├── closing-linear-issue/
 │   ├── code-simplifier/
@@ -32,7 +31,8 @@ This repository is a single plugin source repo, not a marketplace repo.
 │   ├── implementing-linear-issue/
 │   ├── maintain-github-repos/
 │   ├── raising-linear-pr/
-│   └── writing-tests/
+│   ├── writing-tests/
+│   └── yolo/
 └── README.md
 ```
 
@@ -185,7 +185,6 @@ This repository is licensed under Elastic License 2.0. See [LICENSE](./LICENSE).
 | Skill | Purpose |
 | --- | --- |
 | [`adversarial-review`](./skills/adversarial-review) | Adversarial code review using the opposite model (Claude spawns Codex, Codex spawns Claude) to challenge large diffs from distinct critical lenses. |
-| [`agent-browser`](./skills/agent-browser) | Browser automation CLI for AI agents: navigate, fill forms, click, screenshot, scrape, or test web apps programmatically. |
 | [`authoring-flow-spec`](./skills/authoring-flow-spec) | Author a behavior-focused Vibedata user-flow spec from a canonical ID in the User-Flows-Details Sheet; writes to the target repo's `docs/functional/<id>/README.md`. |
 | [`closing-linear-issue`](./skills/closing-linear-issue) | Merge, close, and clean up branches and worktrees after a Linear issue's PR has been reviewed. |
 | [`code-simplifier`](./skills/code-simplifier) | Simplify recently modified code by removing needless complexity while preserving behavior and project standards. |
@@ -200,3 +199,4 @@ This repository is licensed under Elastic License 2.0. See [LICENSE](./LICENSE).
 | [`maintain-github-repos`](./skills/maintain-github-repos) | Hygiene for `accelerate-data` GitHub org: decide which stale `dev*`/`scratch*` repos to archive or delete. |
 | [`raising-linear-pr`](./skills/raising-linear-pr) | PR-phase workflow after implementation: verification rerun, AC completion check, push, PR creation, and `In Review` transition. |
 | [`writing-tests`](./skills/writing-tests) | Write, update, audit, or review unit and integration tests using Vladimir Khorikov's standards. |
+| [`yolo`](./skills/yolo) | Single-shot flow that creates an issue, implements it, and raises a PR in one invocation. |

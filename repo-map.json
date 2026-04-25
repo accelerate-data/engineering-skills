@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-04-24T00:00:00Z",
+  "generated_at": "2026-04-25T00:00:00Z",
   "repo_root": "engineering-skills",
   "primary_languages": ["Markdown", "JSON", "Shell", "YAML"],
   "package_managers": [
@@ -36,7 +36,7 @@
     },
     "skills": {
       "path": "skills/",
-      "description": "Canonical skill directories (17 skills). Each skill owns its SKILL.md and any supporting references, assets, scripts, or agents."
+      "description": "Canonical skill directories (16 skills). Each skill owns its SKILL.md and any supporting references, assets, scripts, or agents."
     },
     "eval_harness": {
       "path": "tests/evals/",
