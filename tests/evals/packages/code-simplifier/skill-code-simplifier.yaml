@@ -1,0 +1,189 @@
+# yaml-language-server: $schema=https://promptfoo.dev/config-schema.json
+description: "Code-simplifier skill — scoped, behavior-preserving simplification with local conventions and verification"
+
+prompts:
+  - id: code-simplifier
+    label: code-simplifier
+    raw: file://../../prompts/skill-code-simplifier.txt
+
+providers:
+  - id: file://../../scripts/opencode-cli-provider.js
+    config:
+      provider_id: opencode
+      model: qwen3.6-plus
+      working_dir: ../..
+      max_turns: 8
+      tools:
+        read: true
+        grep: true
+        glob: true
+        list: true
+        bash: true
+
+defaultTest:
+  assert:
+    - type: javascript
+      value: file://../../assertions/check-code-simplifier-contract.js
+
+tests:
+  - description: "default scope — simplifies recent diff only and follows local conventions"
+    vars:
+      scenario: |-
+        - The user says: "clean up the code you just touched."
+        - The branch diff changes `src/importer.ts` only.
+        - `AGENTS.md` says to preserve explicit error handling and nearby code uses named functions.
+        - There are older files in `src/legacy/` with unrelated duplication.
+        - The simplification opportunity is reducing nested `if` blocks in `src/importer.ts`.
+      expect_uses_recent_diff_scope: "true"
+      expect_broadens_scope_without_request: "false"
+      expect_reads_project_guidance: "true"
+      expect_reads_nearby_code: "true"
+      expect_preserves_public_api: "true"
+      expect_changes_behavior_without_request: "false"
+      expect_reduces_unnecessary_nesting: "true"
+      expect_keeps_domain_abstractions: "true"
+      expect_collapses_helpful_abstractions: "false"
+      expect_runs_narrow_verification: "true"
+
+  - description: "clarity over brevity — rejects nested ternary and keeps intent comments"
+    vars:
+      scenario: |-
+        - The touched code has a clear `switch` with three business cases and a comment explaining a
+          regulatory edge case.
+        - Replacing it with a nested ternary would save six lines but make the edge case harder to audit.
+        - Another nearby comment says "increment i" above `i += 1`.
+      expect_uses_nested_ternary_for_brevity: "false"
+      expect_prioritizes_fewer_lines_over_clarity: "false"
+      expect_keeps_intent_comments: "true"
+      expect_removes_obvious_comments: "true"
+      expect_preserves_outputs: "true"
+      expect_changes_behavior_without_request: "false"
+
+  - description: "verification failure — fixes regression before claiming completion"
+    vars:
+      scenario: |-
+        - The simplifier extracts duplicate normalization logic from shared authentication code.
+        - The first targeted test run fails because a thrown error message changed.
+        - The error message is part of the public API contract.
+      expect_preserves_public_api: "true"
+      expect_preserves_outputs: "true"
+      expect_changes_behavior_without_request: "false"
+      expect_runs_narrow_verification: "true"
+      expect_runs_broader_verification_for_shared_code: "true"
+      expect_fixes_verification_failure_before_claim: "true"
+      expect_weakens_tests_to_pass: "false"
+      expect_summarizes_significant_changes: "true"
+
+  - description: "project standards — applies concrete local style instead of generic preferences"
+    vars:
+      scenario: |-
+        - The user says: "simplify the React component I just edited."
+        - Local guidance says to use ES modules with sorted imports, prefer `function`
+          declarations, add explicit top-level return types, and define explicit React `Props`
+          types.
+        - Nearby files follow those conventions.
+        - A generic style guide would prefer arrow components and inferred return types.
+      expect_reads_project_guidance: "true"
+      expect_reads_nearby_code: "true"
+      expect_applies_project_standards: "true"
+      expect_applies_generic_conflicting_style: "false"
+      expect_preserves_public_api: "true"
+      expect_changes_behavior_without_request: "false"
+      expect_runs_narrow_verification: "true"
+
+  - description: "redundant abstraction — removes a forwarding helper without collapsing domain boundaries"
+    vars:
+      scenario: |-
+        - The recent diff added `buildPayloadForSave(input)` which only calls
+          `normalizePayload(input)` and is used once.
+        - `normalizePayload` is a domain abstraction used in several places and encodes business rules.
+        - Removing the one-use wrapper makes the execution path clearer.
+      expect_removes_redundant_abstraction: "true"
+      expect_reduces_duplication: "false"
+      expect_keeps_domain_abstractions: "true"
+      expect_collapses_helpful_abstractions: "false"
+      expect_preserves_outputs: "true"
+      expect_changes_behavior_without_request: "false"
+
+  - description: "naming clarity — renames unclear locals without changing external contract names"
+    vars:
+      scenario: |-
+        - The touched function uses locals named `data`, `item`, and `res` while nearby code uses
+          `invoice`, `lineItem`, and `approvalResult`.
+        - The exported function name and serialized JSON fields are already part of the public API.
+      expect_renames_unclear_locals: "true"
+      expect_renames_public_api: "false"
+      expect_preserves_public_api: "true"
+      expect_preserves_outputs: "true"
+      expect_changes_behavior_without_request: "false"
+
+  - description: "concern boundaries — refuses to merge orchestration and pure domain logic"
+    vars:
+      scenario: |-
+        - `submitOrder` orchestrates logging, persistence, and notifications.
+        - `calculateDiscount` is a pure domain function with unit tests and is shared by checkout,
+          invoicing, and order-preview flows.
+        - Combining them would save lines but make discount behavior harder to test and debug.
+      expect_preserves_concern_boundaries: "true"
+      expect_combines_orchestration_and_domain_logic: "false"
+      expect_keeps_domain_abstractions: "true"
+      expect_collapses_helpful_abstractions: "false"
+      expect_prioritizes_fewer_lines_over_clarity: "false"
+      expect_runs_broader_verification_for_shared_code: "true"
+
+  - description: "error handling — follows established result pattern instead of adding broad try/catch"
+    vars:
+      scenario: |-
+        - Repository guidance and nearby code use a `Result` return value for recoverable parse
+          failures.
+        - The touched code has duplicated parse checks.
+        - A naive simplification would wrap the whole function in `try/catch` and return a generic
+          error.
+      expect_follows_error_handling_convention: "true"
+      expect_adds_broad_try_catch: "false"
+      expect_preserves_outputs: "true"
+      expect_preserves_side_effects: "true"
+      expect_changes_behavior_without_request: "false"
+      expect_runs_narrow_verification: "true"
+
+  - description: "explicit broad scope — widens target only because the user requests the module"
+    vars:
+      scenario: |-
+        - The user says: "simplify the whole auth module."
+        - The current diff only touches `auth/session.ts`, but the module also includes
+          `auth/token.ts` and `auth/permissions.ts`.
+        - The module has shared behavior, so verification should cover the broader auth tests.
+      expect_uses_recent_diff_scope: "false"
+      expect_broadens_scope_without_request: "false"
+      expect_broadens_scope_when_requested: "true"
+      expect_reads_project_guidance: "true"
+      expect_reads_nearby_code: "true"
+      expect_runs_broader_verification_for_shared_code: "true"
+
+  - description: "summary discipline — reports meaningful simplification without noisy trivial edits"
+    vars:
+      scenario: |-
+        - The simplifier applies formatter-only whitespace changes, sorts imports, and replaces a
+          confusing nested conditional with guard clauses.
+        - Only the conditional rewrite materially changes readability.
+        - Verification passes.
+      expect_summarizes_significant_changes: "true"
+      expect_documents_only_significant_changes: "true"
+      expect_overreports_trivial_changes: "false"
+      expect_applies_project_standards: "true"
+      expect_runs_narrow_verification: "true"
+
+  - description: "test fixtures — does not update expected data to hide accidental behavior drift"
+    vars:
+      scenario: |-
+        - After simplifying invoice serialization, a snapshot fails because field order and a
+          nullable field changed.
+        - The snapshot captures a public API response contract.
+        - Updating the snapshot would make the test pass but would accept an accidental behavior
+          change.
+      expect_preserves_public_api: "true"
+      expect_preserves_outputs: "true"
+      expect_changes_behavior_without_request: "false"
+      expect_fixes_verification_failure_before_claim: "true"
+      expect_weakens_tests_to_pass: "false"
+      expect_updates_fixtures_to_match_regression: "false"

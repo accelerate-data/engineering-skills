@@ -3,8 +3,6 @@
     "adversarial-review",
     "agent-browser",
     "authoring-flow-spec",
-    "explaining-code",
-    "playwright",
-    "shadcn-ui"
+    "explaining-code"
   ]
 }

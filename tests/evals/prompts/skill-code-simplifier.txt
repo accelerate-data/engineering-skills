@@ -1,0 +1,82 @@
+You are evaluating the `code-simplifier` skill workflow for a specific scenario.
+
+Scenario:
+
+{{scenario}}
+
+Workflow contract:
+
+- Default scope is code modified in the current session or current branch diff. Broaden only when
+  the user names a wider target.
+- Before editing, read local project guidance and nearby code so simplification follows repository
+  conventions instead of generic style.
+- Preserve exact behavior: public APIs, outputs, side effects, persistence shape, error behavior,
+  and timing assumptions must not change unless the user explicitly asks for a behavior change.
+- Simplification may reduce nesting, duplication, redundant branching, unnecessary indirection, and
+  unclear names.
+- Keep helpful abstractions that encode domain intent or separate concerns.
+- Remove redundant one-use helpers, wrappers, or abstractions when they obscure the execution path
+  without preserving a useful boundary.
+- Rename unclear local variables to domain-relevant names, but do not rename public APIs or external
+  contracts as a cleanup.
+- Apply concrete local standards when present, such as sorted ES module imports, function
+  declarations, explicit top-level return types, React Props types, or established result/error
+  patterns.
+- Follow repository error-handling conventions instead of introducing broad try/catch blocks or
+  generic error wrappers.
+- Keep orchestration and domain logic separate when that boundary improves testability, debugging,
+  or extension.
+- Do not replace clear multi-branch code with nested ternaries, dense one-liners, or clever code just
+  to reduce line count.
+- Remove only comments that restate obvious code. Keep comments that explain non-obvious intent,
+  constraints, or external behavior.
+- Run the narrowest meaningful verification first, then broader checks when the code is shared or
+  behavior-critical.
+- If verification fails, debug and fix the regression before claiming the simplification is complete.
+- Summarize only significant simplifications and verification performed.
+- Do not update fixtures, snapshots, or assertions to match an accidental behavior change.
+
+Answer each field for what the workflow should do in this exact scenario.
+
+Do not actually call tools. Return JSON only with this shape. Include every key exactly, even when
+the value is false:
+
+```json
+{
+  "uses_recent_diff_scope": true,
+  "broadens_scope_without_request": false,
+  "reads_project_guidance": true,
+  "reads_nearby_code": true,
+  "applies_project_standards": false,
+  "applies_generic_conflicting_style": false,
+  "preserves_public_api": true,
+  "preserves_outputs": true,
+  "preserves_side_effects": true,
+  "changes_behavior_without_request": false,
+  "broadens_scope_when_requested": false,
+  "reduces_unnecessary_nesting": false,
+  "reduces_duplication": false,
+  "removes_redundant_abstraction": false,
+  "renames_unclear_locals": false,
+  "renames_public_api": false,
+  "keeps_domain_abstractions": true,
+  "collapses_helpful_abstractions": false,
+  "preserves_concern_boundaries": true,
+  "combines_orchestration_and_domain_logic": false,
+  "follows_error_handling_convention": true,
+  "adds_broad_try_catch": false,
+  "uses_nested_ternary_for_brevity": false,
+  "prioritizes_fewer_lines_over_clarity": false,
+  "removes_obvious_comments": false,
+  "keeps_intent_comments": true,
+  "runs_narrow_verification": true,
+  "runs_broader_verification_for_shared_code": false,
+  "fixes_verification_failure_before_claim": false,
+  "weakens_tests_to_pass": false,
+  "updates_fixtures_to_match_regression": false,
+  "summarizes_significant_changes": true,
+  "documents_only_significant_changes": true,
+  "overreports_trivial_changes": false,
+  "notes": "string"
+}
+```

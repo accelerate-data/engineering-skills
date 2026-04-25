@@ -36,11 +36,11 @@
     },
     "skills": {
       "path": "skills/",
-      "description": "Canonical skill directories (18 skills). Each skill owns its SKILL.md and any supporting references, assets, scripts, or agents."
+      "description": "Canonical skill directories (17 skills). Each skill owns its SKILL.md and any supporting references, assets, scripts, or agents."
     },
     "eval_harness": {
       "path": "tests/evals/",
-      "description": "Promptfoo harness and deterministic compatibility checks for skills in this repository. Agentic eval packages use a local OpenCode CLI provider that invokes `opencode run` directly, avoiding a managed `opencode serve` process. Current packages cover the Linear workflow skills, create-feature-request, maintain-github-repos, writing-tests, the 4 e2e BDD authoring skills, yolo, bundled raising-linear-pr promptfoo DB gate helper tests, eval coverage reporting, and Codex compatibility."
+      "description": "Promptfoo harness and deterministic compatibility checks for skills in this repository. Agentic eval packages use a local OpenCode CLI provider that invokes `opencode run` directly, avoiding a managed `opencode serve` process. Current packages cover the Linear workflow skills, create-feature-request, code-simplifier, maintain-github-repos, writing-tests, the 4 e2e BDD authoring skills, yolo, bundled raising-linear-pr promptfoo DB gate helper tests, eval coverage reporting, and Codex compatibility."
     },
     "scripts": {
       "path": "scripts/",
@@ -76,6 +76,7 @@
     "eval_closing_linear_issue": "npm run eval:closing-linear-issue",
     "eval_maintain_github_repos": "npm run eval:maintain-github-repos",
     "eval_create_feature_request": "npm run eval:create-feature-request",
+    "eval_code_simplifier": "npm run eval:code-simplifier",
     "eval_writing_tests": "npm run eval:writing-tests",
     "eval_e2e_adding_scenario": "npm run eval:e2e-adding-scenario",
     "eval_e2e_authoring_feature_file": "npm run eval:e2e-authoring-feature-file",
@@ -104,6 +105,6 @@
     "marketplace_model": "This repository is a plugin source, not a marketplace. Marketplaces in other repositories should point to this repo as the plugin source.",
     "eval_scope": "tests/evals only covers skills owned by this repository. Do not move in evals for external skill repos such as superpowers.",
     "update_repo_map": "Refresh this file whenever manifests, skill layout, eval layout, validation scripts, or command references change.",
-    "license": "Root repository content is Elastic License 2.0 (ELv2). Third-party bundled content such as skills/playwright/LICENSE.txt keeps its upstream license."
+    "license": "Root repository content is Elastic License 2.0 (ELv2)."
   }
 }

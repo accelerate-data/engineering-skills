@@ -11,6 +11,7 @@
     "eval:closing-linear-issue": "npm --prefix tests/evals run eval:closing-linear-issue",
     "eval:maintain-github-repos": "npm --prefix tests/evals run eval:maintain-github-repos",
     "eval:create-feature-request": "npm --prefix tests/evals run eval:create-feature-request",
+    "eval:code-simplifier": "npm --prefix tests/evals run eval:code-simplifier",
     "eval:yolo": "npm --prefix tests/evals run eval:yolo",
     "eval:yolo-routing": "npm --prefix tests/evals run eval:yolo-routing",
     "eval:coverage": "npm --prefix tests/evals run eval:coverage",
