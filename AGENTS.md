@@ -46,9 +46,7 @@ Claude and Codex plugin manifests must keep the same plugin name and version.
 When plugin content or metadata changes, bump both manifest versions together and
 run `npm run validate:plugin-manifests`.
 
-This repository is licensed under Elastic License 2.0 (`ELv2`). The bundled
-Playwright license at `skills/playwright/LICENSE.txt` is upstream third-party
-content and must remain unchanged unless that vendored upstream license changes.
+This repository is licensed under Elastic License 2.0 (`ELv2`).
 
 ## Testing
 
@@ -123,11 +121,10 @@ Use these repo-local skills when requests match:
 - `skills/yolo/SKILL.md` - single-shot flow: create issue, implement, and raise PR in one invocation
 - `skills/adversarial-review/SKILL.md` - run adversarial code review
 - `skills/authoring-flow-spec/SKILL.md` - author a Vibedata user-flow specification from a canonical ID in the User-Flows-Details Sheet
-- `skills/shadcn-ui/SKILL.md` - shadcn/ui component work
 - `skills/explaining-code/SKILL.md` - explain code with diagrams and teaching-style breakdowns
-- `skills/playwright/SKILL.md` - browser automation workflows
 - `skills/agent-browser/SKILL.md` - browser automation with agent-browser
 - `skills/create-feature-request/SKILL.md` - create a feature request in Linear
+- `skills/code-simplifier/SKILL.md` - simplify recently modified code while preserving behavior
 - `skills/writing-tests/SKILL.md` - write, audit, or improve unit and integration tests (Khorikov standards)
 - `skills/e2e-adding-scenario/SKILL.md` - append BDD scenarios to an existing `.feature` file in a Playwright+Claude e2e harness (set `E2E_HARNESS_ROOT` when running from outside the harness)
 - `skills/e2e-authoring-feature-file/SKILL.md` - author a new `.feature` file from scratch in a Playwright+Claude e2e harness (set `E2E_HARNESS_ROOT` when running from outside the harness)

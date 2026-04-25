@@ -21,6 +21,7 @@ This repository is a single plugin source repo, not a marketplace repo.
 │   ├── agent-browser/
 │   ├── authoring-flow-spec/
 │   ├── closing-linear-issue/
+│   ├── code-simplifier/
 │   ├── create-feature-request/
 │   ├── creating-linear-issue/
 │   ├── e2e-adding-scenario/
@@ -30,9 +31,7 @@ This repository is a single plugin source repo, not a marketplace repo.
 │   ├── explaining-code/
 │   ├── implementing-linear-issue/
 │   ├── maintain-github-repos/
-│   ├── playwright/
 │   ├── raising-linear-pr/
-│   ├── shadcn-ui/
 │   └── writing-tests/
 └── README.md
 ```
@@ -53,8 +52,8 @@ mkdir -p ~/.claude/skills
 ln -s /absolute/path/to/engineering-skills/skills/adversarial-review \
   ~/.claude/skills/adversarial-review
 
-ln -s /absolute/path/to/engineering-skills/skills/playwright \
-  ~/.claude/skills/playwright
+ln -s /absolute/path/to/engineering-skills/skills/code-simplifier \
+  ~/.claude/skills/code-simplifier
 ```
 
 Repeat that pattern for any other skill in this repo. The symlink name should match the skill directory name.
@@ -77,8 +76,8 @@ mkdir -p ~/.codex/skills
 ln -s /absolute/path/to/engineering-skills/skills/adversarial-review \
   ~/.codex/skills/adversarial-review
 
-ln -s /absolute/path/to/engineering-skills/skills/playwright \
-  ~/.codex/skills/playwright
+ln -s /absolute/path/to/engineering-skills/skills/code-simplifier \
+  ~/.codex/skills/code-simplifier
 ```
 
 Repeat that pattern for any other skill in this repo. The symlink name should match the skill directory name.
@@ -90,7 +89,7 @@ Repeat that pattern for any other skill in this repo. The symlink name should ma
 - Keep skill assets, scripts, references, and agents inside the owning skill directory.
 - Avoid cross-repo relative paths. A plugin install is expected to be self-contained.
 - Keep `.claude-plugin/plugin.json` and `.codex-plugin/plugin.json` on the same plugin name and version.
-- This plugin source repo is licensed under Elastic License 2.0 (`ELv2`). The bundled Playwright license remains under its upstream Apache 2.0 license.
+- This plugin source repo is licensed under Elastic License 2.0 (`ELv2`).
 
 ### Plugin Metadata Validation
 
@@ -181,10 +180,6 @@ above when skill content or Codex compatibility changes.
 
 This repository is licensed under Elastic License 2.0. See [LICENSE](./LICENSE).
 
-Third-party bundled content keeps its own license. In particular,
-[`skills/playwright/LICENSE.txt`](./skills/playwright/LICENSE.txt) remains the
-upstream Microsoft Playwright Apache 2.0 license.
-
 ## Current Skills
 
 | Skill | Purpose |
@@ -193,6 +188,7 @@ upstream Microsoft Playwright Apache 2.0 license.
 | [`agent-browser`](./skills/agent-browser) | Browser automation CLI for AI agents: navigate, fill forms, click, screenshot, scrape, or test web apps programmatically. |
 | [`authoring-flow-spec`](./skills/authoring-flow-spec) | Author a behavior-focused Vibedata user-flow spec from a canonical ID in the User-Flows-Details Sheet; writes to the target repo's `docs/functional/<id>/README.md`. |
 | [`closing-linear-issue`](./skills/closing-linear-issue) | Merge, close, and clean up branches and worktrees after a Linear issue's PR has been reviewed. |
+| [`code-simplifier`](./skills/code-simplifier) | Simplify recently modified code by removing needless complexity while preserving behavior and project standards. |
 | [`create-feature-request`](./skills/create-feature-request) | Log a feature request into the Roadmap (RO) team in Linear from free-form natural language. |
 | [`creating-linear-issue`](./skills/creating-linear-issue) | Draft or refine a Linear issue — preferred over the generic Linear skill for new-issue creation and decomposition. |
 | [`e2e-adding-scenario`](./skills/e2e-adding-scenario) | Append BDD scenarios to an existing `.feature` file in a Playwright+Claude e2e harness. Set `E2E_HARNESS_ROOT` when running from outside the harness. |
@@ -202,7 +198,5 @@ upstream Microsoft Playwright Apache 2.0 license.
 | [`explaining-code`](./skills/explaining-code) | Explain code with analogies, ASCII diagrams, and step-by-step walkthroughs with gotchas. |
 | [`implementing-linear-issue`](./skills/implementing-linear-issue) | Implement an approved Linear issue: branch/worktree setup, plan approval, checkpoint commits, quality gates — stops before the PR phase. |
 | [`maintain-github-repos`](./skills/maintain-github-repos) | Hygiene for `accelerate-data` GitHub org: decide which stale `dev*`/`scratch*` repos to archive or delete. |
-| [`playwright`](./skills/playwright) | Drive a real browser from the terminal via `playwright-cli` for navigation, form-filling, snapshots, screenshots, and UI-flow debugging. |
 | [`raising-linear-pr`](./skills/raising-linear-pr) | PR-phase workflow after implementation: verification rerun, AC completion check, push, PR creation, and `In Review` transition. |
-| [`shadcn-ui`](./skills/shadcn-ui) | shadcn/ui + Tailwind CSS 4 component work: adding primitives, customizing variants, building layouts. |
 | [`writing-tests`](./skills/writing-tests) | Write, update, audit, or review unit and integration tests using Vladimir Khorikov's standards. |
