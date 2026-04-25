@@ -1,0 +1,28 @@
+You are evaluating the `explaining-code` skill for this scenario:
+
+{{scenario}}
+
+Skill contract:
+
+- Use when explaining how code works, teaching about a codebase, or answering "how does this work?"
+- Always start with an analogy.
+- Always draw an ASCII diagram showing flow, structure, or relationships.
+- Walk through the code step by step.
+- Highlight a gotcha: a common mistake or misconception.
+- Keep explanations conversational.
+- For complex concepts, use multiple analogies.
+
+Do not actually call tools. Return JSON only with this shape:
+
+```json
+{
+  "uses_explaining_code_skill": false,
+  "starts_with_analogy": false,
+  "includes_ascii_diagram": false,
+  "walks_step_by_step": false,
+  "highlights_gotcha": false,
+  "keeps_conversational_tone": false,
+  "uses_multiple_analogies_for_complexity": false,
+  "notes": "string"
+}
+```

@@ -1,0 +1,51 @@
+# yaml-language-server: $schema=https://promptfoo.dev/config-schema.json
+description: "explaining-code skill — teaching explanation structure contract"
+
+prompts:
+  - id: explaining-code
+    label: explaining-code
+    raw: file://../../prompts/skill-explaining-code.txt
+
+providers:
+  - id: file://../../scripts/opencode-cli-provider.js
+    config:
+      provider_id: opencode
+      model: qwen3.6-plus
+      working_dir: ../..
+      max_turns: 8
+      tools:
+        read: true
+        grep: true
+        glob: true
+        list: true
+        bash: true
+
+defaultTest:
+  assert:
+    - type: javascript
+      value: file://../../assertions/check-explaining-code-contract.js
+
+tests:
+  - description: "baseline — explanation includes analogy, diagram, walkthrough, and gotcha"
+    vars:
+      scenario: |-
+        - The user asks: "How does this caching helper work?"
+        - They want a teaching-style explanation, not a refactor.
+      expect_uses_explaining_code_skill: "true"
+      expect_starts_with_analogy: "true"
+      expect_includes_ascii_diagram: "true"
+      expect_walks_step_by_step: "true"
+      expect_highlights_gotcha: "true"
+      expect_keeps_conversational_tone: "true"
+
+  - description: "complex concept — uses multiple analogies"
+    vars:
+      scenario: |-
+        - The user asks how a multi-stage queue, worker pool, and retry scheduler interact.
+        - The concept is complex enough that one analogy may not cover all relationships.
+      expect_uses_explaining_code_skill: "true"
+      expect_starts_with_analogy: "true"
+      expect_includes_ascii_diagram: "true"
+      expect_walks_step_by_step: "true"
+      expect_highlights_gotcha: "true"
+      expect_uses_multiple_analogies_for_complexity: "true"

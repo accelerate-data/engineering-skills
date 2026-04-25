@@ -1,21 +1,24 @@
-You are preparing to run the yolo skill for a user who says:
-"yolo — add a config flag to disable the onboarding banner for existing users"
+You are evaluating the yolo skill for this scenario:
 
-The yolo skill chains three sub-skill workflows in sequence:
-1. creating-linear-issue — creates the Linear issue
-2. implementing-linear-issue — implements the code (including all quality gates: code review, simplification review, test coverage review, AC review)
-3. raising-linear-pr — rebases, pushes, creates the PR, moves issue to In Review
+{{scenario}}
 
-The skill stops after the PR is raised. It does not merge or close the issue.
-On Phase 2 failure, the skill surfaces: "Resume with /engineering-skills:implementing-linear-issue <issue-id>"
-On Phase 3 failure, the skill surfaces: "Resume with /engineering-skills:raising-linear-pr"
+Skill contract:
 
-This is a workflow-order and boundary check. Report what the correct execution behavior must be.
+- `yolo` is used when the user wants to go from a feature description to an open PR in one uninterrupted flow.
+- It chains `creating-linear-issue`, then `implementing-linear-issue`, then `raising-linear-pr`.
+- It preserves all implementation quality gates from `implementing-linear-issue`.
+- It stops after the PR is raised. It does not merge or close the issue.
+- If Phase 2 fails after issue creation, surface: "Resume with /engineering-skills:implementing-linear-issue <issue-id>".
+- If Phase 3 fails after implementation, surface: "Resume with /engineering-skills:raising-linear-pr".
+- Do not use yolo when the user only asks to create a ticket, when an issue already exists and should be implemented, or when implementation is complete and only PR raising remains.
+- Set `yolo_trigger_found_in_message` to true only when the message asks for the uninterrupted create-implement-PR chain.
 
 Do not actually call tools. Return JSON only with this shape:
 
 ```json
 {
+  "detected_skill": "yolo | creating-linear-issue | implementing-linear-issue | raising-linear-pr | none",
+  "yolo_trigger_found_in_message": false,
   "runs_creating_linear_issue_first": true,
   "runs_implementing_linear_issue_second": true,
   "runs_raising_linear_pr_third": true,

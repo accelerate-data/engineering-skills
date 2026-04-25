@@ -10,9 +10,11 @@ Do not read production source files, write tests, or run commands until all thre
 2. Declared mode: TDD, While-building, Post-feature, Update, or Review
 3. Confirmed source file list, or TDD requirement/spec-derived target
 
-If the prompt is vague, ask one mode question and stop. Do not ask mode and scope together.
+If the prompt is vague, ask one mode question and stop. "Write tests for X", "add tests for the Y part", and "test this feature" do not declare a mode. Do not ask mode and scope together. Do not run discovery, inspect files, post the checklist, or infer a mode before the user answers.
 
 In TDD mode, you may read the user-provided requirement/spec before posting the planned target. Do not read implementation files.
+
+Zero exceptions: not for small files, obvious tests, time pressure, or a specific file named in the prompt. If this gate was skipped, stop, discard any draft tests, and restart here.
 
 ## Discovery
 
@@ -64,6 +66,8 @@ Post this exact marker before approval:
 ```
 
 Wait for user approval before Step 4.
+
+Do not vary the marker text. The required header is exactly `## Approved behaviours`; alternatives like "Proposed tests" or "Behaviours to cover" do not satisfy the gate. The marker plus user approval are both required before writing tests.
 
 Before writing, ask: "what plausible bug could still pass this suite?" If you can name one, add it. If not, state that explicitly.
 

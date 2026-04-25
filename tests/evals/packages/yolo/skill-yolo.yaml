@@ -1,5 +1,5 @@
 # yaml-language-server: $schema=https://promptfoo.dev/config-schema.json
-description: "Yolo skill — workflow order and phase boundary checks"
+description: "Yolo skill — workflow order, phase boundaries, and routing trigger checks"
 
 prompts:
   - id: yolo
@@ -27,4 +27,50 @@ defaultTest:
 
 tests:
   - description: "yolo — chains all 3 phases in order, stops at PR, preserves quality gates"
-    vars: {}
+    vars:
+      scenario: |-
+        - Prior conversation context: the user has finished describing a feature and wants to start building.
+        - User message: "yolo — add a config flag to disable the onboarding banner for existing users"
+        - The flow should create the Linear issue, implement it with gates, then raise the PR.
+      expected_detected_skill: "yolo"
+      expect_yolo_trigger_found_in_message: "true"
+      expect_runs_creating_linear_issue_first: "true"
+      expect_runs_implementing_linear_issue_second: "true"
+      expect_runs_raising_linear_pr_third: "true"
+      expect_stops_after_pr_raised: "true"
+      expect_does_not_merge_or_close: "true"
+      expect_preserves_quality_gates_from_implementing: "true"
+      expect_surfaces_recovery_instruction_on_phase2_failure: "true"
+      expect_surfaces_recovery_instruction_on_phase3_failure: "true"
+
+  - description: "routing — detects yolo from single-shot phrasing"
+    vars:
+      scenario: |-
+        - Prior conversation context: the user has finished describing a feature and wants to start building.
+        - User message: "do it all in one shot — create the issue, implement it, and raise the PR"
+      expected_detected_skill: "yolo"
+      expect_yolo_trigger_found_in_message: "true"
+
+  - description: "routing — does not trigger yolo for create-only request"
+    vars:
+      scenario: |-
+        - User message: "create a linear issue for adding dark mode"
+        - The user only asks to file a ticket.
+      expected_detected_skill: "creating-linear-issue"
+      expect_yolo_trigger_found_in_message: "false"
+
+  - description: "routing — does not trigger yolo when issue already exists"
+    vars:
+      scenario: |-
+        - User message: "the issue is already filed as AD-45, go ahead and implement it"
+        - Issue creation is already complete.
+      expected_detected_skill: "implementing-linear-issue"
+      expect_yolo_trigger_found_in_message: "false"
+
+  - description: "routing — does not trigger yolo when implementation is done"
+    vars:
+      scenario: |-
+        - User message: "implementation is done, raise the PR"
+        - The implementation phase is already complete.
+      expected_detected_skill: "raising-linear-pr"
+      expect_yolo_trigger_found_in_message: "false"

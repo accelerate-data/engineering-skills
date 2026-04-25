@@ -18,18 +18,6 @@ module.exports = (output, context) => {
     return { pass: false, score: 0, reason: `Failed to parse JSON output: ${error.message}` };
   }
 
-  if (context.vars.expected_detected_skill !== undefined) {
-    const expected = String(context.vars.expected_detected_skill).trim().toLowerCase();
-    const actual = String(payload.detected_skill || '').trim().toLowerCase();
-    if (actual !== expected) {
-      return {
-        pass: false,
-        score: 0,
-        reason: `Expected detected_skill=${expected}, got ${actual}`,
-      };
-    }
-  }
-
   for (const [varName, varValue] of Object.entries(context.vars || {})) {
     const field = expectedFieldName(varName);
     if (!field) continue;
@@ -44,5 +32,5 @@ module.exports = (output, context) => {
     }
   }
 
-  return { pass: true, score: 1, reason: 'Yolo skill contract matched expected behavior' };
+  return { pass: true, score: 1, reason: 'adversarial-review contract matched expected behavior' };
 };

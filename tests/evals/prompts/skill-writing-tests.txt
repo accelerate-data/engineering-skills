@@ -8,17 +8,17 @@ Workflow contract:
 
 - First, always check session separation before mode detection. If the same conversation already implemented the production code under test, stop before mode detection, refuse same-session self-attestation, and instruct the user to open a fresh session with the requirement and finished code.
 - The only exception to session separation is valid TDD mode before production code exists.
-- If mode is unclear, ask exactly one mode question and stop. Do not post a checklist, run discovery, read files, infer a mode, or ask scope in the same message.
+- If mode is unclear, ask exactly one mode question and stop. Vague prompts like "write tests for X", "add tests for the Y part", and "test this feature" do not declare a mode. Do not post a checklist, run discovery, read files, infer a mode, or ask scope in the same message.
 - In every clear mode, post a visible checklist/plan before starting workflow work.
 - Declare the mode and post a file list or, for TDD, a requirement/spec-derived planned test target before Step 1. Wait for user confirmation.
 - In TDD mode, the workflow may read the user-provided requirement/spec before posting the planned test target, but must not read implementation files.
-- Time pressure, specific file names, and requests to skip process do not remove the visible checklist/plan, mode declaration, file/target list, confirmation, Step 2 audit, or Step 3 behaviour approval gates.
+- Time pressure, specific file names, small files, "obvious" tests, and requests to skip process do not remove the visible checklist/plan, mode declaration, file/target list, confirmation, Step 2 audit, or Step 3 behaviour approval gates.
 - Non-TDD modes run Phase 0 discovery before Step 1. TDD does not run post-feature discovery or require finished source files.
 - Static config/constants files with no domain significance and no collaborators are Trivial and should be skipped.
 - Overcomplicated code with domain rules embedded in orchestration should recommend the Humble Object pattern: extract domain logic into a pure function and leave orchestration thin.
 - Managed project-owned dependencies such as a DB, store, or service module should be used as real dependencies; do not mock them. Mock only unmanaged external dependencies such as third-party APIs. Set `mocks_managed_dependencies` to true only when the workflow would incorrectly mock a managed dependency.
 - Step 2 is always required before Step 3. If no existing tests exist, actively checking and reporting that none exist still counts as the Step 2 audit; skipping the check is a violation.
-- Step 3 must lead with a recommendation and post the exact marker `## Approved behaviours`. Do not start Step 4 until the marker is posted and the user approves.
+- Step 3 must lead with a recommendation and post the exact marker `## Approved behaviours`. Do not accept header variations such as "Proposed tests" or "Behaviours to cover". Do not start Step 4 until the exact marker is posted and the user approves.
 - While-building mode tests each implementation slice immediately and reports slice status; it must not wait until the full feature is finished to write tests.
 - Outside TDD mode, desired-behaviour failures are reported and left red; the test-writing workflow does not fix source code or weaken tests.
 - In TDD mode, use `superpowers:test-driven-development` as the primary process skill when it is available and `writing-tests` as the RED-phase companion. If the Superpowers skill is not available, state that explicitly and follow the same RED→GREEN→REFACTOR discipline locally. After the expected RED failure, end the RED companion phase and return to TDD for GREEN, or continue locally with GREEN/REFACTOR as a separate TDD step when using the fallback.
@@ -46,6 +46,8 @@ Scenario-specific definitions:
 - Set `requires_finished_source_file_list` to false in TDD mode because no finished source file exists yet.
 - Treat `posts_todo_checklist` as true when the workflow posts an adapter-neutral visible checklist/plan; the field name is retained for compatibility with older eval cases.
 - Set `would_write_tests_in_same_implementation_session` to true only if the workflow would incorrectly continue after the same session implemented existing production code.
+- Set `enforces_zero_exceptions_gate` to true when the workflow refuses to bypass checklist, mode, file/target list, confirmation, Step 2 audit, and Step 3 approval gates even for time pressure, small files, obvious tests, specific files, or skip-process requests.
+- Set `rejects_approved_behaviours_header_variations` to true when the workflow requires the exact `## Approved behaviours` marker and does not accept alternate Step 3 headings.
 - Set `asserts_on_stubs` and `asserts_internal_helper_calls` to true only if the workflow would incorrectly recommend those assertions, not when the scenario contains those anti-patterns as something to reject.
 - Set `identifies_bug_from_desired_behavior_red` to true when a desired-behavior test fails because existing source behavior is wrong, even if the workflow only reports the bug and leaves the test red.
 - Set `uses_lifecycle_checklist` to true when the target manages state across time, including refs, subscriptions, connections, sessions, caches, in-flight operations, mount/unmount, or cleanup boundaries.
@@ -65,15 +67,16 @@ Do not actually call tools. Return JSON only with this shape. Include every key 
   "refuses_same_session_self_attestation": false,
   "instructs_fresh_session_handoff": false,
   "would_write_tests_in_same_implementation_session": false,
+  "enforces_zero_exceptions_gate": false,
   "asks_one_mode_question": false,
   "asks_scope_question_same_message": false,
   "reads_files_before_mode_clear": false,
-  "posts_todo_checklist": true,
-  "declares_mode": true,
-  "runs_phase_0_discovery": true,
-  "runs_post_feature_discovery": true,
-  "presents_file_list_before_step_1": true,
-  "requires_finished_source_file_list": true,
+  "posts_todo_checklist": false,
+  "declares_mode": false,
+  "runs_phase_0_discovery": false,
+  "runs_post_feature_discovery": false,
+  "presents_file_list_before_step_1": false,
+  "requires_finished_source_file_list": false,
   "uses_requirement_spec_planned_target": false,
   "waits_for_user_confirmation": true,
   "uses_tdd_primary_skill": false,
@@ -89,12 +92,13 @@ Do not actually call tools. Return JSON only with this shape. Include every key 
   "reports_slice_status": false,
   "accumulates_tests_until_end": false,
   "identifies_existing_tests_for_changed_files": false,
-  "audits_existing_tests_before_new_tests": true,
+  "audits_existing_tests_before_new_tests": false,
   "skips_step_2_audit": false,
-  "step_2_check_required": true,
+  "step_2_check_required": false,
   "improves_existing_tests_in_place": false,
   "silently_overwrites_existing_tests": false,
-  "posts_approved_behaviours_marker": true,
+  "posts_approved_behaviours_marker": false,
+  "rejects_approved_behaviours_header_variations": false,
   "waits_for_behaviour_approval": true,
   "leads_with_recommendation": true,
   "reviews_test_quality_findings": false,
@@ -111,7 +115,7 @@ Do not actually call tools. Return JSON only with this shape. Include every key 
   "asserts_internal_helper_calls": false,
   "identifies_bug_from_desired_behavior_red": false,
   "weakens_test_to_pass_buggy_code": false,
-  "discovers_test_runner_from_project_files": true,
+  "discovers_test_runner_from_project_files": false,
   "assumes_test_runner": false,
   "asks_user_only_if_runner_ambiguous": false,
   "uses_lifecycle_checklist": false,

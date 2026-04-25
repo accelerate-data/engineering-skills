@@ -1,0 +1,61 @@
+# yaml-language-server: $schema=https://promptfoo.dev/config-schema.json
+description: "adversarial-review skill — opposite-model reviewer and verdict contract"
+
+prompts:
+  - id: adversarial-review
+    label: adversarial-review
+    raw: file://../../prompts/skill-adversarial-review.txt
+
+providers:
+  - id: file://../../scripts/opencode-cli-provider.js
+    config:
+      provider_id: opencode
+      model: qwen3.6-plus
+      working_dir: ../..
+      max_turns: 10
+      tools:
+        read: true
+        grep: true
+        glob: true
+        list: true
+        bash: true
+
+defaultTest:
+  assert:
+    - type: javascript
+      value: file://../../assertions/check-adversarial-review-contract.js
+
+tests:
+  - description: "opposite model — uses CLI reviewers, not same-model delegation"
+    vars:
+      scenario: |-
+        - The user says: "run adversarial review on this PR diff."
+        - The lead agent is Codex.
+        - Same-model subagents are available, but would not provide adversarial model diversity.
+      expect_uses_opposite_model_cli: "true"
+      expect_avoids_same_model_subagents: "true"
+      expect_loads_reviewer_lenses: "true"
+      expect_states_author_intent: "true"
+
+  - description: "large diff — selects 3 lens reviewers and runs them in parallel"
+    vars:
+      scenario: |-
+        - The diff changes 8 files and 420 lines.
+        - The review should use Skeptic, Architect, and Minimalist lenses.
+        - Each reviewer should write a separate output file.
+      expect_selects_reviewer_count_by_size: "true"
+      expect_uses_three_reviewers_for_large: "true"
+      expect_spawns_reviewers_in_parallel: "true"
+      expect_writes_lens_named_output_files: "true"
+
+  - description: "synthesis — verifies outputs and renders judgment"
+    vars:
+      scenario: |-
+        - One reviewer output is missing, and two reviewers produced overlapping medium findings.
+        - The final answer must synthesize, deduplicate, and judge the findings.
+      expect_verifies_cli_and_outputs_before_synthesis: "true"
+      expect_notes_missing_or_empty_reviewers: "true"
+      expect_synthesizes_verdict_sections: "true"
+      expect_deduplicates_findings: "true"
+      expect_includes_lead_judgment: "true"
+      expect_applies_verdict_logic: "true"

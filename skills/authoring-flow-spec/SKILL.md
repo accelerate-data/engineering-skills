@@ -55,6 +55,16 @@ Before invoking the skill, confirm:
    after the last `/`, stripping `.git`). Must match one of
    `{studio, skill-builder, domain-cicd, migration-utility}`. Otherwise abort
    with the four legitimate repo names listed.
+5. Confirm the required cross-skill handoffs are available through the
+   runtime's skill/tool registry before drafting:
+
+   - `superpowers:brainstorming`
+   - `superpowers:verification-before-completion`
+
+   Do not rely on local filesystem paths alone; use the runtime's skill
+   availability mechanism so the check reflects what can actually be invoked.
+   If either skill is unavailable, abort before creating or modifying the flow
+   spec and report the missing skill names.
 
 ### Phase 1 — Identify the canonical ID
 

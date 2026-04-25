@@ -1,8 +1,5 @@
 {
   "uncovered_skills": [
-    "adversarial-review",
-    "agent-browser",
-    "authoring-flow-spec",
-    "explaining-code"
+    "agent-browser"
   ]
 }

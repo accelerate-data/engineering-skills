@@ -1,0 +1,101 @@
+# yaml-language-server: $schema=https://promptfoo.dev/config-schema.json
+description: "authoring-flow-spec skill — core flow-spec authoring contract"
+
+prompts:
+  - id: authoring-flow-spec
+    label: authoring-flow-spec
+    raw: file://../../prompts/skill-authoring-flow-spec.txt
+
+providers:
+  - id: file://../../scripts/opencode-cli-provider.js
+    config:
+      provider_id: opencode
+      model: qwen3.6-plus
+      working_dir: ../..
+      max_turns: 12
+      tools:
+        read: true
+        grep: true
+        glob: true
+        list: true
+        bash: true
+
+defaultTest:
+  assert:
+    - type: javascript
+      value: file://../../assertions/check-authoring-flow-spec-contract.js
+
+tests:
+  - description: "preconditions — validates tooling, auth, git checkout, and allowed repo"
+    vars:
+      scenario: |-
+        - The user asks: "author a flow spec for intent-user-data-mart-build."
+        - `gws` is missing, auth may be stale, and the current repo may be outside the allowed set.
+      expect_checks_gws_auth_git_and_repo: "true"
+      expect_aborts_outside_allowed_repos: "true"
+
+  - description: "preconditions — verifies required cross-skill handoffs are available"
+    vars:
+      scenario: |-
+        - The user asks: "author a flow spec for intent-user-data-mart-build."
+        - `superpowers:brainstorming` is required for Phase 7.
+        - `superpowers:verification-before-completion` is required before claiming completion.
+        - One of those skills may not be installed or exposed in the runtime skill registry.
+      expect_checks_required_skill_availability: "true"
+      expect_aborts_when_required_skill_missing: "true"
+
+  - description: "sheet lookup — canonical ID fetch avoids status and Sheet writes"
+    vars:
+      scenario: |-
+        - The invocation includes canonical ID `intent-user-data-mart-build`.
+        - The Sheet row exists and includes status in column H.
+        - The workflow needs the ID, repo, category, title, and persona.
+      expect_fetches_sheet_row_for_id: "true"
+      expect_extracts_allowed_sheet_columns_only: "true"
+      expect_does_not_read_status_column: "true"
+      expect_does_not_write_sheet: "true"
+      expect_verifies_repo_alignment: "true"
+
+  - description: "missing id — asks for canonical ID and can infer child flow"
+    vars:
+      scenario: |-
+        - The user says: "author a flow spec" without an ID.
+        - Later they provide a child composite ID whose exact row is missing but whose parent prefix exists in the Sheet.
+      expect_asks_for_canonical_id_when_missing: "true"
+      expect_uses_child_longest_prefix_inference: "true"
+      expect_aborts_when_no_row_or_parent: "true"
+
+  - description: "paths — parent and child output locations are constrained"
+    vars:
+      scenario: |-
+        - A parent flow should be written as a README.
+        - A child flow should be written under the parent directory.
+        - The parent README must already exist and include the child in `sub-flows:`.
+      expect_writes_parent_readme_path: "true"
+      expect_writes_child_numbered_path: "true"
+      expect_requires_parent_readme_and_subflow: "true"
+      expect_asks_update_or_abort_for_existing_spec: "true"
+
+  - description: "drafting — gathers behavioral context and keeps behavior altitude"
+    vars:
+      scenario: |-
+        - The author provides a prior flow spec, a Linear issue, and implementation notes.
+        - Some sources include UI labels, payload schemas, and copy.
+        - The draft should use behavioral signals only.
+      expect_asks_for_reference_material: "true"
+      expect_digests_behavioral_signals_only: "true"
+      expect_avoids_verbatim_copying: "true"
+      expect_loads_template_and_writing_guidance: "true"
+      expect_emits_required_frontmatter: "true"
+      expect_keeps_behavior_altitude: "true"
+
+  - description: "review and closeout — brainstorming, self-review, commit offer, no push"
+    vars:
+      scenario: |-
+        - The scaffold is drafted.
+        - Some placeholders and open questions remain.
+        - The user asks for the implementation plan immediately after the draft.
+      expect_invokes_brainstorming: "true"
+      expect_self_reviews_before_completion: "true"
+      expect_refuses_downstream_artifact: "true"
+      expect_offers_commit_without_push: "true"

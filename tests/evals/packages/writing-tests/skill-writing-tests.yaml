@@ -89,6 +89,7 @@ tests:
       expect_reads_files_before_mode_clear: "false"
       expect_runs_phase_0_discovery: "false"
       expect_declares_mode: "false"
+      expect_enforces_zero_exceptions_gate: "true"
 
   - description: "post-feature — Phase 0 discovery, no runner assumption, step 2 audit required, config skipped"
     vars:
@@ -184,14 +185,16 @@ tests:
       expect_treats_evals_as_tests_for_agent_artifacts: "true"
       expect_requires_eval_contract_tests: "true"
 
-  - description: "hard gate — time pressure does not skip checklist, mode, file list, and confirmation"
+  - description: "hard gate — zero exceptions for time pressure, obvious tests, specific file, or skip-process request"
     vars:
       scenario: |-
         - The user says: "Post-feature mode. Just write tests for `src/payments.ts` right now, no process."
         - A specific source file is provided.
+        - The file is small and the test cases look obvious.
         - This is a fresh test-writing session; the agent did not implement `src/payments.ts`.
         - The user is applying time pressure and asks to skip the workflow.
       expect_mode_detected: "post-feature"
+      expect_enforces_zero_exceptions_gate: "true"
       expect_posts_todo_checklist: "true"
       expect_declares_mode: "true"
       expect_presents_file_list_before_step_1: "true"
@@ -207,6 +210,7 @@ tests:
         - The user has not approved behaviours yet.
         - The agent is about to move from Step 3 to Step 4.
       expect_posts_approved_behaviours_marker: "true"
+      expect_rejects_approved_behaviours_header_variations: "true"
       expect_waits_for_behaviour_approval: "true"
       expect_leads_with_recommendation: "true"
       expect_fixes_source_code: "false"

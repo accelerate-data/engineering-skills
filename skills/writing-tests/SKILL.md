@@ -11,7 +11,11 @@ This is a progressive-discovery skill: load only the reference needed for the cu
 
 ## First Gate
 
-If this same conversation already implemented the production code under test, stop before mode detection. The builder must not write its own post-feature tests. Use a fresh test session with the requirement and finished code.
+If this same conversation session already implemented the production code under test, stop before mode detection. Do not enter mode detection or any workflow.
+
+A session means one conversation window. Invoking this skill in the same conversation that wrote the code still shares the same context and blind spots. Knowing the code well is the liability: the builder will tend to write tests that confirm what the code does, including its bugs.
+
+The builder must not write its own post-feature tests. Use a fresh test session with the requirement and finished code.
 
 Exception: valid tests-first TDD before production code exists. Use `superpowers:test-driven-development` when available; otherwise state the fallback and follow RED-GREEN-REFACTOR locally.
 
@@ -30,6 +34,8 @@ Declare one mode before reading implementation files:
 | User asks for quality review | Review |
 | Unclear | Ask one mode question, then stop |
 
+Vague prompts always require the clarifying question. Examples: "write tests for X", "add tests for the Y part", and "test this feature" do not declare a mode. Ask one mode question only; do not ask mode and scope together, run discovery, inspect files, or infer a mode.
+
 ## Start Checklist
 
 For every clear mode, post a visible checklist/plan before workflow work:
@@ -44,6 +50,8 @@ For every clear mode, post a visible checklist/plan before workflow work:
 
 Before Step 1, also post the confirmed file list. In TDD mode, read the user-provided requirement/spec first and post the planned public test target instead of a source file list. Do not read implementation files in TDD.
 
+Zero exceptions: not for small files, obvious tests, time pressure, or a specific file named in the prompt. If you skipped the checklist, mode declaration, file list or TDD target, stop and restart at the gate.
+
 Detailed gate rules and report format: `references/workflow.md`.
 
 ## Workflow
@@ -51,7 +59,7 @@ Detailed gate rules and report format: `references/workflow.md`.
 1. **Discover target.** Non-TDD: use branch diff, issue context, explicit user target, then search. TDD: use requirement/spec. Confirm the file list or TDD target with the user.
 2. **Classify.** Domain -> unit tests, Controller -> integration happy path, Trivial -> skip, Overcomplicated -> Humble Object refactor recommendation, LLM-boundary -> deterministic unit tests + mocked API. Load `references/classification.md`.
 3. **Audit existing tests.** Always check colocated tests before proposing new ones. Load `references/audit.md`.
-4. **Recommend behaviours.** Lead with your recommendation and post the exact header `## Approved behaviours`. Wait for approval before writing.
+4. **Recommend behaviours.** Lead with your recommendation and post the exact header `## Approved behaviours`. Do not use variations. Wait for user approval before writing.
 5. **Write tests.** Discover the runner first. Assertion order: output > state > communication. Mock only unmanaged external dependencies. Load `references/assertions.md` and `references/mocking.md`.
 6. **Run and report.** Outside TDD, leave desired-behaviour failures red and do not fix source. In TDD, the RED companion phase ends after the expected failing test; hand control to `superpowers:test-driven-development` for GREEN when available, or state that the local fallback will continue with GREEN/REFACTOR as a separate TDD step.
 
