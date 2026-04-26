@@ -1,23 +1,15 @@
-You are evaluating the `adversarial-review` skill workflow for this scenario:
+You are evaluating the `adversarial-review` skill workflow in this repository.
+
+Read `skills/adversarial-review/SKILL.md` and any directly referenced
+materials needed for this scenario. Use the skill text and scenario only; do
+not rely on a copied contract in this prompt.
+
+Scenario:
 
 {{scenario}}
 
-Skill contract:
-
-- Reviewers must run on the opposite model using the opposite model CLI: `codex exec` when Claude is leading, or `claude -p` when Codex is leading.
-- Reviewers must not be spawned through same-model subagents, Agent tool calls, or internal delegation.
-- Load `references/reviewer-lenses.md` and use the bundled Skeptic, Architect, and Minimalist lens definitions.
-- Determine scope and state the author's intent before reviewing.
-- Reviewer count is based on change size: small uses 1 reviewer, medium uses 2, large uses 3.
-- When a scenario expects a size-specific reviewer count, set both `selects_reviewer_count_by_size` and the matching `uses_*_reviewers_for_*` field true.
-- Spawn reviewers in parallel and write one output file per lens in a temp review directory.
-- Verify the reviewer CLI used and confirm all expected output files exist before synthesis.
-- Missing or empty reviewer output must be noted, not silently skipped.
-- Synthesize a verdict with Intent, Verdict, Findings, What Went Well, and Lead Judgment.
-- Findings must cite concrete files/lines, severity, lens, lens principle, and recommendation.
-- Verdict logic: PASS has no high-severity findings, CONTESTED has disputed high-severity findings, REJECT has consensus high-severity findings.
-
-Do not actually call tools. Return JSON only with this shape:
+Use read-only inspection only. Do not run reviewer CLIs, spawn agents, write
+files, or perform external actions. Return JSON only with this shape:
 
 ```json
 {

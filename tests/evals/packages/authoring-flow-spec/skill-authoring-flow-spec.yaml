@@ -68,8 +68,8 @@ tests:
   - description: "paths — parent and child output locations are constrained"
     vars:
       scenario: |-
-        - A parent flow should be written as a README.
-        - A child flow should be written under the parent directory.
+        - The user asks to author one parent flow and one child flow from their canonical IDs.
+        - The repo already has the parent docs/functional directory shape.
         - The parent README must already exist and include the child in `sub-flows:`.
       expect_writes_parent_readme_path: "true"
       expect_writes_child_numbered_path: "true"
@@ -81,7 +81,7 @@ tests:
       scenario: |-
         - The author provides a prior flow spec, a Linear issue, and implementation notes.
         - Some sources include UI labels, payload schemas, and copy.
-        - The draft should use behavioral signals only.
+        - Some sources include implementation details and product copy that may be too low-level for a flow spec.
       expect_asks_for_reference_material: "true"
       expect_digests_behavioral_signals_only: "true"
       expect_avoids_verbatim_copying: "true"

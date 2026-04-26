@@ -1,18 +1,13 @@
-You are evaluating the `explaining-code` skill for this scenario:
+You are evaluating the `explaining-code` skill workflow in this repository.
+
+Read `skills/explaining-code/SKILL.md`. Use the skill text and scenario only;
+do not rely on a copied contract in this prompt.
+
+Scenario:
 
 {{scenario}}
 
-Skill contract:
-
-- Use when explaining how code works, teaching about a codebase, or answering "how does this work?"
-- Always start with an analogy.
-- Always draw an ASCII diagram showing flow, structure, or relationships.
-- Walk through the code step by step.
-- Highlight a gotcha: a common mistake or misconception.
-- Keep explanations conversational.
-- For complex concepts, use multiple analogies.
-
-Do not actually call tools. Return JSON only with this shape:
+Use read-only inspection only. Return JSON only with this shape:
 
 ```json
 {

@@ -33,7 +33,7 @@ tests:
         - No production code for password reset exists yet.
         - `superpowers:test-driven-development` is available in this session.
         - The user has a requirement/spec but no finished source file list.
-        - The workflow should write the first failing RED test well, then hand back to TDD for GREEN.
+        - They want the first failing test before implementation proceeds.
       expect_mode_detected: "tdd"
       expect_applies_independent_evaluator_rule: "false"
       expect_uses_tdd_primary_skill: "true"
@@ -52,7 +52,7 @@ tests:
         - No production code for password reset exists yet.
         - `superpowers:test-driven-development` is not available in this session.
         - The user has a requirement/spec but no finished source file list.
-        - The workflow should state the missing Superpowers skill, write the first failing RED test well, then continue locally into GREEN using RED→GREEN→REFACTOR discipline.
+        - They still want to proceed locally if the preferred TDD helper is unavailable.
       expect_mode_detected: "tdd"
       expect_applies_independent_evaluator_rule: "false"
       expect_uses_tdd_primary_skill: "false"
@@ -132,7 +132,7 @@ tests:
         - The user says: "I'm currently building checkout; after each slice, help me test it."
         - The next slice is applying discount codes.
         - The user/human is doing the implementation work; this is a separate test-guidance session, not the same agent testing its own code.
-        - The workflow should test each slice as it is completed instead of waiting until the full feature is done.
+        - They want feedback after each completed slice, not at the end of the whole feature.
       expect_mode_detected: "while-building"
       expect_reports_slice_status: "true"
       expect_accumulates_tests_until_end: "false"
@@ -179,7 +179,7 @@ tests:
         - The user says: "Update mode: I'm editing a skill, a slash command, and an agent prompt."
         - They ask what tests are needed for these process artifacts.
         - `superpowers:writing-skills` is available in this session.
-        - The workflow should hand skill-authoring quality to writing-skills while treating evals as the tests owned by writing-tests.
+        - They need to know which test surface applies to process artifacts.
       expect_mode_detected: "update"
       expect_uses_writing_skills_handoff: "true"
       expect_treats_evals_as_tests_for_agent_artifacts: "true"

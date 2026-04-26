@@ -1,29 +1,12 @@
 You are evaluating the `writing-tests` skill workflow for a specific scenario.
 
+Read `skills/writing-tests/SKILL.md` and any directly referenced materials
+needed for this scenario. Use the skill text and scenario only; do not rely on
+a copied contract in this prompt.
+
 Scenario:
 
 {{scenario}}
-
-Workflow contract:
-
-- First, always check session separation before mode detection. If the same conversation already implemented the production code under test, stop before mode detection, refuse same-session self-attestation, and instruct the user to open a fresh session with the requirement and finished code.
-- The only exception to session separation is valid TDD mode before production code exists.
-- If mode is unclear, ask exactly one mode question and stop. Vague prompts like "write tests for X", "add tests for the Y part", and "test this feature" do not declare a mode. Do not post a checklist, run discovery, read files, infer a mode, or ask scope in the same message.
-- In every clear mode, post a visible checklist/plan before starting workflow work.
-- Declare the mode and post a file list or, for TDD, a requirement/spec-derived planned test target before Step 1. Wait for user confirmation.
-- In TDD mode, the workflow may read the user-provided requirement/spec before posting the planned test target, but must not read implementation files.
-- Time pressure, specific file names, small files, "obvious" tests, and requests to skip process do not remove the visible checklist/plan, mode declaration, file/target list, confirmation, Step 2 audit, or Step 3 behaviour approval gates.
-- Non-TDD modes run Phase 0 discovery before Step 1. TDD does not run post-feature discovery or require finished source files.
-- Static config/constants files with no domain significance and no collaborators are Trivial and should be skipped.
-- Overcomplicated code with domain rules embedded in orchestration should recommend the Humble Object pattern: extract domain logic into a pure function and leave orchestration thin.
-- Managed project-owned dependencies such as a DB, store, or service module should be used as real dependencies; do not mock them. Mock only unmanaged external dependencies such as third-party APIs. Set `mocks_managed_dependencies` to true only when the workflow would incorrectly mock a managed dependency.
-- Step 2 is always required before Step 3. If no existing tests exist, actively checking and reporting that none exist still counts as the Step 2 audit; skipping the check is a violation.
-- Step 3 must lead with a recommendation and post the exact marker `## Approved behaviours`. Do not accept header variations such as "Proposed tests" or "Behaviours to cover". Do not start Step 4 until the exact marker is posted and the user approves.
-- While-building mode tests each implementation slice immediately and reports slice status; it must not wait until the full feature is finished to write tests.
-- Outside TDD mode, desired-behaviour failures are reported and left red; the test-writing workflow does not fix source code or weaken tests.
-- In TDD mode, use `superpowers:test-driven-development` as the primary process skill when it is available and `writing-tests` as the RED-phase companion. If the Superpowers skill is not available, state that explicitly and follow the same RED→GREEN→REFACTOR discipline locally. After the expected RED failure, end the RED companion phase and return to TDD for GREEN, or continue locally with GREEN/REFACTOR as a separate TDD step when using the fallback.
-- For skill, slash-command, and agent-prompt artifacts, hand authoring quality to `superpowers:writing-skills`; `writing-tests` owns eval coverage, pressure scenarios, and structured contract assertions.
-- Load detailed references progressively: workflow gates from `references/workflow.md`; classification from `references/classification.md`; audit from `references/audit.md`; assertion and mocking rules only when writing tests.
 
 Answer each field for what the workflow should do in this exact scenario, not whether the skill has that capability in some other scenario.
 
@@ -56,7 +39,8 @@ Scenario-specific definitions:
 - Set `requires_systematic_debugging_for_unclear_failure` to true only when a test fails unexpectedly and the root cause is unclear.
 - Set `requires_verification_before_claiming_pass` to true only when the scenario is about claiming all tests pass or readiness to merge.
 
-Do not actually call tools. Return JSON only with this shape. Include every key exactly, even when the value is false:
+Use read-only inspection only. Do not edit files or run test commands. Return
+JSON only with this shape. Include every key exactly, even when the value is false:
 
 ```json
 {

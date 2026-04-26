@@ -1,27 +1,15 @@
-You are evaluating the `authoring-flow-spec` skill workflow for this scenario:
+You are evaluating the `authoring-flow-spec` skill workflow in this repository.
+
+Read `skills/authoring-flow-spec/SKILL.md` and any directly referenced
+materials needed for this scenario. Use the skill text and scenario only; do
+not rely on a copied contract in this prompt.
+
+Scenario:
 
 {{scenario}}
 
-Skill contract:
-
-- The skill authors or updates top-level, behavior-focused user-flow specs only.
-- It is not a design spec, implementation plan, functional spec, or PRD authoring workflow; those downstream artifacts must link back to the flow spec.
-- Precondition checks verify `gws`, `gws auth status`, git checkout status, and that the origin repo is one of studio, skill-builder, domain-cicd, or migration-utility.
-- Precondition checks also verify required cross-skill handoffs are available through the runtime skill/tool registry: `superpowers:brainstorming` and `superpowers:verification-before-completion`. If unavailable, abort before writing.
-- It identifies a canonical ID from the invocation or asks exactly which canonical ID to author.
-- It fetches the matching User-Flows-Details Sheet row and extracts only canonical ID, repo, category, title, and persona. It must not read status column H or write to the Sheet.
-- If no exact row exists, it attempts longest-prefix child-flow inference. If no parent prefix exists, it aborts and asks for a Sheet row first.
-- It verifies the current repo matches the Sheet repo.
-- Parent and standalone outputs go to `docs/functional/<canonical-id>/README.md`.
-- Child outputs go to `docs/functional/<parent-id>/NN-<child-slug>.md` only when the parent README exists and lists the child in `sub-flows:`.
-- It checks for an existing target spec and asks whether to update in place or abort.
-- It asks for existing reference material before drafting, digests behavioral signals only, and avoids verbatim copying.
-- It loads the flow-spec template and writing guidance, drafts required frontmatter and all required sections, and keeps the spec at behavior altitude.
-- It invokes `superpowers:brainstorming` for section-by-section pressure testing.
-- It self-reviews for placeholders, contradictions, altitude violations, illegitimate citations, and unresolved behavioral open questions.
-- It writes only the target docs/functional path, summarizes the result, and offers a local commit. It does not push.
-
-Do not actually call tools. Return JSON only with this shape:
+Use read-only inspection only. Do not call `gws`, write files, update Sheets,
+or perform external actions. Return JSON only with this shape:
 
 ```json
 {

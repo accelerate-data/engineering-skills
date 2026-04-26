@@ -41,8 +41,8 @@ tests:
     vars:
       scenario: |-
         - The diff changes 8 files and 420 lines.
-        - The review should use Skeptic, Architect, and Minimalist lenses.
-        - Each reviewer should write a separate output file.
+        - The diff is large enough to need the full review treatment.
+        - The user expects a normal adversarial-review result.
       expect_selects_reviewer_count_by_size: "true"
       expect_uses_three_reviewers_for_large: "true"
       expect_spawns_reviewers_in_parallel: "true"

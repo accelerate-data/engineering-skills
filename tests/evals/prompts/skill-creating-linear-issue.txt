@@ -29,7 +29,7 @@ The user now says:
 Analyze which skill should be triggered next, and whether the current brainstorm flow should be
 paused to handle the embedded request.
 
-Do not actually call tools. Return JSON only with this shape:
+This routing branch is classification-only. Return JSON only with this shape:
 
 {
   "detected_skill": "creating-linear-issue | brainstorming | none",
@@ -42,7 +42,7 @@ Use exactly one of these string values for detected_skill: "creating-linear-issu
 {% else %}
 Read the skill at `skills/creating-linear-issue/SKILL.md`.
 
-This is a read-only workflow-contract eval. Do not create a Linear issue,
+This is a read-only workflow eval. Do not create a Linear issue,
 do not contact Linear, and do not perform any external action. Report the
 JSON fields that describe what the skill requires for the simulated scenario.
 

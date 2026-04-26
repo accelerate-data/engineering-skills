@@ -2,7 +2,7 @@ You are evaluating a skill workflow in this repository.
 
 Read the skill at `skills/raising-linear-pr/SKILL.md`.
 
-This is a read-only workflow-contract eval. Do not create a PR, do not push,
+This is a read-only workflow eval. Do not create a PR, do not push,
 do not contact Linear or GitHub, and do not perform any external action. Report
 the JSON fields that describe what the skill requires for the simulated
 scenario.

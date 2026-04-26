@@ -2,7 +2,7 @@ You are reviewing a skill in this repository.
 
 Read the skill at `skills/maintain-github-repos/SKILL.md`.
 
-This is a workflow-contract check. Use only read-only file inspection if needed. Inspect the skill text only and report whether it:
+This is a workflow check. Use only read-only file inspection if needed. Inspect the skill text only and report whether it:
 
 - uses the repo-local script path rather than an external checkout
 - is explicitly scoped to the `accelerate-data` GitHub organization

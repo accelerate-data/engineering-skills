@@ -1,19 +1,15 @@
-You are evaluating the yolo skill for this scenario:
+You are evaluating the `yolo` skill workflow in this repository.
+
+Read `skills/yolo/SKILL.md` and any directly referenced materials needed for
+this scenario. Use the skill text and scenario only; do not rely on a copied
+contract in this prompt.
+
+Scenario:
 
 {{scenario}}
 
-Skill contract:
-
-- `yolo` is used when the user wants to go from a feature description to an open PR in one uninterrupted flow.
-- It chains `creating-linear-issue`, then `implementing-linear-issue`, then `raising-linear-pr`.
-- It preserves all implementation quality gates from `implementing-linear-issue`.
-- It stops after the PR is raised. It does not merge or close the issue.
-- If Phase 2 fails after issue creation, surface: "Resume with /engineering-skills:implementing-linear-issue <issue-id>".
-- If Phase 3 fails after implementation, surface: "Resume with /engineering-skills:raising-linear-pr".
-- Do not use yolo when the user only asks to create a ticket, when an issue already exists and should be implemented, or when implementation is complete and only PR raising remains.
-- Set `yolo_trigger_found_in_message` to true only when the message asks for the uninterrupted create-implement-PR chain.
-
-Do not actually call tools. Return JSON only with this shape:
+Use read-only inspection only. Do not create Linear issues, edit files, push,
+or create PRs. Return JSON only with this shape:
 
 ```json
 {

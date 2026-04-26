@@ -31,10 +31,10 @@ tests:
       scenario: |-
         - Implementation is complete.
         - Implementation commits already exist on the feature branch.
-        - The worktree must be clean before entering this workflow; do not create a final implementation commit in this phase.
+        - The worktree is clean at entry.
         - Acceptance criteria are already complete and checked before PR creation.
         - Since the acceptance criteria are already checked, this scenario does not require checking off acceptance criteria during the PR phase.
-        - This scenario should not stop for incomplete acceptance criteria because none are incomplete, unproven, or blocked.
+        - No acceptance criteria are incomplete, unproven, or blocked.
         - The PR body should link the actual Linear issue IDs rather than using a workspace-specific hardcoded prefix.
       expect_enters_plan_mode: "false"
       expect_creates_checkpoint_commits: "false"
@@ -77,9 +77,7 @@ tests:
           - AC 1 is already checked.
           - AC 2 is complete in existing committed work but is not checked in Linear.
           - AC 3 is not proven complete and would require code or test changes to satisfy.
-        - The workflow must not edit files or create a final implementation commit in this PR phase.
-        - The workflow must not create or update a PR while any AC remains unproven.
-        - The workflow may update Linear metadata for ACs that are already proven by existing committed work.
+        - The user asks to raise the PR from this state.
       expect_enters_plan_mode: "false"
       expect_creates_checkpoint_commits: "false"
       expect_creates_final_commit: "false"
@@ -108,7 +106,7 @@ tests:
         - No acceptance criteria are incomplete, unproven, blocked, or requiring code/test/docs changes.
         - The Linear issue description references `docs/design/proven-ac-design.md`.
         - The referenced design's required behavior is present in committed implementation, tests, targeted evals, and verification notes.
-        - The workflow should check off AC 2 as metadata bookkeeping, then run the design conformance gate before validation, push, or PR creation.
+        - The user asks to raise the PR from this state.
       expect_enters_plan_mode: "false"
       expect_creates_checkpoint_commits: "false"
       expect_creates_final_commit: "false"
@@ -144,7 +142,7 @@ tests:
         - The Linear issue description references `docs/superpowers/specs/2026-04-20-search-design.md`.
         - The design document's required behavior is present in the committed implementation.
         - The committed tests, targeted eval results, acceptance-criteria state, and verification notes cover the design-critical behavior.
-        - The workflow should record the checked design path and a concise pass result in PR-phase evidence before pushing or creating the PR.
+        - The user asks to raise the PR from this state.
       expect_enters_plan_mode: "false"
       expect_creates_checkpoint_commits: "false"
       expect_creates_final_commit: "false"
@@ -180,7 +178,7 @@ tests:
         - The Linear issue description references `docs/design/billing-retry.md`.
         - The design document requires retry telemetry and an error-state eval.
         - The committed implementation omits retry telemetry and the verification evidence lacks design-critical tests and evals.
-        - The workflow must stop before push or PR creation and report concise design mismatch evidence for the implementation phase.
+        - The user asks to raise the PR from this state.
       expect_enters_plan_mode: "false"
       expect_creates_checkpoint_commits: "false"
       expect_creates_final_commit: "false"
@@ -215,7 +213,7 @@ tests:
         - The Linear issue description does not mention a local design document.
         - A Linear issue comment references `docs/design/comment-sourced-design.md`.
         - The referenced design's required behavior is present in committed implementation, tests, targeted evals, and verification notes.
-        - The workflow should inspect Linear comments, record the checked design path, pass design conformance, and continue to validation, evals, push, PR creation, and In Review transition.
+        - The user asks to raise the PR from this state.
       expect_enters_plan_mode: "false"
       expect_creates_checkpoint_commits: "false"
       expect_creates_final_commit: "false"
@@ -250,7 +248,7 @@ tests:
         - All Linear acceptance criteria are complete and checked.
         - The Linear issue references both `docs/design/api-contract.md` and `docs/superpowers/specs/2026-04-20-ui-flow-design.md`.
         - Both referenced designs match the committed implementation, tests, targeted evals, and verification notes.
-        - The workflow must read both design documents, record both checked paths, pass design conformance, and continue to validation, evals, push, PR creation, and In Review transition.
+        - The user asks to raise the PR from this state.
       expect_enters_plan_mode: "false"
       expect_creates_checkpoint_commits: "false"
       expect_creates_final_commit: "false"
@@ -284,12 +282,10 @@ tests:
         - The worktree is clean at entry.
         - All Linear acceptance criteria are checked.
         - The Linear issue description references `docs/design/export-format.md`.
-        - The workflow still has the required dirty-worktree entry guard, even though this scenario's current worktree is clean.
         - A checked Linear acceptance criterion says exports should use CSV.
         - The referenced design document says exports must use JSON Lines and explicitly rejects CSV.
         - The committed implementation and tests follow the checked CSV acceptance criterion, not the JSON Lines design.
-        - The design conformance gate must treat the design document as the source of truth. It may use AC checkbox status only to know that the AC gate passed, not to judge whether CSV is acceptable.
-        - The workflow must fail design conformance and stop before validation, evals, push, or PR creation.
+        - The user asks to raise the PR from this state.
       expect_enters_plan_mode: "false"
       expect_creates_checkpoint_commits: "false"
       expect_creates_final_commit: "false"
@@ -323,7 +319,7 @@ tests:
         - The worktree is clean at entry.
         - All Linear acceptance criteria are complete and checked.
         - The Linear issue, comments, attachments, and linked documents do not reference a local design document path.
-        - The workflow should record design conformance as not_applicable and continue through validation, stale targeted eval decisions, push, PR creation, and In Review transition.
+        - The user asks to raise the PR from this state.
       expect_enters_plan_mode: "false"
       expect_creates_checkpoint_commits: "false"
       expect_creates_final_commit: "false"

@@ -11,7 +11,8 @@ Scenario:
 {% if extra_scenario %}- {{extra_scenario}}{% endif %}
 {% if notes_focus %}{{notes_focus}}{% endif %}
 
-Do not actually call tools. Return JSON only with this shape:
+Use read-only inspection only. Do not merge, close Linear, delete branches, or
+perform external actions. Return JSON only with this shape:
 
 ```json
 {
