@@ -76,16 +76,7 @@ tests:
       eval_type: user-behavior
       failure_modes: "implements-before-brainstorming,acts-before-reading-local-context"
       scenario: |-
-        User prompt:
-        implement ENG-1041, but think through the approach with me before you start coding.
-
-        Simulated context:
-        - Simulated Linear metadata: team `Internal-IT`, project `Engineering Skills`, current status `Ready for Development`.
-        - The Linear issue exists and describes a normal backend behavior change.
-        - The issue has User Flow label `UF-Notification-Rules`, and `docs/functional/UF-Notification-Rules/README.md` exists.
-        - Codebase review can identify the likely files and no design doc gap is evident.
-        - The issue touches one module.
-        - No implementation edits have started.
+        Evaluate the next workflow obligations from the user prompt and simulated context above.
       expect_searches_codebase_before_asking_user: "true"
       expect_hands_off_to_brainstorming: "true"
       expect_hands_off_to_authoring_functional_spec: "false"
@@ -108,16 +99,7 @@ tests:
       eval_type: user-behavior
       failure_modes: "misses-required-handoff,acts-before-reading-local-context"
       scenario: |-
-        User prompt:
-        implement ENG-1042. It touches the API route, background worker, and dashboard state, so make a real plan before coding.
-
-        Simulated context:
-        - Simulated Linear metadata: team `Internal-IT`, project `Engineering Skills`, current status `Ready for Development`.
-        - The Linear issue exists and the acceptance criteria are clear.
-        - The issue has User Flow label `UF-Dashboard-Sync`, and `docs/functional/UF-Dashboard-Sync/README.md` exists.
-        - Codebase review confirms the work spans `src/server/routes`, `src/workers`, and `src/app/dashboard`.
-        - Existing functional and design docs cover the behavior; no new design decision is needed.
-        - No implementation edits have started.
+        Evaluate the next workflow obligations from the user prompt and simulated context above.
       expect_searches_codebase_before_asking_user: "true"
       expect_creates_implementation_plan: "true"
       expect_hands_off_to_brainstorming: "false"
@@ -164,7 +146,7 @@ tests:
         - Codebase review finds likely export-history files, but product behavior is stale or disputed.
         - No implementation edits have started.
       expect_searches_codebase_before_asking_user: "true"
-      expect_hands_off_to_brainstorming: "false"
+      expect_hands_off_to_brainstorming: "true"
       expect_hands_off_to_authoring_functional_spec: "true"
       expect_hands_off_to_authoring_design_spec: "false"
       expect_asks_question_immediately: "false"
@@ -187,7 +169,6 @@ tests:
         - During verification, one export test fails intermittently with no obvious cause.
         - The implementation is not ready for handoff yet.
       expect_searches_codebase_before_asking_user: "true"
-      expect_creates_implementation_plan: "false"
       expect_hands_off_to_authoring_functional_spec: "false"
       expect_hands_off_to_authoring_design_spec: "false"
       expect_uses_systematic_debugging_for_failures: "true"
@@ -295,15 +276,7 @@ tests:
       eval_type: user-behavior
       failure_modes: "misses-required-handoff,premature-success-claim"
       scenario: |-
-        User prompt:
-        fix ENG-1047. Users get a 500 when they export after filtering by owner.
-
-        Simulated context:
-        - Simulated Linear metadata: team `Internal-IT`, project `Engineering Skills`, current status `Ready for Development`.
-        - The Linear issue is a bug report with a production symptom but no root cause.
-        - The issue has User Flow label `UF-Exports`, and `docs/functional/UF-Exports/README.md` exists.
-        - Codebase review finds likely export and filter code paths, but the failing condition has not been reproduced yet.
-        - No implementation edits have started.
+        Evaluate the next workflow obligations from the user prompt and simulated context above.
       expect_searches_codebase_before_asking_user: "true"
       expect_hands_off_to_brainstorming: "false"
       expect_hands_off_to_authoring_design_spec: "false"

@@ -11,6 +11,14 @@ Do not read Linear, write Linear, contact Linear, or call Linear tools. If a
 required Linear fact is missing from the supplied fixture, report that the
 fixture is incomplete instead of trying to fetch it.
 
+User prompt:
+
+{{user_prompt}}
+
+Simulated context:
+
+{{simulated_context}}
+
 Scenario:
 
 {{scenario}}
