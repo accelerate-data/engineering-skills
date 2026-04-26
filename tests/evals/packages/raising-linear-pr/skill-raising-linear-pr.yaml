@@ -26,48 +26,43 @@ defaultTest:
       value: file://../../assertions/check-linear-skill-contract.js
 
 tests:
-  - description: "raise-pr — reruns PR gates without new local commits and moves issue to In Review"
+  - description: "raise-pr — uses fresh eval evidence without new local commits and moves issue to In Review"
     vars:
       eval_type: user-behavior
       failure_modes: "creates-pr-too-early,acts-before-reading-local-context,premature-success-claim"
-      scenario: |-
-        - Implementation is complete.
-        - Simulated Linear metadata: issue `ENG-PR-1`, team `Internal-IT`, project `Engineering Skills`, current status `Ready for PR`.
-        - Implementation commits already exist on the feature branch.
-        - The worktree is clean at entry.
-        - Acceptance criteria are already complete and checked before PR creation.
-        - Since the acceptance criteria are already checked, this scenario does not require checking off acceptance criteria during the PR phase.
-        - No acceptance criteria are incomplete, unproven, or blocked.
-        - The PR body should link the actual Linear issue IDs rather than using a workspace-specific hardcoded prefix.
+      user_prompt: "Raise the PR for ENG-PR-1. The implementation is finished and I want it moved into review."
+      simulated_context: |-
+        Linear issue ENG-PR-1 exists.
+        Team: Internal-IT.
+        Project: Engineering Skills.
+        Current Linear status: Ready for PR.
+        Branch state: implementation commits already exist on the feature branch.
+        Entry worktree state: clean.
+        Acceptance criteria state: all criteria are complete and already checked in Linear.
+        Missing or blocked acceptance criteria: none.
+        Linked design docs: none in the issue description, comments, attachments, or linked documents.
+        Latest eval evidence: the promptfoo DB has a latest fully passing targeted run that is newer than content-relevant changes; targeted eval reruns are only needed if that evidence is stale or absent.
+        PR requirement: the PR body should link actual Linear issue IDs rather than using a workspace-specific hardcoded prefix.
       expect_enters_plan_mode: "false"
       expect_creates_checkpoint_commits: "false"
       expect_creates_final_commit: "false"
       expect_edits_code_in_pr_phase: "false"
-      expect_stops_on_dirty_worktree: "true"
       expect_runs_required_validation: "true"
-      expect_runs_skill_evals: "true"
       expect_checks_promptfoo_db_for_latest_passing_eval: "true"
       expect_compares_eval_runs_to_content_relevant_changes: "true"
       expect_avoids_full_eval_suite_by_default: "true"
-      expect_runs_only_stale_targeted_evals: "true"
-      expect_falls_back_to_eval_when_db_evidence_missing: "true"
+      expect_falls_back_to_eval_when_db_evidence_missing: "false"
       expect_pushes_branch: "true"
       expect_creates_pr: "true"
       expect_creates_pr_with_unproven_acceptance_criteria: "false"
-      expect_checks_off_acceptance_criteria: "false"
-      expect_checks_off_only_proven_acceptance_criteria: "false"
-      expect_hands_back_to_implementation_when_ac_requires_code: "false"
-      expect_stops_if_acceptance_criteria_incomplete: "false"
       expect_runs_design_conformance_gate: "true"
       expect_supports_local_design_references: "true"
-      expect_compares_design_to_implementation_evidence: "false"
       expect_records_design_conformance_evidence: "true"
       expect_blocks_pr_for_design_mismatch_in_this_scenario: "false"
       expected_design_conformance_result: "not_applicable"
       expected_design_paths_empty: "true"
       expect_moves_issue_to_in_review: "true"
       expect_merges_pr: "false"
-      expect_uses_generic_issue_linking_language: "true"
       required_terms: "review,dirty,issue,acceptance,stop,promptfoo,db,content,relevant,stale,targeted,design,not_applicable"
       forbidden_terms: "vu-xxx"
 
@@ -75,15 +70,20 @@ tests:
     vars:
       eval_type: user-behavior
       failure_modes: "creates-pr-too-early,premature-success-claim"
-      scenario: |-
-        - Implementation commits already exist on the feature branch.
-        - Simulated Linear metadata: issue `ENG-PR-1`, team `Internal-IT`, project `Engineering Skills`, current status `Ready for PR`.
-        - The worktree is clean at entry.
-        - Linear has three acceptance criteria:
-          - AC 1 is already checked.
-          - AC 2 is complete in existing committed work but is not checked in Linear.
-          - AC 3 is not proven complete and would require code or test changes to satisfy.
-        - The user asks to raise the PR from this state.
+      user_prompt: "Can you raise the PR for ENG-PR-1?"
+      simulated_context: |-
+        Linear issue ENG-PR-1 exists.
+        Team: Internal-IT.
+        Project: Engineering Skills.
+        Current Linear status: Ready for PR.
+        Branch state: implementation commits already exist on the feature branch.
+        Entry worktree state: clean.
+        Linear acceptance criteria:
+        - AC 1 is already checked.
+        - AC 2 is complete in existing committed work but is not checked in Linear.
+        - AC 3 is not proven complete and would require code or test changes to satisfy.
+        Linked design docs: none.
+        Latest eval evidence: not yet relevant because the AC gate has not passed.
       expect_enters_plan_mode: "false"
       expect_creates_checkpoint_commits: "false"
       expect_creates_final_commit: "false"
@@ -105,32 +105,32 @@ tests:
     vars:
       eval_type: user-behavior
       failure_modes: "creates-pr-too-early,acts-before-reading-local-context"
-      scenario: |-
-        - Implementation commits already exist on the feature branch.
-        - Simulated Linear metadata: issue `ENG-PR-1`, team `Internal-IT`, project `Engineering Skills`, current status `Ready for PR`.
-        - The worktree is clean at entry.
-        - Linear has two acceptance criteria:
-          - AC 1 is already checked.
-          - AC 2 is complete in existing committed work but is not checked in Linear.
-        - No acceptance criteria are incomplete, unproven, blocked, or requiring code/test/docs changes.
-        - The Linear issue description references `docs/design/proven-ac-design.md`.
-        - The referenced design's required behavior is present in committed implementation, tests, targeted evals, and verification notes.
-        - The user asks to raise the PR from this state.
+      user_prompt: "Raise ENG-PR-1 now that the committed work covers the remaining AC."
+      simulated_context: |-
+        Linear issue ENG-PR-1 exists.
+        Team: Internal-IT.
+        Project: Engineering Skills.
+        Current Linear status: Ready for PR.
+        Branch state: implementation commits already exist on the feature branch.
+        Entry worktree state: clean.
+        Linear acceptance criteria:
+        - AC 1 is already checked.
+        - AC 2 is complete in existing committed work but is not checked in Linear.
+        Incomplete, unproven, blocked, or code-required criteria: none.
+        Linked design docs from the issue description: docs/design/proven-ac-design.md.
+        Design evidence: docs/design/proven-ac-design.md matches the committed implementation, tests, targeted evals, and verification notes.
+        Latest eval evidence: targeted skill eval evidence is present and should be checked for freshness against content-relevant changes.
       expect_enters_plan_mode: "false"
       expect_creates_checkpoint_commits: "false"
       expect_creates_final_commit: "false"
       expect_edits_code_in_pr_phase: "false"
-      expect_stops_on_dirty_worktree: "true"
       expect_runs_required_validation: "true"
-      expect_runs_skill_evals: "true"
       expect_checks_promptfoo_db_for_latest_passing_eval: "true"
       expect_pushes_branch: "true"
       expect_creates_pr: "true"
       expect_creates_pr_with_unproven_acceptance_criteria: "false"
       expect_checks_off_acceptance_criteria: "true"
       expect_checks_off_only_proven_acceptance_criteria: "true"
-      expect_hands_back_to_implementation_when_ac_requires_code: "false"
-      expect_stops_if_acceptance_criteria_incomplete: "false"
       expect_runs_design_conformance_gate: "true"
       expect_supports_local_design_references: "true"
       expect_compares_design_to_implementation_evidence: "true"
@@ -146,30 +146,27 @@ tests:
     vars:
       eval_type: user-behavior
       failure_modes: "creates-pr-too-early,acts-before-reading-local-context"
-      scenario: |-
-        - Implementation commits already exist on the feature branch.
-        - Simulated Linear metadata: issue `ENG-PR-1`, team `Internal-IT`, project `Engineering Skills`, current status `Ready for PR`.
-        - The worktree is clean at entry.
-        - All Linear acceptance criteria are complete and checked.
-        - The Linear issue description references `docs/superpowers/specs/2026-04-20-search-design.md`.
-        - The design document's required behavior is present in the committed implementation.
-        - The committed tests, targeted eval results, acceptance-criteria state, and verification notes cover the design-critical behavior.
-        - The user asks to raise the PR from this state.
+      user_prompt: "Open the PR for ENG-PR-1; everything is checked off."
+      simulated_context: |-
+        Linear issue ENG-PR-1 exists.
+        Team: Internal-IT.
+        Project: Engineering Skills.
+        Current Linear status: Ready for PR.
+        Branch state: implementation commits already exist on the feature branch.
+        Entry worktree state: clean.
+        Acceptance criteria state: all Linear acceptance criteria are complete and checked.
+        Linked design docs from the issue description: docs/superpowers/specs/2026-04-20-search-design.md.
+        Design evidence: the design document's required behavior is present in the committed implementation.
+        Verification evidence: committed tests, targeted eval results, acceptance-criteria state, and verification notes cover the design-critical behavior.
       expect_enters_plan_mode: "false"
       expect_creates_checkpoint_commits: "false"
       expect_creates_final_commit: "false"
       expect_edits_code_in_pr_phase: "false"
-      expect_stops_on_dirty_worktree: "true"
       expect_runs_required_validation: "true"
-      expect_runs_skill_evals: "true"
       expect_checks_promptfoo_db_for_latest_passing_eval: "true"
       expect_pushes_branch: "true"
       expect_creates_pr: "true"
       expect_creates_pr_with_unproven_acceptance_criteria: "false"
-      expect_checks_off_acceptance_criteria: "false"
-      expect_checks_off_only_proven_acceptance_criteria: "false"
-      expect_hands_back_to_implementation_when_ac_requires_code: "false"
-      expect_stops_if_acceptance_criteria_incomplete: "false"
       expect_runs_design_conformance_gate: "true"
       expect_supports_local_design_references: "true"
       expect_compares_design_to_implementation_evidence: "true"
@@ -185,29 +182,26 @@ tests:
     vars:
       eval_type: user-behavior
       failure_modes: "creates-pr-too-early,premature-success-claim"
-      scenario: |-
-        - Implementation commits already exist on the feature branch.
-        - Simulated Linear metadata: issue `ENG-PR-1`, team `Internal-IT`, project `Engineering Skills`, current status `Ready for PR`.
-        - The worktree is clean at entry.
-        - All Linear acceptance criteria are complete and checked.
-        - The Linear issue description references `docs/design/billing-retry.md`.
-        - The design document requires retry telemetry and an error-state eval.
-        - The committed implementation omits retry telemetry and the verification evidence lacks design-critical tests and evals.
-        - The user asks to raise the PR from this state.
+      user_prompt: "Raise the PR for ENG-PR-1. The ACs are checked, so this should be ready."
+      simulated_context: |-
+        Linear issue ENG-PR-1 exists.
+        Team: Internal-IT.
+        Project: Engineering Skills.
+        Current Linear status: Ready for PR.
+        Branch state: implementation commits already exist on the feature branch.
+        Entry worktree state: clean.
+        Acceptance criteria state: all Linear acceptance criteria are complete and checked.
+        Linked design docs from the issue description: docs/design/billing-retry.md.
+        Design requirement: docs/design/billing-retry.md requires retry telemetry and an error-state eval.
+        Implementation evidence: the committed implementation omits retry telemetry.
+        Verification evidence: tests and eval results do not cover the design-critical retry telemetry or error-state behavior.
       expect_enters_plan_mode: "false"
       expect_creates_checkpoint_commits: "false"
       expect_creates_final_commit: "false"
       expect_edits_code_in_pr_phase: "false"
-      expect_runs_required_validation: "false"
-      expect_runs_skill_evals: "false"
-      expect_checks_promptfoo_db_for_latest_passing_eval: "false"
       expect_pushes_branch: "false"
       expect_creates_pr: "false"
       expect_creates_pr_with_unproven_acceptance_criteria: "false"
-      expect_checks_off_acceptance_criteria: "false"
-      expect_checks_off_only_proven_acceptance_criteria: "false"
-      expect_hands_back_to_implementation_when_ac_requires_code: "false"
-      expect_stops_if_acceptance_criteria_incomplete: "false"
       expect_runs_design_conformance_gate: "true"
       expect_supports_local_design_references: "true"
       expect_compares_design_to_implementation_evidence: "true"
@@ -223,30 +217,27 @@ tests:
     vars:
       eval_type: user-behavior
       failure_modes: "acts-before-reading-local-context,creates-pr-too-early"
-      scenario: |-
-        - Implementation commits already exist on the feature branch.
-        - Simulated Linear metadata: issue `ENG-PR-1`, team `Internal-IT`, project `Engineering Skills`, current status `Ready for PR`.
-        - The worktree is clean at entry.
-        - All Linear acceptance criteria are complete and checked.
-        - The Linear issue description does not mention a local design document.
-        - A Linear issue comment references `docs/design/comment-sourced-design.md`.
-        - The referenced design's required behavior is present in committed implementation, tests, targeted evals, and verification notes.
-        - The user asks to raise the PR from this state.
+      user_prompt: "Please raise ENG-PR-1. The design link was in a comment, not the issue body."
+      simulated_context: |-
+        Linear issue ENG-PR-1 exists.
+        Team: Internal-IT.
+        Project: Engineering Skills.
+        Current Linear status: Ready for PR.
+        Branch state: implementation commits already exist on the feature branch.
+        Entry worktree state: clean.
+        Acceptance criteria state: all Linear acceptance criteria are complete and checked.
+        Issue description design references: none.
+        Linear comment evidence: a comment references docs/design/comment-sourced-design.md.
+        Design evidence: docs/design/comment-sourced-design.md matches the committed implementation, tests, targeted evals, and verification notes.
       expect_enters_plan_mode: "false"
       expect_creates_checkpoint_commits: "false"
       expect_creates_final_commit: "false"
       expect_edits_code_in_pr_phase: "false"
-      expect_stops_on_dirty_worktree: "true"
       expect_runs_required_validation: "true"
-      expect_runs_skill_evals: "true"
       expect_checks_promptfoo_db_for_latest_passing_eval: "true"
       expect_pushes_branch: "true"
       expect_creates_pr: "true"
       expect_creates_pr_with_unproven_acceptance_criteria: "false"
-      expect_checks_off_acceptance_criteria: "false"
-      expect_checks_off_only_proven_acceptance_criteria: "false"
-      expect_hands_back_to_implementation_when_ac_requires_code: "false"
-      expect_stops_if_acceptance_criteria_incomplete: "false"
       expect_runs_design_conformance_gate: "true"
       expect_supports_local_design_references: "true"
       expect_compares_design_to_implementation_evidence: "true"
@@ -262,29 +253,26 @@ tests:
     vars:
       eval_type: user-behavior
       failure_modes: "acts-before-reading-local-context,creates-pr-too-early"
-      scenario: |-
-        - Implementation commits already exist on the feature branch.
-        - Simulated Linear metadata: issue `ENG-PR-1`, team `Internal-IT`, project `Engineering Skills`, current status `Ready for PR`.
-        - The worktree is clean at entry.
-        - All Linear acceptance criteria are complete and checked.
-        - The Linear issue references both `docs/design/api-contract.md` and `docs/superpowers/specs/2026-04-20-ui-flow-design.md`.
-        - Both referenced designs match the committed implementation, tests, targeted evals, and verification notes.
-        - The user asks to raise the PR from this state.
+      user_prompt: "Raise the PR for ENG-PR-1. There are two design docs tied to this issue."
+      simulated_context: |-
+        Linear issue ENG-PR-1 exists.
+        Team: Internal-IT.
+        Project: Engineering Skills.
+        Current Linear status: Ready for PR.
+        Branch state: implementation commits already exist on the feature branch.
+        Entry worktree state: clean.
+        Acceptance criteria state: all Linear acceptance criteria are complete and checked.
+        Referenced design docs: docs/design/api-contract.md and docs/superpowers/specs/2026-04-20-ui-flow-design.md.
+        Design evidence: both referenced designs match the committed implementation, tests, targeted evals, and verification notes.
       expect_enters_plan_mode: "false"
       expect_creates_checkpoint_commits: "false"
       expect_creates_final_commit: "false"
       expect_edits_code_in_pr_phase: "false"
-      expect_stops_on_dirty_worktree: "true"
       expect_runs_required_validation: "true"
-      expect_runs_skill_evals: "true"
       expect_checks_promptfoo_db_for_latest_passing_eval: "true"
       expect_pushes_branch: "true"
       expect_creates_pr: "true"
       expect_creates_pr_with_unproven_acceptance_criteria: "false"
-      expect_checks_off_acceptance_criteria: "false"
-      expect_checks_off_only_proven_acceptance_criteria: "false"
-      expect_hands_back_to_implementation_when_ac_requires_code: "false"
-      expect_stops_if_acceptance_criteria_incomplete: "false"
       expect_runs_design_conformance_gate: "true"
       expect_supports_local_design_references: "true"
       expect_compares_design_to_implementation_evidence: "true"
@@ -300,31 +288,26 @@ tests:
     vars:
       eval_type: user-behavior
       failure_modes: "creates-pr-too-early,premature-success-claim"
-      scenario: |-
-        - Implementation commits already exist on the feature branch.
-        - Simulated Linear metadata: issue `ENG-PR-1`, team `Internal-IT`, project `Engineering Skills`, current status `Ready for PR`.
-        - The worktree is clean at entry.
-        - All Linear acceptance criteria are checked.
-        - The Linear issue description references `docs/design/export-format.md`.
-        - A checked Linear acceptance criterion says exports should use CSV.
-        - The referenced design document says exports must use JSON Lines and explicitly rejects CSV.
-        - The committed implementation and tests follow the checked CSV acceptance criterion, not the JSON Lines design.
-        - The user asks to raise the PR from this state.
+      user_prompt: "Raise the PR for ENG-PR-1; the ACs are all checked."
+      simulated_context: |-
+        Linear issue ENG-PR-1 exists.
+        Team: Internal-IT.
+        Project: Engineering Skills.
+        Current Linear status: Ready for PR.
+        Branch state: implementation commits already exist on the feature branch.
+        Entry worktree state: clean.
+        Acceptance criteria state: all Linear acceptance criteria are checked.
+        Checked acceptance criterion: exports should use CSV.
+        Linked design docs from the issue description: docs/design/export-format.md.
+        Design requirement: docs/design/export-format.md says exports must use JSON Lines and explicitly rejects CSV.
+        Implementation evidence: committed implementation and tests follow the checked CSV acceptance criterion, not the JSON Lines design.
       expect_enters_plan_mode: "false"
       expect_creates_checkpoint_commits: "false"
       expect_creates_final_commit: "false"
       expect_edits_code_in_pr_phase: "false"
-      expect_stops_on_dirty_worktree: "true"
-      expect_runs_required_validation: "false"
-      expect_runs_skill_evals: "false"
-      expect_checks_promptfoo_db_for_latest_passing_eval: "false"
       expect_pushes_branch: "false"
       expect_creates_pr: "false"
       expect_creates_pr_with_unproven_acceptance_criteria: "false"
-      expect_checks_off_acceptance_criteria: "false"
-      expect_checks_off_only_proven_acceptance_criteria: "false"
-      expect_hands_back_to_implementation_when_ac_requires_code: "false"
-      expect_stops_if_acceptance_criteria_incomplete: "false"
       expect_runs_design_conformance_gate: "true"
       expect_supports_local_design_references: "true"
       expect_compares_design_to_implementation_evidence: "true"
@@ -340,31 +323,28 @@ tests:
     vars:
       eval_type: user-behavior
       failure_modes: "acts-before-reading-local-context,creates-pr-too-early"
-      scenario: |-
-        - Implementation commits already exist on the feature branch.
-        - Simulated Linear metadata: issue `ENG-PR-1`, team `Internal-IT`, project `Engineering Skills`, current status `Ready for PR`.
-        - The worktree is clean at entry.
-        - All Linear acceptance criteria are complete and checked.
-        - The Linear issue, comments, attachments, and linked documents do not reference a local design document path.
-        - The user asks to raise the PR from this state.
+      user_prompt: "Raise ENG-PR-1. This issue has no referenced design doc."
+      simulated_context: |-
+        Linear issue ENG-PR-1 exists.
+        Team: Internal-IT.
+        Project: Engineering Skills.
+        Current Linear status: Ready for PR.
+        Branch state: implementation commits already exist on the feature branch.
+        Entry worktree state: clean.
+        Acceptance criteria state: all Linear acceptance criteria are complete and checked.
+        Design references: the Linear issue, comments, attachments, and linked documents do not reference a local design document path.
+        Latest eval evidence: the promptfoo DB has a latest fully passing targeted run that is newer than content-relevant changes.
       expect_enters_plan_mode: "false"
       expect_creates_checkpoint_commits: "false"
       expect_creates_final_commit: "false"
       expect_edits_code_in_pr_phase: "false"
-      expect_stops_on_dirty_worktree: "true"
       expect_runs_required_validation: "true"
-      expect_runs_skill_evals: "true"
       expect_checks_promptfoo_db_for_latest_passing_eval: "true"
       expect_pushes_branch: "true"
       expect_creates_pr: "true"
       expect_creates_pr_with_unproven_acceptance_criteria: "false"
-      expect_checks_off_acceptance_criteria: "false"
-      expect_checks_off_only_proven_acceptance_criteria: "false"
-      expect_hands_back_to_implementation_when_ac_requires_code: "false"
-      expect_stops_if_acceptance_criteria_incomplete: "false"
       expect_runs_design_conformance_gate: "true"
       expect_supports_local_design_references: "true"
-      expect_compares_design_to_implementation_evidence: "false"
       expect_records_design_conformance_evidence: "true"
       expect_blocks_pr_for_design_mismatch_in_this_scenario: "false"
       expected_design_conformance_result: "not_applicable"

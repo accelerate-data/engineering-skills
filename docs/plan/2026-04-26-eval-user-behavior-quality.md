@@ -481,19 +481,19 @@ git commit -m "Migrate implementing Linear evals to user behavior fixtures"
 - Modify: `tests/evals/packages/yolo/skill-yolo.yaml`
 - Modify corresponding prompt files under `tests/evals/prompts/`
 
-- [ ] **Step 1: Convert issue creation and feature request fixtures**
+- [x] **Step 1: Convert issue creation and feature request fixtures**
 
 Add user prompt and simulated context for User Flow labels, functional spec existence, team enforcement, available Linear labels, and missing metadata conditions.
 
-- [ ] **Step 2: Convert PR and closeout fixtures**
+- [x] **Step 2: Convert PR and closeout fixtures**
 
 Add simulated context for PR URL, merge state, branch/worktree state, acceptance criteria state, design docs, latest eval evidence, and cleanup constraints.
 
-- [ ] **Step 3: Convert yolo routing fixtures**
+- [x] **Step 3: Convert yolo routing fixtures**
 
 Keep `yolo` focused on user intent. Supply any required Linear facts for create/implement/raise phases in simulated context instead of allowing live Linear lookup.
 
-- [ ] **Step 4: Run targeted evals**
+- [x] **Step 4: Run targeted evals**
 
 Run:
 
@@ -507,7 +507,15 @@ npm run eval:yolo
 
 Expected: PASS for each package.
 
-- [ ] **Step 5: Commit**
+Observed:
+
+- `npm run eval:creating-linear-issue`: passed 10/10 (`eval-MdP-2026-04-26T17:44:34`).
+- `npm run eval:creating-feature-request`: passed 3/3 (`eval-bYL-2026-04-26T17:50:27`).
+- `npm run eval:yolo`: passed 5/5.
+- `npm run eval:raising-linear-pr`: passed 9/9 (`eval-bRz-2026-04-26T18:15:04`).
+- `npm run eval:closing-linear-issue`: passed 4/4 (`eval-bRX-2026-04-26T18:17:39`).
+
+- [x] **Step 5: Commit**
 
 ```bash
 git add tests/evals/packages tests/evals/prompts tests/evals/assertions

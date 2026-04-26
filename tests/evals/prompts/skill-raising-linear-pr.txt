@@ -1,6 +1,11 @@
 You are evaluating the `raising-linear-pr` workflow for a realistic PR-phase
 request.
 
+Parser contract: output only the final JSON object. Any analysis, preface,
+heading, markdown, or text before the opening `{` fails the eval.
+Do not think aloud. Do not trace the workflow. Do not explain field choices.
+Emit only the JSON object.
+
 Read the skill at `skills/raising-linear-pr/SKILL.md`.
 
 This is a read-only workflow eval. Do not create a PR, push, contact Linear or
@@ -10,16 +15,28 @@ Do not read Linear, write Linear, contact Linear, or call Linear tools. All requ
 
 Scenario:
 
-{{scenario}}
+User prompt:
 
-Based on the skill, report the next workflow obligations for this scenario. Do
+> {{ user_prompt }}
+
+Simulated context:
+
+{{ simulated_context }}
+
+Think silently. Based on the skill, report the next workflow obligations for this scenario. Do
 not mark something true only because the skill supports it in another scenario.
 When the workflow would block or hand work back to implementation, still return
 the JSON object that describes that outcome.
+Every boolean must describe what the workflow would actively do in this exact
+scenario. If an earlier gate blocks the workflow, mark downstream validation,
+eval, push, PR, and Linear-transition actions false even if the skill supports
+them after a passing gate.
 
-Return JSON only with this shape:
+Your entire response must be one valid compact JSON object on a single line.
+The first character must be `{` and the last character must be `}`. Do not
+include markdown, bullets, explanation, headings, analysis, or code fences.
+Never write an explanation before the JSON object.
 
-```json
 {
   "searches_codebase_first": <bool>,
   "enters_plan_mode": <bool>,
@@ -53,4 +70,3 @@ Return JSON only with this shape:
   "uses_generic_issue_linking_language": <bool>,
   "notes": "string"
 }
-```
