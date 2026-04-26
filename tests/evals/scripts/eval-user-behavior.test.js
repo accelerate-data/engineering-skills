@@ -111,6 +111,100 @@ test('user-behavior fixtures require failure_modes metadata', () => {
   assert.match(result.errors.join('\n'), /user-behavior tests must declare failure_modes/);
 });
 
+test('user-behavior fixtures without description still require failure_modes metadata', () => {
+  const root = makeRepo({
+    'tests/evals/prompts/skill-code-simplifier.txt': [
+      'You are evaluating code-simplifier.',
+      'Scenario:',
+      '{{scenario}}',
+    ].join('\n'),
+    'tests/evals/packages/code-simplifier/skill-code-simplifier.yaml': [
+      'tests:',
+      '  - vars:',
+      '      scenario: "The user asks for simpler code."',
+      '      eval_type: user-behavior',
+    ].join('\n'),
+  });
+
+  const result = checkEvalUserBehavior(root);
+
+  assert.equal(result.ok, false);
+  assert.match(result.errors.join('\n'), /user-behavior tests must declare failure_modes/);
+});
+
+test('user-behavior fixtures accept list-style failure_modes metadata', () => {
+  const root = makeRepo({
+    'tests/evals/prompts/skill-code-simplifier.txt': [
+      'You are evaluating code-simplifier.',
+      'Scenario:',
+      '{{scenario}}',
+    ].join('\n'),
+    'tests/evals/packages/code-simplifier/skill-code-simplifier.yaml': [
+      'tests:',
+      '  - description: simplify code',
+      '    vars:',
+      '      scenario: "The user asks for simpler code."',
+      '      eval_type: user-behavior',
+      '      failure_modes:',
+      '        - preserves-dead-code',
+      '        - over-refactors',
+    ].join('\n'),
+  });
+
+  const result = checkEvalUserBehavior(root);
+
+  assert.equal(result.ok, true, result.errors.join('\n'));
+});
+
+test('tests inheriting user-behavior eval_type require failure_modes metadata', () => {
+  const root = makeRepo({
+    'tests/evals/prompts/skill-code-simplifier.txt': [
+      'You are evaluating code-simplifier.',
+      'Scenario:',
+      '{{scenario}}',
+    ].join('\n'),
+    'tests/evals/packages/code-simplifier/skill-code-simplifier.yaml': [
+      'defaultTest:',
+      '  vars:',
+      '    eval_type: user-behavior',
+      'tests:',
+      '  - description: simplify code',
+      '    vars:',
+      '      scenario: "The user asks for simpler code."',
+    ].join('\n'),
+  });
+
+  const result = checkEvalUserBehavior(root);
+
+  assert.equal(result.ok, false);
+  assert.match(result.errors.join('\n'), /user-behavior tests must declare failure_modes/);
+});
+
+test('tests inheriting user-behavior eval_type accept inherited failure_modes metadata', () => {
+  const root = makeRepo({
+    'tests/evals/prompts/skill-code-simplifier.txt': [
+      'You are evaluating code-simplifier.',
+      'Scenario:',
+      '{{scenario}}',
+    ].join('\n'),
+    'tests/evals/packages/code-simplifier/skill-code-simplifier.yaml': [
+      'defaultTest:',
+      '  vars:',
+      '    eval_type: user-behavior',
+      '    failure_modes:',
+      '      - misses-user-intent',
+      'tests:',
+      '  - description: simplify code',
+      '    vars:',
+      '      scenario: "The user asks for simpler code."',
+    ].join('\n'),
+  });
+
+  const result = checkEvalUserBehavior(root);
+
+  assert.equal(result.ok, true, result.errors.join('\n'));
+});
+
 test('linear-adjacent prompts fail when only reads are forbidden', () => {
   const root = makeRepo({
     'tests/evals/prompts/skill-creating-linear-issue.txt': [

@@ -1,5 +1,6 @@
 const fs = require('node:fs');
 const path = require('node:path');
+const YAML = require('yaml');
 
 const LINEAR_ADJACENT_SKILLS = new Set([
   'creating-feature-request',
@@ -66,46 +67,48 @@ function checkLinearPrompt(relativePath, text, errors) {
   }
 }
 
-function splitYamlTestBlocks(text) {
-  const lines = text.split(/\r?\n/);
-  const blocks = [];
-  let current = [];
+function isObject(value) {
+  return Boolean(value) && typeof value === 'object' && !Array.isArray(value);
+}
 
-  for (const line of lines) {
-    if (/^\s*-\s+description\s*:/.test(line)) {
-      if (current.length > 0) {
-        blocks.push(current.join('\n'));
+function hasFailureModes(value) {
+  if (typeof value === 'string') {
+    return value.trim().length > 0;
+  }
+
+  if (Array.isArray(value)) {
+    return value.some((item) => {
+      if (typeof item === 'string') {
+        return item.trim().length > 0;
       }
-      current = [line];
-      continue;
-    }
 
-    if (current.length > 0) {
-      current.push(line);
-    }
+      return item !== null && item !== undefined;
+    });
   }
 
-  if (current.length > 0) {
-    blocks.push(current.join('\n'));
-  }
-
-  return blocks;
-}
-
-function hasUserBehaviorEvalType(text) {
-  return /^\s*eval_type\s*:\s*['"]?user-behavior['"]?\s*$/m.test(text);
-}
-
-function hasFailureModes(text) {
-  return /^\s*failure_modes\s*:\s*\S+/m.test(text);
+  return false;
 }
 
 function checkFixtureMetadata(relativePath, text, errors) {
-  for (const block of splitYamlTestBlocks(text)) {
-    if (hasUserBehaviorEvalType(block) && !hasFailureModes(block)) {
+  let config;
+  try {
+    config = YAML.parse(text);
+  } catch (error) {
+    errors.push(`${relativePath} could not be parsed as YAML: ${error.message}`);
+    return;
+  }
+
+  const defaultVars = isObject(config?.defaultTest?.vars) ? config.defaultTest.vars : {};
+  const tests = Array.isArray(config?.tests) ? config.tests : [];
+
+  tests.forEach((testConfig) => {
+    const testVars = isObject(testConfig?.vars) ? testConfig.vars : {};
+    const effectiveVars = { ...defaultVars, ...testVars };
+
+    if (effectiveVars.eval_type === 'user-behavior' && !hasFailureModes(effectiveVars.failure_modes)) {
       errors.push(`${relativePath} user-behavior tests must declare failure_modes.`);
     }
-  }
+  });
 }
 
 function checkEvalUserBehavior(repoRoot = path.resolve(__dirname, '..', '..', '..')) {
