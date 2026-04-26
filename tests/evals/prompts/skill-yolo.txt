@@ -5,13 +5,17 @@ Read `skills/yolo/SKILL.md` and any directly referenced materials needed for
 this scenario.
 
 This is a read-only workflow eval. Do not create Linear issues, edit files,
-push, or create PRs.
+push, inspect live git state, contact GitHub, or create PRs.
 
-Do not read Linear, write Linear, contact Linear, or call Linear tools. All required Linear facts are supplied in the scenario and simulated context. If a required Linear fact is missing from the scenario, report that the fixture is incomplete instead of trying to fetch it.
+Do not read Linear, write Linear, contact Linear, or call Linear tools. All required Linear facts are supplied in the user message and simulated context. All required PR, branch, commit, and git/worktree facts are also supplied in the user message and simulated context. If a required fact is missing, report that the fixture is incomplete instead of trying to fetch it.
 
-Scenario:
+User message:
 
-{{scenario}}
+{{user_prompt}}
+
+Simulated context:
+
+{{simulated_context}}
 
 Based on the skill, report the next workflow obligations for this scenario.
 
