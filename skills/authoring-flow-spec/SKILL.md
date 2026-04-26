@@ -1,12 +1,9 @@
 ---
 name: authoring-flow-spec
 description: >-
-  Authors a top-level, behavior-focused user-flow specification from a canonical
-  ID in the Vibedata User-Flows-Details Sheet, writing the result to
-  <repo>/docs/functional/<Canonical ID>/README.md.
-  Triggers on: flow spec, flow specification, functional spec, PRD, product
-  requirements, user flow, behavior spec, journey map, draft a flow, author a
-  flow, write a flow.
+  Use when the user asks to write, draft, author, create, update, or review a
+  behavior-focused user flow, flow spec, functional spec, PRD, product
+  requirements doc, journey map, or canonical flow specification.
 version: 0.1.0
 ---
 
@@ -14,10 +11,7 @@ version: 0.1.0
 
 ## When to use this
 
-Use this skill when authoring or updating a **top-level, behavior-focused
-user-flow specification** for a Vibedata flow. The output is the source-of-truth
-artifact. Downstream functional specs, design specs, and implementation plans
-link back to this one — not the other way around.
+Use this skill when authoring or updating a **top-level, behavior-focused user-flow specification** for a Vibedata flow. The output is the source-of-truth artifact. Downstream functional specs, design specs, and implementation plans link back to this one — not the other way around.
 
 This skill is **not** for:
 
@@ -26,20 +20,15 @@ This skill is **not** for:
 - Implementation plans (file paths, class names, migration steps)
 - PRDs (market positioning, business case)
 
-If the user asks for any of the above, redirect: the flow spec is a prerequisite
-for all of them. Produce the flow spec first; the downstream artifacts link to
-it later.
+If the user asks for any of the above, redirect: the flow spec is a prerequisite for all of them. Produce the flow spec first; the downstream artifacts link to it later.
 
 ## Prerequisites
 
 Before invoking the skill, confirm:
 
 - `gws` CLI is installed and logged in (`gws auth status` exits zero).
-- Current working directory is inside a git checkout of one of the four
-  target repos: `studio`, `skill-builder`, `domain-cicd`, `migration-utility`.
-- The flow's canonical ID exists as a row in the User-Flows-Details Sheet
-  (or the author has scheduled to add it per
-  `vd-specs-product-architecture/.claude/rules/user-flows-sheet-sync.md`).
+- Current working directory is inside a git checkout of one of the four target repos: `studio`, `skill-builder`, `domain-cicd`, `migration-utility`.
+- The flow's canonical ID exists as a row in the User-Flows-Details Sheet (or the author has scheduled to add it per `vd-specs-product-architecture/.claude/rules/user-flows-sheet-sync.md`).
 
 ## Workflow
 
@@ -51,34 +40,26 @@ Before invoking the skill, confirm:
    > Run `gws auth login` first, then retry.
 
 3. Verify `git rev-parse --is-inside-work-tree` exits zero.
-4. Parse `git remote get-url origin` to extract the repo name (everything
-   after the last `/`, stripping `.git`). Must match one of
-   `{studio, skill-builder, domain-cicd, migration-utility}`. Otherwise abort
-   with the four legitimate repo names listed.
-5. Confirm the required cross-skill handoffs are available through the
-   runtime's skill/tool registry before drafting:
+4. Parse `git remote get-url origin` to extract the repo name (everything after the last `/`, stripping `.git`). Must match one of `{studio, skill-builder, domain-cicd, migration-utility}`. Otherwise abort with the four legitimate repo names listed.
+5. Confirm the required cross-skill handoffs are available through the runtime's skill/tool registry before drafting:
 
    - `superpowers:brainstorming`
    - `superpowers:verification-before-completion`
 
-   Do not rely on local filesystem paths alone; use the runtime's skill
-   availability mechanism so the check reflects what can actually be invoked.
-   If either skill is unavailable, abort before creating or modifying the flow
-   spec and report the missing skill names.
+   Do not rely on local filesystem paths alone; use the runtime's skill availability mechanism so the check reflects what can actually be invoked.
+   If either skill is unavailable, abort before creating or modifying the flow spec and report the missing skill names.
 
 ### Phase 1 — Identify the canonical ID
 
 - If the invocation passed an ID (e.g., `/author-flow-spec intent-user-data-mart-build`),
   use it.
 - Otherwise ask: *"Which canonical ID are you authoring?"*
-- If the author cannot name one, use the pattern from
-  `references/sheet-interop.md` to list candidate IDs for the current repo,
+- If the author cannot name one, use the pattern from `references/sheet-interop.md` to list candidate IDs for the current repo,
   then let them pick.
 
 ### Phase 2 — Fetch Sheet row
 
-Run the `values get` command from `references/sheet-interop.md` to fetch
-the row matching the canonical ID. Extract columns:
+Run the `values get` command from `references/sheet-interop.md` to fetch the row matching the canonical ID. Extract columns:
 
 - `B` = canonical ID
 - `C` = `repo` (target repo name)
@@ -92,10 +73,8 @@ If no row matches, proceed to Phase 2a.
 
 ### Phase 2a — Child-flow inference
 
-Attempt a longest-prefix match of the candidate ID against column B across all
-rows. If a prefix match is found, the candidate is a child of that parent.
-Parent prefix collisions are assumed impossible (design-time assumption from
-the spec author).
+Attempt a longest-prefix match of the candidate ID against column B across all rows. If a prefix match is found, the candidate is a child of that parent.
+Parent prefix collisions are assumed impossible (design-time assumption from the spec author).
 
 If no parent prefix matches, abort with:
 
@@ -105,8 +84,7 @@ If no parent prefix matches, abort with:
 
 ### Phase 3 — Verify repo alignment
 
-Compare the current repo name from Phase 0 to the Sheet's column C (for a
-parent/standalone) or the parent's column C (for a child). If they differ,
+Compare the current repo name from Phase 0 to the Sheet's column C (for a parent/standalone) or the parent's column C (for a child). If they differ,
 abort:
 
 > You are in `<current-repo>` but flow `<id>` targets `<sheet-repo>`. Re-run
@@ -114,17 +92,11 @@ abort:
 
 ### Phase 4 — Check for existing spec
 
-- **Parent/standalone target path:**
-  `<repo-root>/docs/functional/<canonical-id>/README.md`
-- **Child target path:**
-  `<repo-root>/docs/functional/<parent-id>/NN-<child-slug>.md`, where `NN`
-  is the child's 1-indexed position (zero-padded to two digits) in the
-  parent's `sub-flows:` frontmatter list.
+- **Parent/standalone target path:** `<repo-root>/docs/functional/<canonical-id>/README.md`
+- **Child target path:** `<repo-root>/docs/functional/<parent-id>/NN-<child-slug>.md`, where `NN`
+  is the child's 1-indexed position (zero-padded to two digits) in the parent's `sub-flows:` frontmatter list.
 
-**Child-authoring precondition:** the parent's `README.md` **must** already
-exist at `<repo-root>/docs/functional/<parent-id>/README.md`, AND the child's
-composite ID must appear in that README's `sub-flows:` list. If either is
-missing, abort:
+**Child-authoring precondition:** the parent's `README.md` **must** already exist at `<repo-root>/docs/functional/<parent-id>/README.md`, AND the child's composite ID must appear in that README's `sub-flows:` list. If either is missing, abort:
 
 > Author the parent flow `<parent-id>` first (and add `<child-id>` to its
 > `sub-flows:` list).
@@ -138,8 +110,7 @@ Otherwise, proceed to draft.
 
 ### Phase 5 — Gather reference material
 
-Before drafting, ask the author what existing context should shape the
-flow spec:
+Before drafting, ask the author what existing context should shape the flow spec:
 
 > *"Before I draft, are there any existing documents I should read? For
 > example: prior flow specs (same repo or archived under*
@@ -151,26 +122,18 @@ flow spec:
 Collect whatever the author provides:
 
 - **File paths** (inside any of the relevant repos) → `Read` them.
-- **Linear issue IDs** (e.g., `VD-123`) → fetch via the Linear MCP tool
-  available in your runtime.
-- **Granola meeting IDs or titles** → fetch via the Granola MCP tool
-  available in your runtime.
+- **Linear issue IDs** (e.g., `VD-123`) → fetch via the Linear MCP tool available in your runtime.
+- **Granola meeting IDs or titles** → fetch via the Granola MCP tool available in your runtime.
 - **Google Doc / Sheet IDs** → fetch via the `gws` CLI (e.g.,
   `gws docs documents get`, `gws sheets spreadsheets values get`).
-- **URLs (GitHub, public web)** → fetch via
-  `mcp__read-website-fast__read_website` (fall back to `WebFetch` on
-  failure).
+- **URLs (GitHub, public web)** → fetch via `mcp__read-website-fast__read_website` (fall back to `WebFetch` on failure).
 - **Nothing offered** → proceed to Phase 6 with no additional material.
 
-For each source, extract only the content that shapes the behavioral
-spec — ignore implementation detail, UI copy, retry policies, and
-anything below the altitude line per
+For each source, extract only the content that shapes the behavioral spec — ignore implementation detail, UI copy, retry policies, and anything below the altitude line per
 `references/writing-the-draft.md`. Build a short internal digest
-(4–8 bullets) summarizing the behavioral signals found. Use the digest
-to populate Phase 6's scaffold and to frame Phase 7's brainstorming arc.
+(4–8 bullets) summarizing the behavioral signals found. Use the digest to populate Phase 6's scaffold and to frame Phase 7's brainstorming arc.
 
-Do not copy verbatim prose into the draft. Paraphrase into behavioral
-language.
+Do not copy verbatim prose into the draft. Paraphrase into behavioral language.
 
 ### Phase 6 — Draft the scaffold
 
@@ -189,8 +152,7 @@ Emit frontmatter:
 
 Emit every required template section with short placeholder prompts
 (e.g., `[describe the goal]`) that Phase 7 will close. Incorporate the
-Phase 5 reference-material digest: any behavioral signal it captured
-should appear as a populated section (not a placeholder) or as a tagged
+Phase 5 reference-material digest: any behavioral signal it captured should appear as a populated section (not a placeholder) or as a tagged
 Open Question.
 
 ### Phase 7 — Hand off to `superpowers:brainstorming`
@@ -207,18 +169,14 @@ Wait for brainstorming to return control before proceeding.
 
 ### Phase 8 — Self-review
 
-Apply the altitude test per `references/writing-the-draft.md` to every
-paragraph. Check for:
+Apply the altitude test per `references/writing-the-draft.md` to every paragraph. Check for:
 
 - Placeholders: `TBD`, `TODO`, `[describe…]`.
 - Internal contradictions: do Main flow steps and Success outcome align?
   Do Business rules contradict Invariants?
 - Altitude violations: design detail that slipped in.
-- Illegitimate name citations: anything outside the three legitimate-cite
-  classes.
-- Unresolved behavioral Open Questions: these must be either resolved or
-  have a specific resolution path. Design-tagged (`[design]`) Open Questions
-  may remain.
+- Illegitimate name citations: anything outside the three legitimate-cite classes.
+- Unresolved behavioral Open Questions: these must be either resolved or have a specific resolution path. Design-tagged (`[design]`) Open Questions may remain.
 
 Fix inline. Single pass; do not re-loop.
 
@@ -268,22 +226,15 @@ The skill refuses the following, citing `references/flow-spec-template.md`:
 
 ## References
 
-- `references/flow-spec-template.md` — canonical template, folder-per-ID
-  layout. Loaded in Phase 6 (scaffold) and Phase 8 (self-review).
-- `references/flow-spec-template-rationalization.md` — rationale behind the
-  template's structure. Human-oriented; maintainers only.
-- `references/sheet-interop.md` — `gws` command patterns for Phase 1
-  (candidate listing), Phase 2 (row fetch), and any Google Doc / Sheet
-  fetches surfaced by Phase 5 (reference gathering).
-- `references/writing-the-draft.md` — altitude test, legitimate-cite
-  classes, business-rules-vs-invariants distinction, events/observability
-  kind-level rule.
+- `references/flow-spec-template.md` — canonical template, folder-per-ID layout. Loaded in Phase 6 (scaffold) and Phase 8 (self-review).
+- `references/flow-spec-template-rationalization.md` — rationale behind the template's structure. Human-oriented; maintainers only.
+- `references/sheet-interop.md` — `gws` command patterns for Phase 1 (candidate listing), Phase 2 (row fetch), and any Google Doc / Sheet fetches surfaced by Phase 5 (reference gathering).
+- `references/writing-the-draft.md` — altitude test, legitimate-cite classes, business-rules-vs-invariants distinction, events/observability kind-level rule.
 
 ## Out of scope
 
 - Status updates. Use `update-flow-status` instead.
-- Creating or updating Sheet rows. Follow
-  `vd-specs-product-architecture/.claude/rules/user-flows-sheet-sync.md`
+- Creating or updating Sheet rows. Follow `vd-specs-product-architecture/.claude/rules/user-flows-sheet-sync.md`
   manually.
 - `git push`. The author pushes when ready.
 - Migrating pre-existing flow specs from the archive to the target repos.

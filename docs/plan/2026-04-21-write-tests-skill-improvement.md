@@ -1002,7 +1002,7 @@ In `repo-map.json`, update the `eval_harness` description to mention write-tests
 ```json
 "eval_harness": {
   "path": "tests/evals/",
-  "description": "Promptfoo harness and deterministic compatibility checks for skills in this repository. Current packages cover the Linear workflow skills, create-feature-request, maintain-github-repos, write-tests (standalone + co-trigger), bundled raising-linear-pr promptfoo DB gate helper tests, eval coverage reporting, and Codex compatibility."
+  "description": "Promptfoo harness and deterministic compatibility checks for skills in this repository. Current packages cover the Linear workflow skills, creating-feature-request, maintain-github-repos, write-tests (standalone + co-trigger), bundled raising-linear-pr promptfoo DB gate helper tests, eval coverage reporting, and Codex compatibility."
 }
 ```
 

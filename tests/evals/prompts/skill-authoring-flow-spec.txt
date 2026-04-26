@@ -1,44 +1,48 @@
-You are evaluating the `authoring-flow-spec` skill workflow in this repository.
+You are evaluating the `authoring-flow-spec` workflow for a realistic
+functional-spec authoring request.
 
 Read `skills/authoring-flow-spec/SKILL.md` and any directly referenced
-materials needed for this scenario. Use the skill text and scenario only; do
-not rely on a copied contract in this prompt.
+materials needed for this scenario.
+
+This is a read-only workflow eval. Do not call `gws`, write files, update
+Sheets, or perform external actions.
 
 Scenario:
 
 {{scenario}}
 
-Use read-only inspection only. Do not call `gws`, write files, update Sheets,
-or perform external actions. Return JSON only with this shape:
+Based on the skill, report the next workflow obligations for this scenario.
+
+Return JSON only with this shape:
 
 ```json
 {
-  "checks_gws_auth_git_and_repo": false,
-  "aborts_outside_allowed_repos": false,
-  "checks_required_skill_availability": false,
-  "aborts_when_required_skill_missing": false,
-  "asks_for_canonical_id_when_missing": false,
-  "fetches_sheet_row_for_id": false,
-  "extracts_allowed_sheet_columns_only": false,
-  "does_not_read_status_column": false,
-  "does_not_write_sheet": false,
-  "uses_child_longest_prefix_inference": false,
-  "aborts_when_no_row_or_parent": false,
-  "verifies_repo_alignment": false,
-  "writes_parent_readme_path": false,
-  "writes_child_numbered_path": false,
-  "requires_parent_readme_and_subflow": false,
-  "asks_update_or_abort_for_existing_spec": false,
-  "asks_for_reference_material": false,
-  "digests_behavioral_signals_only": false,
-  "avoids_verbatim_copying": false,
-  "loads_template_and_writing_guidance": false,
-  "emits_required_frontmatter": false,
-  "keeps_behavior_altitude": false,
-  "invokes_brainstorming": false,
-  "self_reviews_before_completion": false,
-  "refuses_downstream_artifact": false,
-  "offers_commit_without_push": false,
+  "checks_gws_auth_git_and_repo": <bool>,
+  "aborts_outside_allowed_repos": <bool>,
+  "checks_required_skill_availability": <bool>,
+  "aborts_when_required_skill_missing": <bool>,
+  "asks_for_canonical_id_when_missing": <bool>,
+  "fetches_sheet_row_for_id": <bool>,
+  "extracts_allowed_sheet_columns_only": <bool>,
+  "does_not_read_status_column": <bool>,
+  "does_not_write_sheet": <bool>,
+  "uses_child_longest_prefix_inference": <bool>,
+  "aborts_when_no_row_or_parent": <bool>,
+  "verifies_repo_alignment": <bool>,
+  "writes_parent_readme_path": <bool>,
+  "writes_child_numbered_path": <bool>,
+  "requires_parent_readme_and_subflow": <bool>,
+  "asks_update_or_abort_for_existing_spec": <bool>,
+  "asks_for_reference_material": <bool>,
+  "digests_behavioral_signals_only": <bool>,
+  "avoids_verbatim_copying": <bool>,
+  "loads_template_and_writing_guidance": <bool>,
+  "emits_required_frontmatter": <bool>,
+  "keeps_behavior_altitude": <bool>,
+  "invokes_brainstorming": <bool>,
+  "self_reviews_before_completion": <bool>,
+  "refuses_downstream_artifact": <bool>,
+  "offers_commit_without_push": <bool>,
   "notes": "string"
 }
 ```

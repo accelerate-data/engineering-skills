@@ -1,34 +1,38 @@
-You are evaluating the `adversarial-review` skill workflow in this repository.
+You are evaluating the `adversarial-review` workflow for a realistic review
+request.
 
-Read `skills/adversarial-review/SKILL.md` and any directly referenced
-materials needed for this scenario. Use the skill text and scenario only; do
-not rely on a copied contract in this prompt.
+Read `skills/adversarial-review/SKILL.md` and any directly referenced materials
+needed for this scenario.
+
+This is a read-only workflow eval. Do not run reviewer CLIs, spawn agents,
+write files, or perform external actions.
 
 Scenario:
 
 {{scenario}}
 
-Use read-only inspection only. Do not run reviewer CLIs, spawn agents, write
-files, or perform external actions. Return JSON only with this shape:
+Based on the skill, report the next workflow obligations for this scenario.
+
+Return JSON only with this shape:
 
 ```json
 {
-  "uses_opposite_model_cli": false,
-  "avoids_same_model_subagents": false,
-  "loads_reviewer_lenses": false,
-  "states_author_intent": false,
-  "selects_reviewer_count_by_size": false,
-  "uses_one_reviewer_for_small": false,
-  "uses_two_reviewers_for_medium": false,
-  "uses_three_reviewers_for_large": false,
-  "spawns_reviewers_in_parallel": false,
-  "writes_lens_named_output_files": false,
-  "verifies_cli_and_outputs_before_synthesis": false,
-  "notes_missing_or_empty_reviewers": false,
-  "synthesizes_verdict_sections": false,
-  "deduplicates_findings": false,
-  "includes_lead_judgment": false,
-  "applies_verdict_logic": false,
+  "uses_opposite_model_cli": <bool>,
+  "avoids_same_model_subagents": <bool>,
+  "loads_reviewer_lenses": <bool>,
+  "states_author_intent": <bool>,
+  "selects_reviewer_count_by_size": <bool>,
+  "uses_one_reviewer_for_small": <bool>,
+  "uses_two_reviewers_for_medium": <bool>,
+  "uses_three_reviewers_for_large": <bool>,
+  "spawns_reviewers_in_parallel": <bool>,
+  "writes_lens_named_output_files": <bool>,
+  "verifies_cli_and_outputs_before_synthesis": <bool>,
+  "notes_missing_or_empty_reviewers": <bool>,
+  "synthesizes_verdict_sections": <bool>,
+  "deduplicates_findings": <bool>,
+  "includes_lead_judgment": <bool>,
+  "applies_verdict_logic": <bool>,
   "notes": "string"
 }
 ```

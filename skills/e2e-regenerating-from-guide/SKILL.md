@@ -1,6 +1,6 @@
 ---
 name: e2e-regenerating-from-guide
-description: Regenerate or create a `.feature` file from its paired user-guide page at `$APP_SRC/docs/user-guide/**/*.md` — e.g. "regenerate features/settings/domain-crud.feature from the guide", "the Notifications guide changed, refresh the .feature". Works from any repo when `E2E_HARNESS_ROOT` points to the harness.
+description: Use when the user asks to regenerate, refresh, sync, or create a BDD `.feature` file from a paired user-guide page after guide or workflow changes.
 ---
 
 # e2e-regenerating-from-guide

@@ -1,55 +1,57 @@
-You are evaluating the `code-simplifier` skill workflow for a specific scenario.
+You are evaluating the `code-simplifier` workflow for a realistic cleanup
+request.
 
 Read `skills/code-simplifier/SKILL.md` and any directly referenced materials
-needed for this scenario. Use the skill text and scenario only; do not rely on
-a copied contract in this prompt.
+needed for this scenario.
+
+This is a read-only workflow eval. Do not edit files or run verification
+commands.
 
 Scenario:
 
 {{scenario}}
 
-Answer each field for what the workflow should do in this exact scenario.
+Based on the skill, report the next workflow obligations for this scenario. Do
+not mark something true only because the skill supports it in another scenario.
 
-Use read-only inspection only. Do not edit files or run verification commands.
-Return JSON only with this shape. Include every key exactly, even when
-the value is false:
+Return JSON only with this shape:
 
 ```json
 {
-  "uses_recent_diff_scope": true,
-  "broadens_scope_without_request": false,
-  "reads_project_guidance": true,
-  "reads_nearby_code": true,
-  "applies_project_standards": false,
-  "applies_generic_conflicting_style": false,
-  "preserves_public_api": true,
-  "preserves_outputs": true,
-  "preserves_side_effects": true,
-  "changes_behavior_without_request": false,
-  "broadens_scope_when_requested": false,
-  "reduces_unnecessary_nesting": false,
-  "reduces_duplication": false,
-  "removes_redundant_abstraction": false,
-  "renames_unclear_locals": false,
-  "renames_public_api": false,
-  "keeps_domain_abstractions": true,
-  "collapses_helpful_abstractions": false,
-  "preserves_concern_boundaries": true,
-  "combines_orchestration_and_domain_logic": false,
-  "follows_error_handling_convention": true,
-  "adds_broad_try_catch": false,
-  "uses_nested_ternary_for_brevity": false,
-  "prioritizes_fewer_lines_over_clarity": false,
-  "removes_obvious_comments": false,
-  "keeps_intent_comments": true,
-  "runs_narrow_verification": true,
-  "runs_broader_verification_for_shared_code": false,
-  "fixes_verification_failure_before_claim": false,
-  "weakens_tests_to_pass": false,
-  "updates_fixtures_to_match_regression": false,
-  "summarizes_significant_changes": true,
-  "documents_only_significant_changes": true,
-  "overreports_trivial_changes": false,
+  "uses_recent_diff_scope": <bool>,
+  "broadens_scope_without_request": <bool>,
+  "reads_project_guidance": <bool>,
+  "reads_nearby_code": <bool>,
+  "applies_project_standards": <bool>,
+  "applies_generic_conflicting_style": <bool>,
+  "preserves_public_api": <bool>,
+  "preserves_outputs": <bool>,
+  "preserves_side_effects": <bool>,
+  "changes_behavior_without_request": <bool>,
+  "broadens_scope_when_requested": <bool>,
+  "reduces_unnecessary_nesting": <bool>,
+  "reduces_duplication": <bool>,
+  "removes_redundant_abstraction": <bool>,
+  "renames_unclear_locals": <bool>,
+  "renames_public_api": <bool>,
+  "keeps_domain_abstractions": <bool>,
+  "collapses_helpful_abstractions": <bool>,
+  "preserves_concern_boundaries": <bool>,
+  "combines_orchestration_and_domain_logic": <bool>,
+  "follows_error_handling_convention": <bool>,
+  "adds_broad_try_catch": <bool>,
+  "uses_nested_ternary_for_brevity": <bool>,
+  "prioritizes_fewer_lines_over_clarity": <bool>,
+  "removes_obvious_comments": <bool>,
+  "keeps_intent_comments": <bool>,
+  "runs_narrow_verification": <bool>,
+  "runs_broader_verification_for_shared_code": <bool>,
+  "fixes_verification_failure_before_claim": <bool>,
+  "weakens_tests_to_pass": <bool>,
+  "updates_fixtures_to_match_regression": <bool>,
+  "summarizes_significant_changes": <bool>,
+  "documents_only_significant_changes": <bool>,
+  "overreports_trivial_changes": <bool>,
   "notes": "string"
 }
 ```

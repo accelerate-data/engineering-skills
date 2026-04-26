@@ -1,5 +1,5 @@
 # yaml-language-server: $schema=https://promptfoo.dev/config-schema.json
-description: "authoring-flow-spec skill — core flow-spec authoring contract"
+description: "authoring-flow-spec skill — realistic flow-spec authoring requests"
 
 prompts:
   - id: authoring-flow-spec
@@ -70,7 +70,7 @@ tests:
       scenario: |-
         - The user asks to author one parent flow and one child flow from their canonical IDs.
         - The repo already has the parent docs/functional directory shape.
-        - The parent README must already exist and include the child in `sub-flows:`.
+        - The parent README is already present and lists the child in `sub-flows:`.
       expect_writes_parent_readme_path: "true"
       expect_writes_child_numbered_path: "true"
       expect_requires_parent_readme_and_subflow: "true"

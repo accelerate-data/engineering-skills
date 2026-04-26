@@ -1,23 +1,25 @@
-You are evaluating the `explaining-code` skill workflow in this repository.
+You are evaluating the `explaining-code` workflow for a realistic explanation
+request.
 
-Read `skills/explaining-code/SKILL.md`. Use the skill text and scenario only;
-do not rely on a copied contract in this prompt.
+Read `skills/explaining-code/SKILL.md`.
 
 Scenario:
 
 {{scenario}}
 
-Use read-only inspection only. Return JSON only with this shape:
+Based on the skill, report the next workflow obligations for this scenario.
+
+Return JSON only with this shape:
 
 ```json
 {
-  "uses_explaining_code_skill": false,
-  "starts_with_analogy": false,
-  "includes_ascii_diagram": false,
-  "walks_step_by_step": false,
-  "highlights_gotcha": false,
-  "keeps_conversational_tone": false,
-  "uses_multiple_analogies_for_complexity": false,
+  "uses_explaining_code_skill": <bool>,
+  "starts_with_analogy": <bool>,
+  "includes_ascii_diagram": <bool>,
+  "walks_step_by_step": <bool>,
+  "highlights_gotcha": <bool>,
+  "keeps_conversational_tone": <bool>,
+  "uses_multiple_analogies_for_complexity": <bool>,
   "notes": "string"
 }
 ```

@@ -1,33 +1,28 @@
 ---
 name: adversarial-review
 description: >-
-  Adversarial code review using the opposite model. Spawns 1–3 reviewers on the
-  opposing model (Claude spawns Codex, Codex spawns Claude) to challenge work from
-  distinct critical lenses. Triggers: "adversarial review".
+  Use when the user asks for an adversarial review, opposing-model review,
+  hostile review, red-team review, or extra critical review of a plan, branch,
+  implementation, or large diff.
 schedule: "After cook sessions that produce large diffs (200+ lines), implement plan phases, or complete a planning session"
 ---
 
 # Adversarial Review
 
-Spawn reviewers on the **opposite model** to challenge work. Reviewers attack from distinct
-lenses grounded in the bundled review lens definitions. The deliverable is a synthesized
-verdict; do not make changes.
+Spawn reviewers on the **opposite model** to challenge work. Reviewers attack from distinct lenses grounded in the bundled review lens definitions. The deliverable is a synthesized verdict; do not make changes.
 
 **Hard constraint:** Reviewers MUST run via the opposite model's CLI (`codex exec` or
-`claude -p`). Do NOT use subagents, the Agent tool, or any internal delegation mechanism as
-reviewers — those run on *your own* model, which defeats the purpose.
+`claude -p`). Do NOT use subagents, the Agent tool, or any internal delegation mechanism as reviewers — those run on *your own* model, which defeats the purpose.
 
 ## Step 1 — Load Review Lenses
 
-Read `references/reviewer-lenses.md`. These bundled lens definitions govern reviewer
-judgments and are the only required local reference material for this skill.
+Read `references/reviewer-lenses.md`. These bundled lens definitions govern reviewer judgments and are the only required local reference material for this skill.
 
 ## Step 2 — Determine Scope and Intent
 
 Identify what to review from context (recent diffs, referenced plans, user message).
 
-Determine the **intent** — what the author is trying to achieve. This is critical: reviewers
-challenge whether the work *achieves the intent well*, not whether the intent is correct.
+Determine the **intent** — what the author is trying to achieve. This is critical: reviewers challenge whether the work *achieves the intent well*, not whether the intent is correct.
 State the intent explicitly before proceeding.
 
 Assess change size:
@@ -55,8 +50,7 @@ codex exec --skip-git-repo-check -o "$REVIEW_DIR/skeptic.md" "prompt" 2>/dev/nul
 ```
 
 Use `--profile edit` only if the reviewer needs to run tests. Default to read-only.
-Run reviewer commands concurrently with your environment's available shell background
-mechanism and wait for every output file before synthesis.
+Run reviewer commands concurrently with your environment's available shell background mechanism and wait for every output file before synthesis.
 
 **If you are Codex** → spawn Claude reviewers via `claude` CLI:
 
@@ -64,8 +58,7 @@ mechanism and wait for every output file before synthesis.
 claude -p "prompt" > "$REVIEW_DIR/skeptic.md" 2>/dev/null
 ```
 
-Run reviewer commands concurrently with your environment's available shell background
-mechanism and wait for every output file before synthesis.
+Run reviewer commands concurrently with your environment's available shell background mechanism and wait for every output file before synthesis.
 
 Name each output file after the lens: `skeptic.md`, `architect.md`, `minimalist.md`.
 
@@ -76,8 +69,7 @@ Each reviewer gets a single prompt containing:
 1. The stated intent (from Step 2)
 2. Their assigned lens (full text from references/reviewer-lenses.md)
 3. The code or diff to review
-4. Instructions: "You are an adversarial reviewer. Your job is to find real problems, not
-   validate the work. Be specific — cite files, lines, and concrete failure scenarios.
+4. Instructions: "You are an adversarial reviewer. Your job is to find real problems, not validate the work. Be specific — cite files, lines, and concrete failure scenarios.
    Rate each finding: high (blocks ship), medium (should fix), low (worth noting).
    Write findings as a numbered markdown list to your output file."
 
@@ -92,8 +84,7 @@ echo "reviewer_cli=codex|claude"
 ls "$REVIEW_DIR"/*.md
 ```
 
-If any output file is missing or empty, note the failure in the verdict — do not silently skip
-a reviewer.
+If any output file is missing or empty, note the failure in the verdict — do not silently skip a reviewer.
 
 Read each reviewer's output file from `$REVIEW_DIR/`. Deduplicate overlapping findings.
 Produce a single verdict:
@@ -127,10 +118,7 @@ For each finding:
 
 ## Step 5 — Render Judgment
 
-After synthesizing the reviewers, apply your own judgment. Using the stated intent and bundled
-review lenses as your frame, state which findings you would accept and which you would reject
-and why. Reviewers are adversarial by design; not every finding warrants action. Call out
-false positives, overreach, and findings that mistake style for substance.
+After synthesizing the reviewers, apply your own judgment. Using the stated intent and bundled review lenses as your frame, state which findings you would accept and which you would reject and why. Reviewers are adversarial by design; not every finding warrants action. Call out false positives, overreach, and findings that mistake style for substance.
 
 Append to the verdict:
 

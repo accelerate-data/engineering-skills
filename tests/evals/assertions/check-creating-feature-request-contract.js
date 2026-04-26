@@ -22,29 +22,35 @@ module.exports = (output, context) => {
   }
 
   const boolChecks = [
-    ['loads_vibedata_strategy', parseExpectedBoolean(context.vars.expect_loads_vibedata_strategy)],
-    ['loads_vibedata_architecture', parseExpectedBoolean(context.vars.expect_loads_vibedata_architecture)],
     ['queries_linear_labels', parseExpectedBoolean(context.vars.expect_queries_linear_labels)],
     ['queries_linear_projects', parseExpectedBoolean(context.vars.expect_queries_linear_projects)],
     ['queries_ro_statuses', parseExpectedBoolean(context.vars.expect_queries_ro_statuses)],
     ['uses_live_metadata_before_defaults', parseExpectedBoolean(context.vars.expect_uses_live_metadata_before_defaults)],
+    [
+      'resolves_user_flow_child_labels_live',
+      parseExpectedBoolean(context.vars.expect_resolves_user_flow_child_labels_live),
+    ],
+    ['requires_user_flow_tag', parseExpectedBoolean(context.vars.expect_requires_user_flow_tag)],
+    ['proposes_one_user_flow_label', parseExpectedBoolean(context.vars.expect_proposes_one_user_flow_label)],
+    [
+      'lists_close_user_flow_alternatives',
+      parseExpectedBoolean(context.vars.expect_lists_close_user_flow_alternatives),
+    ],
+    ['asks_user_to_pick_user_flow', parseExpectedBoolean(context.vars.expect_asks_user_to_pick_user_flow)],
+    ['creates_issue_without_user_flow', parseExpectedBoolean(context.vars.expect_creates_issue_without_user_flow)],
     ['shows_preview_before_confirmation', parseExpectedBoolean(context.vars.expect_shows_preview_before_confirmation)],
     [
       'requires_user_confirmation_before_create',
       parseExpectedBoolean(context.vars.expect_requires_user_confirmation_before_create),
     ],
     ['creates_issue_before_confirmation', parseExpectedBoolean(context.vars.expect_creates_issue_before_confirmation)],
+    ['uses_yaml_payload', parseExpectedBoolean(context.vars.expect_uses_yaml_payload)],
+    ['uses_linear_native_create', parseExpectedBoolean(context.vars.expect_uses_linear_native_create)],
     [
-      'handles_context_load_failure_by_warning_and_continue',
-      parseExpectedBoolean(context.vars.expect_handles_context_load_failure_by_warning_and_continue),
+      'falls_back_to_hardcoded_linear_metadata',
+      parseExpectedBoolean(context.vars.expect_falls_back_to_hardcoded_linear_metadata),
     ],
-    [
-      'handles_linear_metadata_failure_by_defaults',
-      parseExpectedBoolean(context.vars.expect_handles_linear_metadata_failure_by_defaults),
-    ],
-    ['emits_context_load_warning', parseExpectedBoolean(context.vars.expect_emits_context_load_warning)],
-    ['continues_without_context_enrichment', parseExpectedBoolean(context.vars.expect_continues_without_context_enrichment)],
-    ['omits_context_enrichment_fields', parseExpectedBoolean(context.vars.expect_omits_context_enrichment_fields)],
+    ['stops_when_linear_metadata_missing', parseExpectedBoolean(context.vars.expect_stops_when_linear_metadata_missing)],
   ];
 
   for (const [field, expected] of boolChecks) {
@@ -95,6 +101,6 @@ module.exports = (output, context) => {
   return {
     pass: true,
     score: 1,
-    reason: 'Create-feature-request skill contract matched expected workflow',
+    reason: 'Creating-feature-request skill contract matched expected workflow',
   };
 };

@@ -21,7 +21,7 @@ This repository is a single plugin source repo, not a marketplace repo.
 │   ├── authoring-flow-spec/
 │   ├── closing-linear-issue/
 │   ├── code-simplifier/
-│   ├── create-feature-request/
+│   ├── creating-feature-request/
 │   ├── creating-linear-issue/
 │   ├── e2e-adding-scenario/
 │   ├── e2e-authoring-feature-file/
@@ -162,7 +162,7 @@ npm run eval:implementing-linear-issue
 npm run eval:raising-linear-pr
 npm run eval:closing-linear-issue
 npm run eval:maintain-github-repos
-npm run eval:create-feature-request
+npm run eval:creating-feature-request
 npm run eval:writing-tests
 npm run eval:coverage
 npm run eval:e2e-adding-scenario
@@ -188,7 +188,7 @@ This repository is licensed under Elastic License 2.0. See [LICENSE](./LICENSE).
 | [`authoring-flow-spec`](./skills/authoring-flow-spec) | Author a behavior-focused Vibedata user-flow spec from a canonical ID in the User-Flows-Details Sheet; writes to the target repo's `docs/functional/<id>/README.md`. |
 | [`closing-linear-issue`](./skills/closing-linear-issue) | Merge, close, and clean up branches and worktrees after a Linear issue's PR has been reviewed. |
 | [`code-simplifier`](./skills/code-simplifier) | Simplify recently modified code by removing needless complexity while preserving behavior and project standards. |
-| [`create-feature-request`](./skills/create-feature-request) | Log a feature request into the Roadmap (RO) team in Linear from free-form natural language. |
+| [`creating-feature-request`](./skills/creating-feature-request) | Log a feature request into the Roadmap (RO) team in Linear from free-form natural language. |
 | [`creating-linear-issue`](./skills/creating-linear-issue) | Draft or refine a Linear issue — preferred over the generic Linear skill for new-issue creation and decomposition. |
 | [`e2e-adding-scenario`](./skills/e2e-adding-scenario) | Append BDD scenarios to an existing `.feature` file in a Playwright+Claude e2e harness. Set `E2E_HARNESS_ROOT` when running from outside the harness. |
 | [`e2e-authoring-feature-file`](./skills/e2e-authoring-feature-file) | Author a new `.feature` file from scratch in a Playwright+Claude e2e harness. Set `E2E_HARNESS_ROOT` when running from outside the harness. |

@@ -1,6 +1,6 @@
 ---
 name: explaining-code
-description: Explains code with visual diagrams and analogies. Use when explaining how code works, teaching about a codebase, or when the user asks "how does this work?"
+description: Use when the user asks how code works, requests a code walkthrough, wants a codebase explanation, or asks to explain a function, module, flow, architecture, or implementation.
 ---
 
 When explaining code, always include:

@@ -1970,7 +1970,7 @@ coverage is explicitly deferred per the design spec's non-goals.
 
 - [ ] **Step 1: Create a Linear issue**
 
-Use the `engineering-skills:create-feature-request` skill to open an
+Use the `engineering-skills:creating-feature-request` skill to open an
 Internal-IT-scoped issue titled:
 
 > Add promptfoo eval suite for authoring-flow-spec skill

@@ -1,42 +1,35 @@
-You are reviewing a skill in this repository.
+You are evaluating the `maintain-github-repos` workflow for a realistic GitHub
+repository maintenance request.
 
 Read the skill at `skills/maintain-github-repos/SKILL.md`.
 
-This is a workflow check. Use only read-only file inspection if needed. Inspect the skill text only and report whether it:
+This is a read-only workflow eval. Inspect the skill text only; do not call
+GitHub or run maintenance scripts.
 
-- uses the repo-local script path rather than an external checkout
-- is explicitly scoped to the `accelerate-data` GitHub organization
-- tells the operator to preview with `--dry-run` before `--execute`
-- requires user confirmation on the exact execution scope before executing changes
-- supports archive-only execution
-- supports delete-only execution
-- supports selected-delete execution with `--delete-repo`
-- stops instead of using this workflow when the user wants archive cherry-picking or arbitrary exclusions
-- includes the VibeData `dev*` repository rule: delete when there is no activity on any branch for more than 1 week
-- says archived scratch repos are deleted based on no branch activity for more than 8 weeks, not based on archive timestamp
-- says repos with more than 100 branches are flagged for manual review and excluded from automatic archive/delete actions
-- points to the threshold constants in the script
+The user says:
 
-Return only the JSON object with this shape. Do not include status text before or after it:
+> Review stale scratch repositories in the accelerate-data org and show me what would be archived or deleted before doing anything destructive.
+
+Based on the skill, report the next workflow obligations for this scenario.
+
+Return JSON only with this shape:
 
 ```json
 {
   "script_path": "string",
-  "uses_repo_local_script_path": true,
-  "mentions_accelerate_data_only": true,
-  "requires_dry_run_before_execute": true,
-  "requires_user_confirmation_before_execute": true,
-  "requires_exact_scope_confirmation": true,
-  "supports_archive_only_execution": true,
-  "supports_delete_only_execution": true,
-  "supports_selected_delete_execution": true,
-  "stops_on_unsupported_partial_approval": true,
-  "includes_dev_repo_delete_rule": true,
-  "uses_activity_not_archive_timestamp_for_scratch_delete": true,
-  "flags_large_branch_count_for_manual_review": true,
-  "surfaces_threshold_constants": true,
+  "uses_repo_local_script_path": <bool>,
+  "mentions_accelerate_data_only": <bool>,
+  "requires_dry_run_before_execute": <bool>,
+  "requires_user_confirmation_before_execute": <bool>,
+  "requires_exact_scope_confirmation": <bool>,
+  "supports_archive_only_execution": <bool>,
+  "supports_delete_only_execution": <bool>,
+  "supports_selected_delete_execution": <bool>,
+  "stops_on_unsupported_partial_approval": <bool>,
+  "includes_dev_repo_delete_rule": <bool>,
+  "uses_activity_not_archive_timestamp_for_scratch_delete": <bool>,
+  "flags_large_branch_count_for_manual_review": <bool>,
+  "surfaces_threshold_constants": <bool>,
   "notes": "string"
 }
 ```
-
-Use every key exactly once.

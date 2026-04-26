@@ -1,46 +1,68 @@
-You are preparing to implement Linear issue `ENG-1023` in this repository.
+You are evaluating the `implementing-linear-issue` workflow for a realistic
+user request.
 
 Read the skill at `skills/implementing-linear-issue/SKILL.md`.
 
+This is a read-only workflow eval. Do not create branches, worktrees, commits,
+PRs, or external updates.
+
 Scenario:
 
-- After codebase review, exactly one unresolved fork remains with two viable implementation paths and no local evidence that makes either path clearly correct.
-- Other clarification can be answered from local code.
-- The user has not approved any plan yet.
-- No branch or worktree exists yet.
-- Branch/worktree setup fails in one branch of the scenario.
+{{scenario}}
 
-This is a workflow-order check. Report the sequence the skill requires in the
-real workflow.
+Based on the skill, report the next workflow obligations for this scenario. Do
+not mark something true only because the skill supports it in another scenario.
+If the scenario reaches a hard gate before implementation edits, downstream
+implementation, review, commit, and verification fields should reflect that
+blocked state.
 
-Use read-only inspection only. Do not create branches, worktrees, commits, or
-external updates. Return JSON only with this shape:
+Return JSON only with this shape:
 
 ```json
 {
-  "searches_codebase_before_asking_user": true,
-  "enters_plan_mode": true,
-  "asks_question_immediately": false,
-  "question_count": 1,
-  "creates_branch_and_worktree_first": true,
-  "stops_on_branch_or_worktree_failure": true,
-  "requires_clean_worktree_for_handoff": true,
-  "creates_checkpoint_commits": true,
-  "creates_final_commit": true,
-  "runs_required_validation": true,
-  "runs_skill_evals": true,
-  "uses_independent_review_agents": true,
-  "runs_code_review": true,
-  "runs_simplification_review": true,
-  "runs_test_coverage_review": true,
-  "runs_acceptance_criteria_review": true,
-  "updates_linear_with_ac_status": true,
-  "posts_linear_note_with_tests_and_next_steps": true,
-  "creates_pr": false,
-  "pushes_git": false,
-  "implements_before_plan_approval": false,
+  "searches_codebase_before_asking_user": <bool>,
+  "creates_implementation_plan": <bool>,
+  "hands_off_to_brainstorming": <bool>,
+  "hands_off_to_authoring_functional_spec": <bool>,
+  "hands_off_to_authoring_design_spec": <bool>,
+  "uses_writing_plans_before_implementation": <bool>,
+  "uses_test_driven_development_for_implementation": <bool>,
+  "uses_writing_tests_when_test_design_needed": <bool>,
+  "uses_systematic_debugging_for_failures": <bool>,
+  "shows_root_cause_and_fix_before_bug_fix": <bool>,
+  "proceeds_after_root_cause_fix_confirmation": <bool>,
+  "simple_bug_can_skip_writing_plan": <bool>,
+  "uses_requesting_code_review_for_quality_gate": <bool>,
+  "uses_receiving_code_review_for_review_feedback": <bool>,
+  "uses_code_simplifier_for_simplification_gate": <bool>,
+  "uses_authoring_user_guide_when_user_docs_needed": <bool>,
+  "reads_functional_spec_from_userflow_tag": <bool>,
+  "stops_if_userflow_label_missing": <bool>,
+  "stops_if_functional_spec_missing": <bool>,
+  "searches_related_design_docs": <bool>,
+  "tracks_related_implementation_plan": <bool>,
+  "linear_update_references_functional_spec": <bool>,
+  "linear_update_references_design_doc": <bool>,
+  "linear_update_references_implementation_plan": <bool>,
+  "asks_question_immediately": <bool>,
+  "question_count": <number>,
+  "creates_branch_and_worktree_first": <bool>,
+  "stops_on_branch_or_worktree_failure": <bool>,
+  "requires_clean_worktree_for_handoff": <bool>,
+  "creates_checkpoint_commits": <bool>,
+  "creates_final_commit": <bool>,
+  "runs_required_validation": <bool>,
+  "runs_skill_evals": <bool>,
+  "uses_independent_review_agents": <bool>,
+  "runs_code_review": <bool>,
+  "runs_simplification_review": <bool>,
+  "runs_test_coverage_review": <bool>,
+  "runs_acceptance_criteria_review": <bool>,
+  "updates_linear_with_ac_status": <bool>,
+  "posts_linear_note_with_tests_and_next_steps": <bool>,
+  "creates_pr": <bool>,
+  "pushes_git": <bool>,
+  "implements_before_plan_approval": <bool>,
   "notes": "string"
 }
 ```
-
-Use every key exactly once. Do not omit `creates_branch_and_worktree_first`, `stops_on_branch_or_worktree_failure`, or `uses_independent_review_agents`.

@@ -1,5 +1,5 @@
 # yaml-language-server: $schema=https://promptfoo.dev/config-schema.json
-description: "Yolo skill — workflow order, phase boundaries, and routing trigger checks"
+description: "Yolo skill — natural single-shot delivery requests"
 
 prompts:
   - id: yolo
@@ -31,7 +31,8 @@ tests:
       scenario: |-
         - Prior conversation context: the user has finished describing a feature and wants to start building.
         - User message: "yolo — add a config flag to disable the onboarding banner for existing users"
-        - The flow should create the Linear issue, implement it with gates, then raise the PR.
+        - No Linear issue exists yet for this request.
+        - The user expects the work to continue through an open PR without stopping between phases.
       expected_detected_skill: "yolo"
       expect_yolo_trigger_found_in_message: "true"
       expect_runs_creating_linear_issue_first: "true"
