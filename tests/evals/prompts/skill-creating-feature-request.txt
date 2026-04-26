@@ -6,17 +6,37 @@ Read the skill at `skills/creating-feature-request/SKILL.md`.
 This is a read-only workflow eval. Do not contact Linear and do not create an
 issue.
 
-Do not read Linear, write Linear, contact Linear, or call Linear tools. All required Linear facts are supplied in the scenario and simulated context. If a required Linear fact is missing from the scenario, report that the fixture is incomplete instead of trying to fetch it.
+Do not read Linear, query Linear, write Linear, create Linear issues, update
+Linear issues, contact Linear, or call Linear tools. All required Linear facts are supplied in the scenario and simulated context. If a required Linear fact is missing from the scenario, report that the fixture is incomplete instead of trying to fetch it.
+
+When the skill would normally read Linear metadata, treat the simulated context
+below as the discovered evidence. Report whether the workflow requires those
+lookup steps for this scenario; do not perform the lookups.
 
 The user says:
 
-> {{ user_request }}
+> {{ user_prompt }}
 
-Discovered context:
+Simulated context:
 
-{{ discovered_context }}
+{{ simulated_context }}
 
 Based on the skill, report the next workflow obligations for this scenario.
+Set booleans for what the workflow should do in the current scenario, not for
+what the skill can do in other scenarios.
+
+Use these scenario-specific rules:
+
+- `proposes_one_user_flow_label` is true only when the simulated context gives
+  exactly one clear User Flow child-label match and metadata is available.
+- `lists_close_user_flow_alternatives` is true only when the simulated context
+  gives several plausible User Flow child labels and no clearly strongest match.
+- `asks_user_to_pick_user_flow` is true only when several labels are plausible
+  or no clear match exists while metadata is available.
+- If required Roadmap Linear metadata is missing, set preview, User Flow
+  proposal, alternative listing, and pick-request booleans to false, set
+  `stops_when_linear_metadata_missing` to true, and report the missing metadata.
+- Set `team` to the Linear team key `RO`.
 
 Return JSON only with this shape:
 

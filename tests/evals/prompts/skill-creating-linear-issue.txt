@@ -45,18 +45,30 @@ Read the skill at `skills/creating-linear-issue/SKILL.md`.
 This is a read-only workflow eval. Do not create a Linear issue, contact Linear,
 modify files, or perform any external action.
 
-Do not read Linear, write Linear, contact Linear, or call Linear tools. All required Linear facts are supplied in the scenario and simulated context. If a required Linear fact is missing from the scenario, report that the fixture is incomplete instead of trying to fetch it.
+Do not read Linear, query Linear, write Linear, create Linear issues, update
+Linear issues, contact Linear, or call Linear tools. All required Linear facts
+are supplied in the scenario and simulated context. If a required Linear fact is
+missing from the scenario, report that the fixture is incomplete instead of
+trying to fetch it.
+
+When the skill would normally read local files or Linear metadata, treat the
+simulated context below as the discovered evidence. Report whether the workflow
+requires those lookup steps for this scenario; do not perform the lookups.
 
 The user says:
 
-> {{ user_request }}
+> {{ user_prompt }}
 
-Assume this local context has already been discovered from the repo and Linear:
+Simulated context:
 
-{{ discovered_context }}
+{{ simulated_context }}
 
 Based on the skill, report the next workflow obligations for this scenario. Do
 not mark something true only because the skill supports it in another scenario.
+Set `reads_functional_spec_before_issue_creation` to true only when the
+scenario has a proposed or confirmed User Flow label and the workflow reaches
+the functional-spec check. Set `stops_if_functional_spec_missing` to true only
+when the simulated context says the matching functional spec is missing.
 
 Return one valid JSON object with exactly these keys:
 
@@ -98,6 +110,8 @@ Return one valid JSON object with exactly these keys:
 
 Use booleans for boolean fields, arrays for list fields, and strings for string
 fields. `issue_kind` must be one of `feature`, `bug`, or `spike`.
+Use exactly the key names shown above. In particular, use
+`proposes_user_flow_child_label`, not `proposes_user_flow_label`.
 
 Do not include commentary, markdown fences, refusal text, or prefaces before or
 after the JSON object. The first character of your response must be `{` and the

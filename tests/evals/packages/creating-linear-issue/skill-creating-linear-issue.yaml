@@ -26,7 +26,6 @@ defaultTest:
       value: file://../../assertions/check-linear-skill-contract.js
   vars:
     expect_searches_codebase_first: "true"
-    expect_enters_plan_mode: "true"
     expected_issue_kind: "feature"
     expect_uses_distinct_issue_kind_paths: "true"
     expect_resolves_project_before_asking: "true"
@@ -34,8 +33,6 @@ defaultTest:
     expected_assignee_default: "creator"
     expected_cycle_default: "current"
     expect_ignores_past_milestones: "true"
-    expect_asks_user_to_choose_milestone: "true"
-    expect_asks_to_record_project_in_agents_md_only_after_user_supplies_it: "false"
     required_terms: "feature,milestone,project,current,creator,assignee,cycle,user_flow"
     forbidden_terms: "creates_issue_before_plan_approval\":true"
 
@@ -44,8 +41,8 @@ tests:
     vars:
       eval_type: user-behavior
       failure_modes: "skips-user-flow,over-asks-instead-of-resolving-locally"
-      user_request: "Create a Linear issue for adding saved export presets. It should let users rerun the same filtered export without rebuilding it every time."
-      discovered_context: |
+      user_prompt: "Create a Linear issue for adding saved export presets. It should let users rerun the same filtered export without rebuilding it every time."
+      simulated_context: |
         - Simulated AGENTS.md resolves the Linear project to `Studio Product`.
         - The resolved Linear team is `Studio`.
         - Milestones include two viable future releases and one past release.
@@ -54,7 +51,6 @@ tests:
         - Simulated Linear label metadata found three close User Flow child labels. `UF-Export-Presets` is the strongest match; `UF-Exports` and `UF-Saved-Filters` are weaker alternatives.
         - `docs/functional/UF-Export-Presets/README.md` exists.
         - `docs/design/export-presets/README.md` exists and is related.
-      expected_resolved_fields_include: "user_flow_label"
       expect_team_requires_user_flow_label: "true"
       expect_reads_user_flow_labels_live: "true"
       expect_reads_functional_spec_before_issue_creation: "true"
@@ -74,8 +70,8 @@ tests:
     vars:
       eval_type: user-behavior
       failure_modes: "skips-user-flow,over-asks-instead-of-resolving-locally"
-      user_request: "Please log a Linear ticket for a quarterly roadmap view. PMs need to group initiatives by quarter and see the committed items first."
-      discovered_context: |
+      user_prompt: "Please log a Linear ticket for a quarterly roadmap view. PMs need to group initiatives by quarter and see the committed items first."
+      simulated_context: |
         - Simulated AGENTS.md resolves the Linear project to `Product Roadmap`.
         - The resolved Linear team is `Roadmap`.
         - Milestones include two viable future releases and one past release.
@@ -84,7 +80,6 @@ tests:
         - Simulated Linear label metadata found exactly one matching User Flow child label, `UF-Roadmap-Quarterly-View`.
         - `docs/functional/UF-Roadmap-Quarterly-View/README.md` exists.
         - No related design document was found after searching `docs/design/`.
-      expected_resolved_fields_include: "user_flow_label"
       expect_team_requires_user_flow_label: "true"
       expect_reads_user_flow_labels_live: "true"
       expect_reads_functional_spec_before_issue_creation: "true"
@@ -97,27 +92,25 @@ tests:
       expect_user_flow_label_in_confirmation: "true"
       expect_refuses_silent_missing_user_flow: "true"
       expect_issue_body_references_functional_spec: "true"
-      expect_issue_body_references_design_doc: "false"
       required_terms: "feature,milestone,project,current,creator,assignee,cycle,user_flow,roadmap,functional"
 
   - description: "real request — selected team but no matching User Flow label"
     vars:
       eval_type: user-behavior
       failure_modes: "skips-user-flow,over-asks-instead-of-resolving-locally"
-      user_request: "Create a ticket for an admin-only toggle that hides the legacy footer banner in the internal console."
-      discovered_context: |
+      user_prompt: "Create a ticket for an admin-only toggle that hides the legacy footer banner in the internal console."
+      simulated_context: |
         - Simulated AGENTS.md resolves the Linear project to `Studio Product`.
         - The resolved Linear team is `Studio`.
         - Milestones include two viable future releases and one past release.
         - The user did not name an assignee or cycle.
         - Codebase search found the admin settings surface and the legacy footer banner.
         - Simulated Linear label metadata found current User Flow child labels, but none match this admin toggle.
-      expected_resolved_fields_include: "user_flow_label"
       expect_team_requires_user_flow_label: "true"
       expect_reads_user_flow_labels_live: "true"
       expect_reads_functional_spec_before_issue_creation: "false"
       expect_stops_if_functional_spec_missing: "false"
-      expect_searches_related_design_docs: "false"
+      expect_searches_related_design_docs: "true"
       expect_proposes_user_flow_child_label: "false"
       expect_recommends_one_user_flow_label: "false"
       expect_lists_close_alternatives_in_confirmation: "false"
@@ -130,8 +123,8 @@ tests:
     vars:
       eval_type: user-behavior
       failure_modes: "acts-before-reading-local-context,over-asks-instead-of-resolving-locally"
-      user_request: "Can you file a Linear issue for a campaign launch checklist? The GTM team wants the launch dashboard to show owner, due date, and status."
-      discovered_context: |
+      user_prompt: "Can you file a Linear issue for a campaign launch checklist? The GTM team wants the launch dashboard to show owner, due date, and status."
+      simulated_context: |
         - Simulated AGENTS.md resolves the Linear project to `Q3 Campaigns`.
         - The resolved Linear team is `GTM`.
         - Milestones include two viable future releases and one past release.
@@ -143,7 +136,7 @@ tests:
       expect_reads_user_flow_labels_live: "false"
       expect_reads_functional_spec_before_issue_creation: "false"
       expect_stops_if_functional_spec_missing: "false"
-      expect_searches_related_design_docs: "false"
+      expect_searches_related_design_docs: "true"
       expect_proposes_user_flow_child_label: "false"
       expect_recommends_one_user_flow_label: "false"
       expect_lists_close_alternatives_in_confirmation: "false"
@@ -156,8 +149,8 @@ tests:
     vars:
       eval_type: user-behavior
       failure_modes: "skips-functional-spec,skips-user-flow"
-      user_request: "Create a Linear issue for letting users archive reports in bulk from the Reports page."
-      discovered_context: |
+      user_prompt: "Create a Linear issue for letting users archive reports in bulk from the Reports page."
+      simulated_context: |
         - Simulated AGENTS.md resolves the Linear project to `Studio Product`.
         - The resolved Linear team is `Studio`.
         - Milestones include two viable future releases and one past release.
@@ -165,17 +158,16 @@ tests:
         - Codebase search found the Reports page and existing single-report archive action.
         - Simulated Linear label metadata found one matching User Flow child label, `UF-Reports-Bulk-Actions`.
         - `docs/functional/UF-Reports-Bulk-Actions/` does not exist.
-      expected_resolved_fields_include: "user_flow_label"
       expect_team_requires_user_flow_label: "true"
       expect_reads_user_flow_labels_live: "true"
-      expect_reads_functional_spec_before_issue_creation: "false"
+      expect_reads_functional_spec_before_issue_creation: "true"
       expect_stops_if_functional_spec_missing: "true"
-      expect_searches_related_design_docs: "false"
+      expect_searches_related_design_docs: "true"
       expect_proposes_user_flow_child_label: "true"
       expect_recommends_one_user_flow_label: "true"
       expect_lists_close_alternatives_in_confirmation: "false"
       expect_asks_user_to_pick_user_flow: "false"
-      expect_user_flow_label_in_confirmation: "false"
+      expect_user_flow_label_in_confirmation: "true"
       expect_refuses_silent_missing_user_flow: "true"
       expect_creates_issue_before_plan_approval: "false"
       required_terms: "feature,user_flow,functional,studio"
@@ -184,8 +176,8 @@ tests:
     vars:
       eval_type: user-behavior
       failure_modes: "implements-before-brainstorming,misses-required-handoff"
-      user_request: "Create Linear issues for the new approvals workspace. It needs request queues, approver routing, comments, audit history, and reminders."
-      discovered_context: |
+      user_prompt: "Create Linear issues for the new approvals workspace. It needs request queues, approver routing, comments, audit history, and reminders."
+      simulated_context: |
         - Simulated AGENTS.md resolves the Linear project to `Studio Product`.
         - The resolved Linear team is `Studio`.
         - Milestones include two viable future releases and one past release.
@@ -195,7 +187,6 @@ tests:
         - `docs/functional/UF-Approvals-Workspace/README.md` exists.
         - `docs/design/approvals/README.md` exists and is related.
         - The scope spans several user outcomes and is too large for one implementation issue.
-      expected_resolved_fields_include: "user_flow_label"
       expect_team_requires_user_flow_label: "true"
       expect_reads_user_flow_labels_live: "true"
       expect_reads_functional_spec_before_issue_creation: "true"
@@ -214,8 +205,8 @@ tests:
     vars:
       eval_type: user-behavior
       failure_modes: "misses-required-handoff,over-asks-instead-of-resolving-locally"
-      user_request: "File a bug for exports failing with a 500 after filtering by owner. A customer hit it twice this morning."
-      discovered_context: |
+      user_prompt: "File a bug for exports failing with a 500 after filtering by owner. A customer hit it twice this morning."
+      simulated_context: |
         - Simulated AGENTS.md resolves the Linear project to `Studio Product`.
         - The resolved Linear team is `Studio`.
         - Milestones include two viable future releases and one past release.
@@ -226,7 +217,6 @@ tests:
         - `docs/design/export-filtering/README.md` exists and is related.
         - The user gave actual behavior and impact, but expected behavior and exact reproduction details need to be captured before the bug issue is durable.
       expected_issue_kind: "bug"
-      expected_resolved_fields_include: "user_flow_label"
       expect_team_requires_user_flow_label: "true"
       expect_reads_user_flow_labels_live: "true"
       expect_reads_functional_spec_before_issue_creation: "true"

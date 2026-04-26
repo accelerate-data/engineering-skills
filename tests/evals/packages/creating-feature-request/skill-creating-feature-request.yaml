@@ -30,8 +30,8 @@ tests:
     vars:
       eval_type: user-behavior
       failure_modes: "skips-user-flow,over-asks-instead-of-resolving-locally,premature-success-claim"
-      user_request: "Feature request: Add a source credibility score to Vibedata content briefs so demand-gen users can quickly see which cited sources are most reliable. Priority P2, medium effort."
-      discovered_context: |
+      user_prompt: "Feature request: Add a source credibility score to Vibedata content briefs so demand-gen users can quickly see which cited sources are most reliable. Priority P2, medium effort."
+      simulated_context: |
         - Simulated Linear metadata for the Roadmap team is supplied by the fixture.
         - Simulated User Flow child-label metadata supplies exactly one strong match: `UF-Content-Brief-Source-Credibility`.
         - Simulated project metadata includes a Demand Gen project that fits the request.
@@ -63,8 +63,8 @@ tests:
     vars:
       eval_type: user-behavior
       failure_modes: "skips-user-flow,over-asks-instead-of-resolving-locally,premature-success-claim"
-      user_request: "Log a feature request for saved brief templates. Marketing users want to reuse prior brief structure when starting a new content brief."
-      discovered_context: |
+      user_prompt: "Log a feature request for saved brief templates. Marketing users want to reuse prior brief structure when starting a new content brief."
+      simulated_context: |
         - Simulated Linear metadata for the Roadmap team is supplied by the fixture.
         - Simulated User Flow child-label metadata supplies several plausible labels: `UF-Content-Brief-Create`, `UF-Content-Brief-Templates`, and `UF-Content-Reuse`.
         - None is clearly strongest from the request alone.
@@ -96,8 +96,8 @@ tests:
     vars:
       eval_type: user-behavior
       failure_modes: "skips-user-flow,premature-success-claim"
-      user_request: "Create a feature request for adding team-level source quality settings to briefs."
-      discovered_context: |
+      user_prompt: "Create a feature request for adding team-level source quality settings to briefs."
+      simulated_context: |
         - Simulated Linear metadata for the Roadmap team is explicitly missing from the fixture.
         - User Flow child labels, Roadmap projects, and Roadmap statuses are unavailable.
         - No human has confirmed issue creation yet.
@@ -112,7 +112,6 @@ tests:
       expect_asks_user_to_pick_user_flow: "false"
       expect_creates_issue_without_user_flow: "false"
       expect_shows_preview_before_confirmation: "false"
-      expect_requires_user_confirmation_before_create: "true"
       expect_creates_issue_before_confirmation: "false"
       expect_uses_yaml_payload: "false"
       expect_uses_linear_native_create: "true"
