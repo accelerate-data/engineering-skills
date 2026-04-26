@@ -260,7 +260,7 @@ git commit -m "Add eval user behavior static check"
 - Modify: `tests/evals/prompts/skill-yolo.txt`
 - Modify: `tests/evals/packages/{creating-feature-request,creating-linear-issue,implementing-linear-issue,raising-linear-pr,closing-linear-issue,yolo}/*.yaml`
 
-- [ ] **Step 1: Add the Linear isolation paragraph to each Linear-adjacent prompt**
+- [x] **Step 1: Add the Linear isolation paragraph to each Linear-adjacent prompt**
 
 Insert this exact paragraph before each `Scenario:` or `The user says:` block.
 
@@ -268,7 +268,7 @@ Insert this exact paragraph before each `Scenario:` or `The user says:` block.
 Do not read Linear, write Linear, contact Linear, or call Linear tools. All required Linear facts are supplied in the scenario and simulated context. If a required Linear fact is missing from the scenario, report that the fixture is incomplete instead of trying to fetch it.
 ```
 
-- [ ] **Step 2: Convert required Linear facts into prompt-visible fixture text**
+- [x] **Step 2: Convert required Linear facts into prompt-visible fixture text**
 
 For each Linear-adjacent package, ensure every case supplies issue state, labels, status, comments, PR state, and document links in `scenario` or `simulated_context`. Use this YAML shape for migrated cases.
 
@@ -293,7 +293,7 @@ vars:
   failure_modes: "implements-before-brainstorming,skips-functional-spec"
 ```
 
-- [ ] **Step 3: Run the static check and expect the package metadata gaps**
+- [x] **Step 3: Run the static check and expect the package metadata gaps**
 
 Run:
 
@@ -303,7 +303,7 @@ npm run check:eval-user-behavior
 
 Expected: FAIL until every `eval_type: user-behavior` case has `failure_modes` and every Linear-adjacent prompt has the isolation paragraph.
 
-- [ ] **Step 4: Finish fixture metadata migration for Linear-adjacent packages**
+- [x] **Step 4: Finish fixture metadata migration for Linear-adjacent packages**
 
 Apply the `eval_type` and `failure_modes` fields to all Linear-adjacent tests. Use comma-separated failure IDs from the design doc matrix:
 
@@ -314,7 +314,7 @@ failure_modes: "skips-user-flow,creates-pr-too-early"
 
 Keep existing `expect_*` fields for now so current assertions continue to work.
 
-- [ ] **Step 5: Run Linear package syntax and static checks**
+- [x] **Step 5: Run Linear package syntax and static checks**
 
 Run:
 
@@ -331,7 +331,7 @@ npm run check:eval-user-behavior
 
 Expected: both commands PASS.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add tests/evals/prompts tests/evals/packages
@@ -346,7 +346,7 @@ git commit -m "Make Linear eval prompts self contained"
 - Modify: `tests/evals/scripts/eval-harness-contract.test.js`
 - Modify: `tests/evals/skill-eval-coverage-baseline.json` only if the report format requires a stable baseline change
 
-- [ ] **Step 1: Add failing harness tests for user-behavior metadata reporting**
+- [x] **Step 1: Add failing harness tests for user-behavior metadata reporting**
 
 Extend `tests/evals/scripts/eval-harness-contract.test.js`.
 
@@ -365,7 +365,7 @@ test('user-behavior eval cases declare failure modes', () => {
 });
 ```
 
-- [ ] **Step 2: Run the harness test and confirm the current failure if metadata is incomplete**
+- [x] **Step 2: Run the harness test and confirm the current failure if metadata is incomplete**
 
 Run:
 
@@ -375,7 +375,7 @@ npm --prefix tests/evals run test:eval-harness-contract
 
 Expected: FAIL if any migrated user-behavior fixture lacks `failure_modes`; otherwise PASS.
 
-- [ ] **Step 3: Extend coverage script output**
+- [x] **Step 3: Extend coverage script output**
 
 Update `tests/evals/scripts/check-skill-eval-coverage.js` to count `eval_type: user-behavior`, `eval_type: contract-oracle`, and unique `failure_modes` strings per package. Print a summary after the existing uncovered-skill output.
 
@@ -392,7 +392,7 @@ function countMetadata(packagePath) {
 }
 ```
 
-- [ ] **Step 4: Run coverage**
+- [x] **Step 4: Run coverage**
 
 Run:
 
@@ -402,7 +402,7 @@ npm run eval:coverage
 
 Expected: PASS and print eval type plus failure-mode coverage summary.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add tests/evals/scripts/check-skill-eval-coverage.js tests/evals/scripts/eval-harness-contract.test.js tests/evals/skill-eval-coverage-baseline.json
