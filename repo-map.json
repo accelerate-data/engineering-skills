@@ -40,7 +40,7 @@
     },
     "eval_harness": {
       "path": "tests/evals/",
-      "description": "Promptfoo harness and deterministic compatibility checks for skills in this repository. Agentic eval packages use a local OpenCode CLI provider that invokes `opencode run` directly, avoiding a managed `opencode serve` process. Current packages cover the Linear workflow skills, creating-feature-request, code-simplifier, maintain-github-repos, writing-tests, adversarial-review, authoring-flow-spec, explaining-code, the 4 e2e BDD authoring skills, yolo, bundled raising-linear-pr promptfoo DB gate helper tests, eval coverage reporting, and Codex compatibility."
+      "description": "Promptfoo harness and deterministic compatibility checks for skills in this repository. Agentic eval packages use a local OpenCode CLI provider that invokes `opencode run` directly, avoiding a managed `opencode serve` process. Current packages cover the Linear workflow skills, creating-feature-request, code-simplifier, maintain-github-repos, writing-tests, adversarial-review, authoring-flow-spec, explaining-code, the 4 e2e BDD authoring skills, yolo, bundled raising-linear-pr promptfoo DB gate helper tests, eval coverage reporting, Codex compatibility, and the static eval user-behavior quality check."
     },
     "scripts": {
       "path": "scripts/",
@@ -58,7 +58,7 @@
   "key_directories": {
     "skills/": "All skill content owned by this plugin repo",
     "commands/": "Top-level slash-command wrappers that delegate to skills",
-    "tests/evals/": "Promptfoo eval packages, prompts, assertions, a local OpenCode CLI provider, and wrapper script for skill regression checks",
+    "tests/evals/": "Promptfoo eval packages, prompts, assertions, a local OpenCode CLI provider, and deterministic scripts for skill regression and eval quality checks",
     "scripts/": "Repository helper and validation scripts such as canonical worktree setup and plugin manifest checks",
     "tests/": "Unit tests for repository validation scripts",
     ".claude-plugin/": "Claude plugin manifest",
@@ -89,6 +89,7 @@
     "eval_yolo": "npm run eval:yolo",
     "eval_coverage": "npm run eval:coverage",
     "eval_codex_compatibility": "npm run eval:codex-compatibility",
+    "check_eval_user_behavior": "npm run check:eval-user-behavior",
     "test_promptfoo_db_gate": "npm run test:promptfoo-db-gate",
     "eval_view": "npm run view"
   },
@@ -107,6 +108,7 @@
     "startup": "Read this file before exploring the repository. It is the primary startup context for structure, ownership, and eval commands.",
     "marketplace_model": "This repository is a plugin source, not a marketplace. Marketplaces in other repositories should point to this repo as the plugin source.",
     "eval_scope": "tests/evals only covers skills owned by this repository. Do not move in evals for external skill repos such as superpowers.",
+    "eval_user_behavior": "Run npm run check:eval-user-behavior to enforce that Linear-adjacent eval prompts are self-contained and user-behavior fixtures declare failure_modes.",
     "update_repo_map": "Refresh this file whenever manifests, skill layout, eval layout, validation scripts, or command references change.",
     "license": "Root repository content is Elastic License 2.0 (ELv2)."
   }
