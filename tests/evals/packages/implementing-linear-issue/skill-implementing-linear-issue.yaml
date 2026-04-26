@@ -70,10 +70,21 @@ tests:
 
   - description: "natural request — user asks to think through approach before implementing"
     vars:
+      user_prompt: "implement ENG-1041, but think through the approach with me before you start coding."
+      simulated_context: |-
+        - Simulated Linear metadata: team `Internal-IT`, project `Engineering Skills`, current status `Ready for Development`.
+        - The Linear issue exists and describes a normal backend behavior change.
+        - The issue has User Flow label `UF-Notification-Rules`, and `docs/functional/UF-Notification-Rules/README.md` exists.
+        - Codebase review can identify the likely files and no design doc gap is evident.
+        - The issue touches one module.
+        - No implementation edits have started.
       eval_type: user-behavior
       failure_modes: "implements-before-brainstorming,acts-before-reading-local-context"
       scenario: |-
-        - The user says: "implement ENG-1041, but think through the approach with me before you start coding."
+        User prompt:
+        implement ENG-1041, but think through the approach with me before you start coding.
+
+        Simulated context:
         - Simulated Linear metadata: team `Internal-IT`, project `Engineering Skills`, current status `Ready for Development`.
         - The Linear issue exists and describes a normal backend behavior change.
         - The issue has User Flow label `UF-Notification-Rules`, and `docs/functional/UF-Notification-Rules/README.md` exists.
@@ -94,10 +105,21 @@ tests:
 
   - description: "natural request — multi-module implementation needs writing-plans first"
     vars:
+      user_prompt: "implement ENG-1042. It touches the API route, background worker, and dashboard state, so make a real plan before coding."
+      simulated_context: |-
+        - Simulated Linear metadata: team `Internal-IT`, project `Engineering Skills`, current status `Ready for Development`.
+        - The Linear issue exists and the acceptance criteria are clear.
+        - The issue has User Flow label `UF-Dashboard-Sync`, and `docs/functional/UF-Dashboard-Sync/README.md` exists.
+        - Codebase review confirms the work spans `src/server/routes`, `src/workers`, and `src/app/dashboard`.
+        - Existing functional and design docs cover the behavior; no new design decision is needed.
+        - No implementation edits have started.
       eval_type: user-behavior
       failure_modes: "misses-required-handoff,acts-before-reading-local-context"
       scenario: |-
-        - The user says: "implement ENG-1042. It touches the API route, background worker, and dashboard state, so make a real plan before coding."
+        User prompt:
+        implement ENG-1042. It touches the API route, background worker, and dashboard state, so make a real plan before coding.
+
+        Simulated context:
         - Simulated Linear metadata: team `Internal-IT`, project `Engineering Skills`, current status `Ready for Development`.
         - The Linear issue exists and the acceptance criteria are clear.
         - The issue has User Flow label `UF-Dashboard-Sync`, and `docs/functional/UF-Dashboard-Sync/README.md` exists.
@@ -298,10 +320,20 @@ tests:
 
   - description: "natural request — bug issue needs systematic debugging before fix"
     vars:
+      user_prompt: "fix ENG-1047. Users get a 500 when they export after filtering by owner."
+      simulated_context: |-
+        - Simulated Linear metadata: team `Internal-IT`, project `Engineering Skills`, current status `Ready for Development`.
+        - The Linear issue is a bug report with a production symptom but no root cause.
+        - The issue has User Flow label `UF-Exports`, and `docs/functional/UF-Exports/README.md` exists.
+        - Codebase review finds likely export and filter code paths, but the failing condition has not been reproduced yet.
+        - No implementation edits have started.
       eval_type: user-behavior
       failure_modes: "misses-required-handoff,premature-success-claim"
       scenario: |-
-        - The user says: "fix ENG-1047. Users get a 500 when they export after filtering by owner."
+        User prompt:
+        fix ENG-1047. Users get a 500 when they export after filtering by owner.
+
+        Simulated context:
         - Simulated Linear metadata: team `Internal-IT`, project `Engineering Skills`, current status `Ready for Development`.
         - The Linear issue is a bug report with a production symptom but no root cause.
         - The issue has User Flow label `UF-Exports`, and `docs/functional/UF-Exports/README.md` exists.

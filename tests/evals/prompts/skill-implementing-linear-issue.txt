@@ -6,7 +6,10 @@ Read the skill at `skills/implementing-linear-issue/SKILL.md`.
 This is a read-only workflow eval. Do not create branches, worktrees, commits,
 PRs, or external updates.
 
-Do not read Linear, write Linear, contact Linear, or call Linear tools. All required Linear facts are supplied in the scenario and simulated context. If a required Linear fact is missing from the scenario, report that the fixture is incomplete instead of trying to fetch it.
+Use only the supplied scenario and simulated context for required Linear facts.
+Do not read Linear, write Linear, contact Linear, or call Linear tools. If a
+required Linear fact is missing from the supplied fixture, report that the
+fixture is incomplete instead of trying to fetch it.
 
 Scenario:
 
