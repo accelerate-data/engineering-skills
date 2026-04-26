@@ -32,6 +32,7 @@
   },
   "dependencies": {
     "@opencode-ai/sdk": "1.14.21",
-    "promptfoo": "0.121.7"
+    "promptfoo": "0.121.7",
+    "yaml": "2.8.3"
   }
 }
