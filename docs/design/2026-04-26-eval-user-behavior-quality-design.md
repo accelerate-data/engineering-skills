@@ -46,6 +46,8 @@ This design defines the next cleanup pass: split user-like inputs from evaluator
 |---|---|
 | Keep the read-only harness, but stop making it the only behavior signal | It is useful for fast workflow regression checks, but it is not enough to mimic user behavior |
 | Store user prompt text separately from evaluator context | The model should see a natural request; the assertion layer can hold hidden oracle facts |
+| Make Linear access forbidden in eval prompts | Prompts must state that the evaluator must not read from Linear, write to Linear, or infer missing Linear data from live systems |
+| Put all required Linear facts in the prompt | Required issue status, labels, project/team, acceptance criteria, comments, links, PR state, and metadata must be supplied by the scenario or simulated context |
 | Add a common failure-mode matrix per skill | Coverage should be auditable by failure mode, not just by test count |
 | Prefer semantic assertions over exact required terms | Assertions should accept equivalent correct behavior and reject shallow keyword echoes |
 | Add a static anti-overfit check for eval prompts | Prompt templates should fail review when they restate the full skill contract or expose expected outcomes |
@@ -56,9 +58,24 @@ This design defines the next cleanup pass: split user-like inputs from evaluator
 | Layer | Visible to model | Owned by | Purpose |
 |---|---|---|---|
 | User prompt | Natural user message, minimal repo context, realistic ambiguity | YAML fixture | Measures routing and next-action behavior |
-| Hidden scenario context | Simulated tool facts, Linear metadata, files that exist or are missing | YAML fixture | Lets assertions grade without leaking answer cues |
+| Simulated context | Tool results, Linear metadata, files that exist or are missing | YAML fixture | Supplies every required fact without live Linear reads |
 | Expected behavior | Small list of required decisions and forbidden mistakes | Assertion file | Keeps grading precise without exposing contract language |
 | Common failure IDs | Stable IDs such as `asks-before-reading`, `skips-functional-spec`, `creates-pr-too-early` | Package metadata | Makes coverage review systematic |
+
+## Linear Eval Prompt Rule
+
+Every eval prompt for Linear-adjacent skills must include explicit instructions that the evaluator must not read Linear, write Linear, or call Linear tools. The prompt must also say that all required Linear facts are already present in the scenario or simulated context.
+
+| Required In Prompt | Examples |
+|---|---|
+| Issue identity and state | Issue key, current status, whether the issue exists, whether the PR exists or is merged |
+| Team and project metadata | Selected team, project, available labels, required statuses |
+| User Flow data | User Flow label, whether the team enforces User Flow, whether `docs/functional/<User Flow>/README.md` exists |
+| Issue content | Summary, description, acceptance criteria, bug report fields, linked comments |
+| Referenced artifacts | Functional specs, design docs, implementation plans, PR URL, latest eval evidence |
+| Missing-data conditions | Which labels, specs, docs, statuses, or metadata are absent and should block progress |
+
+The eval should fail if the model says it needs to inspect live Linear to determine a required answer that should have been supplied by the fixture.
 
 ## Common Failure Mode Matrix
 
@@ -79,7 +96,7 @@ This design defines the next cleanup pass: split user-like inputs from evaluator
 | Step | Change | Output |
 |---|---|---|
 | 1 | Add eval metadata fields: `user_prompt`, `hidden_context`, `failure_modes`, and `eval_type` | Fixtures distinguish user-behavior tests from oracle tests |
-| 2 | Add `scripts/check_eval_user_behavior.py` | Static check flags prompt templates that expose expected booleans, long contract schemas, or evaluator-only wording in user prompts |
+| 2 | Add `scripts/check_eval_user_behavior.py` | Static check flags prompt templates that expose expected booleans, omit Linear no-read/no-write language, omit all-required-facts language, include long contract schemas, or put evaluator-only wording in user prompts |
 | 3 | Convert one high-risk package first: `implementing-linear-issue` | Proves the split for User Flow, brainstorm, design, bug, TDD, and quality gates |
 | 4 | Convert Linear workflow packages | Covers `creating-linear-issue`, `creating-feature-request`, `raising-linear-pr`, `closing-linear-issue`, and `yolo` |
 | 5 | Convert support skills | Covers code simplification, test writing, e2e authoring, explanation, review, and repo maintenance |
@@ -92,6 +109,7 @@ This design defines the next cleanup pass: split user-like inputs from evaluator
 |---|---|
 | User-like prompts | Every skill has at least two `eval_type: user-behavior` cases unless the skill has only one meaningful workflow |
 | Hidden expectations | Expected booleans and required terms are not visible in user prompt text |
+| Linear isolation | Linear-adjacent eval prompts explicitly forbid reading or writing Linear and provide all required Linear facts in the prompt |
 | Failure-mode coverage | Every skill maps each high-risk common mistake in its `Common Mistakes` section to at least one eval or an explicit non-applicable note |
 | Dense schemas | Contract-oracle prompts are allowed, but user-behavior prompts do not ask for more than ten top-level fields |
 | Exact terms | Required literal terms are limited to names or paths that must actually appear in the user-facing workflow |
