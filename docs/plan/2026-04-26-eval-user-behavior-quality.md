@@ -36,7 +36,7 @@
 - Modify: `package.json`
 - Modify: `repo-map.json`
 
-- [ ] **Step 1: Write failing tests for Linear prompt isolation**
+- [x] **Step 1: Write failing tests for Linear prompt isolation**
 
 Add `tests/evals/scripts/eval-user-behavior.test.js` with fixtures that prove the checker rejects Linear-adjacent prompts unless they explicitly forbid Linear reads and writes and state that required Linear facts are fixture-supplied.
 
@@ -115,7 +115,7 @@ test('linear-adjacent prompts pass when Linear isolation is explicit', () => {
 });
 ```
 
-- [ ] **Step 2: Run tests and confirm they fail because the checker does not exist**
+- [x] **Step 2: Run tests and confirm they fail because the checker does not exist**
 
 Run:
 
@@ -125,7 +125,7 @@ npm --prefix tests/evals run test:eval-user-behavior
 
 Expected: FAIL with `Cannot find module './check-eval-user-behavior'` or a missing script error.
 
-- [ ] **Step 3: Implement the minimal static checker**
+- [x] **Step 3: Implement the minimal static checker**
 
 Create `tests/evals/scripts/check-eval-user-behavior.js`.
 
@@ -216,7 +216,7 @@ if (require.main === module) main();
 module.exports = { checkEvalUserBehavior };
 ```
 
-- [ ] **Step 4: Add package scripts**
+- [x] **Step 4: Add package scripts**
 
 Modify `tests/evals/package.json`.
 
@@ -231,7 +231,7 @@ Modify root `package.json`.
 "check:eval-user-behavior": "npm --prefix tests/evals run check:eval-user-behavior"
 ```
 
-- [ ] **Step 5: Run the new unit tests**
+- [x] **Step 5: Run the new unit tests**
 
 Run:
 
@@ -241,7 +241,7 @@ npm --prefix tests/evals run test:eval-user-behavior
 
 Expected: PASS.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add package.json tests/evals/package.json tests/evals/scripts/check-eval-user-behavior.js tests/evals/scripts/eval-user-behavior.test.js repo-map.json
