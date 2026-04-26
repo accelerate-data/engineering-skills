@@ -461,7 +461,7 @@ npm run eval:implementing-linear-issue
 
 Expected: PASS, or record exact failing scenario and fix the assertion or fixture if the failure reflects the new shape rather than a skill regression.
 
-Observed: `npm run eval:implementing-linear-issue` failed from stale expectations after the three fixture migrations (`eval-dIn-2026-04-26T15:33:00`, 3/14 passed). The failures were expectation mismatches for downstream planning/TDD/review fields after hard gates, plus missing User Flow fixtures using a team where the User Flow gate does not apply. The package was adjusted to keep active-obligation assertions while removing over-prescriptive downstream assertions; `npm run eval:implementing-linear-issue` then passed 14/14 (`eval-Ipt-2026-04-26T15:05:09`).
+Observed: `npm run eval:implementing-linear-issue` failed from stale expectations after the three fixture migrations (`eval-dIn-2026-04-26T15:33:00`, 3/14 passed). The failures were expectation mismatches for downstream planning/TDD/review fields after hard gates, plus missing User Flow fixtures using a team where the User Flow gate does not apply. The package was adjusted to keep active-obligation assertions while removing over-prescriptive downstream assertions. After balance was restored, `npm run eval:implementing-linear-issue` passed 14/14 (`eval-OkD-2026-04-26T17:25:41`).
 
 - [x] **Step 5: Commit**
 

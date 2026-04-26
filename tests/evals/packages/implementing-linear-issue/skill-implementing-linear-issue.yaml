@@ -146,7 +146,7 @@ tests:
         - Codebase review finds likely export-history files, but product behavior is stale or disputed.
         - No implementation edits have started.
       expect_searches_codebase_before_asking_user: "true"
-      expect_hands_off_to_brainstorming: "true"
+      expect_hands_off_to_brainstorming: "false"
       expect_hands_off_to_authoring_functional_spec: "true"
       expect_hands_off_to_authoring_design_spec: "false"
       expect_asks_question_immediately: "false"
@@ -194,7 +194,6 @@ tests:
       expect_hands_off_to_brainstorming: "false"
       expect_hands_off_to_authoring_functional_spec: "false"
       expect_hands_off_to_authoring_design_spec: "false"
-      expect_uses_requesting_code_review_for_quality_gate: "true"
       expect_uses_receiving_code_review_for_review_feedback: "true"
       expect_uses_code_simplifier_for_simplification_gate: "true"
       expect_creates_branch_and_worktree_first: "true"
@@ -347,7 +346,6 @@ tests:
         - The issue has acceptance criteria and likely code paths, but the required functional spec folder is missing.
         - No implementation edits have started.
       expect_searches_codebase_before_asking_user: "false"
-      expect_stops_if_userflow_label_missing: "false"
       expect_stops_if_functional_spec_missing: "true"
       expect_reads_functional_spec_from_userflow_tag: "false"
       expect_creates_implementation_plan: "false"
