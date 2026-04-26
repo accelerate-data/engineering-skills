@@ -28,8 +28,11 @@ defaultTest:
 tests:
   - description: "raise-pr — reruns PR gates without new local commits and moves issue to In Review"
     vars:
+      eval_type: user-behavior
+      failure_modes: "creates-pr-too-early,acts-before-reading-local-context,premature-success-claim"
       scenario: |-
         - Implementation is complete.
+        - Simulated Linear metadata: issue `ENG-PR-1`, team `Internal-IT`, project `Engineering Skills`, current status `Ready for PR`.
         - Implementation commits already exist on the feature branch.
         - The worktree is clean at entry.
         - Acceptance criteria are already complete and checked before PR creation.
@@ -70,8 +73,11 @@ tests:
 
   - description: "raise-pr — checks off only proven ACs and hands back if an AC needs implementation"
     vars:
+      eval_type: user-behavior
+      failure_modes: "creates-pr-too-early,premature-success-claim"
       scenario: |-
         - Implementation commits already exist on the feature branch.
+        - Simulated Linear metadata: issue `ENG-PR-1`, team `Internal-IT`, project `Engineering Skills`, current status `Ready for PR`.
         - The worktree is clean at entry.
         - Linear has three acceptance criteria:
           - AC 1 is already checked.
@@ -97,8 +103,11 @@ tests:
 
   - description: "raise-pr — checks off proven ACs then runs design gate before PR"
     vars:
+      eval_type: user-behavior
+      failure_modes: "creates-pr-too-early,acts-before-reading-local-context"
       scenario: |-
         - Implementation commits already exist on the feature branch.
+        - Simulated Linear metadata: issue `ENG-PR-1`, team `Internal-IT`, project `Engineering Skills`, current status `Ready for PR`.
         - The worktree is clean at entry.
         - Linear has two acceptance criteria:
           - AC 1 is already checked.
@@ -135,8 +144,11 @@ tests:
 
   - description: "raise-pr — passes design conformance when referenced local design matches evidence"
     vars:
+      eval_type: user-behavior
+      failure_modes: "creates-pr-too-early,acts-before-reading-local-context"
       scenario: |-
         - Implementation commits already exist on the feature branch.
+        - Simulated Linear metadata: issue `ENG-PR-1`, team `Internal-IT`, project `Engineering Skills`, current status `Ready for PR`.
         - The worktree is clean at entry.
         - All Linear acceptance criteria are complete and checked.
         - The Linear issue description references `docs/superpowers/specs/2026-04-20-search-design.md`.
@@ -171,8 +183,11 @@ tests:
 
   - description: "raise-pr — blocks before push and PR when design conformance fails"
     vars:
+      eval_type: user-behavior
+      failure_modes: "creates-pr-too-early,premature-success-claim"
       scenario: |-
         - Implementation commits already exist on the feature branch.
+        - Simulated Linear metadata: issue `ENG-PR-1`, team `Internal-IT`, project `Engineering Skills`, current status `Ready for PR`.
         - The worktree is clean at entry.
         - All Linear acceptance criteria are complete and checked.
         - The Linear issue description references `docs/design/billing-retry.md`.
@@ -206,8 +221,11 @@ tests:
 
   - description: "raise-pr — finds design reference in Linear comment evidence"
     vars:
+      eval_type: user-behavior
+      failure_modes: "acts-before-reading-local-context,creates-pr-too-early"
       scenario: |-
         - Implementation commits already exist on the feature branch.
+        - Simulated Linear metadata: issue `ENG-PR-1`, team `Internal-IT`, project `Engineering Skills`, current status `Ready for PR`.
         - The worktree is clean at entry.
         - All Linear acceptance criteria are complete and checked.
         - The Linear issue description does not mention a local design document.
@@ -242,8 +260,11 @@ tests:
 
   - description: "raise-pr — records all referenced design document paths"
     vars:
+      eval_type: user-behavior
+      failure_modes: "acts-before-reading-local-context,creates-pr-too-early"
       scenario: |-
         - Implementation commits already exist on the feature branch.
+        - Simulated Linear metadata: issue `ENG-PR-1`, team `Internal-IT`, project `Engineering Skills`, current status `Ready for PR`.
         - The worktree is clean at entry.
         - All Linear acceptance criteria are complete and checked.
         - The Linear issue references both `docs/design/api-contract.md` and `docs/superpowers/specs/2026-04-20-ui-flow-design.md`.
@@ -277,8 +298,11 @@ tests:
 
   - description: "raise-pr — design gate fails when checked AC content diverges from the design"
     vars:
+      eval_type: user-behavior
+      failure_modes: "creates-pr-too-early,premature-success-claim"
       scenario: |-
         - Implementation commits already exist on the feature branch.
+        - Simulated Linear metadata: issue `ENG-PR-1`, team `Internal-IT`, project `Engineering Skills`, current status `Ready for PR`.
         - The worktree is clean at entry.
         - All Linear acceptance criteria are checked.
         - The Linear issue description references `docs/design/export-format.md`.
@@ -314,8 +338,11 @@ tests:
 
   - description: "raise-pr — records not_applicable when no design document is referenced"
     vars:
+      eval_type: user-behavior
+      failure_modes: "acts-before-reading-local-context,creates-pr-too-early"
       scenario: |-
         - Implementation commits already exist on the feature branch.
+        - Simulated Linear metadata: issue `ENG-PR-1`, team `Internal-IT`, project `Engineering Skills`, current status `Ready for PR`.
         - The worktree is clean at entry.
         - All Linear acceptance criteria are complete and checked.
         - The Linear issue, comments, attachments, and linked documents do not reference a local design document path.

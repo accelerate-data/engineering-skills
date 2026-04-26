@@ -6,6 +6,8 @@ Read the skill at `skills/creating-feature-request/SKILL.md`.
 This is a read-only workflow eval. Do not contact Linear and do not create an
 issue.
 
+Do not read Linear, write Linear, contact Linear, or call Linear tools. All required Linear facts are supplied in the scenario and simulated context. If a required Linear fact is missing from the scenario, report that the fixture is incomplete instead of trying to fetch it.
+
 The user says:
 
 > {{ user_request }}

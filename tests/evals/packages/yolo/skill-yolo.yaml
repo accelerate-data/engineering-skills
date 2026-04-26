@@ -28,8 +28,11 @@ defaultTest:
 tests:
   - description: "yolo — chains all 3 phases in order, stops at PR, preserves quality gates"
     vars:
+      eval_type: user-behavior
+      failure_modes: "misses-required-handoff,creates-pr-too-early,implements-before-brainstorming"
       scenario: |-
         - Prior conversation context: the user has finished describing a feature and wants to start building.
+        - Simulated Linear metadata is supplied by the fixture; issue existence and phase are exactly as listed below.
         - User message: "yolo — add a config flag to disable the onboarding banner for existing users"
         - No Linear issue exists yet for this request.
         - The user expects the work to continue through an open PR without stopping between phases.
@@ -46,32 +49,44 @@ tests:
 
   - description: "routing — detects yolo from single-shot phrasing"
     vars:
+      eval_type: user-behavior
+      failure_modes: "misses-required-handoff,creates-pr-too-early"
       scenario: |-
         - Prior conversation context: the user has finished describing a feature and wants to start building.
+        - Simulated Linear metadata is supplied by the fixture; issue existence and phase are exactly as listed below.
         - User message: "do it all in one shot — create the issue, implement it, and raise the PR"
       expected_detected_skill: "yolo"
       expect_yolo_trigger_found_in_message: "true"
 
   - description: "routing — does not trigger yolo for create-only request"
     vars:
+      eval_type: user-behavior
+      failure_modes: "misses-required-handoff,creates-pr-too-early"
       scenario: |-
         - User message: "create a linear issue for adding dark mode"
+        - Simulated Linear metadata is supplied by the fixture; issue existence and phase are exactly as listed below.
         - The user only asks to file a ticket.
       expected_detected_skill: "creating-linear-issue"
       expect_yolo_trigger_found_in_message: "false"
 
   - description: "routing — does not trigger yolo when issue already exists"
     vars:
+      eval_type: user-behavior
+      failure_modes: "misses-required-handoff,creates-pr-too-early"
       scenario: |-
         - User message: "the issue is already filed as AD-45, go ahead and implement it"
+        - Simulated Linear metadata is supplied by the fixture; issue existence and phase are exactly as listed below.
         - Issue creation is already complete.
       expected_detected_skill: "implementing-linear-issue"
       expect_yolo_trigger_found_in_message: "false"
 
   - description: "routing — does not trigger yolo when implementation is done"
     vars:
+      eval_type: user-behavior
+      failure_modes: "misses-required-handoff,creates-pr-too-early"
       scenario: |-
         - User message: "implementation is done, raise the PR"
+        - Simulated Linear metadata is supplied by the fixture; issue existence and phase are exactly as listed below.
         - The implementation phase is already complete.
       expected_detected_skill: "raising-linear-pr"
       expect_yolo_trigger_found_in_message: "false"

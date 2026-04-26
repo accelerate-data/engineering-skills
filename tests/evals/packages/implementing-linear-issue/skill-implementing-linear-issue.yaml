@@ -28,8 +28,11 @@ defaultTest:
 tests:
   - description: "implement-issue — creates branch/worktree first, commits during implementation, runs local gates, no PR/push"
     vars:
+      eval_type: user-behavior
+      failure_modes: "acts-before-reading-local-context,creates-pr-too-early,premature-success-claim"
       scenario: |-
         - The user says: "implement ENG-1023. The approach in the issue is approved; start the first coding slice."
+        - Simulated Linear metadata: team `Internal-IT`, project `Engineering Skills`, current status `Ready for Development`.
         - Codebase review confirms the work is localized to one module and the issue's implementation approach is clear.
         - The issue has User Flow label `UF-Checkout-Receipts`, and `docs/functional/UF-Checkout-Receipts/README.md` exists.
         - The implementation plan at `docs/plan/ENG-1023-checkout-receipts.md` was already created by `superpowers:writing-plans` and approved in Linear.
@@ -67,8 +70,11 @@ tests:
 
   - description: "natural request — user asks to think through approach before implementing"
     vars:
+      eval_type: user-behavior
+      failure_modes: "implements-before-brainstorming,acts-before-reading-local-context"
       scenario: |-
         - The user says: "implement ENG-1041, but think through the approach with me before you start coding."
+        - Simulated Linear metadata: team `Internal-IT`, project `Engineering Skills`, current status `Ready for Development`.
         - The Linear issue exists and describes a normal backend behavior change.
         - The issue has User Flow label `UF-Notification-Rules`, and `docs/functional/UF-Notification-Rules/README.md` exists.
         - Codebase review can identify the likely files and no design doc gap is evident.
@@ -88,8 +94,11 @@ tests:
 
   - description: "natural request — multi-module implementation needs writing-plans first"
     vars:
+      eval_type: user-behavior
+      failure_modes: "misses-required-handoff,acts-before-reading-local-context"
       scenario: |-
         - The user says: "implement ENG-1042. It touches the API route, background worker, and dashboard state, so make a real plan before coding."
+        - Simulated Linear metadata: team `Internal-IT`, project `Engineering Skills`, current status `Ready for Development`.
         - The Linear issue exists and the acceptance criteria are clear.
         - The issue has User Flow label `UF-Dashboard-Sync`, and `docs/functional/UF-Dashboard-Sync/README.md` exists.
         - Codebase review confirms the work spans `src/server/routes`, `src/workers`, and `src/app/dashboard`.
@@ -110,8 +119,11 @@ tests:
 
   - description: "natural request — complex architecture needs design doc handoff"
     vars:
+      eval_type: user-behavior
+      failure_modes: "misses-required-handoff,acts-before-reading-local-context"
       scenario: |-
         - The user says: "implement ENG-1043. This changes how tenant permissions are modeled across the API, jobs, and audit logs, so don't just patch it."
+        - Simulated Linear metadata: team `Internal-IT`, project `Engineering Skills`, current status `Ready for Development`.
         - The Linear issue exists but has no linked design doc.
         - The issue has User Flow label `UF-Tenant-Permissions`, and `docs/functional/UF-Tenant-Permissions/README.md` exists.
         - Codebase review finds durable authorization and audit-log architecture decisions are missing.
@@ -132,8 +144,11 @@ tests:
 
   - description: "natural request — stale product behavior needs functional spec handoff"
     vars:
+      eval_type: user-behavior
+      failure_modes: "skips-functional-spec,misses-required-handoff"
       scenario: |-
         - The user says: "implement ENG-1052 for saved exports, but the issue and the user flow doc disagree about what happens after the export expires."
+        - Simulated Linear metadata: team `Internal-IT`, project `Engineering Skills`, current status `Ready for Development`.
         - The Linear issue exists and has User Flow label `UF-Saved-Exports`.
         - `docs/functional/UF-Saved-Exports/README.md` exists, but it conflicts with the issue acceptance criteria.
         - Codebase review finds likely export-history files, but product behavior is stale or disputed.
@@ -154,8 +169,11 @@ tests:
 
   - description: "natural request — implementation with failures routes to debugging and review handoffs"
     vars:
+      eval_type: user-behavior
+      failure_modes: "misses-required-handoff,premature-success-claim"
       scenario: |-
         - The user says: "implement ENG-1044 and make sure the flaky export test is really fixed."
+        - Simulated Linear metadata: team `Internal-IT`, project `Engineering Skills`, current status `Ready for Development`.
         - The Linear issue exists and the intended behavior is clear.
         - The issue has User Flow label `UF-Exports`, and `docs/functional/UF-Exports/README.md` exists.
         - The implementation plan at `docs/plan/ENG-1044-export-flake.md` already exists from `superpowers:writing-plans`.
@@ -180,8 +198,11 @@ tests:
 
   - description: "natural request — quality gate feedback uses receiving-code-review before fixes"
     vars:
+      eval_type: user-behavior
+      failure_modes: "misses-required-handoff,premature-success-claim"
       scenario: |-
         - The user says: "implement ENG-1051. If the reviews find anything, handle it carefully before handoff."
+        - Simulated Linear metadata: team `Internal-IT`, project `Engineering Skills`, current status `Ready for Development`.
         - The Linear issue exists and the intended behavior is clear.
         - The issue has User Flow label `UF-Reports`, and `docs/functional/UF-Reports/README.md` exists.
         - The implementation plan at `docs/plan/ENG-1051-reports.md` already exists from `superpowers:writing-plans`.
@@ -206,8 +227,11 @@ tests:
 
   - description: "natural request — major refactor needs a written plan before behavior-preserving changes"
     vars:
+      eval_type: user-behavior
+      failure_modes: "misses-required-handoff,acts-before-reading-local-context"
       scenario: |-
         - The user says: "implement ENG-1045. The old importer is tangled; refactor it without changing behavior and break it into safe steps."
+        - Simulated Linear metadata: team `Internal-IT`, project `Engineering Skills`, current status `Ready for Development`.
         - The Linear issue exists and describes a behavior-preserving cleanup.
         - The issue has User Flow label `UF-Importer`, and `docs/functional/UF-Importer/README.md` exists.
         - Codebase review finds the refactor crosses parser, validation, and import job modules.
@@ -226,8 +250,11 @@ tests:
 
   - description: "natural request — UI work with no approved interface needs design spec before coding"
     vars:
+      eval_type: user-behavior
+      failure_modes: "misses-required-handoff,acts-before-reading-local-context"
       scenario: |-
         - The user says: "implement ENG-1046. Add the new settings panel UI; there isn't a mockup yet, so design the interface before coding."
+        - Simulated Linear metadata: team `Internal-IT`, project `Engineering Skills`, current status `Ready for Development`.
         - The Linear issue exists but does not define the settings panel states, interactions, or component contract.
         - The issue has User Flow label `UF-Settings-Panel`, and `docs/functional/UF-Settings-Panel/README.md` exists.
         - Codebase review finds this affects the settings page, shared form components, and persisted preferences.
@@ -245,8 +272,11 @@ tests:
 
   - description: "natural request — end-user workflow change needs user guide handoff"
     vars:
+      eval_type: user-behavior
+      failure_modes: "misses-required-handoff,premature-success-claim"
       scenario: |-
         - The user says: "implement ENG-1053. This adds a visible bulk archive action to the Reports page, so make sure the docs get updated too."
+        - Simulated Linear metadata: team `Internal-IT`, project `Engineering Skills`, current status `Ready for Development`.
         - The Linear issue exists and has clear acceptance criteria.
         - The issue has User Flow label `UF-Reports-Bulk-Actions`, and `docs/functional/UF-Reports-Bulk-Actions/README.md` exists.
         - Codebase and design-doc search find no unresolved product or design fork.
@@ -268,8 +298,11 @@ tests:
 
   - description: "natural request — bug issue needs systematic debugging before fix"
     vars:
+      eval_type: user-behavior
+      failure_modes: "misses-required-handoff,premature-success-claim"
       scenario: |-
         - The user says: "fix ENG-1047. Users get a 500 when they export after filtering by owner."
+        - Simulated Linear metadata: team `Internal-IT`, project `Engineering Skills`, current status `Ready for Development`.
         - The Linear issue is a bug report with a production symptom but no root cause.
         - The issue has User Flow label `UF-Exports`, and `docs/functional/UF-Exports/README.md` exists.
         - Codebase review finds likely export and filter code paths, but the failing condition has not been reproduced yet.
@@ -292,8 +325,11 @@ tests:
 
   - description: "natural request — linked functional spec, design doc, and plan are read and cited in Linear updates"
     vars:
+      eval_type: user-behavior
+      failure_modes: "acts-before-reading-local-context,misses-required-handoff"
       scenario: |-
         - The user says: "implement ENG-1048 for the export history flow."
+        - Simulated Linear metadata: team `Internal-IT`, project `Engineering Skills`, current status `Ready for Development`.
         - The Linear issue has User Flow label `UF-Export-History`.
         - `docs/functional/UF-Export-History/README.md` exists and defines the product behavior.
         - Codebase and doc search find a related design document at `docs/design/export-history/README.md`.
@@ -316,8 +352,11 @@ tests:
 
   - description: "natural request — missing User Flow label stops before planning"
     vars:
+      eval_type: user-behavior
+      failure_modes: "skips-user-flow,premature-success-claim"
       scenario: |-
         - The user says: "implement ENG-1049 for the billing export flow."
+        - Simulated Linear metadata: team `Internal-IT`, project `Engineering Skills`, current status `Ready for Development`.
         - The Linear issue exists, but it has no User Flow label.
         - The issue has acceptance criteria and likely code paths, but no functional-spec folder can be derived from a label.
         - No implementation edits have started.
@@ -334,8 +373,11 @@ tests:
 
   - description: "natural request — missing functional spec folder stops before planning"
     vars:
+      eval_type: user-behavior
+      failure_modes: "skips-functional-spec,premature-success-claim"
       scenario: |-
         - The user says: "implement ENG-1050 for saved filters."
+        - Simulated Linear metadata: team `Internal-IT`, project `Engineering Skills`, current status `Ready for Development`.
         - The Linear issue has User Flow label `UF-Saved-Filters`.
         - `docs/functional/UF-Saved-Filters/` does not exist.
         - The issue has acceptance criteria and likely code paths, but the required functional spec folder is missing.

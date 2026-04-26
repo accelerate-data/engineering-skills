@@ -7,6 +7,8 @@ this scenario.
 This is a read-only workflow eval. Do not create Linear issues, edit files,
 push, or create PRs.
 
+Do not read Linear, write Linear, contact Linear, or call Linear tools. All required Linear facts are supplied in the scenario and simulated context. If a required Linear fact is missing from the scenario, report that the fixture is incomplete instead of trying to fetch it.
+
 Scenario:
 
 {{scenario}}

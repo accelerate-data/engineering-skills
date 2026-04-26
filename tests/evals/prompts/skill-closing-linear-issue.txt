@@ -6,9 +6,13 @@ Read the skill at `skills/closing-linear-issue/SKILL.md`.
 This is a read-only workflow eval. Do not merge, close Linear, delete branches,
 or perform external actions.
 
+Do not read Linear, write Linear, contact Linear, or call Linear tools. All required Linear facts are supplied in the scenario and simulated context. If a required Linear fact is missing from the scenario, report that the fixture is incomplete instead of trying to fetch it.
+
 Scenario:
 
 - The user says: "close the Linear issue now that the PR is done."
+- Linear issue ENG-1077 exists in the Internal-IT project and is currently In Review.
+- PR URL: https://github.com/accelerate-data/engineering-skills/pull/1077.
 - {{pr_state_scenario}}
 - The closeout worktree starts clean.
 - After merge and remote branch deletion, the feature worktree contains ignored and untracked eval artifacts plus a tracked file edit.

@@ -28,12 +28,14 @@ defaultTest:
 tests:
   - description: "real request — clear User Flow match previews before create"
     vars:
+      eval_type: user-behavior
+      failure_modes: "skips-user-flow,over-asks-instead-of-resolving-locally,premature-success-claim"
       user_request: "Feature request: Add a source credibility score to Vibedata content briefs so demand-gen users can quickly see which cited sources are most reliable. Priority P2, medium effort."
       discovered_context: |
-        - Linear metadata for the Roadmap team can be queried.
-        - Live User Flow child-label lookup finds exactly one strong match: `UF-Content-Brief-Source-Credibility`.
-        - Live projects include a Demand Gen project that fits the request.
-        - Live statuses include a triage/backlog-like status.
+        - Simulated Linear metadata for the Roadmap team is supplied by the fixture.
+        - Simulated User Flow child-label metadata supplies exactly one strong match: `UF-Content-Brief-Source-Credibility`.
+        - Simulated project metadata includes a Demand Gen project that fits the request.
+        - Simulated status metadata includes a triage/backlog-like status.
         - No human has confirmed issue creation yet.
       expect_queries_linear_labels: "true"
       expect_queries_linear_projects: "true"
@@ -59,12 +61,14 @@ tests:
 
   - description: "real request — ambiguous User Flow asks user to choose"
     vars:
+      eval_type: user-behavior
+      failure_modes: "skips-user-flow,over-asks-instead-of-resolving-locally,premature-success-claim"
       user_request: "Log a feature request for saved brief templates. Marketing users want to reuse prior brief structure when starting a new content brief."
       discovered_context: |
-        - Linear metadata for the Roadmap team can be queried.
-        - Live User Flow child-label lookup finds several plausible labels: `UF-Content-Brief-Create`, `UF-Content-Brief-Templates`, and `UF-Content-Reuse`.
+        - Simulated Linear metadata for the Roadmap team is supplied by the fixture.
+        - Simulated User Flow child-label metadata supplies several plausible labels: `UF-Content-Brief-Create`, `UF-Content-Brief-Templates`, and `UF-Content-Reuse`.
         - None is clearly strongest from the request alone.
-        - Live projects and statuses are available.
+        - Simulated project and status metadata are supplied by the fixture.
         - No human has confirmed issue creation yet.
       expect_queries_linear_labels: "true"
       expect_queries_linear_projects: "true"
@@ -90,9 +94,11 @@ tests:
 
   - description: "real request — missing Linear metadata stops before creation"
     vars:
+      eval_type: user-behavior
+      failure_modes: "skips-user-flow,premature-success-claim"
       user_request: "Create a feature request for adding team-level source quality settings to briefs."
       discovered_context: |
-        - Linear metadata for the Roadmap team cannot be loaded.
+        - Simulated Linear metadata for the Roadmap team is explicitly missing from the fixture.
         - User Flow child labels, Roadmap projects, and Roadmap statuses are unavailable.
         - No human has confirmed issue creation yet.
       expect_queries_linear_labels: "true"

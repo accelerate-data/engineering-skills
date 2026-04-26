@@ -21,6 +21,8 @@ Prior conversation context:
 - You were running the brainstorming skill, presenting feature design options to the user.
 - The user was evaluating the options you proposed.
 
+Do not read Linear, write Linear, contact Linear, or call Linear tools. All required Linear facts are supplied in the scenario and simulated context. If a required Linear fact is missing from the scenario, report that the fixture is incomplete instead of trying to fetch it.
+
 The user now says:
 "{{user_message}}"
 
@@ -42,6 +44,8 @@ Read the skill at `skills/creating-linear-issue/SKILL.md`.
 
 This is a read-only workflow eval. Do not create a Linear issue, contact Linear,
 modify files, or perform any external action.
+
+Do not read Linear, write Linear, contact Linear, or call Linear tools. All required Linear facts are supplied in the scenario and simulated context. If a required Linear fact is missing from the scenario, report that the fixture is incomplete instead of trying to fetch it.
 
 The user says:
 
