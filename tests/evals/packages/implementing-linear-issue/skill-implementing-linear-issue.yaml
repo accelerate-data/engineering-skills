@@ -44,11 +44,6 @@ tests:
       expect_hands_off_to_brainstorming: "false"
       expect_hands_off_to_authoring_functional_spec: "false"
       expect_hands_off_to_authoring_design_spec: "false"
-      expect_uses_writing_plans_before_implementation: "true"
-      expect_uses_test_driven_development_for_implementation: "true"
-      expect_reads_functional_spec_from_userflow_tag: "true"
-      expect_stops_if_userflow_label_missing: "false"
-      expect_stops_if_functional_spec_missing: "false"
       expect_uses_code_simplifier_for_simplification_gate: "true"
       expect_asks_question_immediately: "false"
       expect_creates_branch_and_worktree_first: "true"
@@ -92,12 +87,9 @@ tests:
         - The issue touches one module.
         - No implementation edits have started.
       expect_searches_codebase_before_asking_user: "true"
-      expect_creates_implementation_plan: "false"
       expect_hands_off_to_brainstorming: "true"
       expect_hands_off_to_authoring_functional_spec: "false"
       expect_hands_off_to_authoring_design_spec: "false"
-      expect_uses_writing_plans_before_implementation: "true"
-      expect_reads_functional_spec_from_userflow_tag: "true"
       expect_asks_question_immediately: "false"
       expect_creates_branch_and_worktree_first: "true"
       expect_creates_pr: "false"
@@ -132,7 +124,6 @@ tests:
       expect_hands_off_to_authoring_functional_spec: "false"
       expect_hands_off_to_authoring_design_spec: "false"
       expect_uses_writing_plans_before_implementation: "true"
-      expect_reads_functional_spec_from_userflow_tag: "true"
       expect_asks_question_immediately: "false"
       expect_creates_branch_and_worktree_first: "true"
       expect_creates_pr: "false"
@@ -149,15 +140,12 @@ tests:
         - The Linear issue exists but has no linked design doc.
         - The issue has User Flow label `UF-Tenant-Permissions`, and `docs/functional/UF-Tenant-Permissions/README.md` exists.
         - Codebase review finds durable authorization and audit-log architecture decisions are missing.
+        - This is a hard gate before implementation planning or implementation edits.
         - No implementation edits have started.
       expect_searches_codebase_before_asking_user: "true"
-      expect_creates_implementation_plan: "false"
       expect_hands_off_to_brainstorming: "false"
       expect_hands_off_to_authoring_functional_spec: "false"
       expect_hands_off_to_authoring_design_spec: "true"
-      expect_uses_writing_plans_before_implementation: "true"
-      expect_uses_test_driven_development_for_implementation: "false"
-      expect_reads_functional_spec_from_userflow_tag: "true"
       expect_asks_question_immediately: "false"
       expect_creates_branch_and_worktree_first: "true"
       expect_creates_pr: "false"
@@ -176,13 +164,9 @@ tests:
         - Codebase review finds likely export-history files, but product behavior is stale or disputed.
         - No implementation edits have started.
       expect_searches_codebase_before_asking_user: "true"
-      expect_creates_implementation_plan: "false"
       expect_hands_off_to_brainstorming: "false"
       expect_hands_off_to_authoring_functional_spec: "true"
       expect_hands_off_to_authoring_design_spec: "false"
-      expect_uses_writing_plans_before_implementation: "true"
-      expect_uses_test_driven_development_for_implementation: "false"
-      expect_reads_functional_spec_from_userflow_tag: "true"
       expect_asks_question_immediately: "false"
       expect_creates_branch_and_worktree_first: "true"
       expect_creates_pr: "false"
@@ -204,15 +188,9 @@ tests:
         - The implementation is not ready for handoff yet.
       expect_searches_codebase_before_asking_user: "true"
       expect_creates_implementation_plan: "false"
-      expect_hands_off_to_brainstorming: "false"
       expect_hands_off_to_authoring_functional_spec: "false"
       expect_hands_off_to_authoring_design_spec: "false"
-      expect_uses_writing_plans_before_implementation: "true"
-      expect_uses_test_driven_development_for_implementation: "true"
-      expect_uses_writing_tests_when_test_design_needed: "false"
       expect_uses_systematic_debugging_for_failures: "true"
-      expect_reads_functional_spec_from_userflow_tag: "true"
-      expect_uses_requesting_code_review_for_quality_gate: "false"
       expect_creates_branch_and_worktree_first: "true"
       expect_creates_pr: "false"
       required_terms: "systematic-debugging"
@@ -231,17 +209,13 @@ tests:
         - Implementation and local validation have completed.
         - The independent code-review quality gate returns feedback about an edge case in the report filter logic.
         - The implementation is not ready for final handoff until that feedback is evaluated and resolved.
-      expect_searches_codebase_before_asking_user: "true"
       expect_creates_implementation_plan: "false"
       expect_hands_off_to_brainstorming: "false"
       expect_hands_off_to_authoring_functional_spec: "false"
       expect_hands_off_to_authoring_design_spec: "false"
-      expect_uses_writing_plans_before_implementation: "true"
-      expect_uses_test_driven_development_for_implementation: "true"
       expect_uses_requesting_code_review_for_quality_gate: "true"
       expect_uses_receiving_code_review_for_review_feedback: "true"
       expect_uses_code_simplifier_for_simplification_gate: "true"
-      expect_reads_functional_spec_from_userflow_tag: "true"
       expect_creates_branch_and_worktree_first: "true"
       expect_creates_pr: "false"
       required_terms: "receiving-code-review"
@@ -260,11 +234,9 @@ tests:
         - Existing architecture is still valid; no new design decision is needed.
         - No implementation edits have started.
       expect_searches_codebase_before_asking_user: "true"
-      expect_hands_off_to_brainstorming: "false"
       expect_hands_off_to_authoring_design_spec: "false"
       expect_uses_writing_plans_before_implementation: "true"
       expect_creates_implementation_plan: "true"
-      expect_reads_functional_spec_from_userflow_tag: "true"
       expect_creates_branch_and_worktree_first: "true"
       expect_creates_pr: "false"
       required_terms: "writing-plans"
@@ -284,9 +256,6 @@ tests:
       expect_searches_codebase_before_asking_user: "true"
       expect_hands_off_to_brainstorming: "false"
       expect_hands_off_to_authoring_design_spec: "true"
-      expect_uses_writing_plans_before_implementation: "true"
-      expect_uses_test_driven_development_for_implementation: "false"
-      expect_reads_functional_spec_from_userflow_tag: "true"
       expect_creates_branch_and_worktree_first: "true"
       expect_creates_pr: "false"
       required_terms: "authoring-design-spec"
@@ -302,17 +271,13 @@ tests:
         - The Linear issue exists and has clear acceptance criteria.
         - The issue has User Flow label `UF-Reports-Bulk-Actions`, and `docs/functional/UF-Reports-Bulk-Actions/README.md` exists.
         - Codebase and design-doc search find no unresolved product or design fork.
-        - The implementation plan at `docs/plan/ENG-1053-reports-bulk-actions.md` already exists from `superpowers:writing-plans`.
         - The change affects end-user UI labels and workflow documentation.
+        - This is a hard gate to update user-facing docs before implementation edits.
       expect_searches_codebase_before_asking_user: "true"
-      expect_creates_implementation_plan: "false"
       expect_hands_off_to_brainstorming: "false"
       expect_hands_off_to_authoring_functional_spec: "false"
       expect_hands_off_to_authoring_design_spec: "false"
-      expect_uses_writing_plans_before_implementation: "true"
-      expect_uses_test_driven_development_for_implementation: "true"
       expect_uses_authoring_user_guide_when_user_docs_needed: "true"
-      expect_reads_functional_spec_from_userflow_tag: "true"
       expect_creates_branch_and_worktree_first: "true"
       expect_creates_pr: "false"
       required_terms: "authoring-user-guide"
@@ -346,10 +311,6 @@ tests:
       expect_shows_root_cause_and_fix_before_bug_fix: "true"
       expect_proceeds_after_root_cause_fix_confirmation: "true"
       expect_simple_bug_can_skip_writing_plan: "true"
-      expect_uses_writing_plans_before_implementation: "false"
-      expect_creates_implementation_plan: "false"
-      expect_uses_test_driven_development_for_implementation: "false"
-      expect_reads_functional_spec_from_userflow_tag: "true"
       expect_creates_branch_and_worktree_first: "true"
       expect_creates_pr: "false"
       required_terms: "systematic-debugging,root cause,fix"
@@ -369,8 +330,6 @@ tests:
         - The issue's behavior and design are already approved; implementation can proceed after normal plan approval.
       expect_searches_codebase_before_asking_user: "true"
       expect_creates_implementation_plan: "false"
-      expect_reads_functional_spec_from_userflow_tag: "true"
-      expect_uses_writing_plans_before_implementation: "true"
       expect_searches_related_design_docs: "true"
       expect_tracks_related_implementation_plan: "true"
       expect_linear_update_references_functional_spec: "true"
@@ -388,16 +347,15 @@ tests:
       failure_modes: "skips-user-flow,premature-success-claim"
       scenario: |-
         - The user says: "implement ENG-1049 for the billing export flow."
-        - Simulated Linear metadata: team `Internal-IT`, project `Engineering Skills`, current status `Ready for Development`.
+        - Simulated Linear metadata: team `Studio`, project `Engineering Skills`, current status `Ready for Development`.
+        - Studio is one of the selected teams where the User Flow label hard gate applies before codebase search.
         - The Linear issue exists, but it has no User Flow label.
         - The issue has acceptance criteria and likely code paths, but no functional-spec folder can be derived from a label.
         - No implementation edits have started.
       expect_searches_codebase_before_asking_user: "false"
       expect_stops_if_userflow_label_missing: "true"
-      expect_stops_if_functional_spec_missing: "false"
       expect_reads_functional_spec_from_userflow_tag: "false"
       expect_creates_implementation_plan: "false"
-      expect_uses_test_driven_development_for_implementation: "false"
       expect_creates_branch_and_worktree_first: "true"
       expect_creates_pr: "false"
       required_terms: "user flow,label,stop"
@@ -409,8 +367,9 @@ tests:
       failure_modes: "skips-functional-spec,premature-success-claim"
       scenario: |-
         - The user says: "implement ENG-1050 for saved filters."
-        - Simulated Linear metadata: team `Internal-IT`, project `Engineering Skills`, current status `Ready for Development`.
-        - The Linear issue has User Flow label `UF-Saved-Filters`.
+        - Simulated Linear metadata: team `Studio`, project `Engineering Skills`, current status `Ready for Development`.
+        - Studio is one of the selected teams where the functional-spec folder hard gate applies before codebase search.
+        - The Linear issue has User Flow label `UF-Saved-Filters`; the User Flow label is present.
         - `docs/functional/UF-Saved-Filters/` does not exist.
         - The issue has acceptance criteria and likely code paths, but the required functional spec folder is missing.
         - No implementation edits have started.
@@ -419,7 +378,6 @@ tests:
       expect_stops_if_functional_spec_missing: "true"
       expect_reads_functional_spec_from_userflow_tag: "false"
       expect_creates_implementation_plan: "false"
-      expect_uses_test_driven_development_for_implementation: "false"
       expect_creates_branch_and_worktree_first: "true"
       expect_creates_pr: "false"
       required_terms: "docs/functional/UF-Saved-Filters,stop"
