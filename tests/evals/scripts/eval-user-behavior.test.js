@@ -132,6 +132,26 @@ test('linear-adjacent prompts fail when only reads are forbidden', () => {
   assert.match(result.errors.join('\n'), /must forbid writing Linear/);
 });
 
+test('linear-adjacent prompts fail when Linear facts are explicitly not supplied', () => {
+  const root = makeRepo({
+    'tests/evals/prompts/skill-creating-linear-issue.txt': [
+      'You are evaluating creating-linear-issue.',
+      'Do not read Linear, write Linear, contact Linear, or call Linear tools.',
+      'Required Linear facts are not supplied by the scenario.',
+      'Scenario:',
+      '{{scenario}}',
+    ].join('\n'),
+    'tests/evals/packages/creating-linear-issue/skill-creating-linear-issue.yaml': packageFixture(
+      'creating-linear-issue',
+    ),
+  });
+
+  const result = checkEvalUserBehavior(root);
+
+  assert.equal(result.ok, false);
+  assert.match(result.errors.join('\n'), /must state required Linear facts are supplied/);
+});
+
 test('non-user-behavior fixtures do not require failure_modes metadata', () => {
   const root = makeRepo({
     'tests/evals/prompts/skill-code-simplifier.txt': [

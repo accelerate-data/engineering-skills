@@ -30,10 +30,6 @@ function readText(filePath) {
   return fs.readFileSync(filePath, 'utf8');
 }
 
-function normalize(text) {
-  return text.toLowerCase().replace(/\s+/g, ' ');
-}
-
 function skillNameFromPrompt(promptPath) {
   return path.basename(promptPath, '.txt').replace(/^skill-/, '');
 }
@@ -42,9 +38,19 @@ function forbidsLinearAction(text, actionPattern) {
   return new RegExp(`do not[^.\\n]*(?:${actionPattern})`, 'i').test(text);
 }
 
-function checkLinearPrompt(relativePath, text, errors) {
-  const normalized = normalize(text);
+function statesLinearFactsAreFixtureSupplied(text) {
+  return text.split(/[.\n]/).some((sentence) => {
+    return (
+      /\brequired\s+linear\s+facts\b/i.test(sentence) &&
+      /\b(?:scenario|simulated\s+context)\b/i.test(sentence) &&
+      /\b(?:(?:are\s+)?(?:supplied|provided|present)|comes?\s+from)\b/i.test(sentence) &&
+      !/\b(?:not|never)\s+(?:supplied|provided|present|comes?\s+from|come\s+from)\b/i.test(sentence) &&
+      !/\b(?:do|does|are)\s+not\s+come\s+from\b/i.test(sentence)
+    );
+  });
+}
 
+function checkLinearPrompt(relativePath, text, errors) {
   if (!forbidsLinearAction(text, '(read|query|access|contact|call)\\s+linear|linear\\s+(reads|queries|access)')) {
     errors.push(`${relativePath} must forbid reading Linear.`);
   }
@@ -53,10 +59,7 @@ function checkLinearPrompt(relativePath, text, errors) {
     errors.push(`${relativePath} must forbid writing Linear.`);
   }
 
-  if (
-    !normalized.includes('required linear facts') ||
-    (!normalized.includes('scenario') && !normalized.includes('simulated context'))
-  ) {
+  if (!statesLinearFactsAreFixtureSupplied(text)) {
     errors.push(
       `${relativePath} must state required Linear facts are supplied by the scenario or simulated context.`,
     );
