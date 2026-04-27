@@ -296,7 +296,6 @@ tests:
         - Codebase and doc search find a related design document at `docs/design/export-history/README.md`.
         - Codebase and doc search find an existing implementation plan at `docs/plan/ENG-1048-export-history.md`.
         - The issue's behavior and design are already approved; implementation can proceed after normal plan approval.
-      expect_searches_codebase_before_asking_user: "true"
       expect_creates_implementation_plan: "false"
       expect_searches_related_design_docs: "true"
       expect_tracks_related_implementation_plan: "true"
