@@ -28,6 +28,8 @@ defaultTest:
 tests:
   - description: "happy path — authors new feature file with sibling Background and teardown"
     vars:
+      eval_type: user-behavior
+      failure_modes: "wrong-harness-root,overwrites-feature,missing-background,skips-category-confirmation"
       scenario: |-
         - E2E_HARNESS_ROOT is set to /home/user/e2e-test-harness.
         - The harness .env contains: DATABASE_PATH=/home/user/app/data/db.sqlite
@@ -43,6 +45,8 @@ tests:
 
   - description: "halt — DATABASE_PATH missing from .env and E2E_APP_SRC not set"
     vars:
+      eval_type: user-behavior
+      failure_modes: "wrong-harness-root,overwrites-feature,missing-background,skips-category-confirmation"
       scenario: |-
         - E2E_HARNESS_ROOT is not set. CWD is /home/user/e2e-test-harness which contains features/ and steps/.
         - The harness .env exists but has no DATABASE_PATH entry at all.
@@ -55,6 +59,8 @@ tests:
 
   - description: "overwrite guard — refuses to overwrite an existing feature file"
     vars:
+      eval_type: user-behavior
+      failure_modes: "wrong-harness-root,overwrites-feature,missing-background,skips-category-confirmation"
       scenario: |-
         - E2E_HARNESS_ROOT is set to /home/user/e2e-test-harness.
         - The harness .env contains: DATABASE_PATH=/home/user/app/data/db.sqlite
@@ -64,6 +70,8 @@ tests:
 
   - description: "new category — confirms with user before creating a brand-new feature directory"
     vars:
+      eval_type: user-behavior
+      failure_modes: "wrong-harness-root,overwrites-feature,missing-background,skips-category-confirmation"
       scenario: |-
         - E2E_HARNESS_ROOT is set to /home/user/e2e-test-harness.
         - The harness .env contains: DATABASE_PATH=/home/user/app/data/db.sqlite
@@ -74,6 +82,8 @@ tests:
 
   - description: "E2E_APP_SRC set — skips DATABASE_PATH gate and proceeds to author"
     vars:
+      eval_type: user-behavior
+      failure_modes: "wrong-harness-root,overwrites-feature,missing-background,skips-category-confirmation"
       scenario: |-
         - E2E_HARNESS_ROOT is set to /home/user/e2e-test-harness.
         - E2E_APP_SRC is set to /home/user/app.
@@ -89,6 +99,8 @@ tests:
 
   - description: "halt — E2E_APP_SRC set but unreadable"
     vars:
+      eval_type: user-behavior
+      failure_modes: "wrong-harness-root,overwrites-feature,missing-background,skips-category-confirmation"
       scenario: |-
         - E2E_HARNESS_ROOT is set to /home/user/e2e-test-harness.
         - E2E_APP_SRC is set to /home/user/missing-app, but that directory is not readable.
@@ -103,6 +115,8 @@ tests:
 
   - description: "skill-module awareness — checks skills/*.md before declaring a TOTP step missing"
     vars:
+      eval_type: user-behavior
+      failure_modes: "wrong-harness-root,overwrites-feature,missing-background,skips-category-confirmation"
       scenario: |-
         - E2E_HARNESS_ROOT is set to /home/user/e2e-test-harness.
         - The harness .env contains: DATABASE_PATH=/home/user/app/data/db.sqlite
@@ -119,6 +133,8 @@ tests:
 
   - description: "RUN_ID tagging — data literals carry {{RUN_ID}}, UI chrome does not"
     vars:
+      eval_type: user-behavior
+      failure_modes: "wrong-harness-root,overwrites-feature,missing-background,skips-category-confirmation"
       scenario: |-
         - E2E_HARNESS_ROOT is set to /home/user/e2e-test-harness.
         - The harness .env contains: DATABASE_PATH=/home/user/app/data/db.sqlite

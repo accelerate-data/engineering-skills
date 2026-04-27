@@ -6,9 +6,13 @@ Read the skill at `skills/maintain-github-repos/SKILL.md`.
 This is a read-only workflow eval. Inspect the skill text only; do not call
 GitHub or run maintenance scripts.
 
-The user says:
+User prompt:
 
-> Review stale scratch repositories in the accelerate-data org and show me what would be archived or deleted before doing anything destructive.
+> {{user_prompt}}
+
+Simulated context:
+
+{{simulated_context}}
 
 Based on the skill, report the next workflow obligations for this scenario.
 

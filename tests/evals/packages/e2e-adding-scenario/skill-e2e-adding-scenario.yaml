@@ -28,6 +28,8 @@ defaultTest:
 tests:
   - description: "happy path — E2E_HARNESS_ROOT set, appends scenario without emitting Feature heading"
     vars:
+      eval_type: user-behavior
+      failure_modes: "wrong-harness-root,overwrites-feature,invents-steps,skips-vocabulary-check"
       scenario: |-
         - E2E_HARNESS_ROOT is set to /home/user/e2e-test-harness.
         - The harness .env contains: DATABASE_PATH=/home/user/app/data/db.sqlite
@@ -44,6 +46,8 @@ tests:
 
   - description: "halt — DATABASE_PATH missing from .env and E2E_APP_SRC not set"
     vars:
+      eval_type: user-behavior
+      failure_modes: "wrong-harness-root,overwrites-feature,invents-steps,skips-vocabulary-check"
       scenario: |-
         - E2E_HARNESS_ROOT is not set. CWD is /home/user/e2e-test-harness which contains features/ and steps/.
         - The harness .env exists but DATABASE_PATH is commented out: # DATABASE_PATH=
@@ -56,6 +60,8 @@ tests:
 
   - description: "handoff — target feature file does not exist, route to authoring skill"
     vars:
+      eval_type: user-behavior
+      failure_modes: "wrong-harness-root,overwrites-feature,invents-steps,skips-vocabulary-check"
       scenario: |-
         - E2E_HARNESS_ROOT is set to /home/user/e2e-test-harness.
         - The harness .env contains: DATABASE_PATH=/home/user/app/data/db.sqlite
@@ -66,6 +72,8 @@ tests:
 
   - description: "vocabulary gap — emits MISSING STEP comment instead of inventing a step"
     vars:
+      eval_type: user-behavior
+      failure_modes: "wrong-harness-root,overwrites-feature,invents-steps,skips-vocabulary-check"
       scenario: |-
         - E2E_HARNESS_ROOT is set to /home/user/e2e-test-harness.
         - The harness .env contains: DATABASE_PATH=/home/user/app/data/db.sqlite
@@ -79,6 +87,8 @@ tests:
 
   - description: "E2E_APP_SRC set — skips DATABASE_PATH gate and proceeds to append"
     vars:
+      eval_type: user-behavior
+      failure_modes: "wrong-harness-root,overwrites-feature,invents-steps,skips-vocabulary-check"
       scenario: |-
         - E2E_HARNESS_ROOT is set to /home/user/e2e-test-harness.
         - E2E_APP_SRC is set to /home/user/app.
@@ -93,6 +103,8 @@ tests:
 
   - description: "halt — E2E_APP_SRC set but unreadable"
     vars:
+      eval_type: user-behavior
+      failure_modes: "wrong-harness-root,overwrites-feature,invents-steps,skips-vocabulary-check"
       scenario: |-
         - E2E_HARNESS_ROOT is set to /home/user/e2e-test-harness.
         - E2E_APP_SRC is set to /home/user/missing-app, but that directory is not readable.
@@ -106,6 +118,8 @@ tests:
 
   - description: "auto-discovery — DATABASE_PATH missing but one app root found without printing absolute path"
     vars:
+      eval_type: user-behavior
+      failure_modes: "wrong-harness-root,overwrites-feature,invents-steps,skips-vocabulary-check"
       scenario: |-
         - E2E_HARNESS_ROOT is set to /home/user/e2e-test-harness.
         - E2E_APP_SRC is not set.
@@ -120,6 +134,8 @@ tests:
 
   - description: "skill-module awareness — checks skills/*.md before declaring a step missing"
     vars:
+      eval_type: user-behavior
+      failure_modes: "wrong-harness-root,overwrites-feature,invents-steps,skips-vocabulary-check"
       scenario: |-
         - E2E_HARNESS_ROOT is set to /home/user/e2e-test-harness.
         - The harness .env contains: DATABASE_PATH=/home/user/app/data/db.sqlite
@@ -134,6 +150,8 @@ tests:
 
   - description: "RUN_ID tagging — data literals carry {{RUN_ID}}, UI chrome does not"
     vars:
+      eval_type: user-behavior
+      failure_modes: "wrong-harness-root,overwrites-feature,invents-steps,skips-vocabulary-check"
       scenario: |-
         - E2E_HARNESS_ROOT is set to /home/user/e2e-test-harness.
         - The harness .env contains: DATABASE_PATH=/home/user/app/data/db.sqlite
@@ -149,6 +167,8 @@ tests:
 
   - description: "guide-backed warning — MAPPINGS entry present, warns before appending"
     vars:
+      eval_type: user-behavior
+      failure_modes: "wrong-harness-root,overwrites-feature,invents-steps,skips-vocabulary-check"
       scenario: |-
         - E2E_HARNESS_ROOT is set to /home/user/e2e-test-harness.
         - The harness .env contains: DATABASE_PATH=/home/user/app/data/db.sqlite

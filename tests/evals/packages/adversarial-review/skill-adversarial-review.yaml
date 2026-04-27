@@ -28,6 +28,8 @@ defaultTest:
 tests:
   - description: "opposite model — uses CLI reviewers, not same-model delegation"
     vars:
+      eval_type: user-behavior
+      failure_modes: "same-model-review,serial-reviewers,missing-review-lenses,premature-synthesis"
       scenario: |-
         - The user says: "run adversarial review on this PR diff."
         - The lead agent is Codex.
@@ -39,6 +41,8 @@ tests:
 
   - description: "large diff — selects 3 lens reviewers and runs them in parallel"
     vars:
+      eval_type: user-behavior
+      failure_modes: "same-model-review,serial-reviewers,missing-review-lenses,premature-synthesis"
       scenario: |-
         - The diff changes 8 files and 420 lines.
         - The diff is large enough to need the full review treatment.
@@ -50,6 +54,8 @@ tests:
 
   - description: "synthesis — verifies outputs and renders judgment"
     vars:
+      eval_type: user-behavior
+      failure_modes: "same-model-review,serial-reviewers,missing-review-lenses,premature-synthesis"
       scenario: |-
         - One reviewer output is missing, and two reviewers produced overlapping medium findings.
         - The final answer must synthesize, deduplicate, and judge the findings.

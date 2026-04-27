@@ -28,6 +28,8 @@ defaultTest:
 tests:
   - description: "preconditions — validates tooling, auth, git checkout, and allowed repo"
     vars:
+      eval_type: user-behavior
+      failure_modes: "missing-preconditions,wrong-source-of-truth,implementation-level-spec,premature-closeout"
       scenario: |-
         - The user asks: "author a flow spec for intent-user-data-mart-build."
         - `gws` is missing, auth may be stale, and the current repo may be outside the allowed set.
@@ -36,6 +38,8 @@ tests:
 
   - description: "preconditions — verifies required cross-skill handoffs are available"
     vars:
+      eval_type: user-behavior
+      failure_modes: "missing-preconditions,wrong-source-of-truth,implementation-level-spec,premature-closeout"
       scenario: |-
         - The user asks: "author a flow spec for intent-user-data-mart-build."
         - `superpowers:brainstorming` is required for Phase 7.
@@ -46,6 +50,8 @@ tests:
 
   - description: "sheet lookup — canonical ID fetch avoids status and Sheet writes"
     vars:
+      eval_type: user-behavior
+      failure_modes: "missing-preconditions,wrong-source-of-truth,implementation-level-spec,premature-closeout"
       scenario: |-
         - The invocation includes canonical ID `intent-user-data-mart-build`.
         - The Sheet row exists and includes status in column H.
@@ -58,6 +64,8 @@ tests:
 
   - description: "missing id — asks for canonical ID and can infer child flow"
     vars:
+      eval_type: user-behavior
+      failure_modes: "missing-preconditions,wrong-source-of-truth,implementation-level-spec,premature-closeout"
       scenario: |-
         - The user says: "author a flow spec" without an ID.
         - Later they provide a child composite ID whose exact row is missing but whose parent prefix exists in the Sheet.
@@ -67,6 +75,8 @@ tests:
 
   - description: "paths — parent and child output locations are constrained"
     vars:
+      eval_type: user-behavior
+      failure_modes: "missing-preconditions,wrong-source-of-truth,implementation-level-spec,premature-closeout"
       scenario: |-
         - The user asks to author one parent flow and one child flow from their canonical IDs.
         - The repo already has the parent docs/functional directory shape.
@@ -78,6 +88,8 @@ tests:
 
   - description: "drafting — gathers behavioral context and keeps behavior altitude"
     vars:
+      eval_type: user-behavior
+      failure_modes: "missing-preconditions,wrong-source-of-truth,implementation-level-spec,premature-closeout"
       scenario: |-
         - The author provides a prior flow spec, a Linear issue, and implementation notes.
         - Some sources include UI labels, payload schemas, and copy.
@@ -91,6 +103,8 @@ tests:
 
   - description: "review and closeout — brainstorming, self-review, commit offer, no push"
     vars:
+      eval_type: user-behavior
+      failure_modes: "missing-preconditions,wrong-source-of-truth,implementation-level-spec,premature-closeout"
       scenario: |-
         - The scaffold is drafted.
         - Some placeholders and open questions remain.

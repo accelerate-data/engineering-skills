@@ -28,6 +28,8 @@ defaultTest:
 tests:
   - description: "happy path — DB step with dual dialect and RUN_ID example"
     vars:
+      eval_type: user-behavior
+      failure_modes: "cross-backend-step,duplicate-vocabulary,missing-run-id,overbroad-pattern"
       scenario: |-
         - E2E_HARNESS_ROOT is set to /home/user/e2e-test-harness.
         - The user says: "I need a step: 'the database should have a domain named {name} with status {status}'."
@@ -43,6 +45,8 @@ tests:
 
   - description: "cross-backend refusal — step mixes UI click and DB assertion"
     vars:
+      eval_type: user-behavior
+      failure_modes: "cross-backend-step,duplicate-vocabulary,missing-run-id,overbroad-pattern"
       scenario: |-
         - E2E_HARNESS_ROOT is set to /home/user/e2e-test-harness.
         - The user says: "Add a step that clicks the Delete button AND verifies the domain is removed from the database."
@@ -53,6 +57,8 @@ tests:
 
   - description: "CWD fallback — E2E_HARNESS_ROOT not set, CWD is the harness"
     vars:
+      eval_type: user-behavior
+      failure_modes: "cross-backend-step,duplicate-vocabulary,missing-run-id,overbroad-pattern"
       scenario: |-
         - E2E_HARNESS_ROOT is not set.
         - CWD is /home/user/e2e-test-harness and it contains features/ and steps/ directories.
@@ -66,6 +72,8 @@ tests:
 
   - description: "skill-module routing — complex TOTP logic goes to skills/ module not inline recipe"
     vars:
+      eval_type: user-behavior
+      failure_modes: "cross-backend-step,duplicate-vocabulary,missing-run-id,overbroad-pattern"
       scenario: |-
         - E2E_HARNESS_ROOT is set to /home/user/e2e-test-harness.
         - The user says: "Add a step: 'I log in using TOTP two-factor authentication with secret {secret}'."
@@ -78,6 +86,8 @@ tests:
 
   - description: "near-duplicate refusal — existing pattern covers same semantics, no synonym added"
     vars:
+      eval_type: user-behavior
+      failure_modes: "cross-backend-step,duplicate-vocabulary,missing-run-id,overbroad-pattern"
       scenario: |-
         - E2E_HARNESS_ROOT is set to /home/user/e2e-test-harness.
         - The user says: "Add a step: 'the database should contain a domain with name {name}'."
@@ -89,6 +99,8 @@ tests:
 
   - description: "narrowness check — one-feature-only pattern triggers ask-first before adding"
     vars:
+      eval_type: user-behavior
+      failure_modes: "cross-backend-step,duplicate-vocabulary,missing-run-id,overbroad-pattern"
       scenario: |-
         - E2E_HARNESS_ROOT is set to /home/user/e2e-test-harness.
         - The user says: "Add a step: 'the Notifications panel digest interval should be set to Weekly'."

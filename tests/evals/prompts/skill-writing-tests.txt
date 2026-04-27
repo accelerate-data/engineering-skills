@@ -1,10 +1,21 @@
 You are evaluating the `writing-tests` workflow for a realistic test-quality
 request.
 
-Read `skills/writing-tests/SKILL.md` and any directly referenced materials
-needed for this scenario.
+Parser contract: output only the final JSON object. Any analysis, preface,
+heading, markdown, or text before the opening `{` fails the eval.
+Do not think aloud. Do not trace the workflow. Do not explain field choices.
+Emit only the JSON object. Your first character must be `{`. Never start with
+"Now I have", "Let me analyze", bullets, headings, or a code fence.
+If you need to reason, do it silently. Do not enumerate fields in prose.
+
+Read only the repository-local `skills/writing-tests/SKILL.md` and any
+repository-local directly referenced materials needed for this scenario. Do not
+read `~/.agents`, home-directory skill installs, or any external skill
+installation.
 
 This is a read-only workflow eval. Do not edit files or run test commands.
+Treat named skills described as unavailable in the scenario as unavailable for
+that scenario.
 
 Scenario:
 
@@ -13,7 +24,12 @@ Scenario:
 Based on the skill, report the next workflow obligations for this scenario. Do
 not mark something true only because the skill supports it in another scenario.
 
-Return JSON only with this shape:
+Field meaning: `returns_to_tdd_for_green` means that after the expected RED
+test is written, GREEN/REFACTOR belongs to the TDD workflow rather than the
+writing-tests workflow stopping as a post-feature red failure.
+
+Return JSON only with this shape. The first character must be `{` and the last
+character must be `}`:
 
 ```json
 {
@@ -81,3 +97,6 @@ Return JSON only with this shape:
   "notes": "string"
 }
 ```
+
+Respond now with only the JSON object. No prose. No markdown. First character:
+`{`
