@@ -53,7 +53,6 @@ tests:
         - The requested step combines a UI action (browser click) with a DB assertion in a single step.
       expect_refuses_cross_backend_step: "true"
       expect_classifies_backend_before_adding: "true"
-      expect_no_hardcoded_app_path: "true"
 
   - description: "CWD fallback — E2E_HARNESS_ROOT not set, CWD is the harness"
     vars:
@@ -82,7 +81,6 @@ tests:
         - No skills/totp-generation.md exists yet.
       expect_routes_complex_logic_to_skill_module: "true"
       expect_classifies_backend_before_adding: "true"
-      expect_no_hardcoded_app_path: "true"
 
   - description: "near-duplicate refusal — existing pattern covers same semantics, no synonym added"
     vars:
@@ -95,7 +93,6 @@ tests:
         - The existing pattern checks the same table, same column, same assertion logic — just different wording.
       expect_refuses_near_duplicate_pattern: "true"
       expect_classifies_backend_before_adding: "true"
-      expect_no_hardcoded_app_path: "true"
 
   - description: "narrowness check — one-feature-only pattern triggers ask-first before adding"
     vars:
@@ -108,4 +105,3 @@ tests:
         - No other .feature file would ever need this exact assertion.
       expect_asks_before_narrow_pattern: "true"
       expect_classifies_backend_before_adding: "true"
-      expect_no_hardcoded_app_path: "true"

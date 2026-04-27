@@ -10,6 +10,11 @@ Scenario:
 
 Based on the skill, report the next workflow obligations for this scenario. Do
 not mark something true only because the skill supports it in another scenario.
+Each boolean means "the agent must do this for the simulated scenario above."
+Use `false` when the scenario does not trigger that obligation, even if the
+skill would require it in a different scenario.
+
+Return raw JSON only. Do not wrap the answer in Markdown fences.
 
 Return JSON only with this shape:
 

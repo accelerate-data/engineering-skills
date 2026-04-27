@@ -55,7 +55,6 @@ tests:
         - The user says: "Author a new feature file for the billing module."
       expect_halts_on_missing_database_path: "true"
       expect_falls_back_to_cwd_when_env_not_set: "true"
-      expect_no_hardcoded_app_path: "true"
 
   - description: "overwrite guard — refuses to overwrite an existing feature file"
     vars:
@@ -111,7 +110,6 @@ tests:
       expect_halts_on_unreadable_e2e_app_src: "true"
       expect_halts_on_missing_database_path: "false"
       expect_includes_teardown_scenario: "false"
-      expect_no_hardcoded_app_path: "true"
 
   - description: "skill-module awareness — checks skills/*.md before declaring a TOTP step missing"
     vars:

@@ -535,7 +535,7 @@ git commit -m "Migrate Linear workflow evals to user behavior fixtures"
 - Modify: `tests/evals/packages/writing-tests/skill-writing-tests.yaml`
 - Modify corresponding prompt files under `tests/evals/prompts/`
 
-- [ ] **Step 1: Add `eval_type` and `failure_modes` metadata**
+- [x] **Step 1: Add `eval_type` and `failure_modes` metadata**
 
 Classify each existing case as `user-behavior` or `contract-oracle`.
 
@@ -544,7 +544,7 @@ eval_type: user-behavior
 failure_modes: "acts-before-reading-local-context,premature-success-claim"
 ```
 
-- [ ] **Step 2: Add at least two user-behavior cases for narrow packages**
+- [x] **Step 2: Add at least two user-behavior cases for narrow packages**
 
 Add coverage where the design identified gaps:
 
@@ -552,7 +552,7 @@ Add coverage where the design identified gaps:
 - `closing-linear-issue`: add a dirty worktree and missing merge evidence scenario.
 - `explaining-code`: add a terse user question and a confused-code-reader scenario.
 
-- [ ] **Step 3: Run targeted evals by package group**
+- [x] **Step 3: Run targeted evals by package group**
 
 Run:
 
@@ -571,12 +571,32 @@ npm run eval:e2e-regenerating-from-guide
 
 Expected: PASS for each package.
 
-- [ ] **Step 4: Commit**
+Result:
+
+- `npm run eval:code-simplifier`: PASS 11/11, `eval-Cw1-2026-04-26T23:44:40`
+- `npm run eval:writing-tests`: PASS 21/21, `eval-d1X-2026-04-27T01:16:53`
+- `npm run eval:adversarial-review`: PASS 3/3, `eval-3z3-2026-04-27T01:25:34`
+- `npm run eval:authoring-flow-spec`: PASS 7/7, `eval-p6A-2026-04-27T01:26:06`
+- `npm run eval:explaining-code`: PASS 4/4, `eval-WWV-2026-04-26T23:42:05`
+- `npm run eval:maintain-github-repos`: PASS 2/2, `eval-20c-2026-04-26T23:41:33`
+- `npm run eval:e2e-adding-scenario`: PASS 10/10, `eval-3rh-2026-04-27T01:32:50`
+- `npm run eval:e2e-authoring-feature-file`: PASS 8/8, `eval-SGu-2026-04-27T01:37:49`
+- `npm run eval:e2e-extending-step-vocabulary`: PASS 6/6, `eval-Dnu-2026-04-27T01:42:22`
+- `npm run eval:e2e-regenerating-from-guide`: PASS 9/9, `eval-WTA-2026-04-27T01:43:26`
+- YAML parse for 10 changed packages: PASS
+- `npm run check:eval-user-behavior`: PASS
+- `git diff --check`: PASS
+
+- [x] **Step 4: Commit**
 
 ```bash
 git add tests/evals/packages tests/evals/prompts tests/evals/assertions
 git commit -m "Migrate support skill evals to user behavior metadata"
 ```
+
+Result: committed package metadata and support prompt migration as `408ab38`.
+Follow-up e2e prompt and scenario-local expectation fixes remain in the final
+verification commit.
 
 ## Task 7: Final Verification and Documentation
 

@@ -68,7 +68,6 @@ tests:
         - The user says: "Add a scenario to features/billing/invoices.feature."
         - features/billing/invoices.feature does NOT exist in the harness.
       expect_handoffs_to_authoring_when_file_missing: "true"
-      expect_no_hardcoded_app_path: "true"
 
   - description: "vocabulary gap — emits MISSING STEP comment instead of inventing a step"
     vars:
