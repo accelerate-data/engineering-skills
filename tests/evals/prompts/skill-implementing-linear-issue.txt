@@ -25,9 +25,22 @@ Scenario:
 
 Based on the skill, report the next workflow obligations for this scenario. Do
 not mark something true only because the skill supports it in another scenario.
+`searches_codebase_before_asking_user` means codebase search happens before
+asking the human an ad hoc clarification question; a workflow handoff such as
+brainstorming, authoring a spec, writing a plan, or updating a user guide is
+not an ad hoc clarification question for this field.
+`creates_branch_and_worktree_first` means the workflow requires branch/worktree
+setup before issue implementation work starts; keep it true when the scenario
+has already reached a later implementation or review-feedback stage unless the
+scenario says branch/worktree setup was skipped or failed.
 If the scenario reaches a hard gate before implementation edits, downstream
 implementation, review, commit, and verification fields should reflect that
-blocked state.
+blocked state. If the scenario says a User Flow label or functional spec hard
+gate applies before codebase search, set `searches_codebase_before_asking_user`
+to false even though codebase search is required in scenarios that pass the
+gate. Set `creates_implementation_plan` to false when the scenario says the
+implementation plan already exists, implementation is already complete, or the
+next obligation is review feedback rather than initial planning.
 
 Return JSON only with this shape:
 

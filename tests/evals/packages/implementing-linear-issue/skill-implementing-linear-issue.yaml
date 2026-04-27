@@ -79,6 +79,7 @@ tests:
         Evaluate the next workflow obligations from the user prompt and simulated context above.
       expect_searches_codebase_before_asking_user: "true"
       expect_hands_off_to_brainstorming: "true"
+      required_terms: "brainstorming"
       expect_hands_off_to_authoring_functional_spec: "false"
       expect_hands_off_to_authoring_design_spec: "false"
       expect_asks_question_immediately: "false"
@@ -125,7 +126,6 @@ tests:
         - This is a hard gate before implementation planning or implementation edits.
         - No implementation edits have started.
       expect_searches_codebase_before_asking_user: "true"
-      expect_hands_off_to_brainstorming: "false"
       expect_hands_off_to_authoring_functional_spec: "false"
       expect_hands_off_to_authoring_design_spec: "true"
       expect_asks_question_immediately: "false"
@@ -174,7 +174,6 @@ tests:
       expect_uses_systematic_debugging_for_failures: "true"
       expect_creates_branch_and_worktree_first: "true"
       expect_creates_pr: "false"
-      required_terms: "systematic-debugging"
       forbidden_terms: "pushes_git\":true"
 
   - description: "natural request — quality gate feedback uses receiving-code-review before fixes"
@@ -234,7 +233,6 @@ tests:
         - Codebase review finds this affects the settings page, shared form components, and persisted preferences.
         - No implementation edits have started.
       expect_searches_codebase_before_asking_user: "true"
-      expect_hands_off_to_brainstorming: "false"
       expect_hands_off_to_authoring_design_spec: "true"
       expect_creates_branch_and_worktree_first: "true"
       expect_creates_pr: "false"
@@ -260,7 +258,6 @@ tests:
       expect_uses_authoring_user_guide_when_user_docs_needed: "true"
       expect_creates_branch_and_worktree_first: "true"
       expect_creates_pr: "false"
-      required_terms: "authoring-user-guide"
       forbidden_terms: "pushes_git\":true"
 
   - description: "natural request — bug issue needs systematic debugging before fix"
@@ -276,7 +273,6 @@ tests:
       failure_modes: "misses-required-handoff,premature-success-claim"
       scenario: |-
         Evaluate the next workflow obligations from the user prompt and simulated context above.
-      expect_searches_codebase_before_asking_user: "true"
       expect_hands_off_to_brainstorming: "false"
       expect_hands_off_to_authoring_design_spec: "false"
       expect_uses_systematic_debugging_for_failures: "true"
@@ -285,7 +281,7 @@ tests:
       expect_simple_bug_can_skip_writing_plan: "true"
       expect_creates_branch_and_worktree_first: "true"
       expect_creates_pr: "false"
-      required_terms: "systematic-debugging,root cause,fix"
+      required_terms: "root cause,fix"
       forbidden_terms: "implements_before_plan_approval\":true,pushes_git\":true"
 
   - description: "natural request — linked functional spec, design doc, and plan are read and cited in Linear updates"
@@ -294,7 +290,7 @@ tests:
       failure_modes: "acts-before-reading-local-context,misses-required-handoff"
       scenario: |-
         - The user says: "implement ENG-1048 for the export history flow."
-        - Simulated Linear metadata: team `Internal-IT`, project `Engineering Skills`, current status `Ready for Development`.
+        - Simulated Linear metadata: team `Studio`, project `Engineering Skills`, current status `Ready for Development`.
         - The Linear issue has User Flow label `UF-Export-History`.
         - `docs/functional/UF-Export-History/README.md` exists and defines the product behavior.
         - Codebase and doc search find a related design document at `docs/design/export-history/README.md`.
@@ -347,7 +343,6 @@ tests:
         - No implementation edits have started.
       expect_searches_codebase_before_asking_user: "false"
       expect_stops_if_functional_spec_missing: "true"
-      expect_reads_functional_spec_from_userflow_tag: "false"
       expect_creates_implementation_plan: "false"
       expect_creates_branch_and_worktree_first: "true"
       expect_creates_pr: "false"

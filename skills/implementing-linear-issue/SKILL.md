@@ -25,7 +25,7 @@ Implement an existing Linear issue, but stop before PR creation. This skill owns
 | 3 | Read the Linear issue, and for Studio, Roadmap, and Utilities issues require a User Flow label plus matching `docs/functional/<User Flow label>/` folder |
 | 4 | Read the functional spec, search the codebase, find related design docs and implementation plans |
 | 5 | Apply pre-implementation handoffs from `references/discovery-and-routing.md` |
-| 6 | Hand off to `superpowers:brainstorming` when real options or unresolved forks remain |
+| 6 | Hand off to `superpowers:brainstorming` when the user asks to think, review, brainstorm, compare options, or when real options or unresolved forks remain |
 | 7 | For bugs, use `superpowers:systematic-debugging`, show root cause and proposed fix, then proceed only after confirmation |
 | 8 | Use `superpowers:writing-plans` for non-bug implementation, complex bug fixes, multi-module changes, refactors, or durable design work |
 | 9 | Implement using `references/implementation-quality.md`; use `superpowers:test-driven-development` where the slice needs test-first behavior coverage |

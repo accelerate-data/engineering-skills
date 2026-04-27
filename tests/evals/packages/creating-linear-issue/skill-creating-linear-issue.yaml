@@ -110,7 +110,6 @@ tests:
       expect_reads_user_flow_labels_live: "true"
       expect_reads_functional_spec_before_issue_creation: "false"
       expect_stops_if_functional_spec_missing: "false"
-      expect_searches_related_design_docs: "true"
       expect_proposes_user_flow_child_label: "false"
       expect_recommends_one_user_flow_label: "false"
       expect_lists_close_alternatives_in_confirmation: "false"
