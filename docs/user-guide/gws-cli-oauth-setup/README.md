@@ -7,6 +7,8 @@ Workspace CLI (`gws`) with approved corporate OAuth credentials.
 
 This setup bypasses automated credential generation and points every local CLI
 install at the same corporate `client_id` and `client_secret`.
+After setup, coding agents such as Claude Code and Codex can call `gws` from
+the engineer's local environment without separate agent-specific credentials.
 
 ## Prerequisites
 
@@ -62,7 +64,7 @@ After configuring credentials, run the login command with only the services the
 team needs:
 
 ```sh
-gws auth login --scopes drive,gmail,sheets
+gws auth login --services drive,gmail,sheets
 ```
 
 Keeping the requested scopes narrow is especially important while the corporate
@@ -74,6 +76,12 @@ account, and approve the requested permissions.
 If Google shows an unverified app warning, choose **Advanced**, then continue to
 the app. This warning is expected when the corporate OAuth app has not completed
 Google verification.
+
+Verify the login before using `gws` from a coding agent:
+
+```sh
+gws auth status
+```
 
 ## Troubleshooting
 
