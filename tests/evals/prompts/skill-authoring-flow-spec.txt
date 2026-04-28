@@ -1,3 +1,51 @@
+{% if user_message %}
+You are an agent responding to a user message mid-conversation. Choose the next
+skill using only the available skill descriptions, not AGENTS.md or CLAUDE.md
+routing rules.
+
+Available skills and their descriptions:
+
+- authoring-flow-spec: Use when the user asks to write, draft, author, create,
+  update, or review a behavior-focused user flow, flow spec, functional spec,
+  PRD, product requirements doc, journey map, or canonical flow specification.
+  Do NOT invoke for implementation plans, design specs, or PRDs with market
+  positioning — those are downstream artifacts that link back to the flow
+  spec, not the flow spec itself.
+- brainstorming: Explore intent, requirements, and design before creative work
+  such as creating features, building components, adding functionality, or
+  modifying behavior.
+- creating-linear-issue: Use when the user asks to create, file, log, open,
+  draft, refine, decompose, or turn a request, bug, spike, or follow-up into a
+  Linear issue or Linear ticket before work continues.
+- none: No skill matches the user message.
+
+Prior conversation context:
+
+- You were running an unrelated workflow when this message arrived.
+
+The user now says:
+"{{user_message}}"
+
+Analyze which skill should be triggered next, and whether the current workflow
+should be paused to handle the embedded request.
+
+This routing branch is classification-only. Return JSON only with this shape:
+
+{
+  "detected_skill": "authoring-flow-spec | brainstorming | creating-linear-issue | none",
+  "trigger_found_in_message": <bool>,
+  "would_pause_current_flow": <bool>,
+  "reason": "string"
+}
+
+Use exactly one of these string values for detected_skill: "authoring-flow-spec", "brainstorming", "creating-linear-issue", or "none".
+
+Do not include commentary, markdown fences, refusal text, or prefaces before or
+after the JSON object. The first character of your response must be `{` and the
+last character must be `}`. Output the JSON object as raw JSON — do not wrap it
+in a string, and do not escape internal quotes. Use `"key": value` directly,
+never `\"key\": value`.
+{% else %}
 You are evaluating the `authoring-flow-spec` workflow for a realistic
 functional-spec authoring request.
 
@@ -29,20 +77,66 @@ Return JSON only with this shape:
   "uses_child_longest_prefix_inference": <bool>,
   "aborts_when_no_row_or_parent": <bool>,
   "verifies_repo_alignment": <bool>,
+  "resolves_target_repos_from_sheet_column_c": <bool>,
+  "caches_repo_set_for_invocation": <bool>,
+  "compares_repo_names_case_insensitive_trimmed": <bool>,
+  "aborts_on_empty_sheet_repo_set": <bool>,
+  "abort_message_lists_dynamic_repo_set": <bool>,
+  "does_not_hardcode_repo_whitelist": <bool>,
   "writes_parent_readme_path": <bool>,
   "writes_child_numbered_path": <bool>,
   "requires_parent_readme_and_subflow": <bool>,
   "asks_update_or_abort_for_existing_spec": <bool>,
+  "update_mode_preserves_closed_sections": <bool>,
+  "update_mode_reruns_brainstorming_on_open_sections": <bool>,
+  "update_mode_bumps_last_reviewed_to_today": <bool>,
   "asks_for_reference_material": <bool>,
   "digests_behavioral_signals_only": <bool>,
   "avoids_verbatim_copying": <bool>,
   "loads_template_and_writing_guidance": <bool>,
   "emits_required_frontmatter": <bool>,
   "keeps_behavior_altitude": <bool>,
+  "child_path_NN_zero_padded_one_indexed": <bool>,
+  "parent_frontmatter_has_empty_sub_flows": <bool>,
+  "child_frontmatter_has_parent_field": <bool>,
+  "standalone_frontmatter_omits_subflows_and_parent": <bool>,
+  "last_reviewed_set_to_today": <bool>,
   "invokes_brainstorming": <bool>,
+  "brainstorming_invoked_with_draft_path_context": <bool>,
+  "waits_for_brainstorming_return_before_self_review": <bool>,
+  "phase_7_runs_after_phase_6_scaffold": <bool>,
+  "invokes_verification_before_completion": <bool>,
   "self_reviews_before_completion": <bool>,
   "refuses_downstream_artifact": <bool>,
+  "redirects_downstream_artifact_request_with_refusal_text": <bool>,
+  "refuses_design_spec_request": <bool>,
+  "refuses_implementation_plan_request": <bool>,
+  "refuses_prd_market_positioning_request": <bool>,
+  "prefers_open_question_over_invention_at_altitude_line": <bool>,
+  "hands_off_to_raising_linear_pr_on_pr_request": <bool>,
   "offers_commit_without_push": <bool>,
+  "commit_message_uses_canonical_id": <bool>,
+  "commit_message_uses_docs_functional_prefix": <bool>,
+  "phase_0_runs_before_sheet_calls": <bool>,
+  "phase_5_runs_before_phase_6_drafting": <bool>,
+  "phase_8_self_review_is_single_pass": <bool>,
+  "phase_9_write_runs_after_phase_8_self_review": <bool>,
+  "child_authoring_blocks_when_parent_readme_missing": <bool>,
+  "child_authoring_blocks_when_not_in_parent_subflows": <bool>,
+  "aborts_on_missing_gws_with_install_guidance": <bool>,
+  "aborts_on_stale_gws_auth_with_relogin_message": <bool>,
+  "aborts_when_outside_git_worktree": <bool>,
+  "aborts_on_phase_3_repo_mismatch_with_redirect": <bool>,
+  "allows_design_tagged_open_questions_to_remain": <bool>,
+  "requires_product_tagged_open_questions_to_resolve_or_have_path": <bool>,
+  "does_not_silently_strip_open_questions_in_self_review": <bool>,
   "notes": "string"
 }
 ```
+
+Do not include commentary, markdown fences, refusal text, or prefaces before or
+after the JSON object. The first character of your response must be `{` and the
+last character must be `}`. Output the JSON object as raw JSON — do not wrap it
+in a string, and do not escape internal quotes. Use `"key": value` directly,
+never `\"key\": value`.
+{% endif %}

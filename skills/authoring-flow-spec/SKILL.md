@@ -3,7 +3,10 @@ name: authoring-flow-spec
 description: >-
   Use when the user asks to write, draft, author, create, update, or review a
   behavior-focused user flow, flow spec, functional spec, PRD, product
-  requirements doc, journey map, or canonical flow specification.
+  requirements doc, journey map, or canonical flow specification. Do NOT
+  invoke for implementation plans, design specs, or PRDs with market
+  positioning — those are downstream artifacts that link back to the flow
+  spec, not the flow spec itself.
 version: 0.1.0
 ---
 
@@ -27,7 +30,7 @@ If the user asks for any of the above, redirect: the flow spec is a prerequisite
 Before invoking the skill, confirm:
 
 - `gws` CLI is installed and logged in (`gws auth status` exits zero).
-- Current working directory is inside a git checkout of one of the four target repos: `studio`, `skill-builder`, `domain-cicd`, `migration-utility`.
+- Current working directory is inside a git checkout of one of the target repos listed in column C of the User-Flows-Details Sheet. The skill resolves this list at runtime per `references/sheet-interop.md` §4 — there is no hardcoded list.
 - The flow's canonical ID exists as a row in the User-Flows-Details Sheet (or the author has scheduled to add it per `vd-specs-product-architecture/.claude/rules/user-flows-sheet-sync.md`).
 
 ## Workflow
@@ -40,7 +43,16 @@ Before invoking the skill, confirm:
    > Run `gws auth login` first, then retry.
 
 3. Verify `git rev-parse --is-inside-work-tree` exits zero.
-4. Parse `git remote get-url origin` to extract the repo name (everything after the last `/`, stripping `.git`). Must match one of `{studio, skill-builder, domain-cicd, migration-utility}`. Otherwise abort with the four legitimate repo names listed.
+4. Parse `git remote get-url origin` to extract the repo name (everything after the last `/`, stripping `.git`). Run the resolver from `references/sheet-interop.md` §4 to fetch the unique non-empty values in Sheet column C; cache that set for the rest of the invocation (do not re-fetch in Phase 3). Trim and case-fold both sides before comparing. The Sheet value's original casing is preserved for any user-facing message.
+
+   - If the resolver returns zero values, abort with:
+
+     > Sheet column C is empty or has drifted. Verify the User-Flows-Details schema before retrying.
+
+   - If the current repo is not in the resolved set, abort with:
+
+     > Current repo `<current-repo>` is not listed in Sheet column C. Legitimate options (from the Sheet): `<comma-separated-resolved-list>`. Re-run from one of those, or add a row to the Sheet first.
+
 5. Confirm the required cross-skill handoffs are available through the runtime's skill/tool registry before drafting:
 
    - `superpowers:brainstorming`
@@ -84,8 +96,7 @@ If no parent prefix matches, abort with:
 
 ### Phase 3 — Verify repo alignment
 
-Compare the current repo name from Phase 0 to the Sheet's column C (for a parent/standalone) or the parent's column C (for a child). If they differ,
-abort:
+Compare the current repo name from Phase 0 to the Sheet's column C (for a parent/standalone) or the parent's column C (for a child). Use the cached repo set from Phase 0 — do not re-fetch. Compare trimmed and case-folded, consistent with Phase 0. If they differ, abort:
 
 > You are in `<current-repo>` but flow `<id>` targets `<sheet-repo>`. Re-run
 > this skill from the correct repo.
@@ -212,7 +223,7 @@ The skill refuses the following, citing `references/flow-spec-template.md`:
 - Specifying event names, payload schemas, label strings, or UI details.
 - Writing to any path other than `docs/functional/<canonical-id>/README.md`
   or `NN-<child-slug>.md`.
-- Running outside the four target repos.
+- Running outside any repo listed in Sheet column C of the User-Flows-Details Sheet (the legitimate set is resolved at runtime — there is no hardcoded whitelist in this skill).
 - Writing to any Sheet cell.
 
 ## Cross-skill handoffs
@@ -228,7 +239,7 @@ The skill refuses the following, citing `references/flow-spec-template.md`:
 
 - `references/flow-spec-template.md` — canonical template, folder-per-ID layout. Loaded in Phase 6 (scaffold) and Phase 8 (self-review).
 - `references/flow-spec-template-rationalization.md` — rationale behind the template's structure. Human-oriented; maintainers only.
-- `references/sheet-interop.md` — `gws` command patterns for Phase 1 (candidate listing), Phase 2 (row fetch), and any Google Doc / Sheet fetches surfaced by Phase 5 (reference gathering).
+- `references/sheet-interop.md` — `gws` command patterns for Phase 0 §4 (the dynamic target-repo resolver, used by the precondition guard and reused by Phase 3 alignment), Phase 1 §2 (candidate listing), Phase 2 §1 (row fetch), and any Google Doc / Sheet fetches surfaced by Phase 5 (reference gathering).
 - `references/writing-the-draft.md` — altitude test, legitimate-cite classes, business-rules-vs-invariants distinction, events/observability kind-level rule.
 
 ## Out of scope

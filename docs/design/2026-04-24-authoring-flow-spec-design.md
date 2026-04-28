@@ -15,10 +15,12 @@ User-flow specifications in the Vibedata product architecture currently live at
 shifted that model:
 
 1. Session 19b2675d established a new home for flow specs: each flow's spec
-   now ships in its **target repo** — one of `studio`, `skill-builder`,
-   `domain-cicd`, `migration-utility` — at `docs/functional/<Canonical ID>/`.
-   The User-Flows-Details Sheet already added a `repo` column (C) to encode
-   that mapping.
+   now ships in its **target repo** at `docs/functional/<Canonical ID>/`.
+   The target repo is whichever value appears in column C (`repo`) of the
+   User-Flows-Details Sheet for that row — there is no hardcoded list of
+   target repos in the skill (the active set at the time of writing is
+   `studio`, `skill-builder`, `domain-cicd`, `migration-utility`, but Sheet
+   column C is canonical).
 2. The authoring template (`_flow-spec-template.md`) and its rationalization
    document are useful far beyond the architecture repo; they describe a
    discipline that every target repo now needs. Keeping them pinned inside
@@ -101,8 +103,8 @@ pre-rationalization template and have not been refactored).
          │  Skill is invoked from one of:              │
          ▼                                              │ Reads Sheet via gws
 ┌───────────────────────────────────────────────────────┤
-│  studio / skill-builder / domain-cicd / migration-    │
-│  utility   (one of four target repos)                  │
+│  Any repo whose name appears in Sheet column C        │
+│  (resolved at runtime; no hardcoded whitelist)        │
 │                                                        │
 │  Skill writes: docs/functional/<canonical-id>/         │
 │                README.md  (and NN-<child-slug>.md      │
@@ -216,9 +218,15 @@ version: 0.1.0
 - `gws auth status` confirms an active login. If expired/missing → abort with
   the exact re-auth command.
 - Inside a git repo (`git rev-parse --is-inside-work-tree`).
-- Parse repo name from `git remote get-url origin`; must match one of
-  `{studio, skill-builder, domain-cicd, migration-utility}`. Otherwise abort
-  with the four legitimate repos listed.
+- Parse repo name from `git remote get-url origin`. Run the dynamic
+  target-repo resolver from `skills/authoring-flow-spec/references/sheet-interop.md`
+  §4 to fetch the unique non-empty values from Sheet column C; cache the set
+  for the rest of the invocation (Phase 3 reuses it without re-fetching).
+  Compare trimmed and case-folded; preserve the original Sheet casing in any
+  user-facing message. If the resolver returns zero values, hard-abort
+  ("Sheet column C is empty or has drifted"). If the parsed repo is not in
+  the resolved set, abort and print the dynamic list as the legitimate
+  options.
 
 ### Phase 1 — Identify the canonical ID
 
@@ -252,8 +260,35 @@ version: 0.1.0
 
 - Compare the current repo name (from Phase 0) to the Sheet's column C (for a
   parent/standalone) or the parent's column C (for a child).
+- Reuse the cached repo set from Phase 0; do not re-fetch.
+- Compare trimmed and case-folded, consistent with Phase 0.
 - Mismatch → abort with the message *"You are in `<current>` but flow `<id>`
   targets `<sheet-repo>`. Re-run this skill from the correct repo."*
+
+### Sheet-driven repo set
+
+The skill treats Sheet column C as the single source of truth for which
+repos are legitimate authoring targets. The implementation contract:
+
+- **Resolver location.** The recipe is in
+  `skills/authoring-flow-spec/references/sheet-interop.md` §4.
+- **Cache scope.** The resolver is called exactly once per skill invocation
+  (Phase 0). The result is held in working memory and reused by Phase 3.
+- **Empty-Sheet behavior.** If the resolver returns zero values after
+  filtering (`#N/A`, blank, `pending …`), the skill hard-aborts. The same
+  Sheet is the source of truth for canonical-ID lookup, so proceeding makes
+  no sense.
+- **Comparison semantics.** Both Phase 0 and Phase 3 compare trimmed,
+  case-folded values. User-facing messages preserve the original Sheet
+  casing.
+- **No hardcoded whitelist.** Adding, renaming, or removing a target repo
+  is a Sheet edit only — no skill, command, reference, design, or plan
+  change is required.
+
+This subsection codifies the change captured in
+`docs/plan/2026-04-28-sheet-driven-target-repos.md`. It supersedes any
+narrative in this design that previously enumerated four specific repo
+names as the authoritative set.
 
 ### Phase 4 — Check for existing spec
 
@@ -478,8 +513,11 @@ New column L formula:
     ))
 ```
 
-Guards against `#N/A` or blank `repo` values (the domain-cicd flows are
-nascent and intentionally have `#N/A` today).
+Guards against `#N/A`, blank, or `pending …` `repo` values (some target
+repos may be nascent and intentionally have `#N/A` until a row is finalized).
+The same filter rules apply to the Phase 0 dynamic resolver in
+`references/sheet-interop.md` §4 — both Sheet-column-C consumers (per-row
+extraction and the Phase 0 unique-set resolver) honor identical filters.
 
 **`user-flows/CLAUDE.md`** — rule updates:
 
@@ -523,8 +561,9 @@ the correct path.
 
 **What it does:**
 
-1. Confirms `gws` is logged in and you are inside one of the four target
-   repos (`studio`, `skill-builder`, `domain-cicd`, `migration-utility`).
+1. Confirms `gws` is logged in and you are inside one of the target repos
+   listed in column C of the User-Flows-Details Sheet (resolved at runtime
+   per `references/sheet-interop.md` §4 — no hardcoded whitelist).
 2. Looks up the canonical ID in the Sheet for `repo`, `category`, `title`,
    and `persona`.
 3. Verifies the repo you are in matches the Sheet's `repo` column.
@@ -563,7 +602,7 @@ change, not a status or ownership change.
 
 Apply the new HYPERLINK formula to column L across all existing rows, using
 `gws sheets spreadsheets batchUpdate`. Verify the `#N/A` guard by spot-checking
-a `domain-cicd`-column row. No other columns change.
+a row whose column C currently holds `#N/A`. No other columns change.
 
 ---
 
@@ -689,7 +728,7 @@ All new `.md` files (SKILL.md, command, four references) must pass
 
 ## Success criteria
 
-1. A developer in any of the four target repos can run
+1. A developer in any repo listed in Sheet column C can run
    `/author-flow-spec <canonical-id>` and, within one brainstorming session,
    produce a committed `docs/functional/<id>/README.md` that passes the
    template's altitude test with no manual template lookups.

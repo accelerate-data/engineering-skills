@@ -26,15 +26,34 @@ defaultTest:
       value: file://../../assertions/check-authoring-flow-spec-contract.js
 
 tests:
-  - description: "preconditions — validates tooling, auth, git checkout, and allowed repo"
+  - description: "preconditions — validates tooling, auth, git checkout, and Sheet-driven allowed repo"
     vars:
       eval_type: user-behavior
       failure_modes: "missing-preconditions,wrong-source-of-truth,implementation-level-spec,premature-closeout"
       scenario: |-
         - The user asks: "author a flow spec for intent-user-data-mart-build."
         - `gws` is missing, auth may be stale, and the current repo may be outside the allowed set.
+        - The legitimate set of target repos is whatever appears in column C of the User-Flows-Details Sheet — there is no hardcoded whitelist.
       expect_checks_gws_auth_git_and_repo: "true"
       expect_aborts_outside_allowed_repos: "true"
+      expect_resolves_target_repos_from_sheet_column_c: "true"
+      expect_caches_repo_set_for_invocation: "true"
+      expect_compares_repo_names_case_insensitive_trimmed: "true"
+      expect_does_not_hardcode_repo_whitelist: "true"
+
+  - description: "preconditions — Sheet-driven repo resolver covers empty-Sheet abort and dynamic abort messaging"
+    vars:
+      eval_type: user-behavior
+      failure_modes: "missing-preconditions,wrong-source-of-truth,implementation-level-spec,premature-closeout"
+      scenario: |-
+        - Run A: the user is in a repo whose name does not appear in Sheet column C; the abort message must list the dynamic set fetched from the Sheet, not a static four-name list.
+        - Run B: Sheet column C is empty after filtering (every value is `#N/A`, blank, or starts with `pending`); the skill must hard-abort.
+        - Run C: Sheet column C contains `Studio   ` (trailing whitespace, mixed case) and the user is in a repo whose `git remote` reports `studio`; the skill must accept this as a match.
+      expect_aborts_on_empty_sheet_repo_set: "true"
+      expect_abort_message_lists_dynamic_repo_set: "true"
+      expect_compares_repo_names_case_insensitive_trimmed: "true"
+      expect_does_not_hardcode_repo_whitelist: "true"
+      expect_resolves_target_repos_from_sheet_column_c: "true"
 
   - description: "preconditions — verifies required cross-skill handoffs are available"
     vars:
@@ -113,3 +132,355 @@ tests:
       expect_self_reviews_before_completion: "true"
       expect_refuses_downstream_artifact: "true"
       expect_offers_commit_without_push: "true"
+
+  - description: "handoff — Phase 7 brainstorming invoked with draft path, after scaffold, awaiting return"
+    vars:
+      eval_type: user-behavior
+      failure_modes: "missing-required-handoff,wrong-phase-order,premature-closeout"
+      scenario: |-
+        - The scaffold for flow spec `intent-user-data-mart-build` has just been written to its
+          target path under `docs/functional/`.
+        - The skill is now mid-Phase 7; brainstorming has not yet been invoked.
+        - The skill must invoke `superpowers:brainstorming` with the draft file path as context
+          (not a generic, path-free prompt).
+        - The skill must not start Phase 8 (self-review) until `superpowers:brainstorming`
+          returns control.
+        - Brainstorming must not have been started before the scaffold was written (i.e.,
+          Phase 7 follows Phase 6, not the other way around).
+      expect_invokes_brainstorming: "true"
+      expect_brainstorming_invoked_with_draft_path_context: "true"
+      expect_waits_for_brainstorming_return_before_self_review: "true"
+      expect_phase_7_runs_after_phase_6_scaffold: "true"
+
+  - description: "handoff — verification-before-completion fires before claiming success"
+    vars:
+      eval_type: user-behavior
+      failure_modes: "premature-closeout,missing-required-handoff"
+      scenario: |-
+        - The flow spec for `intent-user-data-mart-build` is fully drafted, brainstormed
+          (Phase 7 complete), and self-reviewed (Phase 8 complete).
+        - The skill is about to tell the user the spec is complete and offer a commit.
+        - Before claiming completion the skill must invoke
+          `superpowers:verification-before-completion`; it may not surface the
+          "spec is complete" message or the commit offer until that handoff returns.
+      expect_invokes_verification_before_completion: "true"
+      expect_self_reviews_before_completion: "true"
+
+  - description: "handoff — PR request after spec lands routes to raising-linear-pr"
+    vars:
+      eval_type: user-behavior
+      failure_modes: "missing-required-handoff,wrong-skill-detected"
+      scenario: |-
+        - The flow spec for `intent-user-data-mart-build` was just written and committed.
+        - The user now says: "open a Linear PR for this."
+        - The skill must hand off to `engineering-skills:raising-linear-pr` to handle
+          the PR; it must not author the PR itself or produce PR content directly.
+      expect_hands_off_to_raising_linear_pr_on_pr_request: "true"
+      expect_offers_commit_without_push: "true"
+
+  - description: "handoff — downstream artifact requests are refused and redirected, not produced"
+    vars:
+      eval_type: user-behavior
+      failure_modes: "implementation-level-spec,wrong-source-of-truth"
+      scenario: |-
+        - The flow spec for `intent-user-data-mart-build` is mid-draft.
+        - The user asks three things in quick succession:
+          (a) "can you also write a design spec for this?"
+          (b) "generate the implementation plan while you're at it"
+          (c) "produce a PRD from what we have so far"
+        - The skill must refuse all three with explicit redirect language that points at
+          the flow spec as the prerequisite artifact.
+        - The skill must not begin producing any of those downstream artifacts.
+      expect_refuses_downstream_artifact: "true"
+      expect_redirects_downstream_artifact_request_with_refusal_text: "true"
+
+  - description: "process — phase ordering and child-precondition guarantees"
+    vars:
+      eval_type: user-behavior
+      failure_modes: "wrong-phase-order,missing-preconditions"
+      scenario: |-
+        - Scenario covers four ordering invariants and two child-flow abort paths:
+          (1) Phase 0 precondition checks (tooling, auth, git, repo alignment) run before
+              any `gws sheets` call is made.
+          (2) Phase 5 (context / reference-material gathering) runs before Phase 6
+              (scaffold drafting begins).
+          (3) Phase 8 self-review runs exactly once; the skill does not loop back through
+              self-review a second time.
+          (4) Phase 9 (file write) runs only after Phase 8 self-review has completed.
+          (5) When authoring a child flow, if the parent README does not exist at the
+              expected path, the skill aborts with an error rather than continuing.
+          (6) When authoring a child flow, if the child canonical ID does not appear in
+              the parent README's `sub-flows:` list, the skill aborts with an error
+              rather than continuing.
+      expect_phase_0_runs_before_sheet_calls: "true"
+      expect_phase_5_runs_before_phase_6_drafting: "true"
+      expect_phase_8_self_review_is_single_pass: "true"
+      expect_phase_9_write_runs_after_phase_8_self_review: "true"
+      expect_child_authoring_blocks_when_parent_readme_missing: "true"
+      expect_child_authoring_blocks_when_not_in_parent_subflows: "true"
+
+  - description: "frontmatter — parent vs child vs standalone shapes are distinct"
+    vars:
+      eval_type: user-behavior
+      failure_modes: "wrong-source-of-truth,implementation-level-spec"
+      scenario: |-
+        - Three sibling authoring runs against the same repo:
+          Run A: authoring a parent flow (`intent-data-mart-build`). The emitted frontmatter
+          must include an empty `sub-flows: []` list and must NOT include a `parent:` field.
+          Run B: authoring a child flow (`intent-data-mart-build-ingest`). The emitted
+          frontmatter must include `parent: intent-data-mart-build` and must NOT include a
+          `sub-flows:` field.
+          Run C: authoring a standalone flow (no parent, no children listed in the Sheet row).
+          The emitted frontmatter must include neither `sub-flows:` nor `parent:`.
+        - In all three runs the `last-reviewed` frontmatter field must be set to today's actual
+          date (e.g. 2026-04-28), not a placeholder like `YYYY-MM-DD` or `TBD`.
+      expect_parent_frontmatter_has_empty_sub_flows: "true"
+      expect_child_frontmatter_has_parent_field: "true"
+      expect_standalone_frontmatter_omits_subflows_and_parent: "true"
+      expect_last_reviewed_set_to_today: "true"
+
+  - description: "frontmatter — child path NN is zero-padded and 1-indexed by sub-flows position"
+    vars:
+      eval_type: user-behavior
+      failure_modes: "wrong-source-of-truth"
+      scenario: |-
+        - The parent flow `intent-data-mart-build` has a `sub-flows:` list with four entries:
+          [intent-data-mart-build-ingest, intent-data-mart-build-transform,
+           intent-data-mart-build-publish, intent-data-mart-build-monitor].
+        - Run A: user is authoring child `intent-data-mart-build-publish` (3rd position).
+          The output path must be `docs/functional/intent-data-mart-build/03-intent-data-mart-build-publish.md`
+          (zero-padded two-digit index, 1-indexed from the sub-flows list).
+        - Run B: a different parent has 10 sub-flows; user is authoring the 10th child.
+          The output path must use `10-` as the prefix (no leading zero needed beyond two digits).
+      expect_writes_child_numbered_path: "true"
+      expect_child_path_NN_zero_padded_one_indexed: "true"
+
+  - description: "altitude — refuses design spec, implementation plan, and PRD requests with explicit redirects"
+    vars:
+      eval_type: user-behavior
+      failure_modes: "implementation-level-spec,wrong-source-of-truth"
+      scenario: |-
+        - The flow spec for `intent-data-mart-build` is mid-draft (Phase 6 in progress).
+        - The user makes three consecutive requests:
+          (a) "Can you also write a design spec with mockups and copy for this flow?"
+          (b) "Generate the implementation plan with file paths and migration steps."
+          (c) "Produce a PRD with market positioning from what we have so far."
+        - Each request must be refused. The refusal must include explicit redirect language
+          that names the flow spec as the prerequisite artifact that must exist first, and
+          must not begin producing any of those downstream artifacts.
+        - The refusal for (a) must cite that design specs require a completed flow spec.
+        - The refusal for (b) must cite that implementation plans are out of scope here.
+        - The refusal for (c) must cite that PRD / market positioning is not authored by
+          this skill.
+      expect_refuses_downstream_artifact: "true"
+      expect_refuses_design_spec_request: "true"
+      expect_refuses_implementation_plan_request: "true"
+      expect_refuses_prd_market_positioning_request: "true"
+
+  - description: "altitude — prefers Open Question over invention at the altitude line"
+    vars:
+      eval_type: user-behavior
+      failure_modes: "implementation-level-spec,wrong-source-of-truth"
+      scenario: |-
+        - During Phase 5, a reference document contains a behavioral signal that is ambiguous:
+          it could be read as a behavioral guarantee ("the system notifies the user when
+          ingestion fails") or as an implementation detail ("uses a Kafka dead-letter queue
+          for failed events").
+        - The skill must not invent a confident behavioral statement from the ambiguous signal.
+        - Instead, the skill must encode the ambiguity as a tagged Open Question in the draft
+          (e.g. `[product] Is user notification on ingest failure a guaranteed behavior or an
+          implementation side-effect?`), keeping the spec at behavior altitude without guessing.
+      expect_keeps_behavior_altitude: "true"
+      expect_prefers_open_question_over_invention_at_altitude_line: "true"
+
+  - description: "abort paths — gws missing, stale auth, non-git worktree, Phase 3 repo mismatch"
+    vars:
+      eval_type: user-behavior
+      failure_modes: "missing-preconditions"
+      scenario: |-
+        - Four concurrent sub-runs, each triggering a distinct Phase 0 abort:
+          Run 1 (gws missing): `gws` is not present on PATH. The skill must abort and
+          provide install guidance (e.g. pointing to the gws installation docs or brew command).
+          Run 2 (stale auth): `gws` is present but `gws auth status` returns a non-zero exit
+          code. The skill must abort and tell the user to re-authenticate (`gws auth login`
+          or equivalent).
+          Run 3 (not a git worktree): the current working directory is not inside any git work
+          tree (`git rev-parse --git-dir` fails). The skill must abort with a message stating
+          that the skill must be run from within a git checkout.
+          Run 4 (Phase 3 repo mismatch): all tooling and auth pass, but Phase 3 alignment check
+          determines the current repo is `studio` while the Sheet row for the requested flow ID
+          lists target repos that include only `skill-builder`. The skill must abort and redirect
+          the user to switch to the correct repo.
+        - No run may proceed past Phase 0 when its abort condition is present.
+      expect_aborts_on_missing_gws_with_install_guidance: "true"
+      expect_aborts_on_stale_gws_auth_with_relogin_message: "true"
+      expect_aborts_when_outside_git_worktree: "true"
+      expect_aborts_on_phase_3_repo_mismatch_with_redirect: "true"
+
+  - description: "spec update mode — ask update/abort, preserve closed sections, re-brainstorm open ones, bump last-reviewed"
+    vars:
+      eval_type: user-behavior
+      failure_modes: "premature-closeout,implementation-level-spec"
+      scenario: |-
+        - The target file `docs/functional/intent-data-mart-build/README.md` already exists.
+        - The existing spec has a mix of populated sections (no placeholders, no open questions)
+          and sections with tagged Open Questions or placeholder text.
+        - When the skill detects the existing file, it must ask the user to choose between
+          "update" and "abort" before proceeding; it must not overwrite silently.
+        - If the user chooses "update":
+          (a) Sections without placeholders or open questions must be preserved exactly as-is.
+          (b) Only sections that contain placeholders or tagged Open Questions are eligible
+              for re-brainstorming and re-drafting.
+          (c) After update, the `last-reviewed` frontmatter field must be set to today's date
+              (not the previous date already in the file).
+      expect_asks_update_or_abort_for_existing_spec: "true"
+      expect_update_mode_preserves_closed_sections: "true"
+      expect_update_mode_reruns_brainstorming_on_open_sections: "true"
+      expect_update_mode_bumps_last_reviewed_to_today: "true"
+
+  - description: "commit handling — suggested message uses canonical ID and docs(functional) prefix"
+    vars:
+      eval_type: user-behavior
+      failure_modes: "premature-closeout"
+      scenario: |-
+        - The spec for flow `intent-data-mart-build` has been written to its target path.
+        - Phase 9 is complete; the skill offers a commit prompt and the user accepts with `y`.
+        - The suggested commit message must follow the conventional-commit form:
+          `docs(functional): author flow spec for intent-data-mart-build`
+          Specifically: the prefix must be `docs(functional)` (not `feat`, `chore`, or any
+          other prefix), and the body must reference the canonical ID `intent-data-mart-build`
+          (not the spec title, not the file path, not a paraphrase).
+        - The skill must NOT run `git push` after the commit — it stops at `git commit`.
+      expect_offers_commit_without_push: "true"
+      expect_commit_message_uses_canonical_id: "true"
+      expect_commit_message_uses_docs_functional_prefix: "true"
+
+  - description: "open-questions discipline — design-tagged may remain, product-tagged need resolution or path, no silent strips"
+    vars:
+      eval_type: user-behavior
+      failure_modes: "premature-closeout,implementation-level-spec"
+      scenario: |-
+        - At the end of Phase 8 self-review the draft contains three tagged Open Questions:
+          OQ-1: `[design] What visual treatment should the error state use?`
+                — a design-level question; acceptable to leave for the design phase.
+          OQ-2: `[product] Who owns the retry policy decision? Owner: PM-lead, due: 2026-05-01`
+                — a product question with a named owner and decision date; acceptable to leave.
+          OQ-3: `[product] Should the system support bulk ingestion?`
+                — a product question with no owner, no date, and no resolution path.
+        - OQ-1 and OQ-2 must be allowed to remain in the spec as-is after self-review.
+        - OQ-3 must either be resolved with the user during self-review or carry a specific
+          resolution path (owner + date) before the spec is written. The skill must not silently
+          drop it from the output.
+        - Under no circumstances may the skill silently strip an Open Question during self-review
+          or the write step.
+      expect_allows_design_tagged_open_questions_to_remain: "true"
+      expect_requires_product_tagged_open_questions_to_resolve_or_have_path: "true"
+      expect_does_not_silently_strip_open_questions_in_self_review: "true"
+
+  - description: "routing — author-flow-spec command with canonical ID"
+    vars:
+      eval_type: user-behavior
+      failure_modes: "wrong-skill-detected,routing-misfire"
+      user_message: "author a flow spec for intent-user-data-mart-build"
+      expected_detected_skill: "authoring-flow-spec"
+      expect_trigger_found_in_message: "true"
+      expect_would_pause_current_flow: "true"
+
+  - description: "routing — draft user flow for named feature"
+    vars:
+      eval_type: user-behavior
+      failure_modes: "wrong-skill-detected,routing-misfire"
+      user_message: "draft a user flow for the export-presets feature"
+      expected_detected_skill: "authoring-flow-spec"
+      expect_trigger_found_in_message: "true"
+      expect_would_pause_current_flow: "true"
+
+  - description: "routing — write a PRD"
+    vars:
+      eval_type: user-behavior
+      failure_modes: "wrong-skill-detected,routing-misfire"
+      user_message: "write a PRD for the new dashboard onboarding"
+      expected_detected_skill: "authoring-flow-spec"
+      expect_trigger_found_in_message: "true"
+      expect_would_pause_current_flow: "true"
+
+  - description: "routing — create a journey map"
+    vars:
+      eval_type: user-behavior
+      failure_modes: "wrong-skill-detected,routing-misfire"
+      user_message: "create a journey map for first-time logins"
+      expected_detected_skill: "authoring-flow-spec"
+      expect_trigger_found_in_message: "true"
+      expect_would_pause_current_flow: "true"
+
+  - description: "routing — functional spec for a handler"
+    vars:
+      eval_type: user-behavior
+      failure_modes: "wrong-skill-detected,routing-misfire"
+      user_message: "I need a functional spec for the retry handler"
+      expected_detected_skill: "authoring-flow-spec"
+      expect_trigger_found_in_message: "true"
+      expect_would_pause_current_flow: "true"
+
+  - description: "routing — review existing flow spec by path"
+    vars:
+      eval_type: user-behavior
+      failure_modes: "wrong-skill-detected,routing-misfire"
+      user_message: "review the flow spec at docs/functional/foo/README.md"
+      expected_detected_skill: "authoring-flow-spec"
+      expect_trigger_found_in_message: "true"
+      expect_would_pause_current_flow: "true"
+
+  - description: "routing — update canonical flow specification"
+    vars:
+      eval_type: user-behavior
+      failure_modes: "wrong-skill-detected,routing-misfire"
+      user_message: "update the canonical flow specification for intent-bar"
+      expected_detected_skill: "authoring-flow-spec"
+      expect_trigger_found_in_message: "true"
+      expect_would_pause_current_flow: "true"
+
+  - description: "routing — slash command invocation"
+    vars:
+      eval_type: user-behavior
+      failure_modes: "wrong-skill-detected,routing-misfire"
+      user_message: "/author-flow-spec intent-baz"
+      expected_detected_skill: "authoring-flow-spec"
+      expect_trigger_found_in_message: "true"
+      expect_would_pause_current_flow: "true"
+
+  - description: "routing — boundary: create linear issue wins over flow spec"
+    vars:
+      eval_type: user-behavior
+      failure_modes: "wrong-skill-detected,routing-misfire"
+      user_message: "create a Linear issue for the new dashboard onboarding"
+      expected_detected_skill: "creating-linear-issue"
+      expect_trigger_found_in_message: "true"
+      expect_would_pause_current_flow: "true"
+
+  - description: "routing — boundary: design request does not trigger flow spec"
+    vars:
+      eval_type: user-behavior
+      failure_modes: "wrong-skill-detected,routing-misfire"
+      user_message: "design the dashboard onboarding screen"
+      expected_detected_skill: "brainstorming"
+      expect_trigger_found_in_message: "true"
+      expect_would_pause_current_flow: "true"
+
+  - description: "routing — boundary: implementation plan does not trigger flow spec"
+    vars:
+      eval_type: user-behavior
+      failure_modes: "wrong-skill-detected,routing-misfire"
+      user_message: "write the implementation plan for intent-foo"
+      expected_detected_skill: "none"
+      expect_trigger_found_in_message: "false"
+      expect_would_pause_current_flow: "false"
+
+  - description: "routing — boundary: brainstorm request routes to brainstorming"
+    vars:
+      eval_type: user-behavior
+      failure_modes: "wrong-skill-detected,routing-misfire"
+      user_message: "brainstorm the dashboard onboarding feature"
+      expected_detected_skill: "brainstorming"
+      expect_trigger_found_in_message: "true"
+      expect_would_pause_current_flow: "true"

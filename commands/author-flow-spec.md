@@ -17,8 +17,9 @@ specification.
 
 Delegates to `Skill("authoring-flow-spec")`. The skill:
 
-1. Confirms `gws` is logged in and you are inside one of the four target repos
-   (`studio`, `skill-builder`, `domain-cicd`, `migration-utility`).
+1. Confirms `gws` is logged in and you are inside one of the target repos
+   listed in column C of the User-Flows-Details Sheet (resolved at runtime —
+   see the skill's `references/sheet-interop.md` §4).
 2. Looks up the canonical ID in the User-Flows-Details Sheet to resolve
    target `repo`, `category`, `title`, `persona`.
 3. Verifies the repo you are in matches the Sheet's `repo` column.
