@@ -27,17 +27,17 @@
 | `tests/evals/packages/raising-linear-pr/skill-raising-linear-pr.yaml` | Modify | 3 | Port provider config using the proven Phase 1 pattern |
 | `tests/evals/packages/closing-linear-issue/skill-closing-linear-issue.yaml` | Modify | 3 | Port provider config using the proven Phase 1 pattern |
 | `tests/evals/packages/maintain-github-repos/skill-maintain-github-repos.yaml` | Modify | 3 | Port provider config using the proven Phase 1 pattern |
-| `tests/evals/packages/create-feature-request/skill-create-feature-request.yaml` | Modify | 3 | Port provider config using the proven Phase 1 pattern |
+| `tests/evals/packages/creating-feature-request/skill-creating-feature-request.yaml` | Modify | 3 | Port provider config using the proven Phase 1 pattern |
 | `tests/evals/packages/writing-tests/skill-writing-tests.yaml` | Modify | 3 | Port provider config using the proven Phase 1 pattern |
 | `tests/evals/prompts/skill-creating-linear-issue-routing.txt` | Inspect, modify if needed | 3 | Keep prompt provider-neutral |
 | `tests/evals/prompts/skill-implementing-linear-issue.txt` | Inspect, modify if needed | 3 | Keep prompt provider-neutral |
 | `tests/evals/prompts/skill-raising-linear-pr.txt` | Inspect, modify if needed | 3 | Keep prompt provider-neutral |
 | `tests/evals/prompts/skill-closing-linear-issue.txt` | Inspect, modify if needed | 3 | Keep prompt provider-neutral |
 | `tests/evals/prompts/skill-maintain-github-repos.txt` | Inspect, modify if needed | 3 | Keep prompt provider-neutral |
-| `tests/evals/prompts/skill-create-feature-request.txt` | Inspect, modify if needed | 3 | Keep prompt provider-neutral |
+| `tests/evals/prompts/skill-creating-feature-request.txt` | Inspect, modify if needed | 3 | Keep prompt provider-neutral |
 | `tests/evals/prompts/skill-writing-tests.txt` | Inspect, modify if needed | 3 | Keep prompt provider-neutral |
 | `tests/evals/assertions/check-routing-contract.js` | Inspect, modify if needed | 3 | Repair only provider-coupled assumptions exposed by the patterned rollout |
-| `tests/evals/assertions/check-create-feature-request-contract.js` | Inspect, modify if needed | 3 | Same for feature-request contract |
+| `tests/evals/assertions/check-creating-feature-request-contract.js` | Inspect, modify if needed | 3 | Same for feature-request contract |
 | `tests/evals/assertions/check-maintain-github-repos-contract.js` | Inspect, modify if needed | 3 | Same for repo-maintenance contract |
 | `tests/evals/assertions/check-writing-tests-contract.js` | Inspect, modify if needed | 3 | Same for writing-tests contract |
 
@@ -342,17 +342,17 @@ If any item fails, stop. Revise Phase 1 before expanding.
 - Modify: `tests/evals/packages/raising-linear-pr/skill-raising-linear-pr.yaml`
 - Modify: `tests/evals/packages/closing-linear-issue/skill-closing-linear-issue.yaml`
 - Modify: `tests/evals/packages/maintain-github-repos/skill-maintain-github-repos.yaml`
-- Modify: `tests/evals/packages/create-feature-request/skill-create-feature-request.yaml`
+- Modify: `tests/evals/packages/creating-feature-request/skill-creating-feature-request.yaml`
 - Modify: `tests/evals/packages/writing-tests/skill-writing-tests.yaml`
 - Inspect: `tests/evals/prompts/skill-creating-linear-issue-routing.txt`
 - Inspect: `tests/evals/prompts/skill-implementing-linear-issue.txt`
 - Inspect: `tests/evals/prompts/skill-raising-linear-pr.txt`
 - Inspect: `tests/evals/prompts/skill-closing-linear-issue.txt`
 - Inspect: `tests/evals/prompts/skill-maintain-github-repos.txt`
-- Inspect: `tests/evals/prompts/skill-create-feature-request.txt`
+- Inspect: `tests/evals/prompts/skill-creating-feature-request.txt`
 - Inspect: `tests/evals/prompts/skill-writing-tests.txt`
 - Inspect: `tests/evals/assertions/check-routing-contract.js`
-- Inspect: `tests/evals/assertions/check-create-feature-request-contract.js`
+- Inspect: `tests/evals/assertions/check-creating-feature-request-contract.js`
 - Inspect: `tests/evals/assertions/check-maintain-github-repos-contract.js`
 - Inspect: `tests/evals/assertions/check-writing-tests-contract.js`
 - Inspect: `tests/evals/assertions/check-linear-skill-contract.js`
@@ -378,7 +378,7 @@ npm run eval:implementing-linear-issue
 npm run eval:raising-linear-pr
 npm run eval:closing-linear-issue
 npm run eval:maintain-github-repos
-npm run eval:create-feature-request
+npm run eval:creating-feature-request
 npm run eval:writing-tests
 ```
 

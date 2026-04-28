@@ -1,34 +1,38 @@
-You are evaluating the yolo skill for this scenario:
+You are evaluating the `yolo` workflow for a realistic single-shot delivery
+request.
 
-{{scenario}}
+Read `skills/yolo/SKILL.md` and any directly referenced materials needed for
+this scenario.
 
-Skill contract:
+This is a read-only workflow eval. Do not create Linear issues, edit files,
+push, inspect live git state, contact GitHub, or create PRs.
 
-- `yolo` is used when the user wants to go from a feature description to an open PR in one uninterrupted flow.
-- It chains `creating-linear-issue`, then `implementing-linear-issue`, then `raising-linear-pr`.
-- It preserves all implementation quality gates from `implementing-linear-issue`.
-- It stops after the PR is raised. It does not merge or close the issue.
-- If Phase 2 fails after issue creation, surface: "Resume with /engineering-skills:implementing-linear-issue <issue-id>".
-- If Phase 3 fails after implementation, surface: "Resume with /engineering-skills:raising-linear-pr".
-- Do not use yolo when the user only asks to create a ticket, when an issue already exists and should be implemented, or when implementation is complete and only PR raising remains.
-- Set `yolo_trigger_found_in_message` to true only when the message asks for the uninterrupted create-implement-PR chain.
+Do not read Linear, write Linear, contact Linear, or call Linear tools. All required Linear facts are supplied in the user message and simulated context. All required PR, branch, commit, and git/worktree facts are also supplied in the user message and simulated context. If a required fact is missing, report that the fixture is incomplete instead of trying to fetch it.
 
-Do not actually call tools. Return JSON only with this shape:
+User message:
+
+{{user_prompt}}
+
+Simulated context:
+
+{{simulated_context}}
+
+Based on the skill, report the next workflow obligations for this scenario.
+
+Return JSON only with this shape:
 
 ```json
 {
   "detected_skill": "yolo | creating-linear-issue | implementing-linear-issue | raising-linear-pr | none",
-  "yolo_trigger_found_in_message": false,
-  "runs_creating_linear_issue_first": true,
-  "runs_implementing_linear_issue_second": true,
-  "runs_raising_linear_pr_third": true,
-  "stops_after_pr_raised": true,
-  "does_not_merge_or_close": true,
-  "preserves_quality_gates_from_implementing": true,
-  "surfaces_recovery_instruction_on_phase2_failure": true,
-  "surfaces_recovery_instruction_on_phase3_failure": true,
+  "yolo_trigger_found_in_message": <bool>,
+  "runs_creating_linear_issue_first": <bool>,
+  "runs_implementing_linear_issue_second": <bool>,
+  "runs_raising_linear_pr_third": <bool>,
+  "stops_after_pr_raised": <bool>,
+  "does_not_merge_or_close": <bool>,
+  "preserves_quality_gates_from_implementing": <bool>,
+  "surfaces_recovery_instruction_on_phase2_failure": <bool>,
+  "surfaces_recovery_instruction_on_phase3_failure": <bool>,
   "notes": "string"
 }
 ```
-
-Use every key exactly once.

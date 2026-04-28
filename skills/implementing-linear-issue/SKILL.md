@@ -1,6 +1,6 @@
 ---
 name: implementing-linear-issue
-description: Use when implementing a Linear issue in this repository after issue creation is complete and coding should stop before PR creation
+description: Use when asked to implement, fix, build, or work on an existing Linear issue in this repository, and coding should stop before PR creation
 argument-hint: "[issue-id]"
 ---
 
@@ -8,151 +8,112 @@ argument-hint: "[issue-id]"
 
 ## Overview
 
-Implement the approved issue, but stop before the PR phase. This skill owns mandatory branch/worktree setup, codebase-first clarification, plan approval, isolated implementation work, checkpoint commits, independent-agent quality gates, a final implementation commit, and Linear implementation updates. `raising-linear-pr` owns the post-rebase verification rerun, push, PR creation, and `In Review` transition.
+Implement an existing Linear issue, but stop before PR creation. This skill owns the local implementation phase: branch/worktree setup, issue/code/spec/design discovery, pre-implementation routing, plan approval, TDD implementation, checkpoint commits, local verification, independent subagent quality gates, Linear implementation updates, and a final local commit.
 
 ## When to Use
 
 - User asks to implement, fix, build, or work on a Linear issue.
-- The issue already exists and needs code changes.
-- Do not use for ticket drafting, PR raising, or close/merge work.
+- The issue already exists and needs repository changes.
+- Do not use for issue drafting, PR raising, merge, closeout, or cleanup.
 
-## Quick Reference
+## Workflow
 
 | Step | Requirement |
 |---|---|
-| 1 | Create or reuse the issue branch and worktree before any implementation work |
+| 1 | Create or reuse the issue branch and worktree before target-file inspection or edits |
 | 2 | Stop immediately if branch or worktree setup fails |
-| 3 | Read the Linear issue and search the codebase before asking anything |
-| 4 | Resolve every answerable clarification yourself |
-| 5 | Ask one question at a time only for true forks |
-| 6 | Enter plan mode and show the full plan before coding |
-| 7 | Implement in reviewable slices with checkpoint commits |
-| 8 | Run tests and independent-agent quality gates, update Linear with implementation and AC status |
-| 9 | Create the final implementation commit and hand off before push/PR |
+| 3 | Read the Linear issue, and for Studio, Roadmap, and Utilities issues require a User Flow label plus matching `docs/functional/<User Flow label>/` folder |
+| 4 | Read the functional spec, search the codebase, find related design docs and implementation plans |
+| 5 | Apply pre-implementation handoffs from `references/discovery-and-routing.md` |
+| 6 | Hand off to `superpowers:brainstorming` when the user asks to think, review, brainstorm, compare options, or when real options or unresolved forks remain |
+| 7 | For bugs, use `superpowers:systematic-debugging`, show root cause and proposed fix, then proceed only after confirmation |
+| 8 | Use `superpowers:writing-plans` for non-bug implementation, complex bug fixes, multi-module changes, refactors, or durable design work |
+| 9 | Implement using `references/implementation-quality.md`; use `superpowers:test-driven-development` where the slice needs test-first behavior coverage |
+| 10 | Update Linear with source traceability and AC status using `references/linear-update-and-handoff.md` |
+| 11 | Run required validation and independent subagent quality gates from `references/implementation-quality.md` |
+| 12 | Use `superpowers:receiving-code-review` before applying any quality-gate, human, or external review feedback |
+| 13 | Resolve verified feedback, update Linear, create the final implementation commit, and leave the worktree clean |
+| 14 | Stop with a clean worktree and hand off to `raising-linear-pr`; do not push or create a PR |
 
-## Implementation
+## Required References
 
-**Tool contract:** use the available Linear MCP tools needed for issue and comment operations in this workflow, `git branch`, `git worktree`, `git status`, `git add <file>`, `git commit`, repo test commands from `repo-map.json`, and independent review agents for the required implementation quality gates. Retry once on tool failure, then stop and report the exact failing step.
+- [`references/discovery-and-routing.md`](references/discovery-and-routing.md) for codebase/spec/design discovery and handoff rules.
+- [`references/implementation-quality.md`](references/implementation-quality.md) for plan content, TDD, tests, commits, evals, and review gates.
+- [`references/linear-update-and-handoff.md`](references/linear-update-and-handoff.md) for Linear update content, source traceability, and handoff boundaries.
+- [`references/refactor-planning.md`](references/refactor-planning.md) when the issue requires a major refactor.
+- [`references/interface-design.md`](references/interface-design.md) when API, module, component, or UI interface design is unclear.
 
-**Status setup:**
+## Branch and Worktree
+
+- Always create or reuse the issue branch and worktree before implementation work starts, regardless of issue size.
+- Do not make code changes in the main checkout.
+- Do not inspect or edit target files from the main checkout once branch/worktree setup begins.
+- If branch creation or worktree creation fails, stop immediately and report the exact failing command.
+
+## Linear Status
 
 - Stop on `Done`, `Cancelled`, or `Duplicate`.
 - Move `Todo` to `In Progress` and assign to `me`.
 - Move `In Review` back to `In Progress` before continuing.
 
-**Branch and worktree setup is mandatory and non-negotiable:**
+## Discovery Contract
 
-- Always create or reuse the issue branch and worktree before any implementation work starts, regardless of issue size.
-- Do not make code changes in the main checkout.
-- Do not inspect or edit target files from the main checkout once branch/worktree setup begins.
-- If branch creation fails, stop immediately.
-- If worktree creation fails, stop immediately.
-- Never continue implementation after a branch or worktree setup failure.
-- There is no small-issue exception and no negotiation on this step.
+Before asking the user anything:
 
-**Clarification protocol:**
+- read the Linear issue description, comments, attachments, labels, and linked documents
+- identify the issue's Linear team
+- for Studio, Roadmap, and Utilities issues, stop if the issue is missing a User Flow label
+- for Studio, Roadmap, and Utilities issues, stop if the User Flow label does not have an exact matching folder at `docs/functional/<User Flow label>/`
+- for Studio, Roadmap, and Utilities issues, read the matching functional spec from that folder before the implementation plan is created
+- search the codebase
+- search `docs/design/` for related design documents
+- search `docs/plan/` for a related implementation plan
 
-1. Create or reuse the issue branch and worktree.
-2. If branch or worktree setup fails, stop and report the exact failing command.
-3. Read the issue from Linear.
-4. Search the codebase before asking the user anything.
-5. For each open question:
-   - If the code answers it confidently, state the decision and continue.
-   - If exactly one viable path exists, state it and continue.
-   - If two or more viable paths exist, present them, recommend one, ask one question, and wait.
-6. Never batch questions.
-7. Never enter plan mode while any gap remains unresolved.
+For selected-team issues, include the functional spec path, related design-doc paths, and related implementation-plan path in the plan and every substantive Linear implementation update. For other teams, include related design-doc and implementation-plan paths when present, and record functional spec as `not_applicable`.
 
-**Plan mode is required.** The implementation plan must include:
+## Implementation Contract
 
-- chosen approach and rejected alternatives when relevant
-- files or modules expected to change inside the isolated worktree
-- commit checkpoints or slice boundaries for multi-step work
-- test coverage by layer: unit, integration, eval
-- skill or plugin eval coverage affected by the change
-- independent quality-gate reviewers to run before handoff: code review, simplification review, test coverage review, AC review
-- manual test scope, or the explicit statement `No manual tests required.`
+- Use `superpowers:systematic-debugging` before fixing bugs, failures, flakiness, regressions, or unexpected behavior.
+- For bug fixes, show the root cause and proposed fix before editing the fix, and proceed only after the user confirms the issue and fix direction.
+- Simple confirmed bug fixes do not require a `superpowers:writing-plans` implementation plan. Use `superpowers:writing-plans` when the bug fix is complex, spans multiple modules, changes architecture, or has meaningful sequencing risk.
+- Use `superpowers:test-driven-development` when the implementation slice needs test-first behavior coverage. Bug fixes may use TDD or add a regression test after root-cause isolation when that is the safer fit.
+- Use `writing-tests` when test strategy or regression boundaries are not obvious.
+- Use `superpowers:receiving-code-review` before applying quality-gate, human, or external review feedback.
+- Use `authoring-user-guide` when changed end-user UI, CLI, or documented workflow needs user-facing docs.
+- Stay within issue scope and stop if work escapes the ticket boundary.
 
-Post the approved plan to Linear before coding. If the user rejects it, revise and re-enter plan mode.
+## Completion Gates
 
-**Implementation rules:**
+Before handoff:
 
-- Branch and worktree setup happens before any file edits.
-- Implementation happens inside the worktree only.
-- Stay within issue scope. Pause if work escapes the ticket boundary.
-- Read existing tests before changing them.
-- Add logging for new behavior per repo policy.
-- Update Linear as a living snapshot, with acceptance criteria checked off in the main issue requirements section and progress captured in the implementation comment.
-- Work in end-to-end slices that can be reviewed independently.
-- After each major slice that leaves the tree green, stage only the relevant files and create a checkpoint commit.
-- Do not let large uncommitted work accumulate when a clean checkpoint is available.
-- Before handoff, run the required automated validation for the changed area.
-- Before handoff, run the specific promptfoo evals for any changed skill or command in this repo.
-- Before handoff, dispatch independent review agents so the checks do not reuse the main implementation context.
-- Required independent-agent quality gates are:
-  - code review
-  - simplification review using the `code-simplifier` lens or equivalent simplification-focused prompt
-  - test coverage review for changed behavior and regression risk
-  - acceptance-criteria review against the current Linear issue state and implementation evidence
-- Give each review agent only the context it needs: issue text, plan, commit range or diff, relevant test/eval results, and changed-file context. Do not pass the full implementation session history.
-- Resolve review findings before handoff. Retry a failed or inconclusive gate once after fixes or evidence updates, then stop if the gate still fails or remains unverified.
-- Treat a coverage review that finds critical paths untested as a failing quality gate.
-- Treat an AC review that finds an acceptance criterion unproven, incomplete, or blocked as a failing completion gate for that criterion; do not claim it complete.
-- Before handoff, update the main issue requirements section so each completed acceptance criterion is checked off in place.
-- Do not create a duplicate acceptance-criteria section in the implementation note.
-- Before handoff, update Linear with a final implementation note that includes:
-  - what was implemented
-  - tests, evals, and manual checks run
-  - outcomes of the code review, simplification review, test coverage review, and AC review
-- Record AC review conclusions in the implementation note only as needed to explain blockers or follow-up, without restating the full acceptance-criteria list.
-- Stop if any required local or independent-agent quality gate fails or remains unverified.
-- After all required quality gates pass and the Linear note is posted, create a final implementation commit for the remaining diff.
-- Leave the worktree clean before handing off to any downstream skill.
-- Output `✅ <completed step>` after each major implementation step.
+- run changed-area validation and affected skill evals
+- run code review through `superpowers:requesting-code-review` as an independent subagent gate
+- run simplification review through `code-simplifier` as an independent subagent gate
+- run test coverage review through `superpowers:requesting-code-review` with a test-coverage-focused brief as an independent subagent gate
+- run acceptance-criteria review as an independent subagent gate
+- check off only completed acceptance criteria in the main Linear requirements section
+- post a final Linear implementation note that references the functional spec, related design documents, related implementation plan, verification, review outcomes, and remaining risks
+- create the final implementation commit and leave the worktree clean
 
-**Stop conditions:**
+## Stop Conditions
 
-- permanent file deletion
-- new external dependency
-- architecture-impacting fork
+- branch or worktree setup fails
+- User Flow label is missing from a Studio, Roadmap, or Utilities Linear issue
+- `docs/functional/<User Flow label>/` is missing for a Studio, Roadmap, or Utilities Linear issue
+- permanent file deletion or new external dependency is needed
+- unresolved architecture, product, security, data, migration, or interface fork
 - unresolved error after two attempts
-- required local quality gate still failing after two attempts
-- required changes outside issue scope
-
-**Handoff boundary:**
-
-- Do not push.
-- Do not create or update a PR.
-- Do not move the issue to `In Review`.
-- Do not hand off with uncommitted or unstaged changes still in the worktree.
-- Hand off to `raising-linear-pr` after the final implementation commit and local verification pass.
-- Report the branch name, worktree path, checkpoint commit SHAs, final implementation commit SHA, clean `git status`, verification run, and any remaining risks.
+- required local or independent subagent quality gate still fails after retry
+- required changes exceed issue scope
 
 ## Common Mistakes
 
-- Starting changes in the main checkout instead of a dedicated branch and worktree.
-- Continuing after branch or worktree setup fails.
-- Asking the user questions the codebase could answer.
-- Entering plan mode before clarification is complete.
-- Waiting until the PR phase to make the first commit.
-- Deferring skill evals or changed-area validation until PR time.
-- Leaving a dirty worktree for the PR phase to clean up.
-- Treating this skill as the PR phase.
-- Treating self-review as sufficient when the workflow requires independent review agents.
-- Claiming ACs are complete without reviewer evidence.
+- Coding before branch/worktree setup and source discovery are complete.
+- Skipping functional spec, design doc, or implementation-plan context.
+- Treating bug fixes as normal implementation before root cause and fix direction are confirmed.
+- Asking ad hoc clarification questions when brainstorming, design, debugging, or planning handoff applies.
+- Pushing, creating a PR, moving to `In Review`, merging, or cleaning up from this phase.
 
-## Error Recovery
+## Boundary
 
-| Situation | Action |
-|---|---|
-| Worktree exists on wrong branch | Remove and recreate before continuing |
-| Branch or worktree creation fails | Stop immediately and report the exact failure |
-| Linear API fails | Retry once, then stop with details |
-| Tests fail after 3 attempts | Escalate with failure details |
-| Plan rejected twice | Ask user for explicit direction |
-
----
-
-## Exit State
-
-When this skill finishes, the branch and worktree exist, the implementation is complete, checkpoint commits and a final implementation commit exist locally, the worktree is clean, the local verification, repo-local eval gates, and independent-agent quality gates have run, the Linear issue has the completed acceptance criteria checked off in the main requirements section plus an implementation note summarizing work, tests, and reviews, and the issue is still in `In Progress`. The next step is `raising-linear-pr`.
+Do not push, create or update a PR, move the issue to `In Review`, merge, close, or remove the worktree. The next skill is `raising-linear-pr`.

@@ -1,0 +1,122 @@
+# yaml-language-server: $schema=https://promptfoo.dev/config-schema.json
+description: "Creating-feature-request skill — Linear-native product feature requests with User Flow tags"
+
+prompts:
+  - id: creating-feature-request
+    label: creating-feature-request
+    raw: file://../../prompts/skill-creating-feature-request.txt
+
+providers:
+  - id: file://../../scripts/opencode-cli-provider.js
+    config:
+      provider_id: opencode
+      model: qwen3.6-plus
+      working_dir: ../..
+      max_turns: 8
+      tools:
+        read: true
+        grep: true
+        glob: true
+        list: true
+        bash: true
+
+defaultTest:
+  assert:
+    - type: javascript
+      value: file://../../assertions/check-creating-feature-request-contract.js
+
+tests:
+  - description: "real request — clear User Flow match previews before create"
+    vars:
+      eval_type: user-behavior
+      failure_modes: "skips-user-flow,over-asks-instead-of-resolving-locally,premature-success-claim"
+      user_prompt: "Feature request: Add a source credibility score to Vibedata content briefs so demand-gen users can quickly see which cited sources are most reliable. Priority P2, medium effort."
+      simulated_context: |
+        - Simulated Linear metadata for the Roadmap team is supplied by the fixture.
+        - Simulated User Flow child-label metadata supplies exactly one strong match: `UF-Content-Brief-Source-Credibility`.
+        - Simulated project metadata includes a Demand Gen project that fits the request.
+        - Simulated status metadata includes a triage/backlog-like status.
+        - No human has confirmed issue creation yet.
+      expect_queries_linear_labels: "true"
+      expect_queries_linear_projects: "true"
+      expect_queries_ro_statuses: "true"
+      expect_uses_live_metadata_before_defaults: "true"
+      expect_resolves_user_flow_child_labels_live: "true"
+      expect_requires_user_flow_tag: "true"
+      expect_proposes_one_user_flow_label: "true"
+      expect_lists_close_user_flow_alternatives: "false"
+      expect_asks_user_to_pick_user_flow: "false"
+      expect_creates_issue_without_user_flow: "false"
+      expect_shows_preview_before_confirmation: "true"
+      expect_requires_user_confirmation_before_create: "true"
+      expect_creates_issue_before_confirmation: "false"
+      expect_uses_yaml_payload: "false"
+      expect_uses_linear_native_create: "true"
+      expect_falls_back_to_hardcoded_linear_metadata: "false"
+      expect_stops_when_linear_metadata_missing: "false"
+      expected_team: "RO"
+      expected_default_priority: "Normal"
+      expected_default_estimate: "S"
+      required_description_sections: "Description,User Outcome,Business Rationale"
+
+  - description: "real request — ambiguous User Flow asks user to choose"
+    vars:
+      eval_type: user-behavior
+      failure_modes: "skips-user-flow,over-asks-instead-of-resolving-locally,premature-success-claim"
+      user_prompt: "Log a feature request for saved brief templates. Marketing users want to reuse prior brief structure when starting a new content brief."
+      simulated_context: |
+        - Simulated Linear metadata for the Roadmap team is supplied by the fixture.
+        - Simulated User Flow child-label metadata supplies several plausible labels: `UF-Content-Brief-Create`, `UF-Content-Brief-Templates`, and `UF-Content-Reuse`.
+        - None is clearly strongest from the request alone.
+        - Simulated project and status metadata are supplied by the fixture.
+        - No human has confirmed issue creation yet.
+      expect_queries_linear_labels: "true"
+      expect_queries_linear_projects: "true"
+      expect_queries_ro_statuses: "true"
+      expect_uses_live_metadata_before_defaults: "true"
+      expect_resolves_user_flow_child_labels_live: "true"
+      expect_requires_user_flow_tag: "true"
+      expect_proposes_one_user_flow_label: "false"
+      expect_lists_close_user_flow_alternatives: "true"
+      expect_asks_user_to_pick_user_flow: "true"
+      expect_creates_issue_without_user_flow: "false"
+      expect_shows_preview_before_confirmation: "true"
+      expect_requires_user_confirmation_before_create: "true"
+      expect_creates_issue_before_confirmation: "false"
+      expect_uses_yaml_payload: "false"
+      expect_uses_linear_native_create: "true"
+      expect_falls_back_to_hardcoded_linear_metadata: "false"
+      expect_stops_when_linear_metadata_missing: "false"
+      expected_team: "RO"
+      expected_default_priority: "Normal"
+      expected_default_estimate: "S"
+      required_description_sections: "Description,User Outcome,Business Rationale"
+
+  - description: "real request — missing Linear metadata stops before creation"
+    vars:
+      eval_type: user-behavior
+      failure_modes: "skips-user-flow,premature-success-claim"
+      user_prompt: "Create a feature request for adding team-level source quality settings to briefs."
+      simulated_context: |
+        - Simulated Linear metadata for the Roadmap team is explicitly missing from the fixture.
+        - User Flow child labels, Roadmap projects, and Roadmap statuses are unavailable.
+        - No human has confirmed issue creation yet.
+      expect_queries_linear_labels: "true"
+      expect_queries_linear_projects: "true"
+      expect_queries_ro_statuses: "true"
+      expect_uses_live_metadata_before_defaults: "true"
+      expect_resolves_user_flow_child_labels_live: "true"
+      expect_requires_user_flow_tag: "true"
+      expect_proposes_one_user_flow_label: "false"
+      expect_lists_close_user_flow_alternatives: "false"
+      expect_asks_user_to_pick_user_flow: "false"
+      expect_creates_issue_without_user_flow: "false"
+      expect_shows_preview_before_confirmation: "false"
+      expect_creates_issue_before_confirmation: "false"
+      expect_uses_yaml_payload: "false"
+      expect_uses_linear_native_create: "true"
+      expect_falls_back_to_hardcoded_linear_metadata: "false"
+      expect_stops_when_linear_metadata_missing: "true"
+      expected_team: "RO"
+      expected_default_priority: "Normal"
+      expected_default_estimate: "S"

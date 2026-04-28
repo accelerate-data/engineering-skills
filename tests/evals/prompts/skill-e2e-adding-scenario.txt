@@ -1,31 +1,22 @@
-Use the Read tool to read `skills/e2e-adding-scenario/SKILL.md` and all files under `skills/e2e-adding-scenario/references/`. Then, without calling any other tools, use only the simulated context provided in the scenario below to determine how the skill would behave.
+Read `skills/e2e-adding-scenario/SKILL.md` and its directly referenced
+materials.
+
+This is a read-only workflow eval. Use only the simulated context below; do not
+edit files or call external tools.
 
 Scenario:
 
 {{scenario}}
 
-For each field below, set `true` if the skill WOULD do that in this specific scenario, `false` if it would NOT do that in this specific scenario.
+Based on the skill, report the next workflow obligations for this scenario. Do
+not mark something true only because the skill supports it in another scenario.
+Each boolean means "the agent must do this for the simulated scenario above."
+Use `false` when the scenario does not trigger that obligation, even if the
+skill would require it in a different scenario.
 
-Field definitions:
-- `halts_on_missing_database_path`: the skill stops and emits a halt notice because DATABASE_PATH is missing or commented out in this scenario's .env
-- `resolves_harness_root_from_env_var`: the skill uses E2E_HARNESS_ROOT (which IS set in this scenario) to locate the harness
-- `falls_back_to_cwd_when_env_not_set`: the skill falls back to CWD as the harness root because E2E_HARNESS_ROOT is NOT set in this scenario
-- `uses_e2e_app_src_when_set`: E2E_APP_SRC is set in this scenario so the skill selects that app-source branch immediately, skips DATABASE_PATH derivation, and this remains `true` even if the path is later found unreadable and causes a halt
-- `halts_on_unreadable_e2e_app_src`: E2E_APP_SRC is set in this scenario but points to an unreadable or missing directory, so the skill halts instead of authoring Gherkin
-- `auto_discovery_avoids_expanded_app_path`: DATABASE_PATH is unavailable but app-root auto-discovery succeeds, and the skill avoids printing the expanded absolute app path in output
-- `emits_run_id_on_data_literals`: the skill embeds the literal RUN_ID marker in seeded data literals in the scenario output
-- `uses_step_vocabulary_only`: the skill only uses step patterns from steps/*.md and does not invent new steps
-- `emits_missing_step_comment`: a required step pattern is absent from steps/*.md in this scenario, so the skill emits a # MISSING STEP: comment
-- `no_hardcoded_app_path`: the skill avoids writing any hardcoded absolute app path in its output; this is also `true` for halt or handoff paths as long as they do not emit such a path
-- `appends_not_replaces`: the skill appends the new scenario(s) to the existing file rather than rewriting it
-- `refuses_to_emit_feature_heading`: the skill does not emit a Feature: heading (since it is appending, not creating a new file)
-- `handoffs_to_authoring_when_file_missing`: the target feature file does not exist in this scenario, so the skill redirects to e2e-authoring-feature-file
-- `checks_skill_modules_before_missing_step`: a step seems missing from steps/*.md in this scenario, but skills/*.md (e.g. skills/totp-generation.md) is referenced from skill-steps.md and covers it — the skill checks skills/*.md before emitting # MISSING STEP:
-- `warns_guide_backed_before_appending`: the target .feature file appears in MAPPINGS in this scenario, so the skill warns in PLAN that hand-edits will be overwritten on next regen and offers the guide-edit path
+Return raw JSON only. Do not wrap the answer in Markdown fences.
 
-Always return every field in the schema below as a boolean. If a field's condition does not apply in this scenario, set it to `false` rather than omitting it.
-
-Return JSON only — no other text — in this shape:
+Return JSON only with this shape:
 
 ```json
 {

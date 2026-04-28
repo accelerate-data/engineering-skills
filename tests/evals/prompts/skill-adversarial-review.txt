@@ -1,42 +1,38 @@
-You are evaluating the `adversarial-review` skill workflow for this scenario:
+You are evaluating the `adversarial-review` workflow for a realistic review
+request.
+
+Read `skills/adversarial-review/SKILL.md` and any directly referenced materials
+needed for this scenario.
+
+This is a read-only workflow eval. Do not run reviewer CLIs, spawn agents,
+write files, or perform external actions.
+
+Scenario:
 
 {{scenario}}
 
-Skill contract:
+Based on the skill, report the next workflow obligations for this scenario.
 
-- Reviewers must run on the opposite model using the opposite model CLI: `codex exec` when Claude is leading, or `claude -p` when Codex is leading.
-- Reviewers must not be spawned through same-model subagents, Agent tool calls, or internal delegation.
-- Load `references/reviewer-lenses.md` and use the bundled Skeptic, Architect, and Minimalist lens definitions.
-- Determine scope and state the author's intent before reviewing.
-- Reviewer count is based on change size: small uses 1 reviewer, medium uses 2, large uses 3.
-- When a scenario expects a size-specific reviewer count, set both `selects_reviewer_count_by_size` and the matching `uses_*_reviewers_for_*` field true.
-- Spawn reviewers in parallel and write one output file per lens in a temp review directory.
-- Verify the reviewer CLI used and confirm all expected output files exist before synthesis.
-- Missing or empty reviewer output must be noted, not silently skipped.
-- Synthesize a verdict with Intent, Verdict, Findings, What Went Well, and Lead Judgment.
-- Findings must cite concrete files/lines, severity, lens, lens principle, and recommendation.
-- Verdict logic: PASS has no high-severity findings, CONTESTED has disputed high-severity findings, REJECT has consensus high-severity findings.
-
-Do not actually call tools. Return JSON only with this shape:
+Return JSON only with this shape:
 
 ```json
 {
-  "uses_opposite_model_cli": false,
-  "avoids_same_model_subagents": false,
-  "loads_reviewer_lenses": false,
-  "states_author_intent": false,
-  "selects_reviewer_count_by_size": false,
-  "uses_one_reviewer_for_small": false,
-  "uses_two_reviewers_for_medium": false,
-  "uses_three_reviewers_for_large": false,
-  "spawns_reviewers_in_parallel": false,
-  "writes_lens_named_output_files": false,
-  "verifies_cli_and_outputs_before_synthesis": false,
-  "notes_missing_or_empty_reviewers": false,
-  "synthesizes_verdict_sections": false,
-  "deduplicates_findings": false,
-  "includes_lead_judgment": false,
-  "applies_verdict_logic": false,
+  "uses_opposite_model_cli": <bool>,
+  "avoids_same_model_subagents": <bool>,
+  "loads_reviewer_lenses": <bool>,
+  "states_author_intent": <bool>,
+  "selects_reviewer_count_by_size": <bool>,
+  "uses_one_reviewer_for_small": <bool>,
+  "uses_two_reviewers_for_medium": <bool>,
+  "uses_three_reviewers_for_large": <bool>,
+  "spawns_reviewers_in_parallel": <bool>,
+  "writes_lens_named_output_files": <bool>,
+  "verifies_cli_and_outputs_before_synthesis": <bool>,
+  "notes_missing_or_empty_reviewers": <bool>,
+  "synthesizes_verdict_sections": <bool>,
+  "deduplicates_findings": <bool>,
+  "includes_lead_judgment": <bool>,
+  "applies_verdict_logic": <bool>,
   "notes": "string"
 }
 ```

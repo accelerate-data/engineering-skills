@@ -1,126 +1,102 @@
-You are evaluating the `writing-tests` skill workflow for a specific scenario.
+You are evaluating the `writing-tests` workflow for a realistic test-quality
+request.
+
+Parser contract: output only the final JSON object. Any analysis, preface,
+heading, markdown, or text before the opening `{` fails the eval.
+Do not think aloud. Do not trace the workflow. Do not explain field choices.
+Emit only the JSON object. Your first character must be `{`. Never start with
+"Now I have", "Let me analyze", bullets, headings, or a code fence.
+If you need to reason, do it silently. Do not enumerate fields in prose.
+
+Read only the repository-local `skills/writing-tests/SKILL.md` and any
+repository-local directly referenced materials needed for this scenario. Do not
+read `~/.agents`, home-directory skill installs, or any external skill
+installation.
+
+This is a read-only workflow eval. Do not edit files or run test commands.
+Treat named skills described as unavailable in the scenario as unavailable for
+that scenario.
 
 Scenario:
 
 {{scenario}}
 
-Workflow contract:
+Based on the skill, report the next workflow obligations for this scenario. Do
+not mark something true only because the skill supports it in another scenario.
 
-- First, always check session separation before mode detection. If the same conversation already implemented the production code under test, stop before mode detection, refuse same-session self-attestation, and instruct the user to open a fresh session with the requirement and finished code.
-- The only exception to session separation is valid TDD mode before production code exists.
-- If mode is unclear, ask exactly one mode question and stop. Vague prompts like "write tests for X", "add tests for the Y part", and "test this feature" do not declare a mode. Do not post a checklist, run discovery, read files, infer a mode, or ask scope in the same message.
-- In every clear mode, post a visible checklist/plan before starting workflow work.
-- Declare the mode and post a file list or, for TDD, a requirement/spec-derived planned test target before Step 1. Wait for user confirmation.
-- In TDD mode, the workflow may read the user-provided requirement/spec before posting the planned test target, but must not read implementation files.
-- Time pressure, specific file names, small files, "obvious" tests, and requests to skip process do not remove the visible checklist/plan, mode declaration, file/target list, confirmation, Step 2 audit, or Step 3 behaviour approval gates.
-- Non-TDD modes run Phase 0 discovery before Step 1. TDD does not run post-feature discovery or require finished source files.
-- Static config/constants files with no domain significance and no collaborators are Trivial and should be skipped.
-- Overcomplicated code with domain rules embedded in orchestration should recommend the Humble Object pattern: extract domain logic into a pure function and leave orchestration thin.
-- Managed project-owned dependencies such as a DB, store, or service module should be used as real dependencies; do not mock them. Mock only unmanaged external dependencies such as third-party APIs. Set `mocks_managed_dependencies` to true only when the workflow would incorrectly mock a managed dependency.
-- Step 2 is always required before Step 3. If no existing tests exist, actively checking and reporting that none exist still counts as the Step 2 audit; skipping the check is a violation.
-- Step 3 must lead with a recommendation and post the exact marker `## Approved behaviours`. Do not accept header variations such as "Proposed tests" or "Behaviours to cover". Do not start Step 4 until the exact marker is posted and the user approves.
-- While-building mode tests each implementation slice immediately and reports slice status; it must not wait until the full feature is finished to write tests.
-- Outside TDD mode, desired-behaviour failures are reported and left red; the test-writing workflow does not fix source code or weaken tests.
-- In TDD mode, use `superpowers:test-driven-development` as the primary process skill when it is available and `writing-tests` as the RED-phase companion. If the Superpowers skill is not available, state that explicitly and follow the same RED→GREEN→REFACTOR discipline locally. After the expected RED failure, end the RED companion phase and return to TDD for GREEN, or continue locally with GREEN/REFACTOR as a separate TDD step when using the fallback.
-- For skill, slash-command, and agent-prompt artifacts, hand authoring quality to `superpowers:writing-skills`; `writing-tests` owns eval coverage, pressure scenarios, and structured contract assertions.
-- Load detailed references progressively: workflow gates from `references/workflow.md`; classification from `references/classification.md`; audit from `references/audit.md`; assertion and mocking rules only when writing tests.
+Field meaning: `returns_to_tdd_for_green` means that after the expected RED
+test is written, GREEN/REFACTOR belongs to the TDD workflow rather than the
+writing-tests workflow stopping as a post-feature red failure.
 
-Answer each field for what the workflow should do in this exact scenario, not whether the skill has that capability in some other scenario.
-
-Scenario-specific definitions:
-
-- Set `mode_detected` to one of: `tdd`, `while-building`, `post-feature`, `update`, `review`, or `unclear`.
-- When `mode_detected` is `unclear`, set file/discovery/workflow fields to false unless the scenario explicitly says the user has answered the mode question.
-- When a scenario says the same conversation/session already implemented existing production code, set `stops_before_mode_detection`, `refuses_same_session_self_attestation`, and `instructs_fresh_session_handoff` to true.
-- In valid TDD mode with no production code, set `uses_write_tests_as_red_phase_companion` to true.
-- Set `uses_tdd_primary_skill` to true when `superpowers:test-driven-development` is available for the TDD workflow.
-- Set `uses_tdd_local_fallback` to true when `superpowers:test-driven-development` is not available and the workflow continues locally with RED→GREEN→REFACTOR discipline.
-- Set `uses_writing_skills_handoff` to true when the artifact under test is a skill, slash command, or agent prompt and authoring quality belongs to `superpowers:writing-skills`.
-- Set `treats_evals_as_tests_for_agent_artifacts` to true when skill, slash-command, or agent-prompt behavior should be verified with evals.
-- Set `requires_eval_contract_tests` to true when the scenario asks for tests for a skill, slash command, or agent prompt.
-- Set `runs_post_feature_discovery` to false for TDD mode because TDD uses requirement/spec-derived planned test targets instead of `git diff` discovery.
-- Set `leaves_red_and_stops` to true only when post-feature/update/review evaluator work finds a desired-behavior failure in existing code and must not fix source. Set it to false for TDD expected RED failures because TDD proceeds to GREEN instead of stopping as an evaluator.
-- Set `returns_to_tdd_for_green` to true only in TDD mode after a RED test fails for the expected reason.
-- Set `fixes_source_code` to false for TDD RED companion work. A later GREEN step may change production code, but the `writing-tests` RED companion itself does not.
-- Set `applies_independent_evaluator_rule` to false only for valid TDD-before-production-code scenarios.
-- Set `requires_finished_source_file_list` to false in TDD mode because no finished source file exists yet.
-- Treat `posts_todo_checklist` as true when the workflow posts an adapter-neutral visible checklist/plan; the field name is retained for compatibility with older eval cases.
-- Set `would_write_tests_in_same_implementation_session` to true only if the workflow would incorrectly continue after the same session implemented existing production code.
-- Set `enforces_zero_exceptions_gate` to true when the workflow refuses to bypass checklist, mode, file/target list, confirmation, Step 2 audit, and Step 3 approval gates even for time pressure, small files, obvious tests, specific files, or skip-process requests.
-- Set `rejects_approved_behaviours_header_variations` to true when the workflow requires the exact `## Approved behaviours` marker and does not accept alternate Step 3 headings.
-- Set `asserts_on_stubs` and `asserts_internal_helper_calls` to true only if the workflow would incorrectly recommend those assertions, not when the scenario contains those anti-patterns as something to reject.
-- Set `identifies_bug_from_desired_behavior_red` to true when a desired-behavior test fails because existing source behavior is wrong, even if the workflow only reports the bug and leaves the test red.
-- Set `uses_lifecycle_checklist` to true when the target manages state across time, including refs, subscriptions, connections, sessions, caches, in-flight operations, mount/unmount, or cleanup boundaries.
-- Set `reviews_test_quality_findings` to true in review mode when the workflow audits tests and reports quality findings without editing tests or source.
-- Set `requires_adversarial_review_for_deep_review` to true only when the scenario asks for deep/adversarial test review.
-- Set `requires_systematic_debugging_for_unclear_failure` to true only when a test fails unexpectedly and the root cause is unclear.
-- Set `requires_verification_before_claiming_pass` to true only when the scenario is about claiming all tests pass or readiness to merge.
-
-Do not actually call tools. Return JSON only with this shape. Include every key exactly, even when the value is false:
+Return JSON only with this shape. The first character must be `{` and the last
+character must be `}`:
 
 ```json
 {
-  "mode_detected": "unclear",
-  "checks_session_separation_before_mode_detection": true,
-  "stops_before_mode_detection": false,
-  "applies_independent_evaluator_rule": true,
-  "refuses_same_session_self_attestation": false,
-  "instructs_fresh_session_handoff": false,
-  "would_write_tests_in_same_implementation_session": false,
-  "enforces_zero_exceptions_gate": false,
-  "asks_one_mode_question": false,
-  "asks_scope_question_same_message": false,
-  "reads_files_before_mode_clear": false,
-  "posts_todo_checklist": false,
-  "declares_mode": false,
-  "runs_phase_0_discovery": false,
-  "runs_post_feature_discovery": false,
-  "presents_file_list_before_step_1": false,
-  "requires_finished_source_file_list": false,
-  "uses_requirement_spec_planned_target": false,
-  "waits_for_user_confirmation": true,
-  "uses_tdd_primary_skill": false,
-  "uses_tdd_local_fallback": false,
-  "uses_writing_skills_handoff": false,
-  "uses_write_tests_as_red_phase_companion": false,
-  "treats_evals_as_tests_for_agent_artifacts": false,
-  "requires_eval_contract_tests": false,
-  "returns_to_tdd_for_green": false,
-  "leaves_red_and_stops": false,
-  "fixes_source_code": false,
-  "skips_trivial_config": false,
-  "reports_slice_status": false,
-  "accumulates_tests_until_end": false,
-  "identifies_existing_tests_for_changed_files": false,
-  "audits_existing_tests_before_new_tests": false,
-  "skips_step_2_audit": false,
-  "step_2_check_required": false,
-  "improves_existing_tests_in_place": false,
-  "silently_overwrites_existing_tests": false,
-  "posts_approved_behaviours_marker": false,
-  "rejects_approved_behaviours_header_variations": false,
-  "waits_for_behaviour_approval": true,
-  "leads_with_recommendation": true,
-  "reviews_test_quality_findings": false,
-  "requires_adversarial_review_for_deep_review": false,
-  "classifies_domain_unit": false,
-  "classifies_controller_integration": false,
-  "classifies_trivial_skip": false,
-  "recommends_humble_object": false,
-  "handles_llm_boundary": false,
-  "mocks_managed_dependencies": false,
-  "uses_real_managed_dependencies": false,
-  "mocks_unmanaged_external_dependencies": false,
-  "asserts_on_stubs": false,
-  "asserts_internal_helper_calls": false,
-  "identifies_bug_from_desired_behavior_red": false,
-  "weakens_test_to_pass_buggy_code": false,
-  "discovers_test_runner_from_project_files": false,
-  "assumes_test_runner": false,
-  "asks_user_only_if_runner_ambiguous": false,
-  "uses_lifecycle_checklist": false,
-  "requires_systematic_debugging_for_unclear_failure": false,
-  "requires_verification_before_claiming_pass": false,
+  "mode_detected": "tdd | while-building | post-feature | update | review | unclear",
+  "checks_session_separation_before_mode_detection": <bool>,
+  "stops_before_mode_detection": <bool>,
+  "applies_independent_evaluator_rule": <bool>,
+  "refuses_same_session_self_attestation": <bool>,
+  "instructs_fresh_session_handoff": <bool>,
+  "would_write_tests_in_same_implementation_session": <bool>,
+  "enforces_zero_exceptions_gate": <bool>,
+  "asks_one_mode_question": <bool>,
+  "asks_scope_question_same_message": <bool>,
+  "reads_files_before_mode_clear": <bool>,
+  "posts_todo_checklist": <bool>,
+  "declares_mode": <bool>,
+  "runs_phase_0_discovery": <bool>,
+  "runs_post_feature_discovery": <bool>,
+  "presents_file_list_before_step_1": <bool>,
+  "requires_finished_source_file_list": <bool>,
+  "uses_requirement_spec_planned_target": <bool>,
+  "waits_for_user_confirmation": <bool>,
+  "uses_tdd_primary_skill": <bool>,
+  "uses_tdd_local_fallback": <bool>,
+  "uses_writing_skills_handoff": <bool>,
+  "uses_write_tests_as_red_phase_companion": <bool>,
+  "treats_evals_as_tests_for_agent_artifacts": <bool>,
+  "requires_eval_contract_tests": <bool>,
+  "returns_to_tdd_for_green": <bool>,
+  "leaves_red_and_stops": <bool>,
+  "fixes_source_code": <bool>,
+  "skips_trivial_config": <bool>,
+  "reports_slice_status": <bool>,
+  "accumulates_tests_until_end": <bool>,
+  "identifies_existing_tests_for_changed_files": <bool>,
+  "audits_existing_tests_before_new_tests": <bool>,
+  "skips_step_2_audit": <bool>,
+  "step_2_check_required": <bool>,
+  "improves_existing_tests_in_place": <bool>,
+  "silently_overwrites_existing_tests": <bool>,
+  "posts_approved_behaviours_marker": <bool>,
+  "rejects_approved_behaviours_header_variations": <bool>,
+  "waits_for_behaviour_approval": <bool>,
+  "leads_with_recommendation": <bool>,
+  "reviews_test_quality_findings": <bool>,
+  "requires_adversarial_review_for_deep_review": <bool>,
+  "classifies_domain_unit": <bool>,
+  "classifies_controller_integration": <bool>,
+  "classifies_trivial_skip": <bool>,
+  "recommends_humble_object": <bool>,
+  "handles_llm_boundary": <bool>,
+  "mocks_managed_dependencies": <bool>,
+  "uses_real_managed_dependencies": <bool>,
+  "mocks_unmanaged_external_dependencies": <bool>,
+  "asserts_on_stubs": <bool>,
+  "asserts_internal_helper_calls": <bool>,
+  "identifies_bug_from_desired_behavior_red": <bool>,
+  "weakens_test_to_pass_buggy_code": <bool>,
+  "discovers_test_runner_from_project_files": <bool>,
+  "assumes_test_runner": <bool>,
+  "asks_user_only_if_runner_ambiguous": <bool>,
+  "uses_lifecycle_checklist": <bool>,
+  "requires_systematic_debugging_for_unclear_failure": <bool>,
+  "requires_verification_before_claiming_pass": <bool>,
   "notes": "string"
 }
 ```
+
+Respond now with only the JSON object. No prose. No markdown. First character:
+`{`

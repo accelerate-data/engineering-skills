@@ -1,5 +1,5 @@
 # yaml-language-server: $schema=https://promptfoo.dev/config-schema.json
-description: "explaining-code skill — teaching explanation structure contract"
+description: "explaining-code skill — realistic code explanation requests"
 
 prompts:
   - id: explaining-code
@@ -28,6 +28,8 @@ defaultTest:
 tests:
   - description: "baseline — explanation includes analogy, diagram, walkthrough, and gotcha"
     vars:
+      eval_type: user-behavior
+      failure_modes: "jumps-to-refactor,too-abstract,no-diagram,misses-gotchas"
       scenario: |-
         - The user asks: "How does this caching helper work?"
         - They want a teaching-style explanation, not a refactor.
@@ -40,6 +42,8 @@ tests:
 
   - description: "complex concept — uses multiple analogies"
     vars:
+      eval_type: user-behavior
+      failure_modes: "jumps-to-refactor,too-abstract,no-diagram,misses-gotchas"
       scenario: |-
         - The user asks how a multi-stage queue, worker pool, and retry scheduler interact.
         - The concept is complex enough that one analogy may not cover all relationships.
@@ -49,3 +53,31 @@ tests:
       expect_walks_step_by_step: "true"
       expect_highlights_gotcha: "true"
       expect_uses_multiple_analogies_for_complexity: "true"
+
+  - description: "terse question — still gives the teaching structure"
+    vars:
+      eval_type: user-behavior
+      failure_modes: "too-terse,no-diagram,misses-gotchas"
+      scenario: |-
+        - The user asks: "what's this function doing?"
+        - The selected code is a short helper, and the user did not ask for changes.
+      expect_uses_explaining_code_skill: "true"
+      expect_starts_with_analogy: "true"
+      expect_includes_ascii_diagram: "true"
+      expect_walks_step_by_step: "true"
+      expect_highlights_gotcha: "true"
+      expect_keeps_conversational_tone: "true"
+
+  - description: "confused reader — explains relationships before details"
+    vars:
+      eval_type: user-behavior
+      failure_modes: "jumps-to-refactor,too-abstract,no-diagram,misses-gotchas"
+      scenario: |-
+        - The user says: "I'm lost. How do the router, loader, and cache fit together?"
+        - They need orientation and a code walkthrough, not a rewrite.
+      expect_uses_explaining_code_skill: "true"
+      expect_starts_with_analogy: "true"
+      expect_includes_ascii_diagram: "true"
+      expect_walks_step_by_step: "true"
+      expect_highlights_gotcha: "true"
+      expect_keeps_conversational_tone: "true"

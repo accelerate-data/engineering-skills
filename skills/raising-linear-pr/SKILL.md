@@ -1,6 +1,6 @@
 ---
 name: raising-linear-pr
-description: Use when implementation is complete and this repository needs the PR-phase workflow - verification, acceptance-criteria completion check, PR creation, and In Review transition
+description: Use when implementation is complete and the user asks to raise, create, open, prepare, or update a PR for an existing Linear issue in this repository
 argument-hint: "[issue-id-or-branch]"
 ---
 
@@ -8,98 +8,78 @@ argument-hint: "[issue-id-or-branch]"
 
 ## Overview
 
-Take completed implementation work across the finish line into review. This skill owns the post-rebase quality-gate rerun, acceptance-criteria completion check, push, PR creation or update, and moving the issue to `In Review`.
+Move completed implementation work into review. This skill owns final branch sync, PR-phase gates, post-rebase validation, stale targeted eval decisions, push, PR creation or update, and the Linear `In Review` transition.
 
 ## When to Use
 
 - Local implementation is complete and ready for final verification.
 - The issue should move from coding into review.
-- Do not use for coding work or merge/close cleanup.
+- Do not use for coding work, merge, closeout, or cleanup.
 
-## Quick Reference
+## Workflow
 
 | Step | Requirement |
 |---|---|
-| 1 | Rebase onto default branch |
-| 2 | Check AC status on Linear; check off only already-proven unchecked ACs; stop and hand back to implementation if any AC is unproven or needs code |
-| 3 | Run the design conformance gate after ACs pass; record `not_applicable` when no local design document is referenced |
-| 4 | Run post-rebase quality gates (automated validation + stale targeted evals) |
-| 5 | Push the prepared implementation branch |
-| 6 | Create or update the PR |
-| 7 | Move the issue to `In Review` |
+| 1 | Verify the worktree is clean and expected implementation commits exist |
+| 2 | Fetch and rebase onto the default branch before final verification |
+| 3 | Run the acceptance-criteria gate from `references/pr-phase-gates.md` |
+| 4 | Run the design conformance gate from `references/pr-phase-gates.md` |
+| 5 | Run changed-area validation and stale targeted eval decisions |
+| 6 | Push the prepared branch |
+| 7 | Create or update the PR |
+| 8 | Move the Linear issue to `In Review` only after the PR exists |
 
-## Implementation
+## Hard Gates
 
-**Tool contract:** use repo test commands from `repo-map.json`, `git status`, `git push`, `gh pr list`, `gh pr create`, `gh pr edit`, `gh pr view`, `gh pr checks`, and the available Linear MCP tools needed for issue and comment operations in this workflow. Retry once on tool failure, then stop and report the exact failing step.
+- Stop immediately if the worktree is dirty at entry.
+- Stop if the branch is missing expected implementation commits.
+- Stop before validation, evals, push, PR creation, or `In Review` if any acceptance criterion is incomplete, unproven, blocked, or requires code/test/docs work.
+- Stop before validation, evals, push, or PR creation if design conformance fails.
+- Stop if validation or stale targeted evals fail or remain unverified.
+- Stop instead of editing files, staging changes, or creating implementation commits in this phase.
 
-**Branch sync comes first:**
+## PR Phase Gates
 
-1. Fetch the default branch.
-2. Rebase the feature branch onto the default branch before final verification.
-3. Resolve only mechanical conflicts directly; escalate semantic conflicts.
+Use `references/pr-phase-gates.md` for acceptance-criteria and design-conformance mechanics.
 
-**PR phase gates:** use `references/pr-phase-gates.md` for the AC and design conformance mechanics.
+The key rules:
 
-| Gate | Required action |
-|---|---|
-| AC gate | Verify every AC in the main issue requirements section. Check off only unchecked ACs already proven complete by committed work and evidence. |
-| AC blocker | If any AC is incomplete, unproven, blocked, or requires code/test/docs, stop before design conformance, validation, evals, push, PR creation, or `In Review`. |
-| Design gate | After ACs pass, inspect issue description, comments, attachments, and linked documents for local design references. |
-| No design reference | Record `not_applicable` and empty checked paths, then continue. |
-| Design pass | Record `pass` and checked paths, then continue. |
-| Design fail | Record `fail`, checked paths, and mismatch evidence; stop before validation, evals, push, or PR creation. |
+- Check off only unchecked ACs already proven complete by committed work and evidence.
+- AC checkoff is Linear metadata only; it is not permission to change repository content.
+- Record design conformance as `pass`, `fail`, or `not_applicable` with checked paths.
+- Hand back to `implementing-linear-issue` when ACs, design conformance, validation, or evals reveal implementation work.
 
-**Quality gate order:**
+## Validation and Evals
 
-1. Re-run the required automated validation for the changed area.
-2. Run only the stale, targeted promptfoo evals for changed skills or commands, using the promptfoo DB gate below.
-3. Stop if required checks fail or remain unverified.
+Run repo validation commands from `repo-map.json` for the changed area.
 
-**Promptfoo eval DB gate:**
+Use `references/promptfoo-db-gate.md` for stale targeted eval decisions. Do not run the full promptfoo suite by default. Run targeted evals when DB evidence is missing or stale; skip only when the latest fully passing DB run is newer than the latest content-relevant Git change.
 
-Use `references/promptfoo-db-gate.md` for stale-targeted-eval decisions. The main rule: run targeted evals when DB evidence is missing or stale; skip only when the latest fully passing DB run is newer than the latest content-relevant Git change.
+## Git and PR Operations
 
-**Linear rules:**
+Use `references/git-and-pr.md` for branch sync, push, PR create/update, issue-linking, and boundary rules.
 
-- Verify that every acceptance criterion is complete and checked off in the main issue requirements section before automated validation, evals, push, or PR creation.
-- Check off only ACs that are already proven by existing committed work and existing evidence.
-- If any acceptance criterion remains incomplete, unproven, blocked, or requires code, test, or docs changes, stop and hand back to `implementing-linear-issue`. Do not create a duplicate acceptance-criteria section in this phase.
-- When local design references exist, report the checked design document paths and concise `pass`, `fail`, or `not_applicable` design conformance result in the PR-phase evidence.
-- Preserve the implementation summary format; do not restate the acceptance criteria in the implementation snapshot.
-- Move the issue to `In Review` only after the PR exists.
+Tool contract: use repo test commands from `repo-map.json`, `git status`, `git push`, `gh pr list`, `gh pr create`, `gh pr edit`, `gh pr view`, `gh pr checks`, and the available Linear MCP tools needed for issue and comment operations. Retry once on tool failure, then stop and report the exact failing step.
 
-**Git and PR rules:**
-
-- If the branch is missing the expected implementation commits, stop and hand back to `implementing-linear-issue`.
-- If the worktree is dirty at the start of this phase, stop immediately and hand back to `implementing-linear-issue`.
-- The dirty-worktree rule is an entry guard that is always part of this PR workflow; a clean worktree means the guard passes, not that the guard is absent.
-- Do not edit files, stage changes, or create code, test, docs, AC-fix, or final implementation commits in this phase.
-- If validation or evals reveal required implementation changes, stop and hand back to `implementing-linear-issue` instead of fixing and committing here.
-- Linear AC checkoff is metadata only; it is not permission to change repository content.
-- Design conformance failures are implementation handoff blockers, not permission to change repository content in this phase.
-- Push the feature branch.
-- Create the PR if none exists; otherwise update the existing PR.
-- Include issue-linking lines for the actual issue IDs, for example `Fixes ENG-1023`. This is a generic issue-linking rule: use the real Linear identifiers and any existing repository convention, not a hardcoded workspace-specific placeholder prefix.
-- Report the PR URL and the remaining manual follow-up, if any.
-
-**Boundary rules:**
+## Boundary
 
 - No plan mode.
 - No merge.
 - No close-to-done transition.
-- No new implementation commits in this phase.
+- No new implementation commits.
 - Hand off to `closing-linear-issue` for merge and cleanup.
 
 ## Common Mistakes
 
-- Running quality gates before rebasing onto the latest default branch.
-- Using this phase to clean up uncommitted implementation work.
-- Proceeding with push or PR creation from a dirty worktree.
-- Treating this as a lightweight push step and skipping verification.
+- Pushing or creating a PR from a dirty worktree.
+- Editing code, tests, docs, or commits in the PR phase.
+- Skipping AC, design, validation, or stale targeted eval gates.
 - Moving the issue to `In Review` before the PR exists.
-- Treating AC verification as permission to invent or duplicate acceptance criteria in this phase.
-- Continuing to PR creation even though one or more ACs are still incomplete.
-- Merging the PR from this skill.
+- Duplicating acceptance criteria instead of checking the main Linear requirements section.
+- Merging or closing from this phase.
+
+## References
 
 - [`references/pr-phase-gates.md`](references/pr-phase-gates.md) — AC and design conformance gate mechanics
 - [`references/promptfoo-db-gate.md`](references/promptfoo-db-gate.md) — stale targeted eval decisions and helper usage
+- [`references/git-and-pr.md`](references/git-and-pr.md) — branch sync, push, PR body, and phase boundaries

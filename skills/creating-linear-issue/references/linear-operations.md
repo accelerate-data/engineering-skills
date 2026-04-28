@@ -21,5 +21,5 @@ The main skill owns the enforcement rule. This reference owns the Linear lookup 
 | Matching inputs | Match each candidate's name and description against the issue title and scope. |
 | Recommendation | Propose exactly one child label when one clear match exists. |
 | Close alternatives | If multiple candidates are close, list alternatives beside the recommendation in the field-confirmation question. |
-| No clear match | Ask the user to pick from the current child-label list or explicitly approve creating without a `User Flow` label. |
+| No clear match | Ask the user to pick from the current child-label list before drafting. Do not create a selected-team issue without a child label. |
 | Hard-coding | Never hard-code child-label names; they can grow or be renamed in Linear. |

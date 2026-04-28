@@ -10,7 +10,7 @@
     "eval:raising-linear-pr": "npm --prefix tests/evals run eval:raising-linear-pr",
     "eval:closing-linear-issue": "npm --prefix tests/evals run eval:closing-linear-issue",
     "eval:maintain-github-repos": "npm --prefix tests/evals run eval:maintain-github-repos",
-    "eval:create-feature-request": "npm --prefix tests/evals run eval:create-feature-request",
+    "eval:creating-feature-request": "npm --prefix tests/evals run eval:creating-feature-request",
     "eval:code-simplifier": "npm --prefix tests/evals run eval:code-simplifier",
     "eval:adversarial-review": "npm --prefix tests/evals run eval:adversarial-review",
     "eval:authoring-flow-spec": "npm --prefix tests/evals run eval:authoring-flow-spec",
@@ -18,6 +18,7 @@
     "eval:yolo": "npm --prefix tests/evals run eval:yolo",
     "eval:coverage": "npm --prefix tests/evals run eval:coverage",
     "eval:codex-compatibility": "npm --prefix tests/evals run eval:codex-compatibility",
+    "check:eval-user-behavior": "npm --prefix tests/evals run check:eval-user-behavior",
     "eval:writing-tests": "npm --prefix tests/evals run eval:writing-tests",
     "eval:e2e-adding-scenario": "npm --prefix tests/evals run eval:e2e-adding-scenario",
     "eval:e2e-authoring-feature-file": "npm --prefix tests/evals run eval:e2e-authoring-feature-file",
@@ -26,6 +27,7 @@
     "test:promptfoo-db-gate": "npm --prefix tests/evals run test:promptfoo-db-gate",
     "validate:plugin-manifests": "python3 scripts/validate_plugin_manifests.py",
     "check:plugin-version": "python3 scripts/check_plugin_version_bump.py --base-ref origin/main",
+    "check:skill-prose-wraps": "python3 scripts/check_skill_prose_wraps.py",
     "test:validators": "python3 -m unittest discover -s tests",
     "view": "npm --prefix tests/evals run view"
   }

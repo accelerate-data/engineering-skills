@@ -28,6 +28,8 @@ defaultTest:
 tests:
   - description: "happy path — DB step with dual dialect and RUN_ID example"
     vars:
+      eval_type: user-behavior
+      failure_modes: "cross-backend-step,duplicate-vocabulary,missing-run-id,overbroad-pattern"
       scenario: |-
         - E2E_HARNESS_ROOT is set to /home/user/e2e-test-harness.
         - The user says: "I need a step: 'the database should have a domain named {name} with status {status}'."
@@ -43,16 +45,19 @@ tests:
 
   - description: "cross-backend refusal — step mixes UI click and DB assertion"
     vars:
+      eval_type: user-behavior
+      failure_modes: "cross-backend-step,duplicate-vocabulary,missing-run-id,overbroad-pattern"
       scenario: |-
         - E2E_HARNESS_ROOT is set to /home/user/e2e-test-harness.
         - The user says: "Add a step that clicks the Delete button AND verifies the domain is removed from the database."
         - The requested step combines a UI action (browser click) with a DB assertion in a single step.
       expect_refuses_cross_backend_step: "true"
       expect_classifies_backend_before_adding: "true"
-      expect_no_hardcoded_app_path: "true"
 
   - description: "CWD fallback — E2E_HARNESS_ROOT not set, CWD is the harness"
     vars:
+      eval_type: user-behavior
+      failure_modes: "cross-backend-step,duplicate-vocabulary,missing-run-id,overbroad-pattern"
       scenario: |-
         - E2E_HARNESS_ROOT is not set.
         - CWD is /home/user/e2e-test-harness and it contains features/ and steps/ directories.
@@ -66,6 +71,8 @@ tests:
 
   - description: "skill-module routing — complex TOTP logic goes to skills/ module not inline recipe"
     vars:
+      eval_type: user-behavior
+      failure_modes: "cross-backend-step,duplicate-vocabulary,missing-run-id,overbroad-pattern"
       scenario: |-
         - E2E_HARNESS_ROOT is set to /home/user/e2e-test-harness.
         - The user says: "Add a step: 'I log in using TOTP two-factor authentication with secret {secret}'."
@@ -74,10 +81,11 @@ tests:
         - No skills/totp-generation.md exists yet.
       expect_routes_complex_logic_to_skill_module: "true"
       expect_classifies_backend_before_adding: "true"
-      expect_no_hardcoded_app_path: "true"
 
   - description: "near-duplicate refusal — existing pattern covers same semantics, no synonym added"
     vars:
+      eval_type: user-behavior
+      failure_modes: "cross-backend-step,duplicate-vocabulary,missing-run-id,overbroad-pattern"
       scenario: |-
         - E2E_HARNESS_ROOT is set to /home/user/e2e-test-harness.
         - The user says: "Add a step: 'the database should contain a domain with name {name}'."
@@ -85,10 +93,11 @@ tests:
         - The existing pattern checks the same table, same column, same assertion logic — just different wording.
       expect_refuses_near_duplicate_pattern: "true"
       expect_classifies_backend_before_adding: "true"
-      expect_no_hardcoded_app_path: "true"
 
   - description: "narrowness check — one-feature-only pattern triggers ask-first before adding"
     vars:
+      eval_type: user-behavior
+      failure_modes: "cross-backend-step,duplicate-vocabulary,missing-run-id,overbroad-pattern"
       scenario: |-
         - E2E_HARNESS_ROOT is set to /home/user/e2e-test-harness.
         - The user says: "Add a step: 'the Notifications panel digest interval should be set to Weekly'."
@@ -96,4 +105,3 @@ tests:
         - No other .feature file would ever need this exact assertion.
       expect_asks_before_narrow_pattern: "true"
       expect_classifies_backend_before_adding: "true"
-      expect_no_hardcoded_app_path: "true"

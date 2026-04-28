@@ -28,9 +28,20 @@ defaultTest:
 tests:
   - description: "close-issue — stops if PR is not merged yet"
     vars:
-      pr_state_scenario: "A PR already exists and has passed review, but it is not merged yet."
-      extra_scenario: ""
-      notes_focus: "In `notes`, explicitly say this skill stops and hands off if the PR is not already merged."
+      eval_type: user-behavior
+      failure_modes: "uses-pr-merge-behavior-in-wrong-phase,premature-success-claim"
+      user_prompt: "close ENG-1077 now that the PR is done."
+      simulated_context: |-
+        Linear issue ENG-1077 exists.
+        Team: Internal-IT.
+        Project: Engineering Skills.
+        Current Linear status: In Review.
+        PR URL: https://github.com/accelerate-data/engineering-skills/pull/1077.
+        PR state from supplied GitHub fixture: review passed, required checks passed, but the PR is not merged.
+        Merge evidence: no merge commit SHA exists because the PR is still open.
+        Entry worktree state: clean.
+        Cleanup state: not applicable because closeout must not start before merge evidence exists.
+        Notes focus: say this skill stops and hands off if the PR is not already merged.
       expect_enters_plan_mode: "false"
       expect_creates_pr: "false"
       expect_stops_if_pr_not_merged: "true"
@@ -38,19 +49,81 @@ tests:
       expect_would_close_issue_in_this_scenario: "false"
       expect_would_do_cleanup_in_this_scenario: "false"
       expect_checks_off_acceptance_criteria: "false"
-      required_terms: "merged,stop,github"
+      required_terms: "merged,stop"
   - description: "close-issue — post-merge cleanup refreshes local main conservatively"
     vars:
-      pr_state_scenario: "A PR already exists, has passed review, and is already merged."
-      extra_scenario: "In this successful post-merge cleanup path, there are no tracked file edits left in the disposable feature worktree, and the workflow reaches the final step of refreshing local `main` against `origin/main`."
-      notes_focus: "In `notes`, explicitly describe that local `main` must match `origin/main` exactly only after verifying there are no local-only commits, and that the workflow stops and reports if local `main` has diverged."
+      eval_type: user-behavior
+      failure_modes: "destructive-action-without-confirmation,acts-before-reading-local-context"
+      user_prompt: "close ENG-1077 and clean up the branch/worktree after the merge."
+      simulated_context: |-
+        Linear issue ENG-1077 exists.
+        Team: Internal-IT.
+        Project: Engineering Skills.
+        Current Linear status: In Review.
+        PR URL: https://github.com/accelerate-data/engineering-skills/pull/1077.
+        PR state from supplied GitHub fixture: merged.
+        Merge evidence: merge commit SHA abc1234 is present on the PR.
+        Closing metadata: PR body contains "Fixes ENG-1077" and no additional linked issues.
+        Entry worktree state: clean.
+        Disposable feature worktree after remote branch deletion: ignored and untracked eval artifacts are present, and no tracked file edits remain.
+        Branch cleanup constraints: local feature branch exists; remote feature branch is already deleted.
+        Local main refresh state: workflow reaches local `main` refresh; local `main` is clean and has no local-only commits.
+        Notes focus: local `main` must match `origin/main` exactly only after verifying there are no local-only commits; stop and report if local `main` has diverged.
       expect_enters_plan_mode: "false"
       expect_creates_pr: "false"
-      expect_stops_if_pr_not_merged: "true"
+      expect_stops_if_pr_not_merged: "false"
       expect_merges_pr: "false"
       expect_would_close_issue_in_this_scenario: "true"
       expect_would_do_cleanup_in_this_scenario: "true"
       expect_auto_cleans_disposable_post_merge: "true"
-      expect_stops_on_tracked_changes_during_cleanup: "true"
+      expect_stops_on_tracked_changes_during_cleanup: "false"
       expect_checks_off_acceptance_criteria: "false"
-      required_terms: "main,origin/main,local-only commits,diverg"
+      required_terms: "main,local-only"
+  - description: "close-issue — stops on dirty worktree before closeout"
+    vars:
+      eval_type: user-behavior
+      failure_modes: "destructive-action-without-confirmation,acts-before-reading-local-context"
+      user_prompt: "close ENG-1077; the PR is merged."
+      simulated_context: |-
+        Linear issue ENG-1077 exists.
+        Team: Internal-IT.
+        Project: Engineering Skills.
+        Current Linear status: In Review.
+        PR URL: https://github.com/accelerate-data/engineering-skills/pull/1077.
+        PR state from supplied GitHub fixture: merged.
+        Merge evidence: merge commit SHA def5678 is present on the PR.
+        Entry worktree state: dirty with tracked modifications in tests/evals/packages/closing-linear-issue/skill-closing-linear-issue.yaml.
+        Cleanup state: not reached because the phase must stop at entry.
+        Notes focus: report the dirty worktree before moving Linear to Done or cleaning up branches.
+      expect_enters_plan_mode: "false"
+      expect_creates_pr: "false"
+      expect_stops_on_dirty_worktree: "true"
+      expect_merges_pr: "false"
+      expect_would_close_issue_in_this_scenario: "false"
+      expect_would_do_cleanup_in_this_scenario: "false"
+      expect_checks_off_acceptance_criteria: "false"
+      required_terms: "dirty,worktree,stop,tracked"
+  - description: "close-issue — refuses speculative closeout without merge evidence"
+    vars:
+      eval_type: user-behavior
+      failure_modes: "premature-success-claim,uses-pr-merge-behavior-in-wrong-phase"
+      user_prompt: "close ENG-1077. I think the PR merged, but I don't have the merge details handy."
+      simulated_context: |-
+        Linear issue ENG-1077 exists.
+        Team: Internal-IT.
+        Project: Engineering Skills.
+        Current Linear status: In Review.
+        PR URL: https://github.com/accelerate-data/engineering-skills/pull/1077.
+        PR state from supplied GitHub fixture: unknown; the fixture does not include a merged state.
+        Merge evidence: missing; no merge commit SHA is supplied.
+        Entry worktree state: clean.
+        Cleanup state: not applicable because the fixture lacks proof that the PR is already merged.
+        Notes focus: say the eval fixture is missing required merge evidence and the workflow must not close Linear speculatively.
+      expect_enters_plan_mode: "false"
+      expect_creates_pr: "false"
+      expect_stops_if_pr_not_merged: "true"
+      expect_merges_pr: "false"
+      expect_would_close_issue_in_this_scenario: "false"
+      expect_would_do_cleanup_in_this_scenario: "false"
+      expect_checks_off_acceptance_criteria: "false"
+      required_terms: "merge,evidence,missing,stop,speculative"

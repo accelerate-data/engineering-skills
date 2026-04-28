@@ -1,6 +1,6 @@
 ---
 name: e2e-extending-step-vocabulary
-description: Add a missing step pattern to `steps/*.md` when a `.feature` draft contains a `# MISSING STEP:` comment or the agent detects a vocabulary gap. Works from any repo when `E2E_HARNESS_ROOT` points to the harness.
+description: Use when a BDD `.feature` draft has a missing step, `# MISSING STEP:` marker, unsupported phrasing, or step-vocabulary gap in a Playwright E2E harness.
 ---
 
 # e2e-extending-step-vocabulary

@@ -1,6 +1,6 @@
 ---
 name: e2e-authoring-feature-file
-description: Create a brand-new `.feature` file in a BDD E2E test harness — e.g. "add a new feature file for the billing panel", "cover the Reports area (no file exists yet)". Works from any repo when `E2E_HARNESS_ROOT` points to the harness.
+description: Use when the user asks to create, author, draft, or add a new `.feature` file in a BDD E2E test harness for an area with no existing feature file.
 ---
 
 # e2e-authoring-feature-file

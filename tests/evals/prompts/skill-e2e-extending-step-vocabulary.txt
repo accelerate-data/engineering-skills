@@ -1,27 +1,22 @@
-Use the Read tool to read `skills/e2e-extending-step-vocabulary/SKILL.md` and all files under `skills/e2e-extending-step-vocabulary/references/`. Then, without calling any other tools, use only the simulated context provided in the scenario below to determine how the skill would behave.
+Read `skills/e2e-extending-step-vocabulary/SKILL.md` and its directly
+referenced materials.
+
+This is a read-only workflow eval. Use only the simulated context below; do not
+edit files or call external tools.
 
 Scenario:
 
 {{scenario}}
 
-For each field below, set `true` if the skill WOULD do that in this specific scenario, `false` if it would NOT do that in this specific scenario.
+Based on the skill, report the next workflow obligations for this scenario. Do
+not mark something true only because the skill supports it in another scenario.
+Each boolean means "the agent must do this for the simulated scenario above."
+Use `false` when the scenario does not trigger that obligation, even if the
+skill would require it in a different scenario.
 
-Field definitions:
-- `resolves_harness_root_from_env_var`: the skill uses E2E_HARNESS_ROOT (which IS set in this scenario) to locate the harness
-- `falls_back_to_cwd_when_env_not_set`: the skill falls back to CWD as the harness root because E2E_HARNESS_ROOT is NOT set in this scenario
-- `classifies_backend_before_adding`: the skill classifies the backend type (ui/api/db/fs/log/other) before proposing the new step entry
-- `refuses_cross_backend_step`: the requested step mixes two backends in this scenario, so the skill refuses and asks the caller to split
-- `includes_failure_mode_note`: the skill includes a failure mode note (no retry, FAIL immediately) in the proposed entry
-- `includes_dual_dialect_for_db`: the step is a DB step in this scenario, so the skill documents both sqlite3 and psql dialects (or uses {DB_CMD})
-- `emits_run_id_on_data_literals`: the skill embeds the literal RUN_ID marker in seeded data literals in the example scenario call
-- `uses_step_vocabulary_only`: reserved for alignment with other BDD skills — set true unless this skill is inventing steps rather than adding to vocabulary
-- `emits_missing_step_comment`: a needed step pattern is absent and the skill emits a # MISSING STEP: comment
-- `no_hardcoded_app_path`: the skill never writes a hardcoded absolute path in its output
-- `routes_complex_logic_to_skill_module`: the requested step requires multi-step reusable logic (e.g. TOTP generation) — the skill proposes a skills/<module>.md entry routed via steps/skill-steps.md rather than inlining the full recipe into the step row
-- `refuses_near_duplicate_pattern`: an existing entry in the target steps/*.md file already covers the same assertion semantics in this scenario, so the skill refuses and points to the existing pattern instead of adding a synonym
-- `asks_before_narrow_pattern`: the requested pattern would only be used in one scenario in one .feature file in this scenario, so the skill asks the caller whether to simplify instead of adding bespoke vocabulary
+Return raw JSON only. Do not wrap the answer in Markdown fences.
 
-Return JSON only — no other text — in this shape:
+Return JSON only with this shape:
 
 ```json
 {

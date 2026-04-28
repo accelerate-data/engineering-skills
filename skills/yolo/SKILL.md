@@ -2,9 +2,8 @@
 name: yolo
 description: >-
   Use when the user wants to go from a feature description to an open PR in one
-  uninterrupted flow. Chains creating-linear-issue → implementing-linear-issue →
-  raising-linear-pr without manual hand-offs. Stops after the PR is raised;
-  closing-linear-issue (merge and cleanup) remains a separate manual step.
+  uninterrupted flow, asks to yolo a change, says do it all, or requests a
+  single-shot create-implement-PR workflow.
 argument-hint: "[feature description]"
 ---
 

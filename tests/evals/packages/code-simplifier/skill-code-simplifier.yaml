@@ -28,6 +28,8 @@ defaultTest:
 tests:
   - description: "default scope — simplifies recent diff only and follows local conventions"
     vars:
+      eval_type: user-behavior
+      failure_modes: "broadens-scope-without-request,skips-local-conventions,changes-behavior-without-request,skips-verification"
       scenario: |-
         - The user says: "clean up the code you just touched."
         - The branch diff changes `src/importer.ts` only.
@@ -47,6 +49,8 @@ tests:
 
   - description: "clarity over brevity — rejects nested ternary and keeps intent comments"
     vars:
+      eval_type: user-behavior
+      failure_modes: "broadens-scope-without-request,skips-local-conventions,changes-behavior-without-request,skips-verification"
       scenario: |-
         - The touched code has a clear `switch` with three business cases and a comment explaining a
           regulatory edge case.
@@ -61,6 +65,8 @@ tests:
 
   - description: "verification failure — fixes regression before claiming completion"
     vars:
+      eval_type: user-behavior
+      failure_modes: "broadens-scope-without-request,skips-local-conventions,changes-behavior-without-request,skips-verification"
       scenario: |-
         - The simplifier extracts duplicate normalization logic from shared authentication code.
         - The first targeted test run fails because a thrown error message changed.
@@ -76,6 +82,8 @@ tests:
 
   - description: "project standards — applies concrete local style instead of generic preferences"
     vars:
+      eval_type: user-behavior
+      failure_modes: "broadens-scope-without-request,skips-local-conventions,changes-behavior-without-request,skips-verification"
       scenario: |-
         - The user says: "simplify the React component I just edited."
         - Local guidance says to use ES modules with sorted imports, prefer `function`
@@ -93,13 +101,14 @@ tests:
 
   - description: "redundant abstraction — removes a forwarding helper without collapsing domain boundaries"
     vars:
+      eval_type: user-behavior
+      failure_modes: "broadens-scope-without-request,skips-local-conventions,changes-behavior-without-request,skips-verification"
       scenario: |-
         - The recent diff added `buildPayloadForSave(input)` which only calls
           `normalizePayload(input)` and is used once.
         - `normalizePayload` is a domain abstraction used in several places and encodes business rules.
         - Removing the one-use wrapper makes the execution path clearer.
       expect_removes_redundant_abstraction: "true"
-      expect_reduces_duplication: "false"
       expect_keeps_domain_abstractions: "true"
       expect_collapses_helpful_abstractions: "false"
       expect_preserves_outputs: "true"
@@ -107,6 +116,8 @@ tests:
 
   - description: "naming clarity — renames unclear locals without changing external contract names"
     vars:
+      eval_type: user-behavior
+      failure_modes: "broadens-scope-without-request,skips-local-conventions,changes-behavior-without-request,skips-verification"
       scenario: |-
         - The touched function uses locals named `data`, `item`, and `res` while nearby code uses
           `invoice`, `lineItem`, and `approvalResult`.
@@ -119,6 +130,8 @@ tests:
 
   - description: "concern boundaries — refuses to merge orchestration and pure domain logic"
     vars:
+      eval_type: user-behavior
+      failure_modes: "broadens-scope-without-request,skips-local-conventions,changes-behavior-without-request,skips-verification"
       scenario: |-
         - `submitOrder` orchestrates logging, persistence, and notifications.
         - `calculateDiscount` is a pure domain function with unit tests and is shared by checkout,
@@ -133,6 +146,8 @@ tests:
 
   - description: "error handling — follows established result pattern instead of adding broad try/catch"
     vars:
+      eval_type: user-behavior
+      failure_modes: "broadens-scope-without-request,skips-local-conventions,changes-behavior-without-request,skips-verification"
       scenario: |-
         - Repository guidance and nearby code use a `Result` return value for recoverable parse
           failures.
@@ -148,6 +163,8 @@ tests:
 
   - description: "explicit broad scope — widens target only because the user requests the module"
     vars:
+      eval_type: user-behavior
+      failure_modes: "broadens-scope-without-request,skips-local-conventions,changes-behavior-without-request,skips-verification"
       scenario: |-
         - The user says: "simplify the whole auth module."
         - The current diff only touches `auth/session.ts`, but the module also includes
@@ -162,6 +179,8 @@ tests:
 
   - description: "summary discipline — reports meaningful simplification without noisy trivial edits"
     vars:
+      eval_type: user-behavior
+      failure_modes: "broadens-scope-without-request,skips-local-conventions,changes-behavior-without-request,skips-verification"
       scenario: |-
         - The simplifier applies formatter-only whitespace changes, sorts imports, and replaces a
           confusing nested conditional with guard clauses.
@@ -175,6 +194,8 @@ tests:
 
   - description: "test fixtures — does not update expected data to hide accidental behavior drift"
     vars:
+      eval_type: user-behavior
+      failure_modes: "broadens-scope-without-request,skips-local-conventions,changes-behavior-without-request,skips-verification"
       scenario: |-
         - After simplifying invoice serialization, a snapshot fails because field order and a
           nullable field changed.

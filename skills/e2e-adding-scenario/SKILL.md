@@ -1,6 +1,6 @@
 ---
 name: e2e-adding-scenario
-description: Append or extend scenarios in an existing `.feature` file in a BDD E2E test harness — e.g. "add a scenario for X to the domain-crud feature", "cover Y in intent-creation.feature". Works from any repo when `E2E_HARNESS_ROOT` points to the harness.
+description: Use when the user asks to add, append, extend, or cover a scenario in an existing `.feature` file in a BDD E2E test harness.
 ---
 
 # e2e-adding-scenario

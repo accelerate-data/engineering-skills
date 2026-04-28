@@ -1,5 +1,5 @@
 # yaml-language-server: $schema=https://promptfoo.dev/config-schema.json
-description: "Yolo skill — workflow order, phase boundaries, and routing trigger checks"
+description: "Yolo skill — natural single-shot delivery requests"
 
 prompts:
   - id: yolo
@@ -28,10 +28,16 @@ defaultTest:
 tests:
   - description: "yolo — chains all 3 phases in order, stops at PR, preserves quality gates"
     vars:
-      scenario: |-
-        - Prior conversation context: the user has finished describing a feature and wants to start building.
-        - User message: "yolo — add a config flag to disable the onboarding banner for existing users"
-        - The flow should create the Linear issue, implement it with gates, then raise the PR.
+      eval_type: user-behavior
+      failure_modes: "misses-required-handoff,creates-pr-too-early,skips-quality-gates"
+      user_prompt: "yolo this: add a config flag so existing users do not see the onboarding banner anymore. Take it all the way to an open PR."
+      simulated_context: |-
+        - Prior conversation context: the user has finished describing the feature and now wants delivery to start.
+        - No Linear issue exists yet for this request.
+        - If Phase 1 succeeds, the fixture-supplied created issue is `ENG-YOLO-101` in the Internal-IT project.
+        - The implementation phase starts from that created issue and must keep the implementing-linear-issue quality gates.
+        - The PR phase starts only after implementation is complete.
+        - The expected stop point is an open PR with the issue moved to In Review, not merge or closeout.
       expected_detected_skill: "yolo"
       expect_yolo_trigger_found_in_message: "true"
       expect_runs_creating_linear_issue_first: "true"
@@ -45,32 +51,51 @@ tests:
 
   - description: "routing — detects yolo from single-shot phrasing"
     vars:
-      scenario: |-
-        - Prior conversation context: the user has finished describing a feature and wants to start building.
-        - User message: "do it all in one shot — create the issue, implement it, and raise the PR"
+      eval_type: user-behavior
+      failure_modes: "misses-required-handoff,creates-pr-too-early"
+      user_prompt: "Do it all in one shot for the recurring reports export retry work: create the issue, implement it, and raise the PR."
+      simulated_context: |-
+        - Prior conversation context: the feature has been discussed and the user is asking for uninterrupted delivery.
+        - No Linear issue exists yet for this request.
+        - If issue creation succeeds, the fixture-supplied created issue is `ENG-YOLO-102`.
+        - The user expects the create, implement, and raise-PR phases to run in sequence without a manual handoff.
       expected_detected_skill: "yolo"
       expect_yolo_trigger_found_in_message: "true"
 
   - description: "routing — does not trigger yolo for create-only request"
     vars:
-      scenario: |-
-        - User message: "create a linear issue for adding dark mode"
+      eval_type: user-behavior
+      failure_modes: "misses-required-handoff,creates-pr-too-early"
+      user_prompt: "Create a Linear issue for adding dark mode."
+      simulated_context: |-
         - The user only asks to file a ticket.
+        - No Linear issue exists yet for this request.
+        - The fixture does not include implementation or PR readiness facts because the user did not request those phases.
       expected_detected_skill: "creating-linear-issue"
       expect_yolo_trigger_found_in_message: "false"
 
   - description: "routing — does not trigger yolo when issue already exists"
     vars:
-      scenario: |-
-        - User message: "the issue is already filed as AD-45, go ahead and implement it"
+      eval_type: user-behavior
+      failure_modes: "misses-required-handoff,creates-pr-too-early"
+      user_prompt: "The issue is already filed as ENG-45. Go ahead and implement it."
+      simulated_context: |-
         - Issue creation is already complete.
+        - Simulated Linear metadata: issue `ENG-45`, team `Internal-IT`, project `Engineering Skills`, current status `Backlog`.
+        - The fixture supplies the issue details needed to start implementation.
+        - No PR exists yet and implementation has not been completed.
       expected_detected_skill: "implementing-linear-issue"
       expect_yolo_trigger_found_in_message: "false"
 
   - description: "routing — does not trigger yolo when implementation is done"
     vars:
-      scenario: |-
-        - User message: "implementation is done, raise the PR"
+      eval_type: user-behavior
+      failure_modes: "misses-required-handoff,creates-pr-too-early"
+      user_prompt: "Implementation is done for ENG-73, raise the PR."
+      simulated_context: |-
         - The implementation phase is already complete.
+        - Simulated Linear metadata: issue `ENG-73`, team `Internal-IT`, project `Engineering Skills`, current status `Ready for PR`.
+        - The feature branch has committed implementation work and the worktree is clean.
+        - Acceptance criteria are complete and the fixture supplies any PR and git facts needed for the PR-phase decision.
       expected_detected_skill: "raising-linear-pr"
       expect_yolo_trigger_found_in_message: "false"

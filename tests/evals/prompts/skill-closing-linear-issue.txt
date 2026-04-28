@@ -1,30 +1,48 @@
-You are preparing to close a completed Linear issue in this repository.
+You are evaluating the `closing-linear-issue` workflow for a realistic closeout
+request.
+
+Parser contract: output only the final JSON object. Any analysis, preface,
+heading, markdown, or text before the opening `{` fails the eval.
+Do not think aloud. Do not trace the workflow. Do not explain field choices.
+Emit only the JSON object.
 
 Read the skill at `skills/closing-linear-issue/SKILL.md`.
 
+This is a read-only workflow eval. Do not merge, close Linear, delete branches,
+or perform external actions.
+
+Do not read Linear, write Linear, contact Linear, or call Linear tools. All required Linear facts are supplied in the scenario and simulated context. If a required Linear fact is missing from the scenario, report that the fixture is incomplete instead of trying to fetch it.
+
 Scenario:
 
-- {{pr_state_scenario}}
-- The issue should only be closed after the PR is already merged and cleanup is complete.
-- The worktree is clean at the start of the close phase.
-- After the PR merges and the remote branch is deleted, the feature worktree contains ignored and untracked eval artifacts plus a tracked file edit.
-{% if extra_scenario %}- {{extra_scenario}}{% endif %}
-{% if notes_focus %}{{notes_focus}}{% endif %}
+User prompt:
 
-Do not actually call tools. Return JSON only with this shape:
+> {{ user_prompt }}
 
-```json
+Simulated context:
+
+{{ simulated_context }}
+
+Think silently. Based on the skill, report the next workflow obligations for this scenario.
+Every boolean must describe what the workflow would actively do in this exact
+scenario. If an earlier gate blocks the workflow, mark downstream closeout and
+cleanup actions false even if the skill supports them after a passing gate.
+
+Your entire response must be one valid compact JSON object on a single line.
+The first character must be `{` and the last character must be `}`. Do not
+include markdown, bullets, explanation, headings, analysis, or code fences.
+Never write an explanation before the JSON object.
+
 {
-  "enters_plan_mode": false,
-  "creates_pr": false,
-  "stops_on_dirty_worktree": true,
-  "stops_if_pr_not_merged": true,
-  "merges_pr": false,
-  "would_close_issue_in_this_scenario": false,
-  "would_do_cleanup_in_this_scenario": false,
-  "auto_cleans_disposable_post_merge": true,
-  "stops_on_tracked_changes_during_cleanup": true,
-  "checks_off_acceptance_criteria": false,
+  "enters_plan_mode": <bool>,
+  "creates_pr": <bool>,
+  "stops_on_dirty_worktree": <bool>,
+  "stops_if_pr_not_merged": <bool>,
+  "merges_pr": <bool>,
+  "would_close_issue_in_this_scenario": <bool>,
+  "would_do_cleanup_in_this_scenario": <bool>,
+  "auto_cleans_disposable_post_merge": <bool>,
+  "stops_on_tracked_changes_during_cleanup": <bool>,
+  "checks_off_acceptance_criteria": <bool>,
   "notes": "string"
 }
-```

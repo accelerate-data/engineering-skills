@@ -28,6 +28,8 @@ defaultTest:
 tests:
   - description: "happy path — UPDATE mode, runs generate script, requires diff review"
     vars:
+      eval_type: user-behavior
+      failure_modes: "manual-gherkin-edit,missing-guide,missing-database-gate,skips-diff-review"
       scenario: |-
         - E2E_HARNESS_ROOT is set to /home/user/e2e-test-harness.
         - The harness .env contains: DATABASE_PATH=/home/user/app/data/db.sqlite
@@ -44,6 +46,8 @@ tests:
 
   - description: "halt — DATABASE_PATH missing from .env and E2E_APP_SRC not set"
     vars:
+      eval_type: user-behavior
+      failure_modes: "manual-gherkin-edit,missing-guide,missing-database-gate,skips-diff-review"
       scenario: |-
         - E2E_HARNESS_ROOT is not set. CWD is /home/user/e2e-test-harness which contains features/ and steps/.
         - The harness .env exists but DATABASE_PATH line is absent entirely.
@@ -55,6 +59,8 @@ tests:
 
   - description: "no guide — refuses to run generate script when guide file is missing"
     vars:
+      eval_type: user-behavior
+      failure_modes: "manual-gherkin-edit,missing-guide,missing-database-gate,skips-diff-review"
       scenario: |-
         - E2E_HARNESS_ROOT is set to /home/user/e2e-test-harness.
         - The harness .env contains: DATABASE_PATH=/home/user/app/data/db.sqlite
@@ -66,6 +72,8 @@ tests:
 
   - description: "CREATE mode — new MAPPINGS pair committed separately before regen"
     vars:
+      eval_type: user-behavior
+      failure_modes: "manual-gherkin-edit,missing-guide,missing-database-gate,skips-diff-review"
       scenario: |-
         - E2E_HARNESS_ROOT is set to /home/user/e2e-test-harness.
         - The harness .env contains: DATABASE_PATH=/home/user/app/data/db.sqlite
@@ -80,6 +88,8 @@ tests:
 
   - description: "E2E_APP_SRC set — skips DATABASE_PATH gate and proceeds to regen"
     vars:
+      eval_type: user-behavior
+      failure_modes: "manual-gherkin-edit,missing-guide,missing-database-gate,skips-diff-review"
       scenario: |-
         - E2E_HARNESS_ROOT is set to /home/user/e2e-test-harness.
         - E2E_APP_SRC is set to /home/user/app.
@@ -96,6 +106,8 @@ tests:
 
   - description: "halt — E2E_APP_SRC set but unreadable"
     vars:
+      eval_type: user-behavior
+      failure_modes: "manual-gherkin-edit,missing-guide,missing-database-gate,skips-diff-review"
       scenario: |-
         - E2E_HARNESS_ROOT is set to /home/user/e2e-test-harness.
         - E2E_APP_SRC is set to /home/user/missing-app, but that directory is not readable.
@@ -109,6 +121,8 @@ tests:
 
   - description: "CREATE mode — MAPPINGS pair already present but target feature is absent"
     vars:
+      eval_type: user-behavior
+      failure_modes: "manual-gherkin-edit,missing-guide,missing-database-gate,skips-diff-review"
       scenario: |-
         - E2E_HARNESS_ROOT is set to /home/user/e2e-test-harness.
         - The harness .env contains: DATABASE_PATH=/home/user/app/data/db.sqlite
@@ -124,6 +138,8 @@ tests:
 
   - description: "append redirect — quick-append request redirects to e2e-adding-scenario with overwrite warning"
     vars:
+      eval_type: user-behavior
+      failure_modes: "manual-gherkin-edit,missing-guide,missing-database-gate,skips-diff-review"
       scenario: |-
         - E2E_HARNESS_ROOT is set to /home/user/e2e-test-harness.
         - The harness .env contains: DATABASE_PATH=/home/user/app/data/db.sqlite
@@ -136,6 +152,8 @@ tests:
 
   - description: "MISSING STEP blocks BDD — handoff to extending-step-vocabulary before BDD runs"
     vars:
+      eval_type: user-behavior
+      failure_modes: "manual-gherkin-edit,missing-guide,missing-database-gate,skips-diff-review"
       scenario: |-
         - E2E_HARNESS_ROOT is set to /home/user/e2e-test-harness.
         - The harness .env contains: DATABASE_PATH=/home/user/app/data/db.sqlite

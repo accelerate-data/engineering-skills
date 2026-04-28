@@ -40,11 +40,11 @@
     },
     "eval_harness": {
       "path": "tests/evals/",
-      "description": "Promptfoo harness and deterministic compatibility checks for skills in this repository. Agentic eval packages use a local OpenCode CLI provider that invokes `opencode run` directly, avoiding a managed `opencode serve` process. Current packages cover the Linear workflow skills, create-feature-request, code-simplifier, maintain-github-repos, writing-tests, adversarial-review, authoring-flow-spec, explaining-code, the 4 e2e BDD authoring skills, yolo, bundled raising-linear-pr promptfoo DB gate helper tests, eval coverage reporting, and Codex compatibility."
+      "description": "Promptfoo harness and deterministic compatibility checks for skills in this repository. Agentic eval packages use a local OpenCode CLI provider that invokes `opencode run` directly, avoiding a managed `opencode serve` process. Current packages cover the Linear workflow skills, creating-feature-request, code-simplifier, maintain-github-repos, writing-tests, adversarial-review, authoring-flow-spec, explaining-code, the 4 e2e BDD authoring skills, yolo, bundled raising-linear-pr promptfoo DB gate helper tests, eval coverage reporting, Codex compatibility, and the static eval user-behavior quality check."
     },
     "scripts": {
       "path": "scripts/",
-      "description": "Repository helper and validation scripts. worktree.sh creates or reattaches sibling worktrees, symlinks shared local state such as .env and tests/evals/.promptfoo, allows direnv, and bootstraps tests/evals dependencies. validate_plugin_manifests.py checks Claude/Codex manifest required fields, identity, license, version, and skills-path parity. check_plugin_version_bump.py enforces shared Claude/Codex version equality and an origin/main version increase."
+      "description": "Repository helper and validation scripts. worktree.sh creates or reattaches sibling worktrees, symlinks shared local state such as .env and tests/evals/.promptfoo, allows direnv, and bootstraps tests/evals dependencies. validate_plugin_manifests.py checks Claude/Codex manifest required fields, identity, license, version, and skills-path parity. check_plugin_version_bump.py enforces shared Claude/Codex version equality and an origin/main version increase. check_skill_prose_wraps.py prevents hard-wrapped prose in skill Markdown files."
     },
     "validator_tests": {
       "path": "tests/",
@@ -58,7 +58,7 @@
   "key_directories": {
     "skills/": "All skill content owned by this plugin repo",
     "commands/": "Top-level slash-command wrappers that delegate to skills",
-    "tests/evals/": "Promptfoo eval packages, prompts, assertions, a local OpenCode CLI provider, and wrapper script for skill regression checks",
+    "tests/evals/": "Promptfoo eval packages, prompts, assertions, a local OpenCode CLI provider, and deterministic scripts for skill regression and eval quality checks",
     "scripts/": "Repository helper and validation scripts such as canonical worktree setup and plugin manifest checks",
     "tests/": "Unit tests for repository validation scripts",
     ".claude-plugin/": "Claude plugin manifest",
@@ -68,6 +68,7 @@
     "setup_worktree": "./scripts/worktree.sh <branch-name>",
     "validate_plugin_manifests": "npm run validate:plugin-manifests",
     "check_plugin_version_bump": "npm run check:plugin-version",
+    "check_skill_prose_wraps": "npm run check:skill-prose-wraps",
     "test_validators": "npm run test:validators",
     "eval_all": "npm run eval",
     "eval_creating_linear_issue": "npm run eval:creating-linear-issue",
@@ -75,7 +76,7 @@
     "eval_raising_linear_pr": "npm run eval:raising-linear-pr",
     "eval_closing_linear_issue": "npm run eval:closing-linear-issue",
     "eval_maintain_github_repos": "npm run eval:maintain-github-repos",
-    "eval_create_feature_request": "npm run eval:create-feature-request",
+    "eval_creating_feature_request": "npm run eval:creating-feature-request",
     "eval_code_simplifier": "npm run eval:code-simplifier",
     "eval_writing_tests": "npm run eval:writing-tests",
     "eval_adversarial_review": "npm run eval:adversarial-review",
@@ -88,6 +89,7 @@
     "eval_yolo": "npm run eval:yolo",
     "eval_coverage": "npm run eval:coverage",
     "eval_codex_compatibility": "npm run eval:codex-compatibility",
+    "check_eval_user_behavior": "npm run check:eval-user-behavior",
     "test_promptfoo_db_gate": "npm run test:promptfoo-db-gate",
     "eval_view": "npm run view"
   },
@@ -106,6 +108,7 @@
     "startup": "Read this file before exploring the repository. It is the primary startup context for structure, ownership, and eval commands.",
     "marketplace_model": "This repository is a plugin source, not a marketplace. Marketplaces in other repositories should point to this repo as the plugin source.",
     "eval_scope": "tests/evals only covers skills owned by this repository. Do not move in evals for external skill repos such as superpowers.",
+    "eval_user_behavior": "Run npm run check:eval-user-behavior to enforce that Linear-adjacent eval prompts are self-contained and user-behavior fixtures declare failure_modes.",
     "update_repo_map": "Refresh this file whenever manifests, skill layout, eval layout, validation scripts, or command references change.",
     "license": "Root repository content is Elastic License 2.0 (ELv2)."
   }

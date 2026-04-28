@@ -6,7 +6,7 @@ Per-backend conventions for `e2e-extending-step-vocabulary`. Load this at checkl
 
 Call `browser_snapshot` **before** any action — extract the target element ref from the snapshot, then act on it:
 
-```
+```text
 browser_snapshot → browser_click(ref) / browser_drag(ref) / browser_fill_form(ref, values)
 ```
 
@@ -31,7 +31,7 @@ Follow the pattern in `steps/fs-assertions.md` for local (`test -d`, `test -f`, 
 
 ## GitHub / gh CLI
 
-```
+```sh
 gh api repos/{owner}/{repo}/...
 ```
 
