@@ -13,7 +13,6 @@
     "eval:creating-feature-request": "npm --prefix tests/evals run eval:creating-feature-request",
     "eval:code-simplifier": "npm --prefix tests/evals run eval:code-simplifier",
     "eval:adversarial-review": "npm --prefix tests/evals run eval:adversarial-review",
-    "eval:authoring-flow-spec": "npm --prefix tests/evals run eval:authoring-flow-spec",
     "eval:explaining-code": "npm --prefix tests/evals run eval:explaining-code",
     "eval:yolo": "npm --prefix tests/evals run eval:yolo",
     "eval:coverage": "npm --prefix tests/evals run eval:coverage",
