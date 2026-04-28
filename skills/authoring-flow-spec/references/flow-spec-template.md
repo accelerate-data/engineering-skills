@@ -13,7 +13,7 @@ Do not treat this file as a flow itself — the underscore prefix (`_flow-spec-t
 
 ## When to use this
 
-Use this prompt when creating or restructuring a user-flow specification. A flow spec lives in its target GitHub repo (`studio`, `skill-builder`, `domain-cicd`, or `migration-utility`) at `docs/functional/<canonical-id>/`. A flow spec is the **top-level, behavior-focused source-of-truth artifact** for a user flow. Downstream functional specifications and detailed design documents link to this spec, not the other way around.
+Use this prompt when creating or restructuring a user-flow specification. A flow spec lives in its target GitHub repo (per the `repo` value in column C of the User-Flows-Details Sheet) at `docs/functional/<canonical-id>/`. A flow spec is the **top-level, behavior-focused source-of-truth artifact** for a user flow. Downstream functional specifications and detailed design documents link to this spec, not the other way around.
 
 Flow specs are **not**:
 
@@ -170,7 +170,7 @@ Use the following prompt as-is (or adapt it lightly) when tasking an agent to au
 > - Standalone or parent: `<repo>/docs/functional/<canonical-id>/README.md`
 > - Child: `<repo>/docs/functional/<parent-id>/NN-<child-slug>.md`
 >
-> The canonical ID matches Sheet column B. The target repo (`studio`, `skill-builder`, `domain-cicd`, or `migration-utility`) is Sheet column C. Category (Sheet column D) is no longer encoded in the file path — it lives only in the Sheet.
+> The canonical ID matches Sheet column B. The target repo is whatever value appears in Sheet column C for that row — there is no hardcoded list. Category (Sheet column D) is no longer encoded in the file path — it lives only in the Sheet.
 
 ---
 

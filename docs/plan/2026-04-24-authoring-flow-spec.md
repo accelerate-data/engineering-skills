@@ -1,5 +1,7 @@
 # authoring-flow-spec Skill Implementation Plan
 
+**Superseded in part by `docs/plan/2026-04-28-sheet-driven-target-repos.md`.** That plan rewrote the Phase 0 repo whitelist to be Sheet-driven. Any reference below to a fixed set of four target repos (`studio`, `skill-builder`, `domain-cicd`, `migration-utility`) reflects the state at the time this plan landed (PR #15) — the legitimate repo set is now whatever appears in column C of the User-Flows-Details Sheet. Use the newer plan for the current authoritative behavior. Concrete repo names that remain below as integration-test setup ("invoke from inside `studio`") are still valid as examples; only the whitelist semantics changed.
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Create a new `authoring-flow-spec` skill and `/author-flow-spec` command in `ad-plugins/engineering-skills` that owns the end-to-end authoring workflow for Vibedata user-flow specifications, and relocate the current template + archive existing flows in `vd-specs-product-architecture` so the skill becomes the single source of truth.

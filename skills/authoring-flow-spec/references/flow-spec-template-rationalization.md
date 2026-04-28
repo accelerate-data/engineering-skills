@@ -111,7 +111,7 @@ Sections of `_flow-spec-template.md`, in order. **Bold** = always; *italic* = op
 
 - **Standalone / Parent**: `<target-repo>/docs/functional/<canonical-id>/README.md`. Frontmatter has `id`, `title`, `persona`, `last-reviewed` (plus `sub-flows:` for parents).
 - **Child**: `<target-repo>/docs/functional/<parent-id>/NN-<child-slug>.md` — sibling of the parent's `README.md`. Frontmatter adds `parent: <parent-slug>`. Canonical ID is composite: `<parent-slug>-<child-slug>`.
-- The `<target-repo>` is one of `studio`, `skill-builder`, `domain-cicd`, `migration-utility` (Sheet column C). Category (Sheet column D) is no longer part of the file path.
+- The `<target-repo>` is the value in Sheet column C for the row. Sheet column C is canonical and may change without a doc update; the active set at the time of writing is `studio`, `skill-builder`, `domain-cicd`, `migration-utility`, but this is non-normative. Category (Sheet column D) is no longer part of the file path.
 
 ## What the template explicitly is NOT
 

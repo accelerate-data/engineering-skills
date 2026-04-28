@@ -26,15 +26,34 @@ defaultTest:
       value: file://../../assertions/check-authoring-flow-spec-contract.js
 
 tests:
-  - description: "preconditions — validates tooling, auth, git checkout, and allowed repo"
+  - description: "preconditions — validates tooling, auth, git checkout, and Sheet-driven allowed repo"
     vars:
       eval_type: user-behavior
       failure_modes: "missing-preconditions,wrong-source-of-truth,implementation-level-spec,premature-closeout"
       scenario: |-
         - The user asks: "author a flow spec for intent-user-data-mart-build."
         - `gws` is missing, auth may be stale, and the current repo may be outside the allowed set.
+        - The legitimate set of target repos is whatever appears in column C of the User-Flows-Details Sheet — there is no hardcoded whitelist.
       expect_checks_gws_auth_git_and_repo: "true"
       expect_aborts_outside_allowed_repos: "true"
+      expect_resolves_target_repos_from_sheet_column_c: "true"
+      expect_caches_repo_set_for_invocation: "true"
+      expect_compares_repo_names_case_insensitive_trimmed: "true"
+      expect_does_not_hardcode_repo_whitelist: "true"
+
+  - description: "preconditions — Sheet-driven repo resolver covers empty-Sheet abort and dynamic abort messaging"
+    vars:
+      eval_type: user-behavior
+      failure_modes: "missing-preconditions,wrong-source-of-truth,implementation-level-spec,premature-closeout"
+      scenario: |-
+        - Run A: the user is in a repo whose name does not appear in Sheet column C; the abort message must list the dynamic set fetched from the Sheet, not a static four-name list.
+        - Run B: Sheet column C is empty after filtering (every value is `#N/A`, blank, or starts with `pending`); the skill must hard-abort.
+        - Run C: Sheet column C contains `Studio   ` (trailing whitespace, mixed case) and the user is in a repo whose `git remote` reports `studio`; the skill must accept this as a match.
+      expect_aborts_on_empty_sheet_repo_set: "true"
+      expect_abort_message_lists_dynamic_repo_set: "true"
+      expect_compares_repo_names_case_insensitive_trimmed: "true"
+      expect_does_not_hardcode_repo_whitelist: "true"
+      expect_resolves_target_repos_from_sheet_column_c: "true"
 
   - description: "preconditions — verifies required cross-skill handoffs are available"
     vars:
