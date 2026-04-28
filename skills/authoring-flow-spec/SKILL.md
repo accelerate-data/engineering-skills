@@ -3,7 +3,10 @@ name: authoring-flow-spec
 description: >-
   Use when the user asks to write, draft, author, create, update, or review a
   behavior-focused user flow, flow spec, functional spec, PRD, product
-  requirements doc, journey map, or canonical flow specification.
+  requirements doc, journey map, or canonical flow specification. Do NOT
+  invoke for implementation plans, design specs, or PRDs with market
+  positioning — those are downstream artifacts that link back to the flow
+  spec, not the flow spec itself.
 version: 0.1.0
 ---
 

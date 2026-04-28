@@ -8,6 +8,9 @@ Available skills and their descriptions:
 - authoring-flow-spec: Use when the user asks to write, draft, author, create,
   update, or review a behavior-focused user flow, flow spec, functional spec,
   PRD, product requirements doc, journey map, or canonical flow specification.
+  Do NOT invoke for implementation plans, design specs, or PRDs with market
+  positioning — those are downstream artifacts that link back to the flow
+  spec, not the flow spec itself.
 - brainstorming: Explore intent, requirements, and design before creative work
   such as creating features, building components, adding functionality, or
   modifying behavior.
@@ -39,7 +42,9 @@ Use exactly one of these string values for detected_skill: "authoring-flow-spec"
 
 Do not include commentary, markdown fences, refusal text, or prefaces before or
 after the JSON object. The first character of your response must be `{` and the
-last character must be `}`.
+last character must be `}`. Output the JSON object as raw JSON — do not wrap it
+in a string, and do not escape internal quotes. Use `"key": value` directly,
+never `\"key\": value`.
 {% else %}
 You are evaluating the `authoring-flow-spec` workflow for a realistic
 functional-spec authoring request.
@@ -82,7 +87,6 @@ Return JSON only with this shape:
   "writes_child_numbered_path": <bool>,
   "requires_parent_readme_and_subflow": <bool>,
   "asks_update_or_abort_for_existing_spec": <bool>,
-  "asks_update_or_abort_when_target_exists": <bool>,
   "update_mode_preserves_closed_sections": <bool>,
   "update_mode_reruns_brainstorming_on_open_sections": <bool>,
   "update_mode_bumps_last_reviewed_to_today": <bool>,
@@ -129,4 +133,10 @@ Return JSON only with this shape:
   "notes": "string"
 }
 ```
+
+Do not include commentary, markdown fences, refusal text, or prefaces before or
+after the JSON object. The first character of your response must be `{` and the
+last character must be `}`. Output the JSON object as raw JSON — do not wrap it
+in a string, and do not escape internal quotes. Use `"key": value` directly,
+never `\"key\": value`.
 {% endif %}

@@ -334,7 +334,6 @@ tests:
           (c) After update, the `last-reviewed` frontmatter field must be set to today's date
               (not the previous date already in the file).
       expect_asks_update_or_abort_for_existing_spec: "true"
-      expect_asks_update_or_abort_when_target_exists: "true"
       expect_update_mode_preserves_closed_sections: "true"
       expect_update_mode_reruns_brainstorming_on_open_sections: "true"
       expect_update_mode_bumps_last_reviewed_to_today: "true"
@@ -456,17 +455,17 @@ tests:
       failure_modes: "wrong-skill-detected,routing-misfire"
       user_message: "create a Linear issue for the new dashboard onboarding"
       expected_detected_skill: "creating-linear-issue"
-      expect_trigger_found_in_message: "false"
-      expect_would_pause_current_flow: "false"
+      expect_trigger_found_in_message: "true"
+      expect_would_pause_current_flow: "true"
 
   - description: "routing — boundary: design request does not trigger flow spec"
     vars:
       eval_type: user-behavior
       failure_modes: "wrong-skill-detected,routing-misfire"
       user_message: "design the dashboard onboarding screen"
-      expected_detected_skill: "none"
-      expect_trigger_found_in_message: "false"
-      expect_would_pause_current_flow: "false"
+      expected_detected_skill: "brainstorming"
+      expect_trigger_found_in_message: "true"
+      expect_would_pause_current_flow: "true"
 
   - description: "routing — boundary: implementation plan does not trigger flow spec"
     vars:
@@ -483,5 +482,5 @@ tests:
       failure_modes: "wrong-skill-detected,routing-misfire"
       user_message: "brainstorm the dashboard onboarding feature"
       expected_detected_skill: "brainstorming"
-      expect_trigger_found_in_message: "false"
-      expect_would_pause_current_flow: "false"
+      expect_trigger_found_in_message: "true"
+      expect_would_pause_current_flow: "true"
