@@ -120,7 +120,6 @@ Use these repo-local skills when requests match:
 - `skills/closing-linear-issue/SKILL.md` - merge, close, and clean up after review
 - `skills/yolo/SKILL.md` - single-shot flow: create issue, implement, and raise PR in one invocation
 - `skills/adversarial-review/SKILL.md` - run adversarial code review
-- `skills/authoring-flow-spec/SKILL.md` - author a Vibedata user-flow specification from a canonical ID in the User-Flows-Details Sheet
 - `skills/explaining-code/SKILL.md` - explain code with diagrams and teaching-style breakdowns
 - `skills/creating-feature-request/SKILL.md` - create a feature request in Linear
 - `skills/code-simplifier/SKILL.md` - simplify recently modified code while preserving behavior

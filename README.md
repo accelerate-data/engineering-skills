@@ -15,10 +15,8 @@ This repository is a single plugin source repo, not a marketplace repo.
 ├── .claude-plugin/plugin.json
 ├── .codex-plugin/plugin.json
 ├── commands/
-│   └── author-flow-spec.md
 ├── skills/
 │   ├── adversarial-review/
-│   ├── authoring-flow-spec/
 │   ├── closing-linear-issue/
 │   ├── code-simplifier/
 │   ├── creating-feature-request/
@@ -185,7 +183,6 @@ This repository is licensed under Elastic License 2.0. See [LICENSE](./LICENSE).
 | Skill | Purpose |
 | --- | --- |
 | [`adversarial-review`](./skills/adversarial-review) | Adversarial code review using the opposite model (Claude spawns Codex, Codex spawns Claude) to challenge large diffs from distinct critical lenses. |
-| [`authoring-flow-spec`](./skills/authoring-flow-spec) | Author a behavior-focused Vibedata user-flow spec from a canonical ID in the User-Flows-Details Sheet; writes to the target repo's `docs/functional/<id>/README.md`. |
 | [`closing-linear-issue`](./skills/closing-linear-issue) | Merge, close, and clean up branches and worktrees after a Linear issue's PR has been reviewed. |
 | [`code-simplifier`](./skills/code-simplifier) | Simplify recently modified code by removing needless complexity while preserving behavior and project standards. |
 | [`creating-feature-request`](./skills/creating-feature-request) | Log a feature request into the Roadmap (RO) team in Linear from free-form natural language. |
