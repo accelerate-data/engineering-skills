@@ -79,7 +79,7 @@ For selected-team issues, include the functional spec path, related design-doc p
 - Use `superpowers:test-driven-development` when the implementation slice needs test-first behavior coverage. Bug fixes may use TDD or add a regression test after root-cause isolation when that is the safer fit.
 - Use `writing-tests` when test strategy or regression boundaries are not obvious.
 - Use `superpowers:receiving-code-review` before applying quality-gate, human, or external review feedback.
-- Use `authoring-user-guide` when changed end-user UI, CLI, or documented workflow needs user-facing docs.
+- Use `doc-skills:authoring-user-guide` when changed end-user UI, CLI, or documented workflow needs user-facing docs.
 - Stay within issue scope and stop if work escapes the ticket boundary.
 
 ## Completion Gates
