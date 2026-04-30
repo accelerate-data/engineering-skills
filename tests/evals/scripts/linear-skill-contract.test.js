@@ -4,11 +4,16 @@ const path = require('node:path');
 const test = require('node:test');
 
 const checkLinearSkillContract = require('../assertions/check-linear-skill-contract');
+const checkCreatingFeatureRequestContract = require('../assertions/check-creating-feature-request-contract');
 
 const EVAL_ROOT = path.resolve(__dirname, '..');
 
 function check(payload, vars) {
   return checkLinearSkillContract(JSON.stringify(payload), { vars });
+}
+
+function checkFeatureRequest(payload, vars) {
+  return checkCreatingFeatureRequestContract(JSON.stringify(payload), { vars });
 }
 
 test('accepts User Flow spelling as the user_flow_label resolved field', () => {
@@ -62,6 +67,52 @@ test('creating-linear-issue eval contract names issue-kind classification paths 
   assert.equal(prompt.includes('has_distinct_paths'), false);
   assert.equal(packageYaml.includes('expect_uses_distinct_issue_kind_paths: "true"'), true);
   assert.equal(prompt.includes('uses_distinct_issue_kind_paths'), true);
+});
+
+test('creating-feature-request contract requires Roadmap team and blank project while keeping User Flow required', () => {
+  const result = checkFeatureRequest(
+    {
+      queries_linear_labels: true,
+      queries_linear_projects: false,
+      queries_ro_statuses: true,
+      leaves_project_blank: true,
+      uses_live_metadata_before_defaults: true,
+      resolves_user_flow_child_labels_live: true,
+      requires_user_flow_tag: true,
+      proposes_one_user_flow_label: true,
+      lists_close_user_flow_alternatives: false,
+      asks_user_to_pick_user_flow: false,
+      creates_issue_without_user_flow: false,
+      shows_preview_before_confirmation: true,
+      requires_user_confirmation_before_create: true,
+      creates_issue_before_confirmation: false,
+      uses_yaml_payload: false,
+      uses_linear_native_create: true,
+      falls_back_to_hardcoded_linear_metadata: false,
+      stops_when_linear_metadata_missing: false,
+      team: 'RO',
+      project: null,
+      default_priority: 'Normal',
+      default_estimate: 'S',
+      description_sections_include: ['Description', 'User Outcome', 'Business Rationale'],
+    },
+    {
+      expect_queries_linear_labels: 'true',
+      expect_queries_linear_projects: 'false',
+      expect_queries_ro_statuses: 'true',
+      expect_leaves_project_blank: 'true',
+      expect_project_blank: 'true',
+      expect_resolves_user_flow_child_labels_live: 'true',
+      expect_requires_user_flow_tag: 'true',
+      expect_creates_issue_without_user_flow: 'false',
+      expected_team: 'RO',
+      expected_default_priority: 'Normal',
+      expected_default_estimate: 'S',
+      required_description_sections: 'Description,User Outcome,Business Rationale',
+    },
+  );
+
+  assert.equal(result.pass, true, result.reason);
 });
 
 test('raising-linear-pr eval contract names scenario-specific design mismatch blocking', () => {

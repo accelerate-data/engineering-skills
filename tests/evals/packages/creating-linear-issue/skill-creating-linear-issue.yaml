@@ -33,6 +33,7 @@ defaultTest:
     expected_assignee_default: "creator"
     expected_cycle_default: "current"
     expect_ignores_past_milestones: "true"
+    expect_asks_user_to_choose_milestone: "true"
     required_terms: "feature,milestone,project,current,creator,assignee,cycle,user_flow"
     forbidden_terms: "creates_issue_before_plan_approval\":true"
 

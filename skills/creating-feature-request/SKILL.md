@@ -11,7 +11,7 @@ version: 3.1.0
 
 ## Overview
 
-Create a product feature request in Linear's Roadmap team (`RO`). This skill is a Linear workflow, not a form-template generator: resolve live Linear metadata, attach the correct canonical User Flow child label, preview the issue, and create it only after user confirmation.
+Create a product feature request in Linear's Roadmap team (`RO`) with no Linear project. This skill is a Linear workflow, not a form-template generator: resolve live Roadmap metadata, attach the correct canonical User Flow child label, preview the issue, and create it only after user confirmation.
 
 ## When to Use
 
@@ -24,16 +24,17 @@ Create a product feature request in Linear's Roadmap team (`RO`). This skill is 
 | Step | Requirement |
 |---|---|
 | 1 | Parse the user request into title, problem, desired outcome, priority, estimate, and obvious product area |
-| 2 | Query live Linear metadata for the Roadmap team: projects, labels, statuses, and candidate User Flow child labels |
+| 2 | Query live Linear metadata for the Roadmap team: labels, statuses, and candidate User Flow child labels |
 | 3 | Resolve one canonical User Flow child label using the same matching rules as `creating-linear-issue` |
 | 4 | Stop and ask the user to choose when no User Flow label clearly fits |
-| 5 | Resolve priority, estimate, project, status, and useful labels from live Linear metadata |
+| 5 | Resolve priority, estimate, status, and useful labels from live Linear metadata |
 | 6 | Show a concise Linear issue preview |
 | 7 | Create the Linear issue only after user confirmation |
 
 ## User Flow Tag
 
 Every feature request created by this skill needs one User Flow child label.
+Always try to resolve the User Flow label from live workspace labels; leaving the Linear project blank never makes the User Flow label optional.
 
 Use the same lookup mechanics as `creating-linear-issue/references/linear-operations.md`:
 
@@ -57,11 +58,11 @@ Use live Linear metadata instead of hard-coded adapter-specific tool names or YA
 | Title | Action-oriented, under 80 characters when practical |
 | Priority | Use user-provided priority when present; otherwise default to Normal |
 | Estimate | Use user-provided size/effort when present; otherwise default to S |
-| Project | Choose the best Roadmap project from live Linear projects |
+| Project | Always leave blank. Do not set a project, even when a matching Roadmap project exists |
 | Status | Use the team's triage or backlog-like state from live statuses |
 | Labels | Include `feature`, the confirmed User Flow child label, and any matching scope/persona labels from live metadata |
 
-If Linear metadata cannot be loaded, stop before creation and report the missing metadata. Do not fall back to stale hard-coded project, label, or status names for feature-request creation.
+If required Linear metadata cannot be loaded, stop before creation and report the missing metadata. Do not fall back to stale hard-coded label or status names for feature-request creation.
 
 ## Preview and Confirmation
 
@@ -69,7 +70,7 @@ Before creating the issue, show a concise preview:
 
 - title
 - Roadmap team
-- project
+- project: blank
 - priority and estimate
 - status
 - labels, including User Flow

@@ -25,6 +25,7 @@ module.exports = (output, context) => {
     ['queries_linear_labels', parseExpectedBoolean(context.vars.expect_queries_linear_labels)],
     ['queries_linear_projects', parseExpectedBoolean(context.vars.expect_queries_linear_projects)],
     ['queries_ro_statuses', parseExpectedBoolean(context.vars.expect_queries_ro_statuses)],
+    ['leaves_project_blank', parseExpectedBoolean(context.vars.expect_leaves_project_blank)],
     ['uses_live_metadata_before_defaults', parseExpectedBoolean(context.vars.expect_uses_live_metadata_before_defaults)],
     [
       'resolves_user_flow_child_labels_live',
@@ -79,6 +80,18 @@ module.exports = (output, context) => {
         pass: false,
         score: 0,
         reason: `Expected ${field}=${expected}, got ${actual}`,
+      };
+    }
+  }
+
+  if (context.vars.expect_project_blank !== undefined) {
+    const projectIsBlank = payload.project === null || payload.project === undefined || normalizedString(payload.project) === '';
+    const expected = parseExpectedBoolean(context.vars.expect_project_blank);
+    if (projectIsBlank !== expected) {
+      return {
+        pass: false,
+        score: 0,
+        reason: `Expected project blank=${expected}, got ${JSON.stringify(payload.project)}`,
       };
     }
   }

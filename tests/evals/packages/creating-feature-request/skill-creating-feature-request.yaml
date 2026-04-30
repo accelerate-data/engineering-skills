@@ -34,12 +34,14 @@ tests:
       simulated_context: |
         - Simulated Linear metadata for the Roadmap team is supplied by the fixture.
         - Simulated User Flow child-label metadata supplies exactly one strong match: `UF-Content-Brief-Source-Credibility`.
-        - Simulated project metadata includes a Demand Gen project that fits the request.
+        - Simulated project metadata includes a Demand Gen project that fits the request, but feature requests must leave project blank.
         - Simulated status metadata includes a triage/backlog-like status.
         - No human has confirmed issue creation yet.
       expect_queries_linear_labels: "true"
-      expect_queries_linear_projects: "true"
+      expect_queries_linear_projects: "false"
       expect_queries_ro_statuses: "true"
+      expect_leaves_project_blank: "true"
+      expect_project_blank: "true"
       expect_uses_live_metadata_before_defaults: "true"
       expect_resolves_user_flow_child_labels_live: "true"
       expect_requires_user_flow_tag: "true"
@@ -68,11 +70,14 @@ tests:
         - Simulated Linear metadata for the Roadmap team is supplied by the fixture.
         - Simulated User Flow child-label metadata supplies several plausible labels: `UF-Content-Brief-Create`, `UF-Content-Brief-Templates`, and `UF-Content-Reuse`.
         - None is clearly strongest from the request alone.
-        - Simulated project and status metadata are supplied by the fixture.
+        - Simulated project metadata is supplied by the fixture, but feature requests must leave project blank.
+        - Simulated status metadata is supplied by the fixture.
         - No human has confirmed issue creation yet.
       expect_queries_linear_labels: "true"
-      expect_queries_linear_projects: "true"
+      expect_queries_linear_projects: "false"
       expect_queries_ro_statuses: "true"
+      expect_leaves_project_blank: "true"
+      expect_project_blank: "true"
       expect_uses_live_metadata_before_defaults: "true"
       expect_resolves_user_flow_child_labels_live: "true"
       expect_requires_user_flow_tag: "true"
@@ -99,11 +104,14 @@ tests:
       user_prompt: "Create a feature request for adding team-level source quality settings to briefs."
       simulated_context: |
         - Simulated Linear metadata for the Roadmap team is explicitly missing from the fixture.
-        - User Flow child labels, Roadmap projects, and Roadmap statuses are unavailable.
+        - User Flow child labels and Roadmap statuses are unavailable.
+        - Project metadata is irrelevant because feature requests must leave project blank.
         - No human has confirmed issue creation yet.
       expect_queries_linear_labels: "true"
-      expect_queries_linear_projects: "true"
+      expect_queries_linear_projects: "false"
       expect_queries_ro_statuses: "true"
+      expect_leaves_project_blank: "true"
+      expect_project_blank: "true"
       expect_uses_live_metadata_before_defaults: "true"
       expect_resolves_user_flow_child_labels_live: "true"
       expect_requires_user_flow_tag: "true"
@@ -114,7 +122,7 @@ tests:
       expect_shows_preview_before_confirmation: "false"
       expect_creates_issue_before_confirmation: "false"
       expect_uses_yaml_payload: "false"
-      expect_uses_linear_native_create: "true"
+      expect_uses_linear_native_create: "false"
       expect_falls_back_to_hardcoded_linear_metadata: "false"
       expect_stops_when_linear_metadata_missing: "true"
       expected_team: "RO"

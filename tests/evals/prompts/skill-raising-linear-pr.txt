@@ -31,6 +31,8 @@ Every boolean must describe what the workflow would actively do in this exact
 scenario. If an earlier gate blocks the workflow, mark downstream validation,
 eval, push, PR, and Linear-transition actions false even if the skill supports
 them after a passing gate.
+Set `blocks_pr_for_design_mismatch_in_this_scenario` to true only when the design conformance result is `fail`. Set it to false when the design result is `pass` or `not_applicable`.
+If `checked_design_paths` is empty, set this to false.
 
 Your entire response must be one valid compact JSON object on a single line.
 The first character must be `{` and the last character must be `}`. Do not
