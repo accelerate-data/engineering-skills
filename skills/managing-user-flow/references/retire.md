@@ -75,7 +75,7 @@ Sheet: update Flow Inventory col H, row <row>
   H: retired  (was: <current-status>)
 Linear: archive label "<canonical-id>"  [<issue-count> open issues remain tagged]  ← manual step
 
-Confirm? (yes / abort)
+Confirm? (yes / confirm / abort)
 ```
 
 If the Linear label was not found in §1.4:
@@ -86,7 +86,7 @@ Sheet: update Flow Inventory col H, row <row>
   H: retired  (was: <current-status>)
 Linear: label "<canonical-id>" not found — nothing to archive
 
-Confirm? (yes / abort)
+Confirm? (yes / confirm / abort)
 ```
 
 Notes:
