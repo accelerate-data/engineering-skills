@@ -36,19 +36,24 @@ From the matched row, read column H. If the value is already `retired`, abort wi
 Search the Phase 0 cached label list for a label named exactly `<canonical-id>` under
 the "User Flow" parent. Note the result — a missing label is not an abort condition.
 
-- If found: record the label's name and ID for use in §5 and §6.
+- If found: record the label's name and ID — both are needed in §5 and §6.
 - If not found: record that no label exists; this affects the Change Preview and §5.
 
 ## §2 Open-Issue Warning
 
-Use `mcp__claude_ai_Linear__list_issues` filtered to label `<canonical-id>` and open
-states only (exclude completed, cancelled, duplicate). Capture the count and list.
+This is the first of two confirmation gates; §3 is the second. Both must fire in
+sequence — do not skip either gate.
+
+Use `mcp__claude_ai_Linear__list_issues` filtered to label `<canonical-id>`. Filter:
+pass `state` = `started` to capture in-progress issues, or omit the state filter and
+manually exclude issues whose state type is `completed`, `cancelled`, or `duplicate`
+from the returned list. Capture the count and list.
 
 If open issues are found, list them (identifier + title) and display:
 
 > These open issues are tagged `<canonical-id>`. Retiring will archive the label —
 > issues keep the tag but the label is removed from the active picker. Continue?
-> (yes / abort)
+> (yes / confirm / abort)
 
 If the user responds with anything other than "yes" or "confirm", abort with:
 
@@ -68,9 +73,9 @@ If the Linear label was found in §1.4:
 
 ```text
 Change Preview — retire
-Sheet: update Flow Inventory col H, row <N>
+Sheet: update Flow Inventory col H, row <row>
   H: retired  (was: <current-status>)
-Linear: archive label "<canonical-id>"  [<N> open issues remain tagged]  ← manual step
+Linear: archive label "<canonical-id>"  [<issue-count> open issues remain tagged]  ← manual step
 
 Confirm? (yes / abort)
 ```
@@ -79,7 +84,7 @@ If the Linear label was not found in §1.4:
 
 ```text
 Change Preview — retire
-Sheet: update Flow Inventory col H, row <N>
+Sheet: update Flow Inventory col H, row <row>
   H: retired  (was: <current-status>)
 Linear: label "<canonical-id>" not found — nothing to archive
 
@@ -88,9 +93,9 @@ Confirm? (yes / abort)
 
 Notes:
 
-- `<N>` in the sheet range is the sheet row number from the §4 lookup
+- `<row>` in the sheet range is the sheet row number from the §4 lookup
   (CSV data index + 2; see sheet-ops.md §4).
-- The open-issues count in the Linear line comes from §2. Show `[0 open issues]`
+- `<issue-count>` is the open-issue count from §2. Show `[0 open issues]`
   if none were found.
 - `<current-status>` is the value read from column H of the matched row in §1.3.
 
