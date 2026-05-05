@@ -168,10 +168,16 @@ If any individual issue update fails: log the issue identifier and title, contin
 with the remaining issues, and report all failures at the end. Do not abort the
 batch on a single failure.
 
+Log each failure as: `<identifier>: <title> — error: <message>`
+
 ## §7 Surface Old Label for Archiving
 
 Using the Phase 0 cached label list, find the label named `<old-id>` under
 "User Flow" and read its ID as `<label-id>`. Present to the user:
+
+Note: the no-re-fetch rule in sheet-ops.md §7 applies to the sheet only.
+Re-fetching Linear labels via `mcp__claude_ai_Linear__list_issue_labels` is safe
+if the session has been long-running.
 
 > Linear label ready to archive: **`<old-id>`** (ID: `<label-id>`). Go to
 > Linear → Settings → Labels, find the label, and archive it. The MCP has no
@@ -185,3 +191,7 @@ After §4–§7 complete, report:
 > `<issue-count>` issues re-tagged to `<new-id>`. [If any failures: `<fail-count>`
 > issues failed re-tagging — see list above.] Archive old label `<old-id>`
 > (ID: `<label-id>`) manually in Linear → Settings → Labels.
+
+If `<issue-count>` equals 250: append to the report — "Warning: the issue query
+was capped at 250. Issues beyond this limit still carry the `<old-id>` label —
+verify manually in Linear."
