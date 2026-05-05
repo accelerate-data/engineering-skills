@@ -86,7 +86,7 @@ Sheet: append row to Flow Inventory
   M: <canonical-id>   ← written after label is created in §3
 Linear: create label "<canonical-id>" under "User Flow" (color #5e6ad2)
 
-Confirm? (yes / abort)
+Confirm? (yes / confirm / abort)
 ```
 
 If the user responds with anything other than "yes" or "confirm", do not write any
