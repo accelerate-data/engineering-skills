@@ -3,9 +3,10 @@
   "private": true,
   "description": "Shared plugin-source repository for engineering-team skills.",
   "scripts": {
-    "eval": "npm --prefix tests/evals run eval",
+    "eval:smoke": "npm --prefix tests/evals run eval:smoke",
+    "eval:regression": "npm --prefix tests/evals run eval:regression",
+    "eval:harness-smoke": "npm --prefix tests/evals run eval:harness-smoke",
     "eval:creating-linear-issue": "npm --prefix tests/evals run eval:creating-linear-issue",
-    "eval:creating-linear-issue-routing": "npm --prefix tests/evals run eval:creating-linear-issue-routing",
     "eval:implementing-linear-issue": "npm --prefix tests/evals run eval:implementing-linear-issue",
     "eval:raising-linear-pr": "npm --prefix tests/evals run eval:raising-linear-pr",
     "eval:closing-linear-issue": "npm --prefix tests/evals run eval:closing-linear-issue",
