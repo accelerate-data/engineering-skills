@@ -95,7 +95,7 @@ Invalid status '<value>'. Must be one of: not-started, early, feature-complete, 
 
 ## §2 List Issues from Both Source Labels
 
-Use `mcp__claude_ai_Linear__list_issues` separately for each source label.
+Use `mcp__linear__list_issues` separately for each source label.
 
 **Query A:** `label` = `<id-a>`, `limit` = 250, no state filter (all issues, open and
 closed).
@@ -222,7 +222,7 @@ partial state to the user.
 
 ### §6.1 Create new label
 
-Use `mcp__claude_ai_Linear__create_issue_label` with:
+Use `mcp__linear__create_issue_label` with:
 
 - `name`: `<new-id>`
 - parent label name: `User Flow`
@@ -235,7 +235,7 @@ retired and the new sheet row is appended, but the label was not created.
 ### §6.2 Re-tag all issues
 
 For each issue in the deduplicated union from §2, use
-`mcp__claude_ai_Linear__save_issue` to:
+`mcp__linear__save_issue` to:
 
 - Add label `<new-id>`
 - Remove labels `<id-a>` AND `<id-b>`
@@ -262,7 +262,7 @@ If either query in §2 returned 250 results, note after re-tagging:
 Find the label IDs for `<id-a>` and `<id-b>` from the Phase 0 cached label list.
 
 Note: the no-re-fetch rule in sheet-ops.md §7 applies to the sheet only. Re-fetching
-Linear labels via `mcp__claude_ai_Linear__list_issue_labels` is safe if the session
+Linear labels via `mcp__linear__list_issue_labels` is safe if the session
 has been long-running.
 
 Present both labels to the user:

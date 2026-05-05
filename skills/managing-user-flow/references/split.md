@@ -105,7 +105,7 @@ Validate the status for each new flow independently. Apply this check to both
 
 ## §2 Fetch Open Issues from Source Label
 
-Use `mcp__claude_ai_Linear__list_issues` with:
+Use `mcp__linear__list_issues` with:
 
 - `label`: `<source-id>`
 - Filter to open states only: omit the state filter and manually exclude issues whose
@@ -284,7 +284,7 @@ row retired, new-id-1 row appended, new-id-2 row not appended). Do not proceed t
 
 ### §7.1 Create label for new-id-1
 
-Use `mcp__claude_ai_Linear__create_issue_label` with:
+Use `mcp__linear__create_issue_label` with:
 
 - `name`: `<new-id-1>`
 - parent label name: `User Flow`
@@ -296,7 +296,7 @@ sheet rows are appended, but `<new-id-1>` label was not created.
 
 ### §7.2 Create label for new-id-2
 
-Use `mcp__claude_ai_Linear__create_issue_label` with:
+Use `mcp__linear__create_issue_label` with:
 
 - `name`: `<new-id-2>`
 - parent label name: `User Flow`
@@ -310,7 +310,7 @@ not created. Do not proceed to §8.
 ## §8 Execute — Re-tag Open Issues
 
 For each open issue, using the confirmed assignments recorded in §3, use
-`mcp__claude_ai_Linear__save_issue` to:
+`mcp__linear__save_issue` to:
 
 - Add the assigned label (`<new-id-1>` or `<new-id-2>`)
 - Remove label `<source-id>`
@@ -334,7 +334,7 @@ If the §2 query was capped at 250, note after re-tagging:
 
 Find `<source-id>`'s label ID from the Phase 0 cached label list. If the cached list
 does not contain the ID (e.g. the session has been long-running), re-fetching Linear
-labels via `mcp__claude_ai_Linear__list_issue_labels` is safe — the no-re-fetch rule
+labels via `mcp__linear__list_issue_labels` is safe — the no-re-fetch rule
 in sheet-ops.md §7 applies to the sheet only.
 
 Present to the user:
