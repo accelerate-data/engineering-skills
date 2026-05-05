@@ -11,7 +11,7 @@
     "eval:raising-linear-pr": "npm --prefix tests/evals run eval:raising-linear-pr",
     "eval:closing-linear-issue": "npm --prefix tests/evals run eval:closing-linear-issue",
     "eval:maintain-github-repos": "npm --prefix tests/evals run eval:maintain-github-repos",
-    "eval:creating-feature-request": "npm --prefix tests/evals run eval:creating-feature-request",
+    "eval:adding-roadmap-item": "npm --prefix tests/evals run eval:adding-roadmap-item",
     "eval:code-simplifier": "npm --prefix tests/evals run eval:code-simplifier",
     "eval:adversarial-review": "npm --prefix tests/evals run eval:adversarial-review",
     "eval:explaining-code": "npm --prefix tests/evals run eval:explaining-code",

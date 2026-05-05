@@ -69,7 +69,7 @@ test('creating-linear-issue eval contract names issue-kind classification paths 
   assert.equal(prompt.includes('uses_distinct_issue_kind_paths'), true);
 });
 
-test('creating-feature-request contract requires Roadmap team and blank project while keeping User Flow required', () => {
+test('adding-roadmap-item contract requires Roadmap team and blank project while keeping User Flow required', () => {
   const result = checkFeatureRequest(
     {
       queries_linear_labels: true,

@@ -1,7 +1,7 @@
-You are evaluating the `creating-feature-request` workflow for a realistic
-feature-request intake.
+You are evaluating the `adding-roadmap-item` workflow for a realistic
+roadmap intake request.
 
-Read the skill at `skills/creating-feature-request/SKILL.md`.
+Read the skill at `skills/adding-roadmap-item/SKILL.md`.
 
 This is a read-only workflow eval. Do not contact Linear and do not create an
 issue.
@@ -42,7 +42,7 @@ Use these scenario-specific rules:
 - If required Roadmap Linear metadata is supplied by the fixture, set
   `stops_when_linear_metadata_missing` to false.
 - Set `team` to the Linear team key `RO`.
-- Set `project` to `null` because feature requests are never assigned to a Linear
+- Set `project` to `null` because roadmap items are never assigned to a Linear
   project.
 
 Return JSON only with this shape:

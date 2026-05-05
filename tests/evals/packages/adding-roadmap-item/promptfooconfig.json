@@ -1,10 +1,10 @@
 {
-  "description": "Creating-feature-request skill — Linear-native product feature requests with User Flow tags",
+  "description": "Adding-roadmap-item skill — Linear-native roadmap intake with User Flow tags",
   "metadata": {
     "eval_tier": "standard"
   },
   "prompts": [
-    "file://../../prompts/skill-creating-feature-request.txt"
+    "file://../../prompts/skill-adding-roadmap-item.txt"
   ],
   "defaultTest": {
     "assert": [
@@ -20,8 +20,8 @@
       "vars": {
         "eval_type": "user-behavior",
         "failure_modes": "skips-user-flow,premature-success-claim",
-        "user_prompt": "Create a feature request for adding team-level source quality settings to briefs.",
-        "simulated_context": "- Simulated Linear metadata for the Roadmap team is explicitly missing from the fixture.\n- User Flow child labels and Roadmap statuses are unavailable.\n- Project metadata is irrelevant because feature requests must leave project blank.\n- No human has confirmed issue creation yet.\n",
+        "user_prompt": "Add a roadmap item for adding team-level source quality settings to briefs.",
+        "simulated_context": "- Simulated Linear metadata for the Roadmap team is explicitly missing from the fixture.\n- User Flow child labels and Roadmap statuses are unavailable.\n- Project metadata is irrelevant because roadmap items must leave project blank.\n- No human has confirmed issue creation yet.\n",
         "expect_queries_linear_labels": "true",
         "expect_queries_linear_projects": "false",
         "expect_queries_ro_statuses": "true",
@@ -50,8 +50,8 @@
       "vars": {
         "eval_type": "user-behavior",
         "failure_modes": "skips-user-flow,over-asks-instead-of-resolving-locally,premature-success-claim",
-        "user_prompt": "Feature request: Add a source credibility score to Vibedata content briefs so demand-gen users can quickly see which cited sources are most reliable. Priority P2, medium effort.",
-        "simulated_context": "- Simulated Linear metadata for the Roadmap team is supplied by the fixture.\n- Simulated User Flow child-label metadata supplies exactly one strong match: `UF-Content-Brief-Source-Credibility`.\n- Simulated project metadata includes a Demand Gen project that fits the request, but feature requests must leave project blank.\n- Simulated status metadata includes a triage/backlog-like status.\n- No human has confirmed issue creation yet.\n",
+        "user_prompt": "Roadmap item: Add a source credibility score to Vibedata content briefs so demand-gen users can quickly see which cited sources are most reliable. Priority P2, medium effort.",
+        "simulated_context": "- Simulated Linear metadata for the Roadmap team is supplied by the fixture.\n- Simulated User Flow child-label metadata supplies exactly one strong match: `UF-Content-Brief-Source-Credibility`.\n- Simulated project metadata includes a Demand Gen project that fits the request, but roadmap items must leave project blank.\n- Simulated status metadata includes a triage/backlog-like status.\n- No human has confirmed issue creation yet.\n",
         "expect_queries_linear_labels": "true",
         "expect_queries_linear_projects": "false",
         "expect_queries_ro_statuses": "true",
@@ -82,8 +82,8 @@
       "vars": {
         "eval_type": "user-behavior",
         "failure_modes": "skips-user-flow,over-asks-instead-of-resolving-locally,premature-success-claim",
-        "user_prompt": "Log a feature request for saved brief templates. Marketing users want to reuse prior brief structure when starting a new content brief.",
-        "simulated_context": "- Simulated Linear metadata for the Roadmap team is supplied by the fixture.\n- Simulated User Flow child-label metadata supplies several plausible labels: `UF-Content-Brief-Create`, `UF-Content-Brief-Templates`, and `UF-Content-Reuse`.\n- None is clearly strongest from the request alone.\n- Simulated project metadata is supplied by the fixture, but feature requests must leave project blank.\n- Simulated status metadata is supplied by the fixture.\n- No human has confirmed issue creation yet.\n",
+        "user_prompt": "Add a roadmap item for saved brief templates. Marketing users want to reuse prior brief structure when starting a new content brief.",
+        "simulated_context": "- Simulated Linear metadata for the Roadmap team is supplied by the fixture.\n- Simulated User Flow child-label metadata supplies several plausible labels: `UF-Content-Brief-Create`, `UF-Content-Brief-Templates`, and `UF-Content-Reuse`.\n- None is clearly strongest from the request alone.\n- Simulated project metadata is supplied by the fixture, but roadmap items must leave project blank.\n- Simulated status metadata is supplied by the fixture.\n- No human has confirmed issue creation yet.\n",
         "expect_queries_linear_labels": "true",
         "expect_queries_linear_projects": "false",
         "expect_queries_ro_statuses": "true",

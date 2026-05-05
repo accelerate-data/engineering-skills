@@ -1,23 +1,24 @@
 ---
-name: creating-feature-request
+name: adding-roadmap-item
 description: >-
-  Use when the user asks to create, log, file, draft, or request a product
-  feature, feature request, FR, roadmap item, product request, or new product
-  capability in Linear.
-version: 3.1.0
+  Use when the user wants to add a roadmap item, submit a roadmap request,
+  propose a product roadmap candidate, or log RO-team roadmap intake in Linear.
+  Not for generic Linear issue creation, bug reports, or implementation tickets.
+version: 3.2.0
 ---
 
-# Creating Feature Request
+# Adding Roadmap Items
 
 ## Overview
 
-Create a product feature request in Linear's Roadmap team (`RO`) with no Linear project. This skill is a Linear workflow, not a form-template generator: resolve live Roadmap metadata, attach the correct canonical User Flow child label, preview the issue, and create it only after user confirmation.
+Add a product roadmap item to Linear's Roadmap team (`RO`) with no Linear project. This skill is a Linear workflow, not a form-template generator: resolve live Roadmap metadata, attach the correct canonical User Flow child label, preview the issue, and create it only after user confirmation.
 
 ## When to Use
 
-- User asks to create, log, file, draft, or request a feature request.
-- The request is product-facing and belongs in the Roadmap team.
-- Do not use for implementation tickets, PR work, bug reports, or closing work.
+- User wants to add a roadmap item, roadmap request, or product roadmap candidate.
+- The request belongs in the Roadmap team (`RO`) and should feed the product roadmap.
+- Do not use for implementation tickets, PR work, bug reports, closing work, or generic Linear issue creation.
+- Do not use when "create Linear issue" is the phrasing — use `creating-linear-issue` for that.
 
 ## Workflow
 
@@ -33,7 +34,7 @@ Create a product feature request in Linear's Roadmap team (`RO`) with no Linear 
 
 ## User Flow Tag
 
-Every feature request created by this skill needs one User Flow child label.
+Every roadmap item created by this skill needs one User Flow child label.
 Always try to resolve the User Flow label from live workspace labels; leaving the Linear project blank never makes the User Flow label optional.
 
 Use the same lookup mechanics as `creating-linear-issue/references/linear-operations.md`:
@@ -46,7 +47,7 @@ Use the same lookup mechanics as `creating-linear-issue/references/linear-operat
 - ask the user to pick from current child labels when no clear match exists
 - never hard-code User Flow label names
 
-Do not create the feature request until the User Flow label is confirmed.
+Do not create the roadmap item until the User Flow label is confirmed.
 
 ## Linear Fields
 
@@ -62,7 +63,7 @@ Use live Linear metadata instead of hard-coded adapter-specific tool names or YA
 | Status | Use the team's triage or backlog-like state from live statuses |
 | Labels | Include `feature`, the confirmed User Flow child label, and any matching scope/persona labels from live metadata |
 
-If required Linear metadata cannot be loaded, stop before creation and report the missing metadata. Do not fall back to stale hard-coded label or status names for feature-request creation.
+If required Linear metadata cannot be loaded, stop before creation and report the missing metadata. Do not fall back to stale hard-coded label or status names for roadmap item creation.
 
 ## Preview and Confirmation
 

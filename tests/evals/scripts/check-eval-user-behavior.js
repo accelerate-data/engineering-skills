@@ -3,7 +3,7 @@ const path = require('node:path');
 const YAML = require('yaml');
 
 const LINEAR_ADJACENT_SKILLS = new Set([
-  'creating-feature-request',
+  'adding-roadmap-item',
   'creating-linear-issue',
   'implementing-linear-issue',
   'raising-linear-pr',
