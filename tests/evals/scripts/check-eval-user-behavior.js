@@ -129,7 +129,7 @@ function checkEvalUserBehavior(repoRoot = path.resolve(__dirname, '..', '..', '.
   }
 
   const packageFiles = listFiles(path.join(evalRoot, 'packages'), (filePath) => {
-    return /\.ya?ml$/.test(filePath);
+    return /\.(ya?ml|json)$/.test(filePath);
   });
 
   for (const packagePath of packageFiles) {

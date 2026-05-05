@@ -1,0 +1,85 @@
+{
+  "description": "e2e-extending-step-vocabulary skill — backend classification, cross-backend refusal, failure mode, dual DB dialect, and RUN_ID examples",
+  "metadata": {
+    "eval_tier": "standard"
+  },
+  "prompts": [
+    "file://../../prompts/skill-e2e-extending-step-vocabulary.txt"
+  ],
+  "defaultTest": {
+    "assert": [
+      {
+        "type": "javascript",
+        "value": "file://../../assertions/check-e2e-bdd-skills-contract.js"
+      }
+    ]
+  },
+  "tests": [
+    {
+      "description": "[smoke] narrowness check — one-feature-only pattern triggers ask-first before adding",
+      "vars": {
+        "eval_type": "user-behavior",
+        "failure_modes": "cross-backend-step,duplicate-vocabulary,missing-run-id,overbroad-pattern",
+        "scenario": "- E2E_HARNESS_ROOT is set to /home/user/e2e-test-harness.\n- The user says: \"Add a step: 'the Notifications panel digest interval should be set to Weekly'.\"\n- The step hardcodes a specific product label and value that would only appear in features/settings/notifications.feature.\n- No other .feature file would ever need this exact assertion.",
+        "expect_asks_before_narrow_pattern": "true",
+        "expect_classifies_backend_before_adding": "true"
+      }
+    },
+    {
+      "description": "happy path — DB step with dual dialect and RUN_ID example",
+      "vars": {
+        "eval_type": "user-behavior",
+        "failure_modes": "cross-backend-step,duplicate-vocabulary,missing-run-id,overbroad-pattern",
+        "scenario": "- E2E_HARNESS_ROOT is set to /home/user/e2e-test-harness.\n- The user says: \"I need a step: 'the database should have a domain named {name} with status {status}'.\"\n- steps/db-assertions.md exists and has several existing DB assertion patterns using {DB_CMD}.\n- No existing pattern covers domain name + status combination.\n- The step pattern is reusable across multiple feature files in features/domains/.",
+        "expect_classifies_backend_before_adding": "true",
+        "expect_includes_failure_mode_note": "true",
+        "expect_includes_dual_dialect_for_db": "true",
+        "expect_emits_run_id_on_data_literals": "true",
+        "expect_no_hardcoded_app_path": "true",
+        "expect_resolves_harness_root_from_env_var": "true"
+      }
+    },
+    {
+      "description": "cross-backend refusal — step mixes UI click and DB assertion",
+      "vars": {
+        "eval_type": "user-behavior",
+        "failure_modes": "cross-backend-step,duplicate-vocabulary,missing-run-id,overbroad-pattern",
+        "scenario": "- E2E_HARNESS_ROOT is set to /home/user/e2e-test-harness.\n- The user says: \"Add a step that clicks the Delete button AND verifies the domain is removed from the database.\"\n- The requested step combines a UI action (browser click) with a DB assertion in a single step.",
+        "expect_refuses_cross_backend_step": "true",
+        "expect_classifies_backend_before_adding": "true"
+      }
+    },
+    {
+      "description": "CWD fallback — E2E_HARNESS_ROOT not set, CWD is the harness",
+      "vars": {
+        "eval_type": "user-behavior",
+        "failure_modes": "cross-backend-step,duplicate-vocabulary,missing-run-id,overbroad-pattern",
+        "scenario": "- E2E_HARNESS_ROOT is not set.\n- CWD is /home/user/e2e-test-harness and it contains features/ and steps/ directories.\n- The user says: \"Add a log assertion step: 'the server log should contain {text}'.\"\n- steps/log-assertions.md exists and has similar grep-based patterns.\n- The step is reusable across multiple feature files.",
+        "expect_falls_back_to_cwd_when_env_not_set": "true",
+        "expect_classifies_backend_before_adding": "true",
+        "expect_includes_failure_mode_note": "true",
+        "expect_no_hardcoded_app_path": "true"
+      }
+    },
+    {
+      "description": "skill-module routing — complex TOTP logic goes to skills/ module not inline recipe",
+      "vars": {
+        "eval_type": "user-behavior",
+        "failure_modes": "cross-backend-step,duplicate-vocabulary,missing-run-id,overbroad-pattern",
+        "scenario": "- E2E_HARNESS_ROOT is set to /home/user/e2e-test-harness.\n- The user says: \"Add a step: 'I log in using TOTP two-factor authentication with secret {secret}'.\"\n- The step requires generating a time-based OTP (get current time, compute HMAC, extract digits) — multi-step reusable logic.\n- steps/skill-steps.md exists and has patterns for delegating to skill modules.\n- No skills/totp-generation.md exists yet.",
+        "expect_routes_complex_logic_to_skill_module": "true",
+        "expect_classifies_backend_before_adding": "true"
+      }
+    },
+    {
+      "description": "near-duplicate refusal — existing pattern covers same semantics, no synonym added",
+      "vars": {
+        "eval_type": "user-behavior",
+        "failure_modes": "cross-backend-step,duplicate-vocabulary,missing-run-id,overbroad-pattern",
+        "scenario": "- E2E_HARNESS_ROOT is set to /home/user/e2e-test-harness.\n- The user says: \"Add a step: 'the database should contain a domain with name {name}'.\"\n- steps/db-assertions.md already has the pattern: 'the database should have a domain named \"{name}\"'.\n- The existing pattern checks the same table, same column, same assertion logic — just different wording.",
+        "expect_refuses_near_duplicate_pattern": "true",
+        "expect_classifies_backend_before_adding": "true"
+      }
+    }
+  ]
+}
