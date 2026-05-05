@@ -138,6 +138,13 @@ If the append call fails, report the error. The Linear label was already created
 
 ## §5 Confirm Outputs
 
+Before reporting success, update the cached state in memory:
+
+- add the new label to the cached Linear label list
+- append the new 13-column row to the cached sheet data
+
+This lets any immediate verification step use post-write state without re-fetching the sheet.
+
 After both §3 and §4 complete successfully, report:
 
 ```text

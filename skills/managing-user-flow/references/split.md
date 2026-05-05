@@ -295,6 +295,16 @@ If the §2 query was capped at 250, note after re-tagging:
 
 ## §9 Surface Source Label for Archiving
 
+Before surfacing the manual archive step, update the cached state in memory:
+
+- set col H = `retired` in the cached row for `<source-id>`
+- append the new 13-column row for `<new-id-1>` to the cached sheet data
+- append the new 13-column row for `<new-id-2>` to the cached sheet data
+- add `<new-id-1>` and `<new-id-2>` to the cached Linear label list
+- update cached issue-label assignments so each re-tagged open issue drops `<source-id>` and gains its confirmed new label
+
+Do not re-fetch the sheet for verification; use this updated cached state instead.
+
 Find `<source-id>`'s label ID from the Phase 0 cached label list. If the cached list does not contain the ID (e.g. the session has been long-running), re-fetching Linear labels via `mcp__linear__list_issue_labels` is safe — the no-re-fetch rule in sheet-ops.md §7 applies to the sheet only.
 
 Present to the user:

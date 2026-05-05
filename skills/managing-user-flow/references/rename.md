@@ -155,6 +155,14 @@ Log each failure as: `<identifier>: <title> — error: <message>`
 
 ## §7 Surface Old Label for Archiving
 
+Before surfacing the manual archive step, update the cached state in memory:
+
+- change the matched cached sheet row so col B = `<new-id>` and col E = `<new-title>`
+- add `<new-id>` to the cached Linear label list
+- remove `<old-id>` and add `<new-id>` in the cached issue-label assignments for the re-tagged issues
+
+This keeps post-write verification deterministic without re-fetching the sheet.
+
 Using the Phase 0 cached label list, find the label named `<old-id>` under
 "User Flow" and read its ID as `<label-id>`. Present to the user:
 
