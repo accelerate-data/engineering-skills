@@ -46,6 +46,12 @@ Confirm all of the following fields are present in the invocation:
 If any field is missing, ask for it before proceeding. Do not show the Change Preview
 until every field is supplied.
 
+If the user does not supply the missing field, abort with:
+
+```text
+Operation cancelled. Required field(s) not provided.
+```
+
 ### §1.5 Status value
 
 Confirm `status` is one of:
@@ -77,7 +83,7 @@ Sheet: append row to Flow Inventory
   E: <title>
   H: <status>
   K: <persona>
-  M: <canonical-id>  (set after label creation)
+  M: <canonical-id>   ← written after label is created in §3
 Linear: create label "<canonical-id>" under "User Flow" (color #5e6ad2)
 
 Confirm? (yes / abort)
@@ -100,12 +106,24 @@ Use `mcp__claude_ai_Linear__create_issue_label` with the following parameters:
 - parent label name: `User Flow`
 - `color`: `#5e6ad2`
 
-Capture the created label's ID and name from the response. The label name is used in
-the §5 confirmation message.
+Capture the created label's name from the response (used in the §5 confirmation
+message). The label's internal ID is not needed by this operation.
+
+If the response does not contain a valid label name, treat it as a failure: abort and
+report the error. Do not proceed to §4.
 
 If the tool call fails, abort and report the error. Do not proceed to §4.
 
 ## §4 Execute — Append Sheet Row
+
+Before populating values, verify the cached CSV has exactly 13 columns (A–M). If the
+count differs, abort with:
+
+```text
+Sheet schema has drifted. Expected 13 columns (A–M), got <N>.
+```
+
+(See sheet-ops.md §7.)
 
 Use the sheet-ops.md §6 append pattern. Populate values as follows:
 
