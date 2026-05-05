@@ -36,8 +36,7 @@ Run before any other sheet command.
 gws auth status
 ```
 
-Exit code 0 means authenticated. Any non-zero exit code, or a "command not found" error, means
-the `gws` binary is missing or the session has expired. Abort with:
+Exit code 0 means authenticated. Any non-zero exit code, or a "command not found" error, means the `gws` binary is missing or the session has expired. Abort with:
 
 ```text
 Run gws auth login first, then retry.
@@ -55,8 +54,7 @@ gws sheets spreadsheets values get \
 
 The `--format csv` flag is required; the canonical-ID lookup in §4 depends on CSV output.
 
-Cache the result in working memory. All validation and change-preview steps consume the cached
-copy. Do not re-fetch the sheet mid-invocation.
+Cache the result in working memory. All validation and change-preview steps consume the cached copy. Do not re-fetch the sheet mid-invocation.
 
 ## §4 Canonical-ID Lookup
 
@@ -74,9 +72,7 @@ Canonical ID '<id>' not found in Flow Inventory sheet. Add the row first.
 
 ### Row-Number Arithmetic
 
-The sheet read starts at `A2` (row 1 is the header). The CSV returned by `gws` is therefore
-zero-indexed from the data: the first data record is CSV index 0, which corresponds to sheet
-row 2.
+The sheet read starts at `A2` (row 1 is the header). The CSV returned by `gws` is therefore zero-indexed from the data: the first data record is CSV index 0, which corresponds to sheet row 2.
 
 **Sheet row = CSV data row index + 2**
 
@@ -84,8 +80,7 @@ Use this value as `<row>` in all update and range expressions below.
 
 ## §5 Cell Update Pattern
 
-Use this pattern to overwrite a single cell or a small range. Parameterise `<row>`, the column
-letter(s), and the value body for each use case.
+Use this pattern to overwrite a single cell or a small range. Parameterise `<row>`, the column letter(s), and the value body for each use case.
 
 ```bash
 gws sheets spreadsheets values update \
@@ -95,15 +90,11 @@ gws sheets spreadsheets values update \
 
 `<row>` is the 1-indexed sheet row number (CSV data row index + 2, because row 1 is the header).
 
-**Updating multiple cells in the same row:** Use two sequential `values update` calls (one for
-each column range), or target the entire B–E range with sparse values. When targeting
-`Flow Inventory!B<row>:E<row>`, supply all four values in order `[B, C, D, E]` — use empty
-strings for columns you do not want to change (C and D).
+**Updating multiple cells in the same row:** Use two sequential `values update` calls (one for each column range), or target the entire B–E range with sparse values. When targeting `Flow Inventory!B<row>:E<row>`, supply all four values in order `[B, C, D, E]` — use empty strings for columns you do not want to change (C and D).
 
 ## §6 Append-Row Pattern
 
-Use this pattern when adding a new flow. A full row of 13 values (columns A–M) is appended after
-the last occupied row.
+Use this pattern when adding a new flow. A full row of 13 values (columns A–M) is appended after the last occupied row.
 
 ```bash
 gws sheets spreadsheets values append \
@@ -111,8 +102,7 @@ gws sheets spreadsheets values append \
   --json '{"values":[["<#>","<canonical-id>","<repo>","<category>","<title>","","","<status>","","","<persona>","","<canonical-id>"]]}'
 ```
 
-Set `<#>` to the next sequential row number: count the data rows in the cached CSV (length of
-the cached result), then add 1. If the last row in the cache has col A = 15, the new row is 16.
+Set `<#>` to the next sequential row number: count the data rows in the cached CSV (length of the cached result), then add 1. If the last row in the cache has col A = 15, the new row is 16.
 
 Value positions (zero-based index in the inner array):
 
@@ -136,15 +126,12 @@ Value positions (zero-based index in the inner array):
 
 **Never do this:**
 
-- **Never write to column L.** The Filename cell contains a HYPERLINK formula managed by sheet
-  owners. Writing any value here will destroy the formula.
+- **Never write to column L.** The Filename cell contains a HYPERLINK formula managed by sheet owners. Writing any value here will destroy the formula.
 - **Never delete a sheet row.** Retire a flow by updating column H to `retired` only.
-- **Never assume column layout.** After reading the CSV, verify it has exactly 13 columns. If the
-  count differs, abort with:
+- **Never assume column layout.** After reading the CSV, verify it has exactly 13 columns. If the count differs, abort with:
 
   ```text
   Sheet schema has drifted. Expected 13 columns (A–M), got <N>.
   ```
 
-- **Never re-fetch the sheet mid-invocation.** Use the §2 cached copy for all reads,
-  validation, and previews throughout the current operation.
+- **Never re-fetch the sheet mid-invocation.** Use the §2 cached copy for all reads, validation, and previews throughout the current operation.
