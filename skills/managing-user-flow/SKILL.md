@@ -23,22 +23,21 @@ Not this skill:
 
 - Does not create `docs/functional/` folders or author functional specs
 - Does not file or track implementation Linear issues
-- Does not edit any sheet column other than B, C, D, E, H, K, M
 
 ## Checklist
 
 - [ ] Phase 0 — Preflight (gws auth, load sheet, load Linear labels)
 - [ ] Phase 1 — Identify operation and arguments
-- [ ] Phase 2 — Validate inputs
-- [ ] Phase 3 — Change Preview (show all changes, await approval)
-- [ ] Phase 4 — Execute changes
-- [ ] Phase 5 — Confirm outputs
+- [ ] Phase 2 — Validate inputs (see per-operation reference)
+- [ ] Phase 3 — Change Preview (see per-operation reference)
+- [ ] Phase 4 — Execute changes (see per-operation reference)
+- [ ] Phase 5 — Confirm outputs (see per-operation reference)
 
 ## Phase 0 — Preflight
 
 1. Verify `gws` is installed and `gws auth status` exits zero. If not, abort: `Run gws auth login first, then retry.` (see `references/sheet-ops.md §2`)
 2. Load the full Flow Inventory sheet via `references/sheet-ops.md §3`. Cache the result — do not re-fetch mid-invocation.
-3. Load all Linear "User Flow" child labels via `mcp__linear__list_issue_labels`. Cache the result.
+3. Load all Linear "User Flow" child labels via `mcp__claude_ai_Linear__list_issue_labels`. Cache the result.
 4. Confirm the operation from the invocation context (argument or user message). If ambiguous, ask once: "Which operation? add / retire / rename / merge / split"
 
 ## Phase 1 — Identify Operation and Arguments
@@ -57,7 +56,7 @@ If any required arg is missing, ask the user before proceeding.
 
 ## Phases 2–5
 
-Phases 2–5 are operation-specific and delegated to the matching `references/<operation>.md` file. The Phase 3 confirmation gate is universal: present the Change Preview block, wait for "yes" or "confirm", and abort on any other response.
+Phases 2–5 are operation-specific and delegated to the matching `references/<operation>.md` file. The Phase 3 confirmation gate is universal: present the Change Preview block and wait for the user to respond "yes" or "confirm". If the user responds with anything else, do not write any changes and report: "Operation cancelled. No changes were made."
 
 ## Safety Rails
 
