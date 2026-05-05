@@ -1,18 +1,10 @@
-You are evaluating the `managing-user-flow` workflow for realistic flow-inventory
-maintenance requests.
+You are evaluating the `managing-user-flow` workflow for realistic flow-inventory maintenance requests.
 
-Parser contract: output only the final JSON object. Any analysis, preface,
-heading, markdown, or text before the opening `{` fails the eval.
-Do not think aloud. Do not trace the workflow. Do not explain field choices.
-Emit only the JSON object.
+Parser contract: output only the final JSON object. Any analysis, preface, heading, markdown, or text before the opening `{` fails the eval. Do not think aloud. Do not trace the workflow. Do not explain field choices. Emit only the JSON object.
 
-Read `skills/managing-user-flow/SKILL.md` and any directly referenced materials
-needed for this scenario.
+Read `skills/managing-user-flow/SKILL.md` and any directly referenced materials needed for this scenario.
 
-This is a read-only workflow eval. Do not write to Google Sheets, do not call
-Linear tools, and do not perform external actions. All required sheet and
-Linear facts are supplied in the scenario and simulated context. If a required
-fact is missing, report that the fixture is incomplete instead of inventing it.
+This is a read-only workflow eval. Do not write to Google Sheets, do not call Linear tools, and do not perform external actions. All required sheet and Linear facts are supplied in the scenario and simulated context. If a required fact is missing, report that the fixture is incomplete instead of inventing it.
 
 User prompt:
 
@@ -22,14 +14,21 @@ Simulated context:
 
 {{ simulated_context }}
 
-Think silently. Based on the skill, report the next workflow obligations for
-this exact scenario. If an earlier gate blocks the operation, mark downstream
-write or verification behavior false unless the skill would still explicitly do
-that step before stopping.
+Think silently. Based on the skill, report the next workflow obligations for this exact scenario. If an earlier gate blocks the operation, mark downstream write or verification behavior false unless the skill would still explicitly do that step before stopping.
 
-Your entire response must be one valid compact JSON object on a single line.
-The first character must be `{` and the last character must be `}`. Do not
-include markdown, bullets, explanation, headings, analysis, or code fences.
+Field semantics:
+
+- `requires_change_preview_before_write` and `blocks_write_without_explicit_confirmation` reflect the skill's design requirements for write operations (add/retire/rename/merge/split): set both to true whenever the scenario is a write operation, regardless of whether the Change Preview has already been shown in the simulated context. Set both to false for the read-only drift operation.
+- `supports_read_only_drift` is true only when this scenario routes to the `drift` operation. When true, set `notes` to a string that includes the word "read-only" to confirm the drift operation makes no writes.
+- `updates_cached_state_after_write` is true only if this scenario reaches a successful write before stopping.
+- `uses_cached_state_for_post_write_verification` is true only if this scenario reaches a post-write verification step after successful writes.
+- `distinguishes_manual_label_archive` is true only if this scenario reaches a manual archive note or warning for labels.
+- `continues_batch_after_single_issue_failure` is true only if this scenario reaches a batch re-tag step where single-item failures are continued.
+- `surfaces_partial_failures` is true only if this scenario reaches a batch re-tag step where the skill's error-reporting logic is active — i.e., the skill would surface any per-item failures that occurred during the batch, even if all items succeeded in this specific fixture.
+- `writes_column_m_for_appended_rows` is true only if this scenario reaches a successful row-append step (i.e., all writes complete including appending a new sheet row). Mark false if the scenario stops before any append occurs — for example, at Change Preview waiting for confirmation, or on a schema abort.
+- `keeps_column_l_untouched` reflects the skill's hard safety rail: the skill never writes col L under any circumstances. Set this to true for every scenario that involves sheet writes (the safety rail is always active); set to false only if the skill would write col L (which it must never do by design).
+
+Your entire response must be one valid compact JSON object on a single line. The first character must be `{` and the last character must be `}`. Do not include markdown, bullets, explanation, headings, analysis, or code fences.
 
 {
   "asks_one_targeted_question": <bool>,
