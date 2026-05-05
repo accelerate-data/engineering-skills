@@ -85,6 +85,14 @@ Ask the user to provide values for the new flow's:
 Suggest the values from `<id-a>`'s row as defaults. Wait for confirmation before
 proceeding.
 
+After the user supplies the `status` value, validate it is one of: `not-started`,
+`early`, `feature-complete`, `working`, `parked`, `retired`. If the value is not
+in this list, abort with:
+
+```text
+Invalid status '<value>'. Must be one of: not-started, early, feature-complete, working, parked, retired.
+```
+
 ## §2 List Issues from Both Source Labels
 
 Use `mcp__claude_ai_Linear__list_issues` separately for each source label.
@@ -104,6 +112,10 @@ If either query returns 250 results, note:
 
 > The query for `<label-id>` returned 250 issues (the maximum). There may be
 > additional issues beyond this limit. Proceeding with the batch returned.
+>
+> Each query is independently capped. Issues that appear only in one label's tail
+> (beyond position 250) are not included in the union, regardless of the other
+> query's result.
 
 ## §3 Change Preview
 
@@ -236,9 +248,7 @@ If any individual issue update fails: log the failure, continue with the remaini
 issues, and report all failures at the end. Do not abort the batch on a single
 failure.
 
-Log each failure as:
-
-`` `<identifier>: <title> — error: <message>` ``
+Log each failure as: `<identifier>: <title> — error: <message>`
 
 ### §6.3 Cap warning
 
