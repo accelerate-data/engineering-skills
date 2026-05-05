@@ -1,10 +1,10 @@
-# managing-user-flow Skill — Implementation Plan (AD-43)
+# managing-user-flows Skill — Implementation Plan (AD-31)
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Add a new `managing-user-flow` skill to the engineering-skills plugin. The skill maintains the canonical user flow list across two surfaces: the User-Flows-Details Google Sheet (Flow Inventory tab, col B) and Linear "User Flow" child labels. This is flow list maintenance only — no `docs/functional/` spec authoring, no implementation tracking.
+**Goal:** Add a new `managing-user-flows` skill to the engineering-skills plugin. The skill maintains the canonical user flow list across two surfaces: the User-Flows-Details Google Sheet (Flow Inventory tab, col B) and Linear "User Flow" child labels. This is flow list maintenance only — no `docs/functional/` spec authoring, no implementation tracking.
 
-**Architecture:** Single skill with per-operation reference files plus five thin slash-command wrappers. Phase 0 is a shared preamble (gws auth, full sheet load, full Linear label load) cached once per invocation. After resolving the operation and arguments, the skill shows a Change Preview and requires explicit user approval before writing anything. Each operation is self-contained in its own reference file. All sheet writes use `gws sheets spreadsheets values update` (cell range) or `gws sheets spreadsheets values append` (new row). All Linear label mutations use MCP tools (`mcp__linear__create_issue_label`, `mcp__linear__save_issue` for re-tagging). Label archiving is a manual Linear UI step — the MCP has no archive or delete call for labels. Archiving (not deleting) is preferred: it preserves the label on historical issues while removing it from the active label picker.
+**Architecture:** Single skill with per-operation reference files plus five thin slash-command wrappers. Phase 0 is a shared preamble (gws auth, full sheet load, full Linear label load) cached once per invocation. After resolving the operation and arguments, the skill shows a Change Preview and requires explicit user approval before writing anything. Each write operation ends with a post-change verification step (re-run drift on cached state, report sync status). The drift operation is read-only and can be invoked at any time via natural language. Each operation is self-contained in its own reference file. All sheet writes use `gws sheets spreadsheets values update` (cell range) or `gws sheets spreadsheets values append` (new row). All Linear label mutations use MCP tools (`mcp__linear__create_issue_label`, `mcp__linear__save_issue` for re-tagging). Label archiving is a manual Linear UI step — the MCP has no archive or delete call for labels. Archiving (not deleting) is preferred: it preserves the label on historical issues while removing it from the active label picker.
 
 **Tech Stack:** Markdown (skill, commands, references), `gws` CLI (sheet read/write), Linear MCP tools (label create, issue list and re-tag), `npm run validate:plugin-manifests` and `npm run check:plugin-version` for manifest gates.
 
@@ -40,21 +40,22 @@ These values are used across all reference files and must not be hardcoded inlin
 
 | File | Responsibility |
 |---|---|
-| `skills/managing-user-flow/SKILL.md` | Skill entry point: trigger conditions, Phase 0 preamble, operation routing table, confirmation gate contract |
-| `skills/managing-user-flow/references/sheet-ops.md` | Sheet coordinates, all `gws` read/write command patterns, auth check, column layout constants |
-| `skills/managing-user-flow/references/add.md` | Add operation: validate, change preview, append row, create Linear label |
-| `skills/managing-user-flow/references/retire.md` | Retire operation: validate, open-issue warning, change preview, update col H, surface label ID for archiving |
-| `skills/managing-user-flow/references/rename.md` | Rename operation: validate, change preview, update col B+E, create new label, re-tag all issues, surface old label for archiving |
-| `skills/managing-user-flow/references/merge.md` | Merge operation: validate two sources + new target, change preview, retire both rows, append new row, create label, re-tag all issues, surface old labels for archiving |
-| `skills/managing-user-flow/references/split.md` | Split operation: validate source + two targets, change preview, retire source row, append two new rows, create two labels, surface open issues with AI recommendation, re-tag after user approval, surface source label for archiving |
-| `commands/add-flow.md` | `/add-flow <canonical-id>` — thin wrapper invoking managing-user-flow for add |
+| `skills/managing-user-flows/SKILL.md` | Skill entry point: trigger conditions, Phase 0 preamble, operation routing table, confirmation gate contract |
+| `skills/managing-user-flows/references/sheet-ops.md` | Sheet coordinates, all `gws` read/write command patterns, auth check, column layout constants |
+| `skills/managing-user-flows/references/add.md` | Add operation: validate, change preview, append row, create Linear label |
+| `skills/managing-user-flows/references/retire.md` | Retire operation: validate, open-issue warning, change preview, update col H, surface label ID for archiving |
+| `skills/managing-user-flows/references/rename.md` | Rename operation: validate, change preview, update col B+E, create new label, re-tag all issues, surface old label for archiving |
+| `skills/managing-user-flows/references/merge.md` | Merge operation: validate two sources + new target, change preview, retire both rows, append new row, create label, re-tag all issues, surface old labels for archiving |
+| `skills/managing-user-flows/references/split.md` | Split operation: validate source + two targets, change preview, retire source row, append two new rows, create two labels, surface open issues with AI recommendation, re-tag after user approval, surface source label for archiving |
+| `skills/managing-user-flows/references/drift.md` | Drift operation: read-only A–B / B–A comparison of active sheet flows vs Linear labels; no writes |
+| `commands/add-flow.md` | `/add-flow <canonical-id>` — thin wrapper invoking managing-user-flows for add |
 | `commands/retire-flow.md` | `/retire-flow <canonical-id>` — thin wrapper for retire |
 | `commands/rename-flow.md` | `/rename-flow <old-id> <new-id> [new-title]` — thin wrapper for rename |
 | `commands/merge-flows.md` | `/merge-flows <id-a> <id-b> <new-id> <new-title>` — thin wrapper for merge |
 | `commands/split-flow.md` | `/split-flow <id> <new-id-1> <new-id-2>` — thin wrapper for split |
 | `.claude-plugin/plugin.json` | Version bump (minor — new skill) |
 | `.codex-plugin/plugin.json` | Version bump in lockstep |
-| `repo-map.json` | Update skills count and add managing-user-flow entry |
+| `repo-map.json` | Update skills count and add managing-user-flows entry |
 
 ---
 
@@ -67,6 +68,8 @@ These values are used across all reference files and must not be hardcoded inlin
 5. **Retire: warn but allow.** If the label to be retired has open issues, list them and warn the user. Proceed only after explicit confirmation. Do not block on closed issues.
 6. **Col L is never written.** The Filename column contains HYPERLINK formulas managed by sheet owners. The skill must never write to col L.
 7. **Col M (Linear) is updated on Add only.** After creating the Linear label, record the label name in col M of the new row. For all other operations, col M is left as-is.
+8. **Drift as a first-class operation.** The skill supports a read-only drift operation that computes A–B (active sheet flows with no Linear label) and B–A (Linear labels with no active sheet row). Invoked via natural language — no slash command wrapper needed.
+9. **Post-change verification after every write.** After executing any write operation, re-run the A–B / B–A comparison on the updated cached state and report sync status or remaining manual steps.
 
 ---
 
@@ -74,7 +77,7 @@ These values are used across all reference files and must not be hardcoded inlin
 
 **Files:**
 
-- Create: `skills/managing-user-flow/references/sheet-ops.md`
+- Create: `skills/managing-user-flows/references/sheet-ops.md`
 
 - [ ] **Step 1: Document sheet coordinates**
 
@@ -139,13 +142,13 @@ Document: col L (Filename, index 11) is always written as empty string. Col M (L
 
 **Files:**
 
-- Create: `skills/managing-user-flow/SKILL.md`
+- Create: `skills/managing-user-flows/SKILL.md`
 
 - [ ] **Step 1: Write frontmatter**
 
 ```yaml
 ---
-name: managing-user-flow
+name: managing-user-flows
 description: >-
   Use when adding, retiring, renaming, merging, or splitting a canonical user
   flow in the User-Flows-Details Sheet and its paired Linear "User Flow" label.
@@ -160,7 +163,7 @@ Cover: user asks to add a new flow, retire an existing one, rename a canonical I
 
 - [ ] **Step 3: Write Checklist**
 
-```
+```text
 - [ ] Phase 0 — Preflight (gws auth, load sheet, load Linear labels)
 - [ ] Phase 1 — Identify operation and arguments
 - [ ] Phase 2 — Validate inputs
@@ -208,7 +211,7 @@ Each phase is operation-specific. The SKILL.md delegates to the matching `refere
 
 **Files:**
 
-- Create: `skills/managing-user-flow/references/add.md`
+- Create: `skills/managing-user-flows/references/add.md`
 
 - [ ] **Step 1: Validation**
 
@@ -219,7 +222,7 @@ Each phase is operation-specific. The SKILL.md delegates to the matching `refere
 
 - [ ] **Step 2: Change Preview block**
 
-```
+```text
 Change Preview — add
 Sheet: append row to Flow Inventory
   B: <canonical-id>
@@ -242,7 +245,11 @@ Use `mcp__linear__create_issue_label` with `name: <canonical-id>`, `parent: "Use
 
 Use `references/sheet-ops.md` §6 append pattern. Set col M to the canonical-id string. Leave col L empty.
 
-- [ ] **Step 5: Confirm outputs**
+- [ ] **Step 5: Post-change verification**
+
+Re-run the A–B / B–A drift check on the updated cached state. Report: `Verification: sheet and Linear are in sync for this operation.` or surface any remaining manual steps.
+
+- [ ] **Step 6: Confirm outputs**
 
 Report: "Added `<canonical-id>` to Flow Inventory (row appended) and created Linear label."
 
@@ -252,7 +259,7 @@ Report: "Added `<canonical-id>` to Flow Inventory (row appended) and created Lin
 
 **Files:**
 
-- Create: `skills/managing-user-flow/references/retire.md`
+- Create: `skills/managing-user-flows/references/retire.md`
 
 - [ ] **Step 1: Validation**
 
@@ -270,7 +277,7 @@ Require explicit confirmation before proceeding.
 
 - [ ] **Step 3: Change Preview block**
 
-```
+```text
 Change Preview — retire
 Sheet: update Flow Inventory col H, row <N>
   H: retired  (was: <current-status>)
@@ -291,7 +298,11 @@ Example output:
 
 > Linear label ready to archive: **`<canonical-id>`** (ID: `<id>`). Go to Linear → Settings → Labels, find the label, and archive it.
 
-- [ ] **Step 6: Confirm outputs**
+- [ ] **Step 6: Post-change verification**
+
+Re-run the A–B / B–A drift check on updated cached state. The label archiving step is always manual, so report: `Verification: 1 Linear label still needs manual archiving — see instructions above.`
+
+- [ ] **Step 7: Confirm outputs**
 
 Report: "Retired `<canonical-id>` in sheet (col H = retired). Archive Linear label `<canonical-id>` (ID: `<id>`) manually in Linear settings."
 
@@ -301,7 +312,7 @@ Report: "Retired `<canonical-id>` in sheet (col H = retired). Archive Linear lab
 
 **Files:**
 
-- Create: `skills/managing-user-flow/references/rename.md`
+- Create: `skills/managing-user-flows/references/rename.md`
 
 - [ ] **Step 1: Validation**
 
@@ -316,7 +327,7 @@ Use `mcp__linear__list_issues` with `label: <old-id>`, `limit: 250`. Count total
 
 - [ ] **Step 3: Change Preview block**
 
-```
+```text
 Change Preview — rename
 Sheet: update Flow Inventory row <N>
   B: <new-id>  (was: <old-id>)
@@ -345,7 +356,11 @@ For each issue returned in Step 2: use `mcp__linear__save_issue` to add the new 
 
 Use the same pattern as retire Step 5. Present the old label ID and name with the instruction to archive via Linear settings.
 
-- [ ] **Step 8: Confirm outputs**
+- [ ] **Step 8: Post-change verification**
+
+Re-run the A–B / B–A drift check on updated cached state. Report sync status or surface the pending label archiving step.
+
+- [ ] **Step 9: Confirm outputs**
 
 Report: "Renamed `<old-id>` → `<new-id>` in sheet. <N> issues re-tagged to `<new-id>`. Archive old label `<old-id>` (ID: `<id>`) manually in Linear settings."
 
@@ -355,7 +370,7 @@ Report: "Renamed `<old-id>` → `<new-id>` in sheet. <N> issues re-tagged to `<n
 
 **Files:**
 
-- Create: `skills/managing-user-flow/references/merge.md`
+- Create: `skills/managing-user-flows/references/merge.md`
 
 - [ ] **Step 1: Validation**
 
@@ -371,7 +386,7 @@ Use `mcp__linear__list_issues` for each source label separately (limit 250). Ded
 
 - [ ] **Step 3: Change Preview block**
 
-```
+```text
 Change Preview — merge <id-a> + <id-b> → <new-id>
 Sheet:
   Retire row <Na> (col H: retired, was: <status-a>)
@@ -401,7 +416,11 @@ Create `new-id` label. Re-tag all issues (from both source labels). Remove sourc
 
 Use the same pattern as retire Step 5 for both `<id-a>` and `<id-b>`. Present both label IDs with the instruction to archive via Linear settings.
 
-- [ ] **Step 8: Confirm outputs**
+- [ ] **Step 8: Post-change verification**
+
+Re-run the A–B / B–A drift check on updated cached state. Report sync status or surface the pending label archiving steps.
+
+- [ ] **Step 9: Confirm outputs**
 
 Report: "Merged `<id-a>` + `<id-b>` → `<new-id>`. <N> issues re-tagged. Archive source labels `<id-a>` and `<id-b>` manually in Linear settings."
 
@@ -411,7 +430,7 @@ Report: "Merged `<id-a>` + `<id-b>` → `<new-id>`. <N> issues re-tagged. Archiv
 
 **Files:**
 
-- Create: `skills/managing-user-flow/references/split.md`
+- Create: `skills/managing-user-flows/references/split.md`
 
 - [ ] **Step 1: Validation**
 
@@ -429,7 +448,7 @@ Use `mcp__linear__list_issues` with `label: <source-id>` and filter to open stat
 
 For each open issue (identifier, title, description excerpt): read the issue and recommend which of the two new flows it belongs to, with a one-line rationale. Format as a table:
 
-```
+```text
 Issue       | Title                        | Recommended flow | Rationale
 VD-1234     | Add source connection setup  | <new-id-1>      | Matches ingestion setup scope
 VD-5678     | Configure alert thresholds   | <new-id-2>      | Relates to alerting behaviour
@@ -441,7 +460,7 @@ Ask: "Review the recommendations above. Adjust any assignments, then confirm."
 
 Show after user confirms the re-tag assignments:
 
-```
+```text
 Change Preview — split <source-id> → <new-id-1> + <new-id-2>
 Sheet:
   Retire row <N> (col H: retired, was: <status>)
@@ -478,13 +497,62 @@ For each open issue: add the confirmed target label, remove the source label.
 
 Use the same pattern as retire Step 5. Present the source label ID and name with the instruction to archive via Linear settings.
 
-- [ ] **Step 10: Confirm outputs**
+- [ ] **Step 10: Post-change verification**
+
+Re-run the A–B / B–A drift check on updated cached state. Report sync status or surface the pending label archiving step.
+
+- [ ] **Step 11: Confirm outputs**
 
 Report: "Split `<source-id>` → `<new-id-1>` + `<new-id-2>`. <N> open issues re-tagged. Archive source label `<source-id>` (ID: `<id>`) manually in Linear settings."
 
 ---
 
-## Task 8: Create command wrappers
+## Task 8: Create `references/drift.md`
+
+**Files:**
+
+- Create: `skills/managing-user-flows/references/drift.md`
+
+- [ ] **Step 1: Document the drift operation**
+
+Explain: drift is read-only. Phase 0 has already loaded the full sheet and all Linear labels into cache. No additional fetch is needed.
+
+- [ ] **Step 2: Compute A–B (sheet-only)**
+
+From cached sheet: collect all rows where col H is not `retired` and not `parked`. For each, check whether a matching "User Flow" child label exists in the cached Linear labels (match on col B = label name). Collect rows with no match.
+
+- [ ] **Step 3: Compute B–A (Linear-only)**
+
+From cached Linear labels: for each "User Flow" child label, check whether a matching active row exists in the cached sheet (col B match, col H not `retired`/`parked`). Collect labels with no match.
+
+- [ ] **Step 4: Document output format**
+
+```text
+Drift Report — Flow Inventory vs Linear
+
+Sheet-only (missing Linear label):
+  <canonical-id-1>
+  <canonical-id-2>
+
+Linear-only (no active sheet row):
+  <label-name-1>
+  <label-name-2>
+
+No action taken. Run an operation to fix.
+```
+
+If both lists are empty: `Sheet and Linear are in sync. No action needed.`
+
+- [ ] **Step 5: Document when drift is called**
+
+Drift runs:
+
+1. When the user asks to "check sync", "show drift", "compare sheet and Linear", or similar natural language.
+2. Automatically at the end of every write operation (post-change verification). In this context the output is prefixed with `Verification:` and only lists remaining gaps (e.g. labels pending manual archiving).
+
+---
+
+## Task 9: Create command wrappers
 
 **Files:**
 
@@ -505,7 +573,7 @@ description: Add a canonical user flow to the Flow Inventory sheet and create it
 
 # /add-flow
 
-Invoke `managing-user-flow` for the **add** operation.
+Invoke `managing-user-flows` for the **add** operation.
 
 ## Usage
 
@@ -514,7 +582,7 @@ Invoke `managing-user-flow` for the **add** operation.
 
 ## What this does
 
-Delegates to `Skill("managing-user-flow")` with operation = add. The skill:
+Delegates to `Skill("managing-user-flows")` with operation = add. The skill:
 
 1. Checks `gws auth status` and loads the current sheet and Linear labels.
 2. Validates that the canonical ID does not already exist in the sheet or Linear.
@@ -541,7 +609,7 @@ Usage: `/split-flow <source-id> <new-id-1> <new-id-2>`. What it does: validates,
 
 ---
 
-## Task 9: Manifest and repo-map updates
+## Task 10: Manifest and repo-map updates
 
 **Files:**
 
@@ -556,13 +624,13 @@ Both manifests must move in lockstep (per AGENTS.md). This is a new skill additi
 - [ ] **Step 2: Update `repo-map.json`**
 
 - Increment the skills count in the `skills` module description (15 → 16).
-- Add `managing-user-flow` to the `eval_all` description note (no eval package exists yet — note that).
+- Add `managing-user-flows` to the `eval_all` description note (no eval package exists yet — note that).
 - Add new eval commands entry as "not yet" or omit until an eval is added.
 - Update `generated_at` to today's date.
 
 ---
 
-## Task 10: Validation
+## Task 11: Validation
 
 **Files:** none
 
@@ -580,19 +648,21 @@ Both must exit zero.
 
 ```bash
 markdownlint \
-  skills/managing-user-flow/SKILL.md \
-  skills/managing-user-flow/references/sheet-ops.md \
-  skills/managing-user-flow/references/add.md \
-  skills/managing-user-flow/references/retire.md \
-  skills/managing-user-flow/references/rename.md \
-  skills/managing-user-flow/references/merge.md \
-  skills/managing-user-flow/references/split.md \
+  skills/managing-user-flows/SKILL.md \
+  skills/managing-user-flows/references/sheet-ops.md \
+  skills/managing-user-flows/references/add.md \
+  skills/managing-user-flows/references/retire.md \
+  skills/managing-user-flows/references/rename.md \
+  skills/managing-user-flows/references/merge.md \
+  skills/managing-user-flows/references/split.md \
+  skills/managing-user-flows/references/drift.md \
   commands/add-flow.md \
   commands/retire-flow.md \
   commands/rename-flow.md \
   commands/merge-flows.md \
   commands/split-flow.md \
-  docs/plan/2026-05-05-managing-user-flow-skill.md
+  docs/plan/2026-05-05-managing-user-flow-skill.md \
+  docs/design/managing-user-flows-skill.md
 ```
 
 - [ ] **Step 3: Run eval coverage gate**
@@ -611,7 +681,7 @@ cd tests/evals && npm run eval:codex-compatibility
 
 ---
 
-## Task 11: Commit and PR
+## Task 12: Commit and PR
 
 **Files:** none
 
@@ -619,12 +689,13 @@ cd tests/evals && npm run eval:codex-compatibility
 
 Group into one atomic commit:
 
-```
-feat: add managing-user-flow skill for canonical flow list maintenance
+```text
+feat: add managing-user-flows skill for canonical flow list maintenance
 
 Adds skill + 5 command wrappers. Supports add, retire, rename, merge,
-and split operations across the Flow Inventory sheet and Linear
-"User Flow" labels. Bumps plugin version 1.1.9 → 1.2.0.
+split, and drift operations across the Flow Inventory sheet and Linear
+"User Flow" labels. Includes post-change verification after every write.
+Bumps plugin version 1.1.9 → 1.2.0.
 ```
 
 - [ ] **Step 2: Push to origin/main**
