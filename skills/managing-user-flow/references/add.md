@@ -1,18 +1,14 @@
 # Add Operation Reference
 
-Use this reference when `managing-user-flow` is invoked with `operation=add`.
-Work through each section in order. Do not skip ahead to execution before validation
-and the Change Preview are complete.
+Use this reference when `managing-user-flow` is invoked with `operation=add`. Work through each section in order. Do not skip ahead to execution before validation and the Change Preview are complete.
 
 ## §1 Validation
 
-Perform all checks below before showing the Change Preview. A failure in any check
-aborts the operation immediately.
+Perform all checks below before showing the Change Preview. A failure in any check aborts the operation immediately.
 
 ### §1.1 Phase 0 prerequisite
 
-The auth check (sheet-ops.md §2) and full-sheet read (sheet-ops.md §3) must already
-be complete and cached in working memory before validation begins.
+The auth check (sheet-ops.md §2) and full-sheet read (sheet-ops.md §3) must already be complete and cached in working memory before validation begins.
 
 ### §1.2 Canonical-ID uniqueness — sheet
 
@@ -25,8 +21,7 @@ Canonical ID `<id>` already exists in Flow Inventory. Use rename or retire inste
 
 ### §1.3 Canonical-ID uniqueness — Linear
 
-Search the Phase 0 cached label list for a label named exactly `<canonical-id>` under
-the "User Flow" parent. If a match is found, abort with:
+Search the Phase 0 cached label list for a label named exactly `<canonical-id>` under the "User Flow" parent. If a match is found, abort with:
 
 ```text
 Linear label `<id>` already exists under User Flow.
@@ -43,8 +38,7 @@ Confirm all of the following fields are present in the invocation:
 - `status`
 - `persona`
 
-If any field is missing, ask for it before proceeding. Do not show the Change Preview
-until every field is supplied.
+If any field is missing, ask for it before proceeding. Do not show the Change Preview until every field is supplied.
 
 If the user does not supply the missing field, abort with:
 
@@ -71,8 +65,7 @@ Invalid status `<value>`. Must be one of: not-started, early, feature-complete, 
 
 ## §2 Change Preview
 
-After all §1 checks pass, show the block below exactly as written and wait for the
-user to respond.
+After all §1 checks pass, show the block below exactly as written and wait for the user to respond.
 
 ```text
 Change Preview — add
@@ -89,8 +82,7 @@ Linear: create label "<canonical-id>" under "User Flow" (color #5e6ad2)
 Confirm? (yes / confirm / abort)
 ```
 
-If the user responds with anything other than "yes" or "confirm", do not write any
-changes and report:
+If the user responds with anything other than "yes" or "confirm", do not write any changes and report:
 
 ```text
 Operation cancelled. No changes were made.
@@ -106,18 +98,15 @@ Use `mcp__linear__create_issue_label` with the following parameters:
 - parent label name: `User Flow`
 - `color`: `#5e6ad2`
 
-Capture the created label's name from the response (used in the §5 confirmation
-message). The label's internal ID is not needed by this operation.
+Capture the created label's name from the response (used in the §5 confirmation message). The label's internal ID is not needed by this operation.
 
-If the response does not contain a valid label name, treat it as a failure: abort and
-report the error. Do not proceed to §4.
+If the response does not contain a valid label name, treat it as a failure: abort and report the error. Do not proceed to §4.
 
 If the tool call fails, abort and report the error. Do not proceed to §4.
 
 ## §4 Execute — Append Sheet Row
 
-Before populating values, verify the cached CSV has exactly 13 columns (A–M). If the
-count differs, abort with:
+Before populating values, verify the cached CSV has exactly 13 columns (A–M). If the count differs, abort with:
 
 ```text
 Sheet schema has drifted. Expected 13 columns (A–M), got <N>.
@@ -143,11 +132,9 @@ Use the sheet-ops.md §6 append pattern. Populate values as follows:
 | L | empty string — **never write a formula here** (see sheet-ops.md §7) |
 | M | `<canonical-id>` — the canonical-id string, now that the label exists |
 
-Compute col A by counting the rows in the cached CSV result and adding 1. Example: if
-the cached CSV has 15 data rows, set col A to 16.
+Compute col A by counting the rows in the cached CSV result and adding 1. Example: if the cached CSV has 15 data rows, set col A to 16.
 
-If the append call fails, report the error. The Linear label was already created;
-note this in the error message so the user can reconcile manually if needed.
+If the append call fails, report the error. The Linear label was already created; note this in the error message so the user can reconcile manually if needed.
 
 ## §5 Confirm Outputs
 

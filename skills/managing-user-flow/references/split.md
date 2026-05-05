@@ -11,8 +11,7 @@ A failure in any check aborts the operation immediately.
 
 ### §1.1 Phase 0 prerequisite
 
-The auth check (sheet-ops.md §2), full-sheet read (sheet-ops.md §3), and Linear label
-list must already be complete and cached in working memory before validation begins.
+The auth check (sheet-ops.md §2), full-sheet read (sheet-ops.md §3), and Linear label list must already be complete and cached in working memory before validation begins.
 
 ### §1.2 Source ID existence
 
@@ -34,8 +33,7 @@ abort with:
 
 ### §1.4 New ID uniqueness — new-id-1 in sheet
 
-Using the cached CSV, run the canonical-ID lookup (sheet-ops.md §4) against column B
-for `<new-id-1>`. If a matching row is found, abort with:
+Using the cached CSV, run the canonical-ID lookup (sheet-ops.md §4) against column B for `<new-id-1>`. If a matching row is found, abort with:
 
 ```text
 Canonical ID '<new-id-1>' already exists in the sheet.
@@ -43,8 +41,7 @@ Canonical ID '<new-id-1>' already exists in the sheet.
 
 ### §1.5 New ID uniqueness — new-id-2 in sheet
 
-Using the cached CSV, run the canonical-ID lookup (sheet-ops.md §4) against column B
-for `<new-id-2>`. If a matching row is found, abort with:
+Using the cached CSV, run the canonical-ID lookup (sheet-ops.md §4) against column B for `<new-id-2>`. If a matching row is found, abort with:
 
 ```text
 Canonical ID '<new-id-2>' already exists in the sheet.
@@ -52,8 +49,7 @@ Canonical ID '<new-id-2>' already exists in the sheet.
 
 ### §1.6 New ID uniqueness — new-id-1 in Linear
 
-Search the Phase 0 cached label list for a label named exactly `<new-id-1>` under
-the "User Flow" parent. If a match is found, abort with:
+Search the Phase 0 cached label list for a label named exactly `<new-id-1>` under the "User Flow" parent. If a match is found, abort with:
 
 ```text
 Linear label '<new-id-1>' already exists under User Flow.
@@ -61,8 +57,7 @@ Linear label '<new-id-1>' already exists under User Flow.
 
 ### §1.7 New ID uniqueness — new-id-2 in Linear
 
-Search the Phase 0 cached label list for a label named exactly `<new-id-2>` under
-the "User Flow" parent. If a match is found, abort with:
+Search the Phase 0 cached label list for a label named exactly `<new-id-2>` under the "User Flow" parent. If a match is found, abort with:
 
 ```text
 Linear label '<new-id-2>' already exists under User Flow.
@@ -70,9 +65,7 @@ Linear label '<new-id-2>' already exists under User Flow.
 
 ### §1.8 New titles
 
-If the title for either `<new-id-1>` or `<new-id-2>` was not provided by the user,
-ask for the missing title(s) before proceeding. Do not show the recommendation table
-or Change Preview until both titles are supplied.
+If the title for either `<new-id-1>` or `<new-id-2>` was not provided by the user, ask for the missing title(s) before proceeding. Do not show the recommendation table or Change Preview until both titles are supplied.
 
 ### §1.9 New flow metadata
 
@@ -83,12 +76,9 @@ Ask the user to provide values for each new flow separately:
 - `status`
 - `persona`
 
-Suggest the values from `<source-id>`'s row as defaults for both. Wait for
-confirmation before proceeding.
+Suggest the values from `<source-id>`'s row as defaults for both. Wait for confirmation before proceeding.
 
-After the user supplies each `status` value, validate it is one of: `not-started`,
-`early`, `feature-complete`, `working`, `parked`, `retired`. If a value is not
-in this list, abort with:
+After the user supplies each `status` value, validate it is one of: `not-started`, `early`, `feature-complete`, `working`, `parked`, `retired`. If a value is not in this list, abort with:
 
 ```text
 Invalid status '<value>'. Must be one of: not-started, early, feature-complete, working, parked, retired.
@@ -108,8 +98,7 @@ Validate the status for each new flow independently. Apply this check to both
 Use `mcp__linear__list_issues` with:
 
 - `label`: `<source-id>`
-- Filter to open states only: omit the state filter and manually exclude issues whose
-  state type is `completed`, `cancelled`, or `duplicate`.
+- Filter to open states only: omit the state filter and manually exclude issues whose state type is `completed`, `cancelled`, or `duplicate`.
 - `limit`: 250
 
 Validate the tool response before proceeding.
@@ -121,15 +110,11 @@ If the query returns 250 results, note:
 > The query for `<source-id>` returned 250 issues (the maximum). There may be
 > additional open issues beyond this limit. Proceeding with the batch returned.
 
-Note: closed issues (`completed`, `cancelled`, `duplicate`) are intentionally
-excluded. They remain tagged with the `<source-id>` (retired) label and are not
-re-tagged.
+Note: closed issues (`completed`, `cancelled`, `duplicate`) are intentionally excluded. They remain tagged with the `<source-id>` (retired) label and are not re-tagged.
 
 ## §3 AI Recommendation Table
 
-For each open issue, review the identifier, title, and description excerpt (if
-available), then recommend which of the two new flows it belongs to with a one-line
-rationale. Format as a table:
+For each open issue, review the identifier, title, and description excerpt (if available), then recommend which of the two new flows it belongs to with a one-line rationale. Format as a table:
 
 ```text
 | Issue      | Title                       | Recommended flow | Rationale                          |
@@ -143,13 +128,9 @@ After the table, ask:
 > Review the recommendations above. Adjust any assignments, then confirm by
 > responding "yes" or "confirm". Or type "abort" to cancel.
 
-If the user provides assignment adjustments (e.g., "move VD-1234 to `<new-id-2>`"),
-update the recorded assignments, re-display the corrected table, and ask for
-confirmation again. Only accept "yes" or "confirm" as final confirmation. Continue
-accepting adjustments until the user confirms or aborts.
+If the user provides assignment adjustments (e.g., "move VD-1234 to `<new-id-2>`"), update the recorded assignments, re-display the corrected table, and ask for confirmation again. Only accept "yes" or "confirm" as final confirmation. Continue accepting adjustments until the user confirms or aborts.
 
-If the user responds "abort", or anything other than "yes" or "confirm", do not
-proceed. Report:
+If the user responds "abort", or anything other than "yes" or "confirm", do not proceed. Report:
 
 ```text
 Operation cancelled. No changes were made.
@@ -163,9 +144,7 @@ and one assigned to `<new-id-2>` — for use in the §4 Change Preview block.
 
 ## §4 Change Preview
 
-After all §1 checks pass, §2 completes, and the user has confirmed the issue
-assignments in §3, show the block below exactly as written and wait for the user
-to respond.
+After all §1 checks pass, §2 completes, and the user has confirmed the issue assignments in §3, show the block below exactly as written and wait for the user to respond.
 
 ```text
 Change Preview — split <source-id> → <new-id-1> + <new-id-2>
@@ -186,14 +165,11 @@ Confirm? (yes / confirm / abort)
 
 Notes:
 
-- `<row-source>` is the sheet row number for `<source-id>` (CSV data index + 2; see
-  sheet-ops.md §4).
-- `<source-status>` is the value read from column H of `<source-id>`'s matched row
-  in §1.3.
+- `<row-source>` is the sheet row number for `<source-id>` (CSV data index + 2; see sheet-ops.md §4).
+- `<source-status>` is the value read from column H of `<source-id>`'s matched row in §1.3.
 - `<open-issue-count>` is the count of open issues from §2.
 
-If the user responds with anything other than "yes" or "confirm", do not write any
-changes and report:
+If the user responds with anything other than "yes" or "confirm", do not write any changes and report:
 
 ```text
 Operation cancelled. No changes were made.
@@ -205,8 +181,7 @@ Do not proceed to §5 unless the user explicitly responds "yes" or "confirm".
 
 ### §5.1 Schema guard
 
-Before writing, verify the cached CSV has exactly 13 columns (A–M). If the count
-differs, abort with:
+Before writing, verify the cached CSV has exactly 13 columns (A–M). If the count differs, abort with:
 
 ```text
 Sheet schema has drifted. Expected 13 columns (A–M), got <col-count>.
@@ -221,13 +196,11 @@ Use the sheet-ops.md §5 cell update pattern:
 - Range: `Flow Inventory!H<row-source>`
 - Value: `retired`
 
-Validate the tool response. If the call fails, abort and report the error. Do not
-proceed to §6 or any later section.
+Validate the tool response. If the call fails, abort and report the error. Do not proceed to §6 or any later section.
 
 ## §6 Execute — Append Two New Rows
 
-Append the new-id-1 row first, then the new-id-2 row. Use the sheet-ops.md §6 append
-pattern for each. Verify each append succeeds before proceeding to the next.
+Append the new-id-1 row first, then the new-id-2 row. Use the sheet-ops.md §6 append pattern for each. Verify each append succeeds before proceeding to the next.
 
 ### §6.1 Append new-id-1 row
 
@@ -249,11 +222,9 @@ Use sheet-ops.md §6 with the following values:
 | L | empty string — **never write a formula here** (see sheet-ops.md §7) |
 | M | `<new-id-1>` |
 
-The cached count reflects the original row total before the retirement in §5 (the
-cached CSV is not re-fetched); add 1 to get the new row number.
+The cached count reflects the original row total before the retirement in §5 (the cached CSV is not re-fetched); add 1 to get the new row number.
 
-Validate the tool response. If the call fails, abort and report partial state (source
-row retired, new-id-1 row not appended).
+Validate the tool response. If the call fails, abort and report partial state (source row retired, new-id-1 row not appended).
 
 ### §6.2 Append new-id-2 row
 
@@ -277,8 +248,7 @@ Use sheet-ops.md §6 with the following values:
 
 Col A is one higher than the new-id-1 row (cached count + 2).
 
-Validate the tool response. If the call fails, abort and report partial state (source
-row retired, new-id-1 row appended, new-id-2 row not appended). Do not proceed to §7.
+Validate the tool response. If the call fails, abort and report partial state (source row retired, new-id-1 row appended, new-id-2 row not appended). Do not proceed to §7.
 
 ## §7 Execute — Create New Labels
 
@@ -290,9 +260,7 @@ Use `mcp__linear__create_issue_label` with:
 - parent label name: `User Flow`
 - `color`: `#5e6ad2`
 
-Verify the response contains a valid label name before proceeding. If the call fails,
-abort and report the error. Note the partial state: source row is retired, both new
-sheet rows are appended, but `<new-id-1>` label was not created.
+Verify the response contains a valid label name before proceeding. If the call fails, abort and report the error. Note the partial state: source row is retired, both new sheet rows are appended, but `<new-id-1>` label was not created.
 
 ### §7.2 Create label for new-id-2
 
@@ -302,10 +270,7 @@ Use `mcp__linear__create_issue_label` with:
 - parent label name: `User Flow`
 - `color`: `#5e6ad2`
 
-Verify the response contains a valid label name before proceeding. If the call fails,
-abort and report the error. Note the partial state: source row is retired, both new
-sheet rows are appended, `<new-id-1>` label was created, but `<new-id-2>` label was
-not created. Do not proceed to §8.
+Verify the response contains a valid label name before proceeding. If the call fails, abort and report the error. Note the partial state: source row is retired, both new sheet rows are appended, `<new-id-1>` label was created, but `<new-id-2>` label was not created. Do not proceed to §8.
 
 ## §8 Execute — Re-tag Open Issues
 
@@ -319,9 +284,7 @@ Process all issues. Report progress as you go:
 
 > Re-tagged `<completed>`/`<open-issue-count>` issues…
 
-If any individual issue update fails: log the failure, continue with the remaining
-issues, and report all failures at the end. Do not abort the batch on a single
-failure.
+If any individual issue update fails: log the failure, continue with the remaining issues, and report all failures at the end. Do not abort the batch on a single failure.
 
 Log each failure as: `` `<identifier>: <title> — error: <message>` ``
 
@@ -332,10 +295,7 @@ If the §2 query was capped at 250, note after re-tagging:
 
 ## §9 Surface Source Label for Archiving
 
-Find `<source-id>`'s label ID from the Phase 0 cached label list. If the cached list
-does not contain the ID (e.g. the session has been long-running), re-fetching Linear
-labels via `mcp__linear__list_issue_labels` is safe — the no-re-fetch rule
-in sheet-ops.md §7 applies to the sheet only.
+Find `<source-id>`'s label ID from the Phase 0 cached label list. If the cached list does not contain the ID (e.g. the session has been long-running), re-fetching Linear labels via `mcp__linear__list_issue_labels` is safe — the no-re-fetch rule in sheet-ops.md §7 applies to the sheet only.
 
 Present to the user:
 
