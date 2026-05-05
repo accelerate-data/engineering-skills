@@ -100,7 +100,7 @@ Do not proceed to §3 unless the user explicitly responds "yes" or "confirm".
 
 ## §3 Execute — Create Linear Label
 
-Use `mcp__claude_ai_Linear__create_issue_label` with the following parameters:
+Use `mcp__linear__create_issue_label` with the following parameters:
 
 - `name`: `<canonical-id>`
 - parent label name: `User Flow`

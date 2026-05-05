@@ -37,7 +37,7 @@ Not this skill:
 
 1. Verify `gws` is installed and `gws auth status` exits zero. If not, abort: `Run gws auth login first, then retry.` (see `references/sheet-ops.md §2`)
 2. Load the full Flow Inventory sheet via `references/sheet-ops.md §3`. Cache the result — do not re-fetch mid-invocation.
-3. Load all Linear "User Flow" child labels via `mcp__claude_ai_Linear__list_issue_labels`. Cache the result.
+3. Load all Linear "User Flow" child labels via `mcp__linear__list_issue_labels`. Cache the result.
 4. Confirm the operation from the invocation context (argument or user message). If ambiguous, ask once: "Which operation? add / retire / rename / merge / split"
 
 ## Phase 1 — Identify Operation and Arguments

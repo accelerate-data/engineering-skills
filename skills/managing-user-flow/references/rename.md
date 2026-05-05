@@ -58,7 +58,7 @@ of the matched row and use it as `<new-title>`. Note to the user:
 
 ## §2 List All Issues Tagged with Old Label
 
-Use `mcp__claude_ai_Linear__list_issues` with:
+Use `mcp__linear__list_issues` with:
 
 - `label`: `<old-id>`
 - `limit`: 250
@@ -143,7 +143,7 @@ state to the user.
 
 ## §5 Execute — Create New Linear Label
 
-Use `mcp__claude_ai_Linear__create_issue_label` with:
+Use `mcp__linear__create_issue_label` with:
 
 - `name`: `<new-id>`
 - parent label name: `User Flow`
@@ -155,7 +155,7 @@ already been updated (cols B and E) — report this partial state to the user.
 
 ## §6 Execute — Re-tag All Issues
 
-For each issue returned in §2, use `mcp__claude_ai_Linear__save_issue` to:
+For each issue returned in §2, use `mcp__linear__save_issue` to:
 
 - Add label `<new-id>`
 - Remove label `<old-id>`
@@ -176,7 +176,7 @@ Using the Phase 0 cached label list, find the label named `<old-id>` under
 "User Flow" and read its ID as `<label-id>`. Present to the user:
 
 Note: the no-re-fetch rule in sheet-ops.md §7 applies to the sheet only.
-Re-fetching Linear labels via `mcp__claude_ai_Linear__list_issue_labels` is safe
+Re-fetching Linear labels via `mcp__linear__list_issue_labels` is safe
 if the session has been long-running.
 
 > Linear label ready to archive: **`<old-id>`** (ID: `<label-id>`). Go to

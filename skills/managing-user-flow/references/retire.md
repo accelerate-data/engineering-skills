@@ -44,10 +44,8 @@ the "User Flow" parent. Note the result — a missing label is not an abort cond
 This is the first of two confirmation gates; §3 is the second. Both must fire in
 sequence — do not skip either gate.
 
-Use `mcp__claude_ai_Linear__list_issues` filtered to label `<canonical-id>`. Filter:
-pass `state` = `started` to capture in-progress issues, or omit the state filter and
-manually exclude issues whose state type is `completed`, `cancelled`, or `duplicate`
-from the returned list. Capture the count and list.
+Use `mcp__linear__list_issues` filtered to label `<canonical-id>` with
+`state` = `started`. Capture the count and list.
 
 If open issues are found, list them (identifier + title) and display:
 
