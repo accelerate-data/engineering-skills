@@ -58,7 +58,8 @@ Implement an existing Linear issue, but stop before PR creation. This skill owns
 
 ## Discovery Contract
 
-Before asking the user anything:
+After branch and worktree setup (Steps 1–2), and before asking the user anything:
+A missing User Flow label or `docs/functional/` folder must not skip or prevent branch/worktree creation.
 
 - read the Linear issue description, comments, attachments, labels, and linked documents
 - identify the issue's Linear team

@@ -26,7 +26,7 @@
         "expect_creates_implementation_plan": "false",
         "expect_creates_branch_and_worktree_first": "true",
         "expect_creates_pr": "false",
-        "required_terms": "docs/functional/UF-Saved-Filters,stop",
+        "required_terms": "docs/functional/UF-Saved-Filters,stop,worktree",
         "forbidden_terms": "implements_before_plan_approval\":true,pushes_git\":true"
       }
     },
