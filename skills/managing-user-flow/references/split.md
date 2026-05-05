@@ -94,6 +94,12 @@ in this list, abort with:
 Invalid status '<value>'. Must be one of: not-started, early, feature-complete, working, parked, retired.
 ```
 
+If the user supplies `retired` as the status for a new flow, abort with:
+
+```text
+A newly created flow cannot have status retired. Choose a different status.
+```
+
 Validate the status for each new flow independently. Apply this check to both
 `<status-1>` and `<status-2>` before proceeding.
 
@@ -137,6 +143,11 @@ After the table, ask:
 > Review the recommendations above. Adjust any assignments, then confirm by
 > responding "yes" or "confirm". Or type "abort" to cancel.
 
+If the user provides assignment adjustments (e.g., "move VD-1234 to `<new-id-2>`"),
+update the recorded assignments, re-display the corrected table, and ask for
+confirmation again. Only accept "yes" or "confirm" as final confirmation. Continue
+accepting adjustments until the user confirms or aborts.
+
 If the user responds "abort", or anything other than "yes" or "confirm", do not
 proceed. Report:
 
@@ -146,6 +157,9 @@ Operation cancelled. No changes were made.
 
 Record the final confirmed assignment for each issue: which of `<new-id-1>` or
 `<new-id-2>` the issue is assigned to. Use these assignments in §8.
+
+Also maintain two grouped lists — one of issue identifiers assigned to `<new-id-1>`
+and one assigned to `<new-id-2>` — for use in the §4 Change Preview block.
 
 ## §4 Change Preview
 
