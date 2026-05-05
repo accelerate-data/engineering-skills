@@ -108,7 +108,7 @@ Use sibling worktrees at `../worktrees/<branch-name>` relative to the repo root.
 - Preserve the full branch name in the path, including prefixes such as `feature/`.
 - Use `./scripts/worktree.sh <branch-name>` from the main checkout as the canonical way to create or reattach a worktree and bootstrap local development state.
 - `scripts/worktree.sh` derives paths relative to the repository and must stay portable across developers and machines.
-- The worktree helper symlinks shared local state such as `.env` and `tests/evals/.promptfoo` from the main checkout into sibling worktrees.
+- The worktree helper symlinks `.env` from the main checkout into sibling worktrees.
 
 ## Skills
 

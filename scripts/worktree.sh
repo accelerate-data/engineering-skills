@@ -77,55 +77,6 @@ link_env_file() {
   echo "ENV: symlink $env_dst -> $env_src"
 }
 
-opencode_auth_json_path() {
-  local xdg_auth="${XDG_DATA_HOME:-$HOME/.local/share}/opencode/auth.json"
-  local legacy_auth="$HOME/.opencode/auth.json"
-
-  if [[ -n "${OPENCODE_AUTH_JSON:-}" ]]; then
-    printf '%s\n' "$OPENCODE_AUTH_JSON"
-  elif [[ -f "$xdg_auth" ]]; then
-    printf '%s\n' "$xdg_auth"
-  else
-    printf '%s\n' "$legacy_auth"
-  fi
-}
-
-link_promptfoo_state() {
-  local promptfoo_src="$repo_root/tests/evals/.promptfoo"
-  local promptfoo_dst="$worktree_path/tests/evals/.promptfoo"
-  local opencode_auth_src
-  local opencode_auth_dst="$promptfoo_src/opencode-runtime/data/opencode/auth.json"
-
-  opencode_auth_src="$(opencode_auth_json_path)"
-
-  if [[ ! -d "$worktree_path/tests/evals" ]]; then
-    echo "PROMPTFOO_DB: skipped (no tests/evals in worktree)"
-    return
-  fi
-
-  if [[ "$promptfoo_src" == "$promptfoo_dst" ]]; then
-    json_error \
-      "WORKTREE_PROMPTFOO_SELF_LINK" \
-      "link_promptfoo_state" \
-      "Refusing to replace the source Promptfoo state directory with a symlink to itself." \
-      "false" \
-      "" \
-      "Run this helper from the main checkout with a separate sibling worktree path."
-  fi
-
-  mkdir -p "$promptfoo_src"
-  mkdir -p "$(dirname "$opencode_auth_dst")"
-  if [[ -f "$opencode_auth_src" ]]; then
-    ln -sf "$opencode_auth_src" "$opencode_auth_dst"
-    echo "OPENCODE_AUTH: symlink $opencode_auth_dst -> $opencode_auth_src"
-  else
-    echo "OPENCODE_AUTH: skipped (no auth at $opencode_auth_src)"
-  fi
-
-  rm -rf "$promptfoo_dst"
-  ln -s "$promptfoo_src" "$promptfoo_dst"
-  echo "PROMPTFOO_DB: symlink $promptfoo_dst -> $promptfoo_src"
-}
 
 allow_direnv() {
   if ! command -v direnv &>/dev/null; then
@@ -211,7 +162,6 @@ existing_branch_worktree() {
 
 bootstrap_worktree() {
   link_env_file
-  link_promptfoo_state
   allow_direnv
   bootstrap_eval_dependencies
 }
