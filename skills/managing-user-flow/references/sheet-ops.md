@@ -3,7 +3,7 @@
 Use this reference for all Google Sheets interactions in the `managing-user-flow` skill.
 Every operation (add, retire, rename, merge, split) follows these patterns.
 
-## Sheet Coordinates
+## §1 Sheet Coordinates
 
 | Constant | Value |
 |---|---|
@@ -28,7 +28,7 @@ Every operation (add, retire, rename, merge, split) follows these patterns.
 | L | Filename | **Never write.** Contains a HYPERLINK formula managed by sheet owners. |
 | M | Linear | Written on Add only. |
 
-## Phase 0: Auth Check
+## §2 Auth Check
 
 Run before any other sheet command.
 
@@ -43,7 +43,9 @@ the `gws` binary is missing or the session has expired. Abort with:
 Run gws auth login first, then retry.
 ```
 
-## Full-Sheet Read
+## §3 Full-Sheet Read
+
+Requires §2 auth check to have passed (exit code 0).
 
 ```bash
 gws sheets spreadsheets values get \
@@ -51,10 +53,12 @@ gws sheets spreadsheets values get \
   --format csv
 ```
 
+The `--format csv` flag is required; the canonical-ID lookup in §4 depends on CSV output.
+
 Cache the result in working memory. All validation and change-preview steps consume the cached
 copy. Do not re-fetch the sheet mid-invocation.
 
-## Canonical-ID Lookup
+## §4 Canonical-ID Lookup
 
 From the cached CSV, find the row where column B equals the target canonical ID.
 
@@ -78,7 +82,7 @@ row 2.
 
 Use this value as `<row>` in all update and range expressions below.
 
-## Cell Update Pattern
+## §5 Cell Update Pattern
 
 Use this pattern to overwrite a single cell or a small range. Parameterise `<row>`, the column
 letter(s), and the value body for each use case.
@@ -91,7 +95,12 @@ gws sheets spreadsheets values update \
 
 `<row>` is the 1-indexed sheet row number (CSV data row index + 2, because row 1 is the header).
 
-## Append-Row Pattern
+**Updating multiple cells in the same row:** Use two sequential `values update` calls (one for
+each column range), or target the entire B–E range with sparse values. When targeting
+`Flow Inventory!B<row>:E<row>`, supply all four values in order `[B, C, D, E]` — use empty
+strings for columns you do not want to change (C and D).
+
+## §6 Append-Row Pattern
 
 Use this pattern when adding a new flow. A full row of 13 values (columns A–M) is appended after
 the last occupied row.
@@ -99,8 +108,11 @@ the last occupied row.
 ```bash
 gws sheets spreadsheets values append \
   --params '{"spreadsheetId":"1nq0ab_E6sAjxR7WgihsF92CGfRzj7lCe3Z3GQSu25kA","range":"Flow Inventory!A:M","valueInputOption":"USER_ENTERED","insertDataOption":"INSERT_ROWS"}' \
-  --json '{"values":[["<#>","<canonical-id>","<repo>","<category>","<title>","","","<status>","","","<persona>","","<linear-label>"]]}'
+  --json '{"values":[["<#>","<canonical-id>","<repo>","<category>","<title>","","","<status>","","","<persona>","","<canonical-id>"]]}'
 ```
+
+Set `<#>` to the next sequential row number: count the data rows in the cached CSV (length of
+the cached result), then add 1. If the last row in the cache has col A = 15, the new row is 16.
 
 Value positions (zero-based index in the inner array):
 
@@ -120,7 +132,7 @@ Value positions (zero-based index in the inner array):
 | 11 | L | Filename — always empty string (never write a formula here) |
 | 12 | M | Linear — set to the new canonical-id string after label creation |
 
-## Constraints
+## §7 Constraints
 
 **Never do this:**
 
@@ -134,5 +146,5 @@ Value positions (zero-based index in the inner array):
   Sheet schema has drifted. Expected 13 columns (A–M), got <N>.
   ```
 
-- **Never re-fetch the sheet mid-invocation.** Use the Phase 0 cached copy for all reads,
+- **Never re-fetch the sheet mid-invocation.** Use the §2 cached copy for all reads,
   validation, and previews throughout the current operation.
