@@ -44,7 +44,7 @@
     },
     "scripts": {
       "path": "scripts/",
-      "description": "Repository helper and validation scripts. worktree.sh creates or reattaches sibling worktrees, symlinks .env from the main checkout, allows direnv, and bootstraps tests/evals dependencies. validate_plugin_manifests.py checks Claude/Codex manifest required fields, identity, license, version, and skills-path parity. check_plugin_version_bump.py enforces shared Claude/Codex version equality and an origin/main version increase. check_skill_prose_wraps.py prevents hard-wrapped prose in skill Markdown files."
+      "description": "Repository helper and validation scripts. worktree.sh creates or reattaches sibling worktrees, symlinks .env from the main checkout, and allows direnv. validate_plugin_manifests.py checks Claude/Codex manifest required fields, identity, license, version, and skills-path parity. check_plugin_version_bump.py enforces shared Claude/Codex version equality and an origin/main version increase. check_skill_prose_wraps.py prevents hard-wrapped prose in skill Markdown files."
     },
     "validator_tests": {
       "path": "tests/",
