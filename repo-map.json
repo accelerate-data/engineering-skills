@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-04-25T00:00:00Z",
+  "generated_at": "2026-05-05T00:00:00Z",
   "repo_root": "engineering-skills",
   "primary_languages": ["Markdown", "JSON", "Shell", "YAML"],
   "package_managers": [
@@ -36,11 +36,11 @@
     },
     "skills": {
       "path": "skills/",
-      "description": "Canonical skill directories (15 skills). Each skill owns its SKILL.md and any supporting references, assets, scripts, or agents."
+      "description": "Canonical skill directories (16 skills). Each skill owns its SKILL.md and any supporting references, assets, scripts, or agents."
     },
     "eval_harness": {
       "path": "tests/evals/",
-      "description": "Promptfoo harness and deterministic compatibility checks for skills in this repository. Agentic eval packages use a local OpenCode CLI provider that invokes `opencode run` directly, avoiding a managed `opencode serve` process. Current packages cover the Linear workflow skills, creating-feature-request, code-simplifier, maintain-github-repos, writing-tests, adversarial-review, explaining-code, the 4 e2e BDD authoring skills, yolo, bundled raising-linear-pr promptfoo DB gate helper tests, eval coverage reporting, Codex compatibility, and the static eval user-behavior quality check."
+      "description": "Promptfoo harness and deterministic compatibility checks for skills in this repository. Agentic eval packages use a local OpenCode CLI provider that invokes `opencode run` directly, avoiding a managed `opencode serve` process. Current packages cover the Linear workflow skills, creating-feature-request, code-simplifier, maintain-github-repos, writing-tests, adversarial-review, explaining-code, the 4 e2e BDD authoring skills, yolo, bundled raising-linear-pr promptfoo DB gate helper tests, eval coverage reporting, Codex compatibility, and the static eval user-behavior quality check. The managing-user-flow skill has no eval package yet — deferred to a follow-on issue after the skill is proven in use."
     },
     "scripts": {
       "path": "scripts/",
