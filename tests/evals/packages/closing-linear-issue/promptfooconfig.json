@@ -84,6 +84,28 @@
         "expect_checks_off_acceptance_criteria": "false",
         "required_terms": "dirty,worktree,stop,tracked"
       }
+    },
+    {
+      "description": "AD-42 — routing — 'close issue [ID]' phrase triggers closing-linear-issue skill",
+      "vars": {
+        "eval_type": "user-behavior",
+        "failure_modes": "misses-required-handoff,routes-to-wrong-skill",
+        "user_message": "close issue AD-42",
+        "expected_detected_skill": "closing-linear-issue",
+        "expect_trigger_found_in_message": "true",
+        "expect_would_pause_current_flow": "true"
+      }
+    },
+    {
+      "description": "AD-42 — routing — 'close [ID]' short form also triggers closing-linear-issue",
+      "vars": {
+        "eval_type": "user-behavior",
+        "failure_modes": "misses-required-handoff,routes-to-wrong-skill",
+        "user_message": "close AD-42",
+        "expected_detected_skill": "closing-linear-issue",
+        "expect_trigger_found_in_message": "true",
+        "expect_would_pause_current_flow": "true"
+      }
     }
   ]
 }
