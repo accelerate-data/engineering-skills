@@ -1,12 +1,12 @@
-# managing-user-flow Skill — Implementation Plan (VU-1163)
+# managing-user-flow Skill — Implementation Plan (AD-43)
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Add a new `managing-user-flow` skill to the engineering-skills plugin. The skill maintains the canonical user flow list across two surfaces: the User-Flows-Details Google Sheet (Flow Inventory tab, col B) and Linear "User Flow" child labels. This is flow list maintenance only — no `docs/functional/` spec authoring, no implementation tracking.
 
-**Architecture:** Single skill with per-operation reference files plus five thin slash-command wrappers. Phase 0 is a shared preamble (gws auth, full sheet load, full Linear label load) cached once per invocation. After resolving the operation and arguments, the skill shows a Change Preview and requires explicit user approval before writing anything. Each operation is self-contained in its own reference file. All sheet writes use `gws sheets spreadsheets values update` (cell range) or `gws sheets spreadsheets values append` (new row). All Linear label mutations use MCP tools (`mcp__linear__create_issue_label`, `mcp__linear__save_issue` for re-tagging, `mcp__linear__delete_comment` is not relevant — label delete is via the save_issue_label path if available, otherwise documented as a manual step with the MCP list).
+**Architecture:** Single skill with per-operation reference files plus five thin slash-command wrappers. Phase 0 is a shared preamble (gws auth, full sheet load, full Linear label load) cached once per invocation. After resolving the operation and arguments, the skill shows a Change Preview and requires explicit user approval before writing anything. Each operation is self-contained in its own reference file. All sheet writes use `gws sheets spreadsheets values update` (cell range) or `gws sheets spreadsheets values append` (new row). All Linear label mutations use MCP tools (`mcp__linear__create_issue_label`, `mcp__linear__save_issue` for re-tagging). Label archiving is a manual Linear UI step — the MCP has no archive or delete call for labels. Archiving (not deleting) is preferred: it preserves the label on historical issues while removing it from the active label picker.
 
-**Tech Stack:** Markdown (skill, commands, references), `gws` CLI (sheet read/write), Linear MCP tools (label create/delete, issue list and re-tag), `npm run validate:plugin-manifests` and `npm run check:plugin-version` for manifest gates.
+**Tech Stack:** Markdown (skill, commands, references), `gws` CLI (sheet read/write), Linear MCP tools (label create, issue list and re-tag), `npm run validate:plugin-manifests` and `npm run check:plugin-version` for manifest gates.
 
 ---
 
@@ -43,10 +43,10 @@ These values are used across all reference files and must not be hardcoded inlin
 | `skills/managing-user-flow/SKILL.md` | Skill entry point: trigger conditions, Phase 0 preamble, operation routing table, confirmation gate contract |
 | `skills/managing-user-flow/references/sheet-ops.md` | Sheet coordinates, all `gws` read/write command patterns, auth check, column layout constants |
 | `skills/managing-user-flow/references/add.md` | Add operation: validate, change preview, append row, create Linear label |
-| `skills/managing-user-flow/references/retire.md` | Retire operation: validate, open-issue warning, change preview, update col H, delete Linear label |
-| `skills/managing-user-flow/references/rename.md` | Rename operation: validate, change preview, update col B+E, create new label, re-tag all issues, delete old label |
-| `skills/managing-user-flow/references/merge.md` | Merge operation: validate two sources + new target, change preview, retire both rows, append new row, create label, re-tag all issues, delete old labels |
-| `skills/managing-user-flow/references/split.md` | Split operation: validate source + two targets, change preview, retire source row, append two new rows, create two labels, surface open issues with AI recommendation, re-tag after user approval, delete source label |
+| `skills/managing-user-flow/references/retire.md` | Retire operation: validate, open-issue warning, change preview, update col H, surface label ID for archiving |
+| `skills/managing-user-flow/references/rename.md` | Rename operation: validate, change preview, update col B+E, create new label, re-tag all issues, surface old label for archiving |
+| `skills/managing-user-flow/references/merge.md` | Merge operation: validate two sources + new target, change preview, retire both rows, append new row, create label, re-tag all issues, surface old labels for archiving |
+| `skills/managing-user-flow/references/split.md` | Split operation: validate source + two targets, change preview, retire source row, append two new rows, create two labels, surface open issues with AI recommendation, re-tag after user approval, surface source label for archiving |
 | `commands/add-flow.md` | `/add-flow <canonical-id>` — thin wrapper invoking managing-user-flow for add |
 | `commands/retire-flow.md` | `/retire-flow <canonical-id>` — thin wrapper for retire |
 | `commands/rename-flow.md` | `/rename-flow <old-id> <new-id> [new-title]` — thin wrapper for rename |
@@ -264,7 +264,7 @@ Report: "Added `<canonical-id>` to Flow Inventory (row appended) and created Lin
 
 Use `mcp__linear__list_issues` with `label: <canonical-id>` and `state: started` (or equivalent open filter). If any open issues are found, list them (identifier + title) and warn:
 
-> These open issues are tagged `<canonical-id>`. Retiring the label will not remove the tag — the issues will remain tagged but the label will be deleted. Continue?
+> These open issues are tagged `<canonical-id>`. Retiring will archive the label — issues keep the tag but the label is removed from the active picker. Continue?
 
 Require explicit confirmation before proceeding.
 
@@ -274,7 +274,7 @@ Require explicit confirmation before proceeding.
 Change Preview — retire
 Sheet: update Flow Inventory col H, row <N>
   H: retired  (was: <current-status>)
-Linear: delete label "<canonical-id>"  [<N> open issues remain tagged]
+Linear: archive label "<canonical-id>"  [<N> open issues remain tagged]
 
 Confirm? (yes / abort)
 ```
@@ -283,15 +283,17 @@ Confirm? (yes / abort)
 
 Use `references/sheet-ops.md` §5 update pattern targeting the col H cell of the identified row.
 
-- [ ] **Step 5: Execute — delete Linear label**
+- [ ] **Step 5: Surface label for archiving**
 
-If the label exists: use `mcp__linear__list_issue_labels` to get the label ID, then surface the ID to the user with the note that label deletion must be done via Linear UI or the `mcp__linear__delete_*` equivalent. Document the exact label ID so the user can action it immediately.
+If the label exists: use `mcp__linear__list_issue_labels` to get the label ID and name. Present them to the user with the instruction to archive via Linear settings (Settings → Labels → archive). The MCP has no archive call — this step is always manual.
 
-> Note: if a direct label-delete MCP call becomes available, wire it here. Until then, present the label ID and name and ask the user to delete it from Linear settings.
+Example output:
+
+> Linear label ready to archive: **`<canonical-id>`** (ID: `<id>`). Go to Linear → Settings → Labels, find the label, and archive it.
 
 - [ ] **Step 6: Confirm outputs**
 
-Report: "Retired `<canonical-id>` in sheet (col H = retired). Linear label `<canonical-id>` (ID: `<id>`) ready for deletion."
+Report: "Retired `<canonical-id>` in sheet (col H = retired). Archive Linear label `<canonical-id>` (ID: `<id>`) manually in Linear settings."
 
 ---
 
@@ -322,7 +324,7 @@ Sheet: update Flow Inventory row <N>
 Linear:
   1. Create label "<new-id>" under "User Flow" (color #5e6ad2)
   2. Re-tag <N> issues from "<old-id>" → "<new-id>"
-  3. Delete label "<old-id>"
+  3. Archive label "<old-id>"  (manual step — instructions provided after)
 
 Confirm? (yes / abort)
 ```
@@ -339,13 +341,13 @@ Use `mcp__linear__create_issue_label` with new-id, parent "User Flow", color "#5
 
 For each issue returned in Step 2: use `mcp__linear__save_issue` to add the new label and remove the old label. Process in batches; report progress ("Re-tagged 12/47 issues…"). If any issue update fails, log it and continue — report failures at the end.
 
-- [ ] **Step 7: Execute — delete old label**
+- [ ] **Step 7: Surface old label for archiving**
 
-Surface the old label ID and name with the instruction to delete via Linear settings (same pattern as retire Step 5).
+Use the same pattern as retire Step 5. Present the old label ID and name with the instruction to archive via Linear settings.
 
 - [ ] **Step 8: Confirm outputs**
 
-Report: "Renamed `<old-id>` → `<new-id>` in sheet. <N> issues re-tagged. Old label `<old-id>` ready for deletion."
+Report: "Renamed `<old-id>` → `<new-id>` in sheet. <N> issues re-tagged to `<new-id>`. Archive old label `<old-id>` (ID: `<id>`) manually in Linear settings."
 
 ---
 
@@ -378,7 +380,7 @@ Sheet:
 Linear:
   1. Create label "<new-id>" under "User Flow" (color #5e6ad2)
   2. Re-tag <N> issues from "<id-a>" and "<id-b>" → "<new-id>"
-  3. Delete labels "<id-a>" and "<id-b>"
+  3. Archive labels "<id-a>" and "<id-b>"  (manual step — instructions provided after)
 
 Confirm? (yes / abort)
 ```
@@ -395,13 +397,13 @@ Use append pattern from `references/sheet-ops.md` §6.
 
 Create `new-id` label. Re-tag all issues (from both source labels). Remove source labels from each issue. Report progress.
 
-- [ ] **Step 7: Execute — delete source labels**
+- [ ] **Step 7: Surface source labels for archiving**
 
-Surface both source label IDs for deletion via Linear settings.
+Use the same pattern as retire Step 5 for both `<id-a>` and `<id-b>`. Present both label IDs with the instruction to archive via Linear settings.
 
 - [ ] **Step 8: Confirm outputs**
 
-Report: "Merged `<id-a>` + `<id-b>` → `<new-id>`. <N> issues re-tagged. Source labels ready for deletion."
+Report: "Merged `<id-a>` + `<id-b>` → `<new-id>`. <N> issues re-tagged. Archive source labels `<id-a>` and `<id-b>` manually in Linear settings."
 
 ---
 
@@ -451,7 +453,7 @@ Linear:
   3. Re-tag open issues:
      → <new-id-1>: VD-1234, VD-…
      → <new-id-2>: VD-5678, VD-…
-  4. Delete label "<source-id>"
+  4. Archive label "<source-id>"  (manual step — instructions provided after)
 
 Confirm? (yes / abort)
 ```
@@ -472,13 +474,13 @@ Create new-id-1 and new-id-2 labels.
 
 For each open issue: add the confirmed target label, remove the source label.
 
-- [ ] **Step 9: Execute — delete source label**
+- [ ] **Step 9: Surface source label for archiving**
 
-Surface source label ID for deletion.
+Use the same pattern as retire Step 5. Present the source label ID and name with the instruction to archive via Linear settings.
 
 - [ ] **Step 10: Confirm outputs**
 
-Report: "Split `<source-id>` → `<new-id-1>` + `<new-id-2>`. <N> open issues re-tagged. Source label ready for deletion."
+Report: "Split `<source-id>` → `<new-id-1>` + `<new-id-2>`. <N> open issues re-tagged. Archive source label `<source-id>` (ID: `<id>`) manually in Linear settings."
 
 ---
 
@@ -523,19 +525,19 @@ Delegates to `Skill("managing-user-flow")` with operation = add. The skill:
 
 - [ ] **Step 2: `commands/retire-flow.md`**
 
-Same pattern. Usage: `/retire-flow <canonical-id>`. What it does: validates, checks for open issues (warns), shows preview, updates col H to `retired`, surfaces label ID for deletion.
+Same pattern. Usage: `/retire-flow <canonical-id>`. What it does: validates, checks for open issues (warns), shows preview, updates col H to `retired`, surfaces label ID for archiving in Linear settings.
 
 - [ ] **Step 3: `commands/rename-flow.md`**
 
-Usage: `/rename-flow <old-id> <new-id> [new-title]`. What it does: validates, shows preview with issue re-tag count, updates sheet cols B+E, creates new label, re-tags all issues, surfaces old label for deletion.
+Usage: `/rename-flow <old-id> <new-id> [new-title]`. What it does: validates, shows preview with issue re-tag count, updates sheet cols B+E, creates new label, re-tags all issues, surfaces old label for archiving in Linear settings.
 
 - [ ] **Step 4: `commands/merge-flows.md`**
 
-Usage: `/merge-flows <id-a> <id-b> <new-id> "<new-title>"`. What it does: validates both sources and new target, collects metadata, shows preview, retires both rows, appends new row, creates label, re-tags all issues, surfaces old labels for deletion.
+Usage: `/merge-flows <id-a> <id-b> <new-id> "<new-title>"`. What it does: validates both sources and new target, collects metadata, shows preview, retires both rows, appends new row, creates label, re-tags all issues, surfaces old labels for archiving in Linear settings.
 
 - [ ] **Step 5: `commands/split-flow.md`**
 
-Usage: `/split-flow <source-id> <new-id-1> <new-id-2>`. What it does: validates, fetches open issues, generates AI recommendation table, collects user confirmation on assignments, shows full preview, retires source, appends two new rows, creates two labels, re-tags open issues, surfaces source label for deletion.
+Usage: `/split-flow <source-id> <new-id-1> <new-id-2>`. What it does: validates, fetches open issues, generates AI recommendation table, collects user confirmation on assignments, shows full preview, retires source, appends two new rows, creates two labels, re-tags open issues, surfaces source label for archiving in Linear settings.
 
 ---
 
