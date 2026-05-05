@@ -253,6 +253,170 @@
       }
     },
     {
+      "description": "AD-35 — multi-module issue triggers complexity question and brainstorming handoff",
+      "vars": {
+        "eval_type": "user-behavior",
+        "failure_modes": "skips-complexity-assessment,implements-before-brainstorming",
+        "scenario": "- The user says: \"implement ENG-2001 for the new notification routing system.\"\n- Simulated Linear metadata: team `Internal-IT`, project `Engineering Skills`, current status `Ready for Development`.\n- The Linear issue has User Flow label `UF-Notifications`, and `docs/functional/UF-Notifications/README.md` exists.\n- Codebase review shows the work spans `src/notifications/router`, `src/workers/delivery`, and `src/app/settings/notifications` — three distinct modules.\n- The issue describes two viable delivery strategies (push vs. queue-based) with no chosen path.\n- No implementation edits have started.",
+        "expect_asks_complexity_question": "true",
+        "expect_hands_off_to_brainstorming": "true",
+        "expect_creates_branch_and_worktree_first": "true",
+        "expect_creates_pr": "false",
+        "required_terms": "brainstorming,complex",
+        "forbidden_terms": "implements_before_plan_approval\":true,pushes_git\":true"
+      }
+    },
+    {
+      "description": "AD-35 — single-module obvious issue does not trigger complexity question",
+      "vars": {
+        "eval_type": "user-behavior",
+        "failure_modes": "over-routes-to-brainstorming,adds-unnecessary-friction",
+        "scenario": "- The user says: \"implement ENG-2002 — add a missing null check in the user serializer.\"\n- Simulated Linear metadata: team `Internal-IT`, project `Engineering Skills`, current status `Ready for Development`.\n- The issue has User Flow label `UF-User-Profile`, and `docs/functional/UF-User-Profile/README.md` exists.\n- Codebase review finds a single file `src/serializers/user.ts` with one clear fix location.\n- There is one obvious fix path: add a null guard before the property access.\n- No implementation edits have started.",
+        "expect_asks_complexity_question": "false",
+        "expect_hands_off_to_brainstorming": "false",
+        "expect_creates_branch_and_worktree_first": "true",
+        "expect_creates_pr": "false",
+        "forbidden_terms": "implements_before_plan_approval\":true,pushes_git\":true"
+      }
+    },
+    {
+      "description": "AD-35 — user says no to complexity question, skips brainstorming and continues to writing-tests and writing-plans",
+      "vars": {
+        "eval_type": "user-behavior",
+        "failure_modes": "ignores-user-no-answer,routes-to-brainstorming-anyway",
+        "scenario": "- The user says: \"implement ENG-2003 for the caching layer. I know it touches a few modules but just implement it — no need to brainstorm.\"\n- Simulated Linear metadata: team `Internal-IT`, project `Engineering Skills`, current status `Ready for Development`.\n- The issue has User Flow label `UF-Cache`, and `docs/functional/UF-Cache/README.md` exists.\n- Codebase review shows the work spans `src/cache/store` and `src/api/middleware` — two modules.\n- The user has explicitly declined brainstorming.\n- No implementation edits have started.",
+        "expect_asks_complexity_question": "true",
+        "expect_hands_off_to_brainstorming": "false",
+        "expect_uses_writing_tests_before_plan": "true",
+        "expect_uses_writing_plans_before_implementation": "true",
+        "expect_creates_branch_and_worktree_first": "true",
+        "expect_creates_pr": "false",
+        "forbidden_terms": "implements_before_plan_approval\":true,pushes_git\":true"
+      }
+    },
+    {
+      "description": "AD-36 — non-trivial implementation requires writing-tests before writing-plans",
+      "vars": {
+        "eval_type": "user-behavior",
+        "failure_modes": "skips-test-scenario-planning,creates-plan-without-coverage-map",
+        "scenario": "- The user says: \"implement ENG-2004 — add webhook delivery retry logic.\"\n- Simulated Linear metadata: team `Internal-IT`, project `Engineering Skills`, current status `Ready for Development`.\n- The issue has User Flow label `UF-Webhooks`, and `docs/functional/UF-Webhooks/README.md` exists.\n- Codebase review shows the work touches `src/webhooks/delivery`, `src/workers/retry`, and related tests.\n- No implementation plan exists yet.\n- No implementation edits have started.",
+        "expect_uses_writing_tests_before_plan": "true",
+        "expect_uses_writing_plans_before_implementation": "true",
+        "expect_creates_implementation_plan": "true",
+        "expect_creates_branch_and_worktree_first": "true",
+        "expect_creates_pr": "false",
+        "required_terms": "writing-tests,writing-plans",
+        "forbidden_terms": "implements_before_plan_approval\":true,pushes_git\":true"
+      }
+    },
+    {
+      "description": "AD-36 — complex multi-module bug fix still requires writing-tests before writing-plans",
+      "vars": {
+        "eval_type": "user-behavior",
+        "failure_modes": "skips-test-scenario-planning-for-bug,creates-bug-fix-plan-without-coverage-map",
+        "scenario": "- The user says: \"fix ENG-2005 — the payment reconciliation job produces incorrect totals when multiple currencies are involved.\"\n- Simulated Linear metadata: team `Internal-IT`, project `Engineering Skills`, current status `Ready for Development`.\n- The issue has User Flow label `UF-Payments`, and `docs/functional/UF-Payments/README.md` exists.\n- `superpowers:systematic-debugging` has already isolated the root cause: a rounding error in `src/payments/reconcile.ts` that propagates through `src/workers/reconcile-job.ts` and the reporting aggregator.\n- The fix requires changes across three files and has complex edge cases across currency combinations.\n- This bug fix requires `superpowers:writing-plans` before edits due to multi-module scope.",
+        "expect_uses_systematic_debugging_for_failures": "true",
+        "expect_uses_writing_tests_before_plan": "true",
+        "expect_uses_writing_plans_before_implementation": "true",
+        "expect_simple_bug_can_skip_writing_plan": "false",
+        "expect_creates_branch_and_worktree_first": "true",
+        "expect_creates_pr": "false",
+        "forbidden_terms": "pushes_git\":true"
+      }
+    },
+    {
+      "description": "AD-36 — simple single-module bug fix skips writing-tests and writing-plans",
+      "vars": {
+        "eval_type": "user-behavior",
+        "failure_modes": "over-gates-simple-bug,requires-plan-for-trivial-fix",
+        "scenario": "- The user says: \"fix ENG-2006 — the date formatter crashes on null input.\"\n- Simulated Linear metadata: team `Internal-IT`, project `Engineering Skills`, current status `Ready for Development`.\n- The issue has User Flow label `UF-Reports`, and `docs/functional/UF-Reports/README.md` exists.\n- `superpowers:systematic-debugging` has isolated the root cause: a missing null guard in `src/utils/date-formatter.ts`.\n- The user has confirmed the root cause and fix direction.\n- The fix is a single null check in one file with no sequencing risk.",
+        "expect_uses_systematic_debugging_for_failures": "true",
+        "expect_simple_bug_can_skip_writing_plan": "true",
+        "expect_uses_writing_tests_before_plan": "false",
+        "expect_uses_writing_plans_before_implementation": "false",
+        "expect_creates_branch_and_worktree_first": "true",
+        "expect_creates_pr": "false",
+        "forbidden_terms": "pushes_git\":true"
+      }
+    },
+    {
+      "description": "AD-38 — as-built behavior diverges from functional spec, routes to authoring-functional-spec",
+      "vars": {
+        "eval_type": "user-behavior",
+        "failure_modes": "skips-spec-reconciliation,ships-with-stale-spec",
+        "scenario": "- The user says: \"implement ENG-2007 — add inline editing to the report builder.\"\n- Simulated Linear metadata: team `Studio`, project `Engineering Skills`, current status `Ready for Development`.\n- The issue has User Flow label `UF-Report-Builder`, and `docs/functional/UF-Report-Builder/README.md` exists.\n- Implementation is complete and all quality gates have passed.\n- The functional spec describes inline editing as only available to admin users.\n- The implementation, per the acceptance criteria, makes inline editing available to all users with edit permissions — a broader behavior than what the spec describes.\n- The as-built behavior and the functional spec do not match.",
+        "expect_updates_functional_spec_if_as_built_diverges": "true",
+        "expect_hands_off_to_authoring_functional_spec": "false",
+        "expect_creates_branch_and_worktree_first": "true",
+        "expect_creates_pr": "false",
+        "required_terms": "authoring-functional-spec",
+        "forbidden_terms": "pushes_git\":true"
+      }
+    },
+    {
+      "description": "AD-38 — functional spec already current, records verification and proceeds",
+      "vars": {
+        "eval_type": "user-behavior",
+        "failure_modes": "incorrectly-routes-to-spec-update,false-positive-spec-reconciliation",
+        "scenario": "- The user says: \"implement ENG-2008 — add CSV export to the dashboard.\"\n- Simulated Linear metadata: team `Studio`, project `Engineering Skills`, current status `Ready for Development`.\n- The issue has User Flow label `UF-Dashboard-Export`, and `docs/functional/UF-Dashboard-Export/README.md` exists.\n- Implementation is complete and all quality gates have passed.\n- The functional spec accurately describes CSV export as available to all dashboard users with view permissions.\n- The implementation matches the functional spec exactly — no behavior was added, removed, or changed beyond what the spec describes.",
+        "expect_updates_functional_spec_if_as_built_diverges": "false",
+        "expect_creates_branch_and_worktree_first": "true",
+        "expect_creates_pr": "false",
+        "forbidden_terms": "pushes_git\":true"
+      }
+    },
+    {
+      "description": "AD-38 — Internal-IT issue, spec reconciliation gate does not apply",
+      "vars": {
+        "eval_type": "user-behavior",
+        "failure_modes": "applies-spec-reconciliation-to-non-selected-team",
+        "scenario": "- The user says: \"implement ENG-2009 — add rate limiting to the internal API.\"\n- Simulated Linear metadata: team `Internal-IT`, project `Engineering Skills`, current status `Ready for Development`.\n- Internal-IT is not a selected team; functional spec is `not_applicable` for this issue.\n- Implementation is complete and all quality gates have passed.\n- There is no functional spec to compare against.",
+        "expect_updates_functional_spec_if_as_built_diverges": "false",
+        "expect_creates_branch_and_worktree_first": "true",
+        "expect_creates_pr": "false",
+        "forbidden_terms": "pushes_git\":true"
+      }
+    },
+    {
+      "description": "AD-41 — plan with 2+ independent tasks routes to subagent-driven-development",
+      "vars": {
+        "eval_type": "user-behavior",
+        "failure_modes": "misses-subagent-driven-routing,implements-sequentially-despite-independent-tasks",
+        "scenario": "- The user says: \"implement ENG-2010 — add audit logging to three separate API endpoints.\"\n- Simulated Linear metadata: team `Internal-IT`, project `Engineering Skills`, current status `Ready for Development`.\n- The issue has User Flow label `UF-Audit`, and `docs/functional/UF-Audit/README.md` exists.\n- `superpowers:writing-plans` has produced an approved implementation plan.\n- The plan has three tasks: add audit logging to `/api/users`, `/api/reports`, and `/api/exports`.\n- Each task touches a distinct file with no shared state and no ordering dependency between them.\n- No implementation edits have started.",
+        "expect_routes_to_subagent_driven_development": "true",
+        "expect_creates_branch_and_worktree_first": "true",
+        "expect_creates_pr": "false",
+        "required_terms": "subagent-driven-development",
+        "forbidden_terms": "pushes_git\":true"
+      }
+    },
+    {
+      "description": "AD-41 — plan with shared-file sequential tasks implements sequentially without subagent routing",
+      "vars": {
+        "eval_type": "user-behavior",
+        "failure_modes": "over-routes-to-subagent-driven,routes-when-tasks-are-not-independent",
+        "scenario": "- The user says: \"implement ENG-2011 — refactor the payment processor to support multi-currency.\"\n- Simulated Linear metadata: team `Internal-IT`, project `Engineering Skills`, current status `Ready for Development`.\n- The issue has User Flow label `UF-Payments`, and `docs/functional/UF-Payments/README.md` exists.\n- `superpowers:writing-plans` has produced an approved implementation plan.\n- The plan has three tasks: update the currency model, update the processor to use the new model, then update the reconciler to use the updated processor.\n- Each task depends on the previous task's output; they share `src/payments/currency.ts` and cannot be reviewed independently.",
+        "expect_routes_to_subagent_driven_development": "false",
+        "expect_creates_branch_and_worktree_first": "true",
+        "expect_creates_pr": "false",
+        "forbidden_terms": "pushes_git\":true,subagent-driven-development"
+      }
+    },
+    {
+      "description": "AD-41 — Studio issue: spec authored after stop, execution routing fires correctly",
+      "vars": {
+        "eval_type": "user-behavior",
+        "failure_modes": "skips-execution-routing-after-spec-stop,never-routes-to-subagent-driven-after-spec-gate",
+        "scenario": "- The user says: \"implement ENG-2012 — add bulk tagging to the asset library.\"\n- Simulated Linear metadata: team `Studio`, project `Engineering Skills`, current status `Ready for Development`.\n- The issue has User Flow label `UF-Asset-Library`.\n- `docs/functional/UF-Asset-Library/` was initially missing, causing a hard stop.\n- `doc-skills:authoring-functional-spec` has since authored the spec and the folder now exists.\n- `superpowers:writing-plans` has produced an approved implementation plan with three tasks: update the asset selection UI, add the tagging API endpoint, and update the asset index — all touching distinct files with no ordering dependency.\n- The spec gate is now cleared and implementation can proceed.",
+        "expect_routes_to_subagent_driven_development": "true",
+        "expect_stops_if_functional_spec_missing": "false",
+        "expect_creates_branch_and_worktree_first": "true",
+        "expect_creates_pr": "false",
+        "required_terms": "subagent-driven-development",
+        "forbidden_terms": "pushes_git\":true"
+      }
+    },
+    {
       "description": "natural request — missing User Flow label stops before planning",
       "vars": {
         "eval_type": "user-behavior",

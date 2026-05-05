@@ -89,6 +89,10 @@ Return JSON only with this shape:
   "creates_pr": <bool>,
   "pushes_git": <bool>,
   "implements_before_plan_approval": <bool>,
+  "asks_complexity_question": <bool>,
+  "uses_writing_tests_before_plan": <bool>,
+  "routes_to_subagent_driven_development": <bool>,
+  "updates_functional_spec_if_as_built_diverges": <bool>,
   "notes": "string"
 }
 ```

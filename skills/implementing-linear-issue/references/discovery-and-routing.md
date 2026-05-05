@@ -33,6 +33,7 @@ Apply hard gates before implementation in this order:
 | Functional behavior or product flow is missing, stale, or disputed | `authoring-functional-spec` |
 | Bug report, unexplained defect, reproduction failure, flaky behavior, regression, or unexpected test result | `superpowers:systematic-debugging`; show root cause and proposed fix, then proceed only after confirmation |
 | Durable architecture, data model, cross-service flow, security, migration, permissions, auditability, API/module boundary, or UI interaction contract is not covered | `authoring-design-spec` |
+| Issue touches 2+ modules, has 2+ viable implementation paths, or has meaningful sequencing risk across slices | Self-assess; ask the user once: "This looks complex because [X] — do you want to brainstorm the approach first?"; if yes → `superpowers:brainstorming`; if no → continue |
 | True fork, unresolved option, or unclear product/design choice remains after discovery | `superpowers:brainstorming` |
 | Non-bug implementation is ready after hard gates and discovery | `superpowers:writing-plans` |
 | Simple bug fix is confirmed after systematic debugging | Proceed directly if no plan-worthy complexity remains |

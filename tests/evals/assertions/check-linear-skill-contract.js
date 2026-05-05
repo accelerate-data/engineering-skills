@@ -222,6 +222,10 @@ module.exports = (output, context) => {
       parseExpectedBoolean(context.vars.expect_hands_back_to_implementation_when_ac_requires_code),
     ],
     ['uses_generic_issue_linking_language', parseExpectedBoolean(context.vars.expect_uses_generic_issue_linking_language)],
+    ['asks_complexity_question', parseExpectedBoolean(context.vars.expect_asks_complexity_question)],
+    ['uses_writing_tests_before_plan', parseExpectedBoolean(context.vars.expect_uses_writing_tests_before_plan)],
+    ['routes_to_subagent_driven_development', parseExpectedBoolean(context.vars.expect_routes_to_subagent_driven_development)],
+    ['updates_functional_spec_if_as_built_diverges', parseExpectedBoolean(context.vars.expect_updates_functional_spec_if_as_built_diverges)],
     ['runs_design_conformance_gate', parseExpectedBoolean(context.vars.expect_runs_design_conformance_gate)],
     ['supports_local_design_references', parseExpectedBoolean(context.vars.expect_supports_local_design_references)],
     [

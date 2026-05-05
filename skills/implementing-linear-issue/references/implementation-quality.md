@@ -4,7 +4,11 @@ Use this reference once discovery and hard-gate routing are complete.
 
 ## Implementation Plan
 
+Before invoking `superpowers:writing-plans`, must invoke `writing-tests` to enumerate the complete test scenario set and produce a coverage map across unit, integration, and Promptfoo evals. Scenarios that cannot be automated must be explicitly identified with justification. Simple confirmed single-module bug fixes that do not require `writing-plans` also skip `writing-tests`.
+
 Use `superpowers:writing-plans` to create or resume the implementation plan under `docs/plan/` before non-bug implementation, multi-module changes, refactors, complex bug fixes, or durable design work. A simple confirmed bug fix may proceed without a written implementation plan after systematic debugging shows the root cause and proposed fix, and the user confirms the fix direction.
+
+After plan approval, check whether the plan contains 2+ tasks with no shared files and no ordering dependency between them. If yes, route to `superpowers:subagent-driven-development`. When in doubt, treat tasks as independent if they can be reviewed separately. Otherwise implement sequentially.
 
 | Plan item | Requirement |
 |---|---|
@@ -54,6 +58,8 @@ Before handoff:
 | Simplification review | Independent subagent using `code-simplifier` | Changed files, intent, diff |
 | Test coverage review | Independent subagent using `superpowers:requesting-code-review` | Tests, uncovered risks, verification |
 | Acceptance-criteria review | Independent subagent | Linear issue, specs, plan, diff, evidence |
+
+| Functional spec reconciliation (Studio, Roadmap, Utilities only) | Local | Compare as-built behavior against the functional spec. If any AC is implemented differently than the spec describes, or if implementation adds or removes behavior the spec does not cover, route to `doc-skills:authoring-functional-spec` to update the spec before handoff. If the spec is already current, record that verification in the final Linear note. |
 
 | Review rule | Requirement |
 |---|---|
