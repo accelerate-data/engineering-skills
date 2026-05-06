@@ -3,7 +3,7 @@ set -euo pipefail
 
 # Maintainer helper for this repository only.
 # Use this from the engineering-skills repo root to create or reattach
-# development worktrees and bootstrap local eval state.
+# development worktrees and bootstrap local repo state.
 
 if [[ $# -ne 1 ]]; then
   echo "Usage: $0 <branch-name>" >&2
@@ -76,7 +76,6 @@ link_env_file() {
   ln -s "$env_src" "$env_dst"
   echo "ENV: symlink $env_dst -> $env_src"
 }
-
 
 allow_direnv() {
   if ! command -v direnv &>/dev/null; then

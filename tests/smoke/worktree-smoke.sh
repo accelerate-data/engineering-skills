@@ -17,7 +17,6 @@ tar \
   --exclude .git \
   --exclude tests/evals/node_modules \
   --exclude tests/evals/.cache \
-  --exclude tests/evals/.promptfoo \
   --exclude tests/evals/.tmp \
   -C "$repo_root" \
   -cf - . | tar -C "$source_repo" -xf -
@@ -25,19 +24,6 @@ tar \
 mkdir -p "$source_repo/tests/evals"
 touch "$source_repo/.env"
 touch "$source_repo/.envrc"
-cat >"$source_repo/tests/evals/package.json" <<'JSON'
-{
-  "name": "worktree-smoke",
-  "private": true,
-  "dependencies": {
-    "is-number": "7.0.0"
-  }
-}
-JSON
-(
-  cd "$source_repo/tests/evals"
-  npm install --package-lock-only --no-audit --no-fund >/dev/null
-)
 
 git -C "$source_repo" init -q
 git -C "$source_repo" config user.email "agent@example.com"
@@ -63,18 +49,13 @@ if [[ "$(readlink "$worktree_path/.env")" != "$source_repo/.env" ]]; then
   exit 1
 fi
 
-if [[ ! -L "$worktree_path/tests/evals/.promptfoo" ]]; then
-  echo "expected promptfoo state symlink in worktree" >&2
+if [[ -e "$worktree_path/tests/evals/.promptfoo" ]]; then
+  echo "did not expect worktree helper to create tests/evals/.promptfoo" >&2
   exit 1
 fi
 
-if [[ "$(readlink "$worktree_path/tests/evals/.promptfoo")" != "$source_repo/tests/evals/.promptfoo" ]]; then
-  echo "expected promptfoo state symlink target to point at repo root tests/evals/.promptfoo" >&2
-  exit 1
-fi
-
-if [[ ! -d "$worktree_path/tests/evals/node_modules/is-number" ]]; then
-  echo "expected npm bootstrap to create tests/evals/node_modules/is-number" >&2
+if [[ -d "$worktree_path/tests/evals/node_modules" ]]; then
+  echo "did not expect worktree helper to install tests/evals/node_modules" >&2
   exit 1
 fi
 

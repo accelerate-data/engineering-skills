@@ -31,16 +31,20 @@ function makeRepo(files) {
 }
 
 function packageFixture(skillName, vars = []) {
-  return [
-    'tests:',
-    `  - description: ${skillName}`,
-    '    vars:',
-    '      scenario: "The user asks for Linear-adjacent work."',
-    '      simulated_context: "The scenario includes all required Linear facts."',
-    '      eval_type: user-behavior',
-    '      failure_modes: "uses-live-linear"',
-    ...vars,
-  ].join('\n');
+  return JSON.stringify({
+    tests: [
+      {
+        description: skillName,
+        vars: {
+          scenario: 'The user asks for Linear-adjacent work.',
+          simulated_context: 'The scenario includes all required Linear facts.',
+          eval_type: 'user-behavior',
+          failure_modes: 'uses-live-linear',
+          ...Object.fromEntries(vars),
+        },
+      },
+    ],
+  }, null, 2);
 }
 
 test('linear-adjacent prompts require explicit no-read and no-write instructions', () => {
@@ -50,7 +54,7 @@ test('linear-adjacent prompts require explicit no-read and no-write instructions
       'Scenario:',
       '{{scenario}}',
     ].join('\n'),
-    'tests/evals/packages/creating-linear-issue/skill-creating-linear-issue.yaml': packageFixture(
+    'tests/evals/packages/creating-linear-issue/skill-creating-linear-issue.json': packageFixture(
       'creating-linear-issue',
     ),
   });
@@ -78,7 +82,7 @@ test('all linear-adjacent prompts pass when Linear isolation is explicit', () =>
           ].join('\n'),
         ],
         [
-          `tests/evals/packages/${skillName}/skill-${skillName}.yaml`,
+          `tests/evals/packages/${skillName}/skill-${skillName}.json`,
           packageFixture(skillName),
         ],
       ]),
@@ -97,13 +101,17 @@ test('user-behavior fixtures require failure_modes metadata', () => {
       'Scenario:',
       '{{scenario}}',
     ].join('\n'),
-    'tests/evals/packages/code-simplifier/skill-code-simplifier.yaml': [
-      'tests:',
-      '  - description: simplify code',
-      '    vars:',
-      '      scenario: "The user asks for simpler code."',
-      '      eval_type: user-behavior',
-    ].join('\n'),
+    'tests/evals/packages/code-simplifier/skill-code-simplifier.json': JSON.stringify({
+      tests: [
+        {
+          description: 'simplify code',
+          vars: {
+            scenario: 'The user asks for simpler code.',
+            eval_type: 'user-behavior',
+          },
+        },
+      ],
+    }, null, 2),
   });
 
   const result = checkEvalUserBehavior(root);
@@ -119,12 +127,16 @@ test('user-behavior fixtures without description still require failure_modes met
       'Scenario:',
       '{{scenario}}',
     ].join('\n'),
-    'tests/evals/packages/code-simplifier/skill-code-simplifier.yaml': [
-      'tests:',
-      '  - vars:',
-      '      scenario: "The user asks for simpler code."',
-      '      eval_type: user-behavior',
-    ].join('\n'),
+    'tests/evals/packages/code-simplifier/skill-code-simplifier.json': JSON.stringify({
+      tests: [
+        {
+          vars: {
+            scenario: 'The user asks for simpler code.',
+            eval_type: 'user-behavior',
+          },
+        },
+      ],
+    }, null, 2),
   });
 
   const result = checkEvalUserBehavior(root);
@@ -140,16 +152,18 @@ test('user-behavior fixtures accept list-style failure_modes metadata', () => {
       'Scenario:',
       '{{scenario}}',
     ].join('\n'),
-    'tests/evals/packages/code-simplifier/skill-code-simplifier.yaml': [
-      'tests:',
-      '  - description: simplify code',
-      '    vars:',
-      '      scenario: "The user asks for simpler code."',
-      '      eval_type: user-behavior',
-      '      failure_modes:',
-      '        - preserves-dead-code',
-      '        - over-refactors',
-    ].join('\n'),
+    'tests/evals/packages/code-simplifier/skill-code-simplifier.json': JSON.stringify({
+      tests: [
+        {
+          description: 'simplify code',
+          vars: {
+            scenario: 'The user asks for simpler code.',
+            eval_type: 'user-behavior',
+            failure_modes: ['preserves-dead-code', 'over-refactors'],
+          },
+        },
+      ],
+    }, null, 2),
   });
 
   const result = checkEvalUserBehavior(root);
@@ -164,15 +178,21 @@ test('tests inheriting user-behavior eval_type require failure_modes metadata', 
       'Scenario:',
       '{{scenario}}',
     ].join('\n'),
-    'tests/evals/packages/code-simplifier/skill-code-simplifier.yaml': [
-      'defaultTest:',
-      '  vars:',
-      '    eval_type: user-behavior',
-      'tests:',
-      '  - description: simplify code',
-      '    vars:',
-      '      scenario: "The user asks for simpler code."',
-    ].join('\n'),
+    'tests/evals/packages/code-simplifier/skill-code-simplifier.json': JSON.stringify({
+      defaultTest: {
+        vars: {
+          eval_type: 'user-behavior',
+        },
+      },
+      tests: [
+        {
+          description: 'simplify code',
+          vars: {
+            scenario: 'The user asks for simpler code.',
+          },
+        },
+      ],
+    }, null, 2),
   });
 
   const result = checkEvalUserBehavior(root);
@@ -188,17 +208,22 @@ test('tests inheriting user-behavior eval_type accept inherited failure_modes me
       'Scenario:',
       '{{scenario}}',
     ].join('\n'),
-    'tests/evals/packages/code-simplifier/skill-code-simplifier.yaml': [
-      'defaultTest:',
-      '  vars:',
-      '    eval_type: user-behavior',
-      '    failure_modes:',
-      '      - misses-user-intent',
-      'tests:',
-      '  - description: simplify code',
-      '    vars:',
-      '      scenario: "The user asks for simpler code."',
-    ].join('\n'),
+    'tests/evals/packages/code-simplifier/skill-code-simplifier.json': JSON.stringify({
+      defaultTest: {
+        vars: {
+          eval_type: 'user-behavior',
+          failure_modes: ['misses-user-intent'],
+        },
+      },
+      tests: [
+        {
+          description: 'simplify code',
+          vars: {
+            scenario: 'The user asks for simpler code.',
+          },
+        },
+      ],
+    }, null, 2),
   });
 
   const result = checkEvalUserBehavior(root);
@@ -216,7 +241,7 @@ test('linear-adjacent prompts fail when only reads are forbidden', () => {
       'Scenario:',
       '{{scenario}}',
     ].join('\n'),
-    'tests/evals/packages/creating-linear-issue/skill-creating-linear-issue.yaml': packageFixture(
+    'tests/evals/packages/creating-linear-issue/skill-creating-linear-issue.json': packageFixture(
       'creating-linear-issue',
     ),
   });
@@ -236,7 +261,7 @@ test('linear-adjacent prompts fail when Linear facts are explicitly not supplied
       'Scenario:',
       '{{scenario}}',
     ].join('\n'),
-    'tests/evals/packages/creating-linear-issue/skill-creating-linear-issue.yaml': packageFixture(
+    'tests/evals/packages/creating-linear-issue/skill-creating-linear-issue.json': packageFixture(
       'creating-linear-issue',
     ),
   });
@@ -254,13 +279,17 @@ test('non-user-behavior fixtures do not require failure_modes metadata', () => {
       'Scenario:',
       '{{scenario}}',
     ].join('\n'),
-    'tests/evals/packages/code-simplifier/skill-code-simplifier.yaml': [
-      'tests:',
-      '  - description: simplify code',
-      '    vars:',
-      '      scenario: "The user asks for simpler code."',
-      '      eval_type: contract-oracle',
-    ].join('\n'),
+    'tests/evals/packages/code-simplifier/skill-code-simplifier.json': JSON.stringify({
+      tests: [
+        {
+          description: 'simplify code',
+          vars: {
+            scenario: 'The user asks for simpler code.',
+            eval_type: 'contract-oracle',
+          },
+        },
+      ],
+    }, null, 2),
   });
 
   const result = checkEvalUserBehavior(root);

@@ -1,6 +1,5 @@
 const fs = require('node:fs');
 const path = require('node:path');
-const YAML = require('yaml');
 
 const LINEAR_ADJACENT_SKILLS = new Set([
   'adding-roadmap-item',
@@ -90,10 +89,22 @@ function hasFailureModes(value) {
   return false;
 }
 
+function parseConfig(text, filePath) {
+  if (filePath.endsWith('.json')) {
+    return JSON.parse(text);
+  }
+
+  // Keep JSON-only worktrees dependency-free while still supporting YAML when
+  // the eval suite chooses to use it.
+  // eslint-disable-next-line global-require, import/no-dynamic-require
+  const YAML = require('yaml');
+  return YAML.parse(text);
+}
+
 function checkFixtureMetadata(relativePath, text, errors) {
   let config;
   try {
-    config = YAML.parse(text);
+    config = parseConfig(text, relativePath);
   } catch (error) {
     errors.push(`${relativePath} could not be parsed as YAML: ${error.message}`);
     return;

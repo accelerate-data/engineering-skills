@@ -1,6 +1,5 @@
 const fs = require('fs');
 const path = require('path');
-const YAML = require('yaml');
 
 const evalRoot = path.resolve(__dirname, '..');
 const repoRoot = path.resolve(evalRoot, '..', '..');
@@ -52,9 +51,22 @@ function normalizeFailureModes(value) {
   return [];
 }
 
-function readEvalMetadata(filePath) {
+function parseConfig(filePath) {
   const text = fs.readFileSync(filePath, 'utf8');
-  const config = YAML.parse(text);
+
+  if (filePath.endsWith('.json')) {
+    return JSON.parse(text);
+  }
+
+  // Keep JSON-only worktrees dependency-free while still supporting YAML when
+  // the eval suite chooses to use it.
+  // eslint-disable-next-line global-require, import/no-dynamic-require
+  const YAML = require('yaml');
+  return YAML.parse(text);
+}
+
+function readEvalMetadata(filePath) {
+  const config = parseConfig(filePath);
   const defaultVars = isObject(config?.defaultTest?.vars) ? config.defaultTest.vars : {};
   const tests = Array.isArray(config?.tests) ? config.tests : [];
 
