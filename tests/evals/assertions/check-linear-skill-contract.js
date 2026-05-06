@@ -181,6 +181,10 @@ module.exports = (output, context) => {
     ['auto_cleans_disposable_post_merge', parseExpectedBoolean(context.vars.expect_auto_cleans_disposable_post_merge)],
     ['stops_on_tracked_changes_during_cleanup', parseExpectedBoolean(context.vars.expect_stops_on_tracked_changes_during_cleanup)],
     ['runs_required_validation', parseExpectedBoolean(context.vars.expect_runs_required_validation)],
+    [
+      'reviews_committed_code_before_ac_decision',
+      parseExpectedBoolean(context.vars.expect_reviews_committed_code_before_ac_decision),
+    ],
     ['runs_skill_evals', parseExpectedBoolean(context.vars.expect_runs_skill_evals)],
     [
       'checks_promptfoo_db_for_latest_passing_eval',

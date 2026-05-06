@@ -30,6 +30,7 @@ This repository is a single plugin source repo, not a marketplace repo.
 │   ├── maintain-github-repos/
 │   ├── maintaining-user-flows/
 │   ├── raising-linear-pr/
+│   ├── reviewing-github-pr/
 │   ├── writing-tests/
 │   └── yolo/
 └── README.md
@@ -159,8 +160,9 @@ npm run eval:creating-linear-issue
 npm run eval:creating-linear-issue-routing
 npm run eval:implementing-linear-issue
 npm run eval:raising-linear-pr
+npm run eval:reviewing-github-pr
 npm run eval:closing-linear-issue
-npm run eval:maintain-github-repos
+npm run eval:maintaining-github-repos
 npm run eval:adding-roadmap-item
 npm run eval:writing-tests
 npm run eval:maintaining-user-flows
@@ -198,5 +200,6 @@ This repository is licensed under Elastic License 2.0. See [LICENSE](./LICENSE).
 | [`maintain-github-repos`](./skills/maintain-github-repos) | Hygiene for `accelerate-data` GitHub org: decide which stale `dev*`/`scratch*` repos to archive or delete. |
 | [`maintaining-user-flows`](./skills/maintaining-user-flows) | Maintain canonical user flow inventory state across the Google Sheet and Linear "User Flow" labels, including add, retire, rename, merge, split, and drift checks. |
 | [`raising-linear-pr`](./skills/raising-linear-pr) | PR-phase workflow after implementation: verification rerun, AC completion check, push, PR creation, and `In Review` transition. |
+| [`reviewing-github-pr`](./skills/reviewing-github-pr) | Review an existing GitHub PR from the PR outward: frame claim vs required vs implemented scope, verify ACs, draft or post a GitHub review event, and clean up the temporary review worktree. |
 | [`writing-tests`](./skills/writing-tests) | Write, update, audit, or review unit and integration tests using Vladimir Khorikov's standards. |
 | [`yolo`](./skills/yolo) | Single-shot flow that creates an issue, implements it, and raises a PR in one invocation. |

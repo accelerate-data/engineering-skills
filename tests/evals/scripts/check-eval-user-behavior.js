@@ -8,6 +8,7 @@ const LINEAR_ADJACENT_SKILLS = new Set([
   'implementing-linear-issue',
   'raising-linear-pr',
   'closing-linear-issue',
+  'reviewing-github-pr',
   'yolo',
 ]);
 

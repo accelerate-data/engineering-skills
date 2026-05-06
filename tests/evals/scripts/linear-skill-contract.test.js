@@ -7,6 +7,7 @@ const checkLinearSkillContract = require('../assertions/check-linear-skill-contr
 const checkCreatingFeatureRequestContract = require('../assertions/check-creating-feature-request-contract');
 
 const EVAL_ROOT = path.resolve(__dirname, '..');
+const REPO_ROOT = path.resolve(EVAL_ROOT, '..', '..');
 
 function check(payload, vars) {
   return checkLinearSkillContract(JSON.stringify(payload), { vars });
@@ -153,4 +154,57 @@ test('raising-linear-pr prompt disambiguates not_applicable design comparison', 
   const prompt = fs.readFileSync(path.join(EVAL_ROOT, 'prompts/skill-raising-linear-pr.txt'), 'utf8');
 
   assert.equal(prompt.includes('If `checked_design_paths` is empty, set this to false.'), true);
+});
+
+test('raising-linear-pr contract requires reviewing committed code before AC checkoff', () => {
+  const packageYaml = fs.readFileSync(
+    path.join(EVAL_ROOT, 'packages/raising-linear-pr/promptfooconfig.json'),
+    'utf8',
+  );
+  const prompt = fs.readFileSync(path.join(EVAL_ROOT, 'prompts/skill-raising-linear-pr.txt'), 'utf8');
+  const skill = fs.readFileSync(path.join(REPO_ROOT, 'skills/raising-linear-pr/SKILL.md'), 'utf8');
+  const acGate = fs.readFileSync(
+    path.join(REPO_ROOT, 'skills/raising-linear-pr/references/acceptance-criteria-gate.md'),
+    'utf8',
+  );
+  const designGate = fs.readFileSync(
+    path.join(REPO_ROOT, 'skills/raising-linear-pr/references/design-conformance-gate.md'),
+    'utf8',
+  );
+
+  assert.equal(
+    prompt.includes('"reviews_committed_code_before_ac_decision": <bool>'),
+    true,
+    'raising-linear-pr prompt must expose committed-code review before AC decision',
+  );
+  assert.equal(
+    packageYaml.includes('"expect_reviews_committed_code_before_ac_decision": "true"'),
+    true,
+    'raising-linear-pr eval fixtures must require committed-code review before AC decisions',
+  );
+  assert.equal(
+    skill.includes('Review the committed code, tests, and verification evidence before any AC decision'),
+    true,
+    'raising-linear-pr skill must state the AC gate starts by reviewing committed evidence',
+  );
+  assert.equal(
+    skill.includes('references/acceptance-criteria-gate.md'),
+    true,
+    'raising-linear-pr skill must reference the dedicated acceptance-criteria gate file',
+  );
+  assert.equal(
+    skill.includes('references/design-conformance-gate.md'),
+    true,
+    'raising-linear-pr skill must reference the dedicated design-conformance gate file',
+  );
+  assert.equal(
+    acGate.includes('Review the committed code, tests, and existing verification evidence first.'),
+    true,
+    'raising-linear-pr AC gate reference must require committed-evidence review first',
+  );
+  assert.equal(
+    designGate.includes('The design document is the source of truth.'),
+    true,
+    'raising-linear-pr design gate reference must keep the source-of-truth rule',
+  );
 });

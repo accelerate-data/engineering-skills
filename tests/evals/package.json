@@ -21,6 +21,7 @@
     "eval:e2e-extending-step-vocabulary": "ad-evals run packages/e2e-extending-step-vocabulary/promptfooconfig.json",
     "eval:e2e-regenerating-from-guide": "ad-evals run packages/e2e-regenerating-from-guide/promptfooconfig.json",
     "eval:maintaining-user-flows": "ad-evals run packages/maintaining-user-flows/promptfooconfig.json",
+    "eval:reviewing-github-pr": "ad-evals run packages/reviewing-github-pr/promptfooconfig.json",
     "eval:yolo": "ad-evals run packages/yolo/promptfooconfig.json",
     "eval:coverage": "node scripts/check-skill-eval-coverage.js",
     "eval:codex-compatibility": "node scripts/check-codex-compatibility.js",

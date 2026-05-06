@@ -12,6 +12,7 @@ const LINEAR_ADJACENT_SKILLS = [
   'implementing-linear-issue',
   'raising-linear-pr',
   'closing-linear-issue',
+  'reviewing-github-pr',
   'yolo',
 ];
 

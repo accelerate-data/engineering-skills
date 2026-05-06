@@ -1,4 +1,4 @@
-# reviewing-prs Skill — Design Document
+# reviewing-github-pr Skill — Design Document
 
 **Status:** Draft
 **Destination:** `engineering-skills` plugin
@@ -7,7 +7,7 @@
 
 ## Goal
 
-Add a `reviewing-prs` skill that starts from an existing GitHub PR, creates a temporary review worktree, gathers the PR's surrounding context, verifies acceptance criteria when possible, performs a review, drafts the GitHub PR review event, asks the user before posting it, and then cleans up the review worktree.
+Add a `reviewing-github-pr` skill that starts from an existing GitHub PR, creates a temporary review worktree, gathers the PR's surrounding context, verifies acceptance criteria when possible, performs a review, drafts the GitHub PR review event, asks the user before posting it, and then cleans up the review worktree.
 
 This skill is the review phase for an already-open PR. It does not create the PR, implement code changes, merge, or close out the branch.
 
@@ -235,12 +235,12 @@ When the outcome is effectively "this PR should probably be closed," the comment
 
 ## Relationship to Existing Skills
 
-`reviewing-prs` should remain distinct from existing skills:
+`reviewing-github-pr` should remain distinct from existing skills:
 
 - `raising-linear-pr` owns PR creation and transition into review, not deep review of an already-open PR
 - `closing-linear-issue` owns merge and cleanup after the PR is approved and merged
 - `adversarial-review` is an optional extra-critical review pattern, not the default PR review workflow
-- `code-simplifier` informs the simplification lens, but `reviewing-prs` owns the PR review decision and posting flow
+- `code-simplifier` informs the simplification lens, but `reviewing-github-pr` owns the PR review decision and posting flow
 
 This skill is the review workflow for an existing PR, not a replacement for the surrounding Linear lifecycle skills.
 
@@ -260,7 +260,7 @@ This skill is the review workflow for an existing PR, not a replacement for the 
 
 ## Acceptance Criteria
 
-- [ ] `skills/reviewing-prs/SKILL.md` exists and clearly defines the PR-triggered review workflow
+- [ ] `skills/reviewing-github-pr/SKILL.md` exists and clearly defines the PR-triggered review workflow
 - [ ] The skill creates a sibling temporary worktree from the PR branch and cleans it up at the end
 - [ ] The skill reads the PR body and the code changes before framing the review
 - [ ] The skill separates `PR Claim`, `Required Scope`, and `Implemented Scope`
