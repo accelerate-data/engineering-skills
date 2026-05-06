@@ -1,4 +1,4 @@
-# maintain-github-repos Reference Skill — Design Document
+# maintaining-github-repos Reference Skill — Design Document
 
 **Status:** Approved
 **Date:** 2026-05-06
@@ -8,7 +8,7 @@
 
 ## Background
 
-`maintain-github-repos` currently behaves like a narrow workflow skill for
+`maintaining-github-repos` currently behaves like a narrow workflow skill for
 org-wide repository cleanup in the `accelerate-data` organization. That shape
 does not fit the broader use case the user wants to support:
 
@@ -27,7 +27,7 @@ the skill guide the response.
 
 ## Goal
 
-Redesign `maintain-github-repos` from a linear cleanup workflow into a general
+Redesign `maintaining-github-repos` from a linear cleanup workflow into a general
 GitHub management reference skill that covers both org-level and repo-level
 maintenance signals, plus safe follow-up actions for repo, branch, and PR
 cleanup candidates.
@@ -57,7 +57,7 @@ Out of scope:
 
 ## Design Summary
 
-The skill remains named `maintain-github-repos`, but it becomes an index plus a
+The skill should be renamed to `maintaining-github-repos`, and it becomes an index plus a
 set of focused reference pages.
 
 `SKILL.md` should:
@@ -76,7 +76,7 @@ The detailed knowledge moves into references that are easier to scan and reuse.
 ## Reference Structure
 
 ```text
-skills/maintain-github-repos/
+skills/maintaining-github-repos/
   SKILL.md
   references/
     org-level-signals.md
@@ -221,7 +221,7 @@ The skill should prioritize official local tooling:
 
 - `gh` CLI for repo, branch, and PR inspection
 - `git` for local and remote branch state where needed
-- `skills/maintain-github-repos/scripts/analyze_repos.py` for the existing
+- `skills/maintaining-github-repos/scripts/analyze_repos.py` for the existing
   org-level repo cleanup analysis flow
 
 The skill should present commands as reference patterns rather than a
@@ -248,7 +248,7 @@ Rules:
 
 ## Eval Impact
 
-The current maintain-github-repos eval contract is workflow-heavy and
+The current maintaining-github-repos eval contract is workflow-heavy and
 org-specific. It should be revised so the skill still preserves the existing
 org cleanup safeguards while also recognizing repo-level prompt-driven queries.
 
@@ -266,7 +266,7 @@ The updated eval surface should check for:
 
 ### Skill structure
 
-- [ ] `skills/maintain-github-repos/SKILL.md` is rewritten as a reference/index
+- [ ] `skills/maintaining-github-repos/SKILL.md` is rewritten as a reference/index
       skill rather than a linear workflow
 - [ ] Reference files exist for org-level signals, repo-level branch signals,
       repo-level PR signals, repo-level actions, branch-level actions, and
@@ -297,7 +297,7 @@ The updated eval surface should check for:
 
 ### Evals and docs
 
-- [ ] The maintain-github-repos eval package and contract are updated for the
+- [ ] The maintaining-github-repos eval package and contract are updated for the
       new prompt-driven knowledge-skill behavior
 - [ ] New Markdown files pass `markdownlint`
 - [ ] `repo-map.json` and any other durable guidance are updated if the skill

@@ -1,12 +1,12 @@
-# maintain-github-repos Reference Skill Implementation Plan
+# maintaining-github-repos Reference Skill Implementation Plan
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Redesign `maintain-github-repos` from an org-specific cleanup workflow into a prompt-driven GitHub management reference skill that covers both org-level and repo-level maintenance signals, plus repo, branch, and PR follow-up actions.
+**Goal:** Redesign `maintaining-github-repos` from an org-specific cleanup workflow into a prompt-driven GitHub management reference skill that covers both org-level and repo-level maintenance signals, plus repo, branch, and PR follow-up actions.
 
-**Architecture:** Keep `skills/maintain-github-repos/SKILL.md` as the single entrypoint, but slim it down into a routing/index document. Move the substantive guidance into focused reference files for org signals, repo-level branch signals, repo-level PR signals, repo-level actions, branch-level actions, and PR-level actions. Preserve `scripts/analyze_repos.py` as an optional helper for org-level cleanup candidate analysis. Update the Promptfoo contract so it validates prompt-driven guidance, repo-level metric coverage, and existing destructive-action safeguards.
+**Architecture:** Keep `skills/maintaining-github-repos/SKILL.md` as the single entrypoint, but slim it down into a routing/index document. Move the substantive guidance into focused reference files for org signals, repo-level branch signals, repo-level PR signals, repo-level actions, branch-level actions, and PR-level actions. Preserve `scripts/analyze_repos.py` as an optional helper for org-level cleanup candidate analysis. Update the Promptfoo contract so it validates prompt-driven guidance, repo-level metric coverage, and existing destructive-action safeguards.
 
-**Tech Stack:** Markdown skill/reference docs, `gh` CLI command patterns, `git` command patterns, existing Python helper script `skills/maintain-github-repos/scripts/analyze_repos.py`, Promptfoo eval package under `tests/evals/`.
+**Tech Stack:** Markdown skill/reference docs, `gh` CLI command patterns, `git` command patterns, existing Python helper script `skills/maintaining-github-repos/scripts/analyze_repos.py`, Promptfoo eval package under `tests/evals/`.
 
 ---
 
@@ -14,25 +14,25 @@
 
 | File | Responsibility |
 | --- | --- |
-| `skills/maintain-github-repos/SKILL.md` | Rewrite as the entrypoint and routing guide for org-level and repo-level GitHub maintenance questions |
-| `skills/maintain-github-repos/references/org-level-signals.md` | Document typical organization-wide repo hygiene signals, commands, and interpretation |
-| `skills/maintain-github-repos/references/repo-level-branch-signals.md` | Document branch inventory metrics, stale-branch checks, and related branch inspection patterns |
-| `skills/maintain-github-repos/references/repo-level-pr-signals.md` | Document PR backlog and pending-review checks, including 48-hour pending thresholds |
-| `skills/maintain-github-repos/references/repo-level-actions.md` | Document follow-up actions for repo archive/delete candidates |
-| `skills/maintain-github-repos/references/branch-level-actions.md` | Document safe branch cleanup follow-up actions |
-| `skills/maintain-github-repos/references/pr-level-actions.md` | Document PR follow-up actions and decision points |
-| `tests/evals/prompts/skill-maintain-github-repos.txt` | Update the eval prompt fixture so it describes the new knowledge-skill behavior |
-| `tests/evals/packages/maintain-github-repos/promptfooconfig.json` | Expand or revise test cases for org-level and repo-level routing behavior |
-| `tests/evals/assertions/check-maintain-github-repos-contract.js` | Validate the new response shape and required contract fields |
+| `skills/maintaining-github-repos/SKILL.md` | Rewrite as the entrypoint and routing guide for org-level and repo-level GitHub maintenance questions |
+| `skills/maintaining-github-repos/references/org-level-signals.md` | Document typical organization-wide repo hygiene signals, commands, and interpretation |
+| `skills/maintaining-github-repos/references/repo-level-branch-signals.md` | Document branch inventory metrics, stale-branch checks, and related branch inspection patterns |
+| `skills/maintaining-github-repos/references/repo-level-pr-signals.md` | Document PR backlog and pending-review checks, including 48-hour pending thresholds |
+| `skills/maintaining-github-repos/references/repo-level-actions.md` | Document follow-up actions for repo archive/delete candidates |
+| `skills/maintaining-github-repos/references/branch-level-actions.md` | Document safe branch cleanup follow-up actions |
+| `skills/maintaining-github-repos/references/pr-level-actions.md` | Document PR follow-up actions and decision points |
+| `tests/evals/prompts/skill-maintaining-github-repos.txt` | Update the eval prompt fixture so it describes the new knowledge-skill behavior |
+| `tests/evals/packages/maintaining-github-repos/promptfooconfig.json` | Expand or revise test cases for org-level and repo-level routing behavior |
+| `tests/evals/assertions/check-maintaining-github-repos-contract.js` | Validate the new response shape and required contract fields |
 | `repo-map.json` | Update the skill description only if the new reference structure materially changes the repository map entry |
 
 ---
 
-## Task 1: Rewrite `SKILL.md` as an index skill
+## Task 1: Rename and rewrite `SKILL.md` as an index skill
 
 **Files:**
 
-- Modify: `skills/maintain-github-repos/SKILL.md`
+- Move to: `skills/maintaining-github-repos/SKILL.md`
 
 - [ ] **Step 1: Replace the current description with trigger-based routing language**
 
@@ -70,7 +70,7 @@ that every use of the skill begins by running it.
 
 **Files:**
 
-- Create: `skills/maintain-github-repos/references/org-level-signals.md`
+- Create: `skills/maintaining-github-repos/references/org-level-signals.md`
 
 - [ ] **Step 1: Document the common organization-wide signals**
 
@@ -86,7 +86,7 @@ Cover:
 - [ ] **Step 2: Provide command patterns for each signal**
 
 Use concrete `gh` command patterns and point to
-`skills/maintain-github-repos/scripts/analyze_repos.py` where it is the best
+`skills/maintaining-github-repos/scripts/analyze_repos.py` where it is the best
 fit.
 
 - [ ] **Step 3: Add interpretation and next-step guidance**
@@ -100,7 +100,7 @@ For each signal, explain what it typically means and route the reader to
 
 **Files:**
 
-- Create: `skills/maintain-github-repos/references/repo-level-branch-signals.md`
+- Create: `skills/maintaining-github-repos/references/repo-level-branch-signals.md`
 
 - [ ] **Step 1: Add the required branch metrics**
 
@@ -134,7 +134,7 @@ Make the branch reference diagnostic, not procedural.
 
 **Files:**
 
-- Create: `skills/maintain-github-repos/references/repo-level-pr-signals.md`
+- Create: `skills/maintaining-github-repos/references/repo-level-pr-signals.md`
 
 - [ ] **Step 1: Add the required PR metric**
 
@@ -165,9 +165,9 @@ Keep this reference diagnostic.
 
 **Files:**
 
-- Create: `skills/maintain-github-repos/references/repo-level-actions.md`
-- Create: `skills/maintain-github-repos/references/branch-level-actions.md`
-- Create: `skills/maintain-github-repos/references/pr-level-actions.md`
+- Create: `skills/maintaining-github-repos/references/repo-level-actions.md`
+- Create: `skills/maintaining-github-repos/references/branch-level-actions.md`
+- Create: `skills/maintaining-github-repos/references/pr-level-actions.md`
 
 - [ ] **Step 1: Write repo-level actions**
 
@@ -202,8 +202,8 @@ Document:
 
 **Files:**
 
-- Modify: `tests/evals/prompts/skill-maintain-github-repos.txt`
-- Modify: `tests/evals/packages/maintain-github-repos/promptfooconfig.json`
+- Move to: `tests/evals/prompts/skill-maintaining-github-repos.txt`
+- Move to: `tests/evals/packages/maintaining-github-repos/promptfooconfig.json`
 
 - [ ] **Step 1: Rewrite the prompt fixture**
 
@@ -225,11 +225,11 @@ confirmation for repo archive/delete actions.
 
 ---
 
-## Task 7: Update the maintain-github-repos contract assertion
+## Task 7: Update the maintaining-github-repos contract assertion
 
 **Files:**
 
-- Modify: `tests/evals/assertions/check-maintain-github-repos-contract.js`
+- Move to: `tests/evals/assertions/check-maintaining-github-repos-contract.js`
 
 - [ ] **Step 1: Expand the contract fields**
 
@@ -257,7 +257,7 @@ Retain assertion coverage for:
 
 - Modify: `repo-map.json`
 
-- [ ] **Step 1: Review the current `maintain-github-repos` entry**
+- [ ] **Step 1: Review the current `maintaining-github-repos` entry**
 
 Check whether the existing description is now stale because the skill is no
 longer org-cleanup-only.
@@ -273,21 +273,21 @@ scope without embedding volatile file inventory.
 
 **Files:**
 
-- Test: `skills/maintain-github-repos/SKILL.md`
-- Test: `skills/maintain-github-repos/references/*.md`
-- Test: `tests/evals/prompts/skill-maintain-github-repos.txt`
-- Test: `tests/evals/packages/maintain-github-repos/promptfooconfig.json`
-- Test: `tests/evals/assertions/check-maintain-github-repos-contract.js`
+- Test: `skills/maintaining-github-repos/SKILL.md`
+- Test: `skills/maintaining-github-repos/references/*.md`
+- Test: `tests/evals/prompts/skill-maintaining-github-repos.txt`
+- Test: `tests/evals/packages/maintaining-github-repos/promptfooconfig.json`
+- Test: `tests/evals/assertions/check-maintaining-github-repos-contract.js`
 
 - [ ] **Step 1: Run markdown lint on the new and modified Markdown files**
 
 Run:
 
 ```bash
-markdownlint skills/maintain-github-repos/SKILL.md \
-  skills/maintain-github-repos/references/*.md \
-  docs/design/maintain-github-repos-reference-skill.md \
-  docs/plan/2026-05-06-maintain-github-repos-reference-skill.md
+markdownlint skills/maintaining-github-repos/SKILL.md \
+  skills/maintaining-github-repos/references/*.md \
+  docs/design/maintaining-github-repos-reference-skill.md \
+  docs/plan/2026-05-06-maintaining-github-repos-reference-skill.md
 ```
 
 Expected: no lint errors.
@@ -297,10 +297,10 @@ Expected: no lint errors.
 Run:
 
 ```bash
-npm run eval:maintain-github-repos
+npm run eval:maintaining-github-repos
 ```
 
-Expected: the maintain-github-repos eval package passes with the updated
+Expected: the maintaining-github-repos eval package passes with the updated
 knowledge-skill contract.
 
 - [ ] **Step 3: Run repository-wide deterministic eval checks**
