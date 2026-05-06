@@ -61,6 +61,15 @@ python3 skills/maintaining-github-repos/scripts/analyze_repos.py --org accelerat
 
 Use it when the user wants a bulk org inventory or cleanup preview. Do not assume every invocation of this skill starts with that script.
 
+## Live GitHub Prerequisite
+
+For real repository review or cleanup work, require live GitHub state before answering branch or PR hygiene questions as if they are current.
+
+- Verify that `gh` is installed before attempting GitHub inspection.
+- Verify that `gh auth status` succeeds before relying on GitHub state.
+- Stop and report the blocker if `gh` is missing or unauthenticated.
+- Do not pretend branch or PR state is current when live GitHub inspection is unavailable.
+
 ## Safety Rails
 
 - Repo archive/delete actions require a preview before mutation and exact-scope confirmation before `--execute`.
