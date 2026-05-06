@@ -30,6 +30,7 @@ gh pr list --state open --search 'head:BRANCH_NAME' --json number,title
 
 ## Safeguards
 
+- Never include the default branch in a cleanup candidate set.
 - Never collapse branch review into a blind bulk delete.
 - Show the exact candidate list before deletion.
 - Call out blockers: open PRs, recent commits, unclear ownership, or long-lived branches with unknown purpose.

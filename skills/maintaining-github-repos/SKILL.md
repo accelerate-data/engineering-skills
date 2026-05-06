@@ -74,6 +74,7 @@ For real repository review or cleanup work, require live GitHub state before ans
 
 - Repo archive/delete actions require a preview before mutation and exact-scope confirmation before `--execute`.
 - Branch cleanup requires the exact local and/or remote candidate set before deletion.
+- Never treat the default branch as a cleanup candidate.
 - PR cleanup must account for merged, approved, blocked, and abandoned states before recommending close or draft actions.
 - Inspection, counting, and signal-reporting requests do not require a fixed workflow or confirmation gate.
 

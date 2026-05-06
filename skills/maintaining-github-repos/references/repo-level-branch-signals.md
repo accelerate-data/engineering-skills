@@ -6,7 +6,7 @@ Use these checks when the user asks about one repository's branch inventory or c
 
 | Signal | Default threshold or framing | Command pattern |
 | --- | --- | --- |
-| Total branch count | Count all remote branches. Exclude the default branch only if the cleanup question is explicitly about candidates. | `gh api repos/OWNER/REPO/branches --paginate --jq '.[].name' \| wc -l` |
+| Total branch count | Count all remote branches. Do not treat the default branch as a cleanup candidate. | `gh api repos/OWNER/REPO/branches --paginate --jq '.[].name' \| wc -l` |
 | Merged vs remaining branches | Compare branches already merged into the default branch versus branches still unmerged. | `git branch -r --merged origin/MAIN` and `git branch -r --no-merged origin/MAIN` |
 | Branches inactive for more than 5 days | Use the last commit timestamp as the baseline inactivity signal. | `for-each-ref` pattern below |
 
@@ -68,3 +68,4 @@ gh pr list --state merged --search 'head:BRANCH_NAME' --json number,mergedAt,bas
 - Branch count alone is not a cleanup decision. Pair it with merged state, PR state, and inactivity.
 - "Inactive for more than 5 days" means "review this branch," not "delete this branch."
 - If a branch has an open or recently active PR, PR state should drive the next action before branch deletion.
+- The default branch is never a cleanup candidate.
