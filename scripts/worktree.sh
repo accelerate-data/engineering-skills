@@ -77,6 +77,39 @@ link_env_file() {
   echo "ENV: symlink $env_dst -> $env_src"
 }
 
+ensure_promptfoo_state() {
+  local promptfoo_src="$repo_root/tests/evals/.promptfoo"
+  local promptfoo_dst="$worktree_path/tests/evals/.promptfoo"
+
+  mkdir -p "$(dirname "$promptfoo_dst")"
+  mkdir -p "$promptfoo_src"
+
+  if [[ -e "$promptfoo_dst" || -L "$promptfoo_dst" ]]; then
+    rm -rf "$promptfoo_dst"
+  fi
+
+  ln -s "$promptfoo_src" "$promptfoo_dst"
+  echo "PROMPTFOO: symlink $promptfoo_dst -> $promptfoo_src"
+}
+
+bootstrap_eval_dependencies() {
+  local eval_manifest="$worktree_path/tests/evals/package.json"
+
+  if [[ ! -f "$eval_manifest" ]]; then
+    echo "tests/evals: skipped npm bootstrap (no package.json in worktree)"
+    return
+  fi
+
+  npm --prefix "$worktree_path/tests/evals" install || json_error \
+    "WORKTREE_EVAL_NPM_INSTALL_FAILED" \
+    "eval_bootstrap" \
+    "npm install failed while bootstrapping tests/evals in the worktree." \
+    "true" \
+    "$(retry_command)" \
+    "Fix the tests/evals dependency install failure, then rerun the worktree command."
+  echo "tests/evals: npm dependencies installed"
+}
+
 
 allow_direnv() {
   if ! command -v direnv &>/dev/null; then
@@ -127,6 +160,8 @@ existing_branch_worktree() {
 
 bootstrap_worktree() {
   link_env_file
+  ensure_promptfoo_state
+  bootstrap_eval_dependencies
   allow_direnv
 }
 
