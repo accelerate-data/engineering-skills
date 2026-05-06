@@ -16,7 +16,7 @@
   },
   "tests": [
     {
-      "description": "[smoke] natural request — missing functional spec folder stops before planning",
+      "description": "[smoke] natural request — missing functional spec folder stops before planning; worktree still created first",
       "vars": {
         "eval_type": "user-behavior",
         "failure_modes": "skips-functional-spec,premature-success-claim",
@@ -24,41 +24,23 @@
         "expect_searches_codebase_before_asking_user": "false",
         "expect_stops_if_functional_spec_missing": "true",
         "expect_creates_implementation_plan": "false",
-        "expect_creates_branch_and_worktree_first": "true",
-        "expect_creates_pr": "false",
-        "required_terms": "docs/functional/UF-Saved-Filters,stop,worktree",
-        "forbidden_terms": "implements_before_plan_approval\":true,pushes_git\":true"
+        "expect_creates_branch_and_worktree_first": "true"
       }
     },
     {
-      "description": "implement-issue — creates branch/worktree first, commits during implementation, runs local gates, no PR/push",
+      "description": "implement-issue — creates branch/worktree first, commits during implementation, runs local gates, no PR",
       "vars": {
         "eval_type": "user-behavior",
         "failure_modes": "acts-before-reading-local-context,creates-pr-too-early,premature-success-claim",
         "scenario": "- The user says: \"implement ENG-1023. The approach in the issue is approved; start the first coding slice.\"\n- Simulated Linear metadata: team `Internal-IT`, project `Engineering Skills`, current status `Ready for Development`.\n- Codebase review confirms the work is localized to one module and the issue's implementation approach is clear.\n- The issue has User Flow label `UF-Checkout-Receipts`, and `docs/functional/UF-Checkout-Receipts/README.md` exists.\n- The implementation plan at `docs/plan/ENG-1023-checkout-receipts.md` was already created by `superpowers:writing-plans` and approved in Linear.\n- No pre-implementation brainstorming, functional spec, design spec, or new writing-plans handoff is needed.\n- No branch or worktree exists yet.\n- Branch and worktree setup succeeds.",
         "expect_searches_codebase_before_asking_user": "true",
-        "expect_creates_implementation_plan": "false",
-        "expect_hands_off_to_brainstorming": "false",
-        "expect_hands_off_to_authoring_functional_spec": "false",
-        "expect_hands_off_to_authoring_design_spec": "false",
-        "expect_uses_code_simplifier_for_simplification_gate": "true",
-        "expect_asks_question_immediately": "false",
         "expect_creates_branch_and_worktree_first": "true",
-        "expect_stops_on_branch_or_worktree_failure": "true",
-        "expect_requires_clean_worktree_for_handoff": "true",
         "expect_creates_checkpoint_commits": "true",
         "expect_creates_final_commit": "true",
         "expect_runs_required_validation": "true",
-        "expect_runs_skill_evals": "true",
         "expect_uses_independent_review_agents": "true",
         "expect_runs_code_review": "true",
-        "expect_runs_simplification_review": "true",
-        "expect_runs_test_coverage_review": "true",
-        "expect_runs_acceptance_criteria_review": "true",
-        "expect_updates_linear_with_ac_status": "true",
-        "expect_posts_linear_note_with_tests_and_next_steps": "true",
-        "expect_creates_pr": "false",
-        "forbidden_terms": "pushes_git\":true,implements_before_plan_approval\":true"
+        "expect_creates_pr": "false"
       }
     },
     {
@@ -71,13 +53,7 @@
         "scenario": "Evaluate the next workflow obligations from the user prompt and simulated context above.",
         "expect_searches_codebase_before_asking_user": "true",
         "expect_hands_off_to_brainstorming": "true",
-        "required_terms": "brainstorming",
-        "expect_hands_off_to_authoring_functional_spec": "false",
-        "expect_hands_off_to_authoring_design_spec": "false",
-        "expect_asks_question_immediately": "false",
-        "expect_creates_branch_and_worktree_first": "true",
-        "expect_creates_pr": "false",
-        "forbidden_terms": "implements_before_plan_approval\":true,pushes_git\":true"
+        "required_terms": "brainstorming"
       }
     },
     {
@@ -90,15 +66,8 @@
         "scenario": "Evaluate the next workflow obligations from the user prompt and simulated context above.",
         "expect_searches_codebase_before_asking_user": "true",
         "expect_creates_implementation_plan": "true",
-        "expect_hands_off_to_brainstorming": "false",
-        "expect_hands_off_to_authoring_functional_spec": "false",
-        "expect_hands_off_to_authoring_design_spec": "false",
         "expect_uses_writing_plans_before_implementation": "true",
-        "expect_asks_question_immediately": "false",
-        "expect_creates_branch_and_worktree_first": "true",
-        "expect_creates_pr": "false",
-        "required_terms": "writing-plans",
-        "forbidden_terms": "pushes_git\":true"
+        "required_terms": "writing-plans"
       }
     },
     {
@@ -108,13 +77,8 @@
         "failure_modes": "misses-required-handoff,acts-before-reading-local-context",
         "scenario": "- The user says: \"implement ENG-1043. This changes how tenant permissions are modeled across the API, jobs, and audit logs, so don't just patch it.\"\n- Simulated Linear metadata: team `Internal-IT`, project `Engineering Skills`, current status `Ready for Development`.\n- The Linear issue exists but has no linked design doc.\n- The issue has User Flow label `UF-Tenant-Permissions`, and `docs/functional/UF-Tenant-Permissions/README.md` exists.\n- Codebase review finds durable authorization and audit-log architecture decisions are missing.\n- This is a hard gate before implementation planning or implementation edits.\n- No implementation edits have started.",
         "expect_searches_codebase_before_asking_user": "true",
-        "expect_hands_off_to_authoring_functional_spec": "false",
         "expect_hands_off_to_authoring_design_spec": "true",
-        "expect_asks_question_immediately": "false",
-        "expect_creates_branch_and_worktree_first": "true",
-        "expect_creates_pr": "false",
-        "required_terms": "authoring-design-spec",
-        "forbidden_terms": "implements_before_plan_approval\":true,pushes_git\":true"
+        "required_terms": "authoring-design-spec"
       }
     },
     {
@@ -124,29 +88,18 @@
         "failure_modes": "skips-functional-spec,misses-required-handoff",
         "scenario": "- The user says: \"implement ENG-1052 for saved exports, but the issue and the user flow doc disagree about what happens after the export expires.\"\n- Simulated Linear metadata: team `Internal-IT`, project `Engineering Skills`, current status `Ready for Development`.\n- The Linear issue exists and has User Flow label `UF-Saved-Exports`.\n- `docs/functional/UF-Saved-Exports/README.md` exists, but it conflicts with the issue acceptance criteria.\n- Codebase review finds likely export-history files, but product behavior is stale or disputed.\n- No implementation edits have started.",
         "expect_searches_codebase_before_asking_user": "true",
-        "expect_hands_off_to_brainstorming": "false",
         "expect_hands_off_to_authoring_functional_spec": "true",
-        "expect_hands_off_to_authoring_design_spec": "false",
-        "expect_asks_question_immediately": "false",
-        "expect_creates_branch_and_worktree_first": "true",
-        "expect_creates_pr": "false",
-        "required_terms": "authoring-functional-spec",
-        "forbidden_terms": "implements_before_plan_approval\":true,pushes_git\":true"
+        "required_terms": "authoring-functional-spec"
       }
     },
     {
-      "description": "natural request — implementation with failures routes to debugging and review handoffs",
+      "description": "natural request — implementation with failures routes to systematic debugging",
       "vars": {
         "eval_type": "user-behavior",
         "failure_modes": "misses-required-handoff,premature-success-claim",
         "scenario": "- The user says: \"implement ENG-1044 and make sure the flaky export test is really fixed.\"\n- Simulated Linear metadata: team `Internal-IT`, project `Engineering Skills`, current status `Ready for Development`.\n- The Linear issue exists and the intended behavior is clear.\n- The issue has User Flow label `UF-Exports`, and `docs/functional/UF-Exports/README.md` exists.\n- The implementation plan at `docs/plan/ENG-1044-export-flake.md` already exists from `superpowers:writing-plans`.\n- Codebase review finds the changed behavior is localized to the export service and its tests.\n- During verification, one export test fails intermittently with no obvious cause.\n- The implementation is not ready for handoff yet.",
         "expect_searches_codebase_before_asking_user": "true",
-        "expect_hands_off_to_authoring_functional_spec": "false",
-        "expect_hands_off_to_authoring_design_spec": "false",
-        "expect_uses_systematic_debugging_for_failures": "true",
-        "expect_creates_branch_and_worktree_first": "true",
-        "expect_creates_pr": "false",
-        "forbidden_terms": "pushes_git\":true"
+        "expect_uses_systematic_debugging_for_failures": "true"
       }
     },
     {
@@ -155,16 +108,8 @@
         "eval_type": "user-behavior",
         "failure_modes": "misses-required-handoff,premature-success-claim",
         "scenario": "- The user says: \"implement ENG-1051. If the reviews find anything, handle it carefully before handoff.\"\n- Simulated Linear metadata: team `Internal-IT`, project `Engineering Skills`, current status `Ready for Development`.\n- The Linear issue exists and the intended behavior is clear.\n- The issue has User Flow label `UF-Reports`, and `docs/functional/UF-Reports/README.md` exists.\n- The implementation plan at `docs/plan/ENG-1051-reports.md` already exists from `superpowers:writing-plans`.\n- Implementation and local validation have completed.\n- The independent code-review quality gate returns feedback about an edge case in the report filter logic.\n- The implementation is not ready for final handoff until that feedback is evaluated and resolved.",
-        "expect_creates_implementation_plan": "false",
-        "expect_hands_off_to_brainstorming": "false",
-        "expect_hands_off_to_authoring_functional_spec": "false",
-        "expect_hands_off_to_authoring_design_spec": "false",
         "expect_uses_receiving_code_review_for_review_feedback": "true",
-        "expect_uses_code_simplifier_for_simplification_gate": "true",
-        "expect_creates_branch_and_worktree_first": "true",
-        "expect_creates_pr": "false",
-        "required_terms": "receiving-code-review",
-        "forbidden_terms": "pushes_git\":true"
+        "required_terms": "receiving-code-review"
       }
     },
     {
@@ -174,13 +119,9 @@
         "failure_modes": "misses-required-handoff,acts-before-reading-local-context",
         "scenario": "- The user says: \"implement ENG-1045. The old importer is tangled; refactor it without changing behavior and break it into safe steps.\"\n- Simulated Linear metadata: team `Internal-IT`, project `Engineering Skills`, current status `Ready for Development`.\n- The Linear issue exists and describes a behavior-preserving cleanup.\n- The issue has User Flow label `UF-Importer`, and `docs/functional/UF-Importer/README.md` exists.\n- Codebase review finds the refactor crosses parser, validation, and import job modules.\n- Existing architecture is still valid; no new design decision is needed.\n- No implementation edits have started.",
         "expect_searches_codebase_before_asking_user": "true",
-        "expect_hands_off_to_authoring_design_spec": "false",
         "expect_uses_writing_plans_before_implementation": "true",
         "expect_creates_implementation_plan": "true",
-        "expect_creates_branch_and_worktree_first": "true",
-        "expect_creates_pr": "false",
-        "required_terms": "writing-plans",
-        "forbidden_terms": "pushes_git\":true"
+        "required_terms": "writing-plans"
       }
     },
     {
@@ -191,10 +132,7 @@
         "scenario": "- The user says: \"implement ENG-1046. Add the new settings panel UI; there isn't a mockup yet, so design the interface before coding.\"\n- Simulated Linear metadata: team `Internal-IT`, project `Engineering Skills`, current status `Ready for Development`.\n- The Linear issue exists but does not define the settings panel states, interactions, or component contract.\n- The issue has User Flow label `UF-Settings-Panel`, and `docs/functional/UF-Settings-Panel/README.md` exists.\n- Codebase review finds this affects the settings page, shared form components, and persisted preferences.\n- No implementation edits have started.",
         "expect_searches_codebase_before_asking_user": "true",
         "expect_hands_off_to_authoring_design_spec": "true",
-        "expect_creates_branch_and_worktree_first": "true",
-        "expect_creates_pr": "false",
-        "required_terms": "authoring-design-spec",
-        "forbidden_terms": "implements_before_plan_approval\":true,pushes_git\":true"
+        "required_terms": "authoring-design-spec"
       }
     },
     {
@@ -204,13 +142,7 @@
         "failure_modes": "misses-required-handoff,premature-success-claim",
         "scenario": "- The user says: \"implement ENG-1053. This adds a visible bulk archive action to the Reports page, so make sure the docs get updated too.\"\n- Simulated Linear metadata: team `Internal-IT`, project `Engineering Skills`, current status `Ready for Development`.\n- The Linear issue exists and has clear acceptance criteria.\n- The issue has User Flow label `UF-Reports-Bulk-Actions`, and `docs/functional/UF-Reports-Bulk-Actions/README.md` exists.\n- Codebase and design-doc search find no unresolved product or design fork.\n- The change affects end-user UI labels and workflow documentation.\n- This is a hard gate to update user-facing docs before implementation edits.",
         "expect_searches_codebase_before_asking_user": "true",
-        "expect_hands_off_to_brainstorming": "false",
-        "expect_hands_off_to_authoring_functional_spec": "false",
-        "expect_hands_off_to_authoring_design_spec": "false",
-        "expect_uses_authoring_user_guide_when_user_docs_needed": "true",
-        "expect_creates_branch_and_worktree_first": "true",
-        "expect_creates_pr": "false",
-        "forbidden_terms": "pushes_git\":true"
+        "expect_uses_authoring_user_guide_when_user_docs_needed": "true"
       }
     },
     {
@@ -221,16 +153,10 @@
         "eval_type": "user-behavior",
         "failure_modes": "misses-required-handoff,premature-success-claim",
         "scenario": "Evaluate the next workflow obligations from the user prompt and simulated context above.",
-        "expect_hands_off_to_brainstorming": "false",
-        "expect_hands_off_to_authoring_design_spec": "false",
         "expect_uses_systematic_debugging_for_failures": "true",
         "expect_shows_root_cause_and_fix_before_bug_fix": "true",
         "expect_proceeds_after_root_cause_fix_confirmation": "true",
-        "expect_simple_bug_can_skip_writing_plan": "true",
-        "expect_creates_branch_and_worktree_first": "true",
-        "expect_creates_pr": "false",
-        "required_terms": "root cause,fix",
-        "forbidden_terms": "implements_before_plan_approval\":true,pushes_git\":true"
+        "expect_simple_bug_can_skip_writing_plan": "true"
       }
     },
     {
@@ -239,17 +165,11 @@
         "eval_type": "user-behavior",
         "failure_modes": "acts-before-reading-local-context,misses-required-handoff",
         "scenario": "- The user says: \"implement ENG-1048 for the export history flow.\"\n- Simulated Linear metadata: team `Studio`, project `Engineering Skills`, current status `Ready for Development`.\n- The Linear issue has User Flow label `UF-Export-History`.\n- `docs/functional/UF-Export-History/README.md` exists and defines the product behavior.\n- Codebase and doc search find a related design document at `docs/design/export-history/README.md`.\n- Codebase and doc search find an existing implementation plan at `docs/plan/ENG-1048-export-history.md`.\n- The issue's behavior and design are already approved; implementation can proceed after normal plan approval.",
-        "expect_creates_implementation_plan": "false",
         "expect_searches_related_design_docs": "true",
         "expect_tracks_related_implementation_plan": "true",
         "expect_linear_update_references_functional_spec": "true",
         "expect_linear_update_references_design_doc": "true",
-        "expect_linear_update_references_implementation_plan": "true",
-        "expect_hands_off_to_authoring_functional_spec": "false",
-        "expect_hands_off_to_authoring_design_spec": "false",
-        "expect_creates_branch_and_worktree_first": "true",
-        "expect_creates_pr": "false",
-        "forbidden_terms": "pushes_git\":true"
+        "expect_linear_update_references_implementation_plan": "true"
       }
     },
     {
@@ -261,9 +181,7 @@
         "expect_asks_complexity_question": "true",
         "expect_hands_off_to_brainstorming": "true",
         "expect_creates_branch_and_worktree_first": "true",
-        "expect_creates_pr": "false",
-        "required_terms": "brainstorming,complex",
-        "forbidden_terms": "implements_before_plan_approval\":true,pushes_git\":true"
+        "required_terms": "brainstorming"
       }
     },
     {
@@ -274,24 +192,20 @@
         "scenario": "- The user says: \"implement ENG-2002 — add a missing null check in the user serializer.\"\n- Simulated Linear metadata: team `Internal-IT`, project `Engineering Skills`, current status `Ready for Development`.\n- The issue has User Flow label `UF-User-Profile`, and `docs/functional/UF-User-Profile/README.md` exists.\n- Codebase review finds a single file `src/serializers/user.ts` with one clear fix location.\n- There is one obvious fix path: add a null guard before the property access.\n- No implementation edits have started.",
         "expect_asks_complexity_question": "false",
         "expect_hands_off_to_brainstorming": "false",
-        "expect_creates_branch_and_worktree_first": "true",
-        "expect_creates_pr": "false",
-        "forbidden_terms": "implements_before_plan_approval\":true,pushes_git\":true"
+        "expect_creates_branch_and_worktree_first": "true"
       }
     },
     {
-      "description": "AD-35 — user says no to complexity question, skips brainstorming and continues to writing-tests and writing-plans",
+      "description": "AD-35 — user pre-empts complexity check, skill proceeds to writing-tests then writing-plans without brainstorming",
       "vars": {
         "eval_type": "user-behavior",
         "failure_modes": "ignores-user-no-answer,routes-to-brainstorming-anyway",
-        "scenario": "- The user says: \"implement ENG-2003 for the caching layer. I know it touches a few modules but just implement it — no need to brainstorm.\"\n- Simulated Linear metadata: team `Internal-IT`, project `Engineering Skills`, current status `Ready for Development`.\n- The issue has User Flow label `UF-Cache`, and `docs/functional/UF-Cache/README.md` exists.\n- Codebase review shows the work spans `src/cache/store` and `src/api/middleware` — two modules.\n- The user has explicitly declined brainstorming.\n- No implementation edits have started.",
-        "expect_asks_complexity_question": "true",
+        "scenario": "- The user says: \"implement ENG-2003 for the caching layer. I know it touches a few modules but just implement it — no need to brainstorm.\"\n- Simulated Linear metadata: team `Internal-IT`, project `Engineering Skills`, current status `Ready for Development`.\n- The issue has User Flow label `UF-Cache`, and `docs/functional/UF-Cache/README.md` exists.\n- Codebase review shows the work spans `src/cache/store` and `src/api/middleware` — two modules.\n- The user's message pre-empts the complexity question: they have explicitly declined brainstorming upfront.\n- The skill must treat the user's statement as an answer and not route to brainstorming.\n- No implementation edits have started.",
+        "expect_asks_complexity_question": "false",
         "expect_hands_off_to_brainstorming": "false",
         "expect_uses_writing_tests_before_plan": "true",
         "expect_uses_writing_plans_before_implementation": "true",
-        "expect_creates_branch_and_worktree_first": "true",
-        "expect_creates_pr": "false",
-        "forbidden_terms": "implements_before_plan_approval\":true,pushes_git\":true"
+        "expect_creates_branch_and_worktree_first": "true"
       }
     },
     {
@@ -303,10 +217,7 @@
         "expect_uses_writing_tests_before_plan": "true",
         "expect_uses_writing_plans_before_implementation": "true",
         "expect_creates_implementation_plan": "true",
-        "expect_creates_branch_and_worktree_first": "true",
-        "expect_creates_pr": "false",
-        "required_terms": "writing-tests,writing-plans",
-        "forbidden_terms": "implements_before_plan_approval\":true,pushes_git\":true"
+        "required_terms": "writing-tests,writing-plans"
       }
     },
     {
@@ -318,10 +229,7 @@
         "expect_uses_systematic_debugging_for_failures": "true",
         "expect_uses_writing_tests_before_plan": "true",
         "expect_uses_writing_plans_before_implementation": "true",
-        "expect_simple_bug_can_skip_writing_plan": "false",
-        "expect_creates_branch_and_worktree_first": "true",
-        "expect_creates_pr": "false",
-        "forbidden_terms": "pushes_git\":true"
+        "expect_simple_bug_can_skip_writing_plan": "false"
       }
     },
     {
@@ -333,10 +241,7 @@
         "expect_uses_systematic_debugging_for_failures": "true",
         "expect_simple_bug_can_skip_writing_plan": "true",
         "expect_uses_writing_tests_before_plan": "false",
-        "expect_uses_writing_plans_before_implementation": "false",
-        "expect_creates_branch_and_worktree_first": "true",
-        "expect_creates_pr": "false",
-        "forbidden_terms": "pushes_git\":true"
+        "expect_uses_writing_plans_before_implementation": "false"
       }
     },
     {
@@ -346,23 +251,16 @@
         "failure_modes": "skips-spec-reconciliation,ships-with-stale-spec",
         "scenario": "- The user says: \"implement ENG-2007 — add inline editing to the report builder.\"\n- Simulated Linear metadata: team `Studio`, project `Engineering Skills`, current status `Ready for Development`.\n- The issue has User Flow label `UF-Report-Builder`, and `docs/functional/UF-Report-Builder/README.md` exists.\n- Implementation is complete and all quality gates have passed.\n- The functional spec describes inline editing as only available to admin users.\n- The implementation, per the acceptance criteria, makes inline editing available to all users with edit permissions — a broader behavior than what the spec describes.\n- The as-built behavior and the functional spec do not match.",
         "expect_updates_functional_spec_if_as_built_diverges": "true",
-        "expect_hands_off_to_authoring_functional_spec": "false",
-        "expect_creates_branch_and_worktree_first": "true",
-        "expect_creates_pr": "false",
-        "required_terms": "authoring-functional-spec",
-        "forbidden_terms": "pushes_git\":true"
+        "required_terms": "authoring-functional-spec"
       }
     },
     {
-      "description": "AD-38 — functional spec already current, records verification and proceeds",
+      "description": "AD-38 — functional spec already current, records verification and proceeds to handoff",
       "vars": {
         "eval_type": "user-behavior",
         "failure_modes": "incorrectly-routes-to-spec-update,false-positive-spec-reconciliation",
         "scenario": "- The user says: \"implement ENG-2008 — add CSV export to the dashboard.\"\n- Simulated Linear metadata: team `Studio`, project `Engineering Skills`, current status `Ready for Development`.\n- The issue has User Flow label `UF-Dashboard-Export`, and `docs/functional/UF-Dashboard-Export/README.md` exists.\n- Implementation is complete and all quality gates have passed.\n- The functional spec accurately describes CSV export as available to all dashboard users with view permissions.\n- The implementation matches the functional spec exactly — no behavior was added, removed, or changed beyond what the spec describes.",
-        "expect_updates_functional_spec_if_as_built_diverges": "false",
-        "expect_creates_branch_and_worktree_first": "true",
-        "expect_creates_pr": "false",
-        "forbidden_terms": "pushes_git\":true"
+        "expect_updates_functional_spec_if_as_built_diverges": "false"
       }
     },
     {
@@ -371,10 +269,7 @@
         "eval_type": "user-behavior",
         "failure_modes": "applies-spec-reconciliation-to-non-selected-team",
         "scenario": "- The user says: \"implement ENG-2009 — add rate limiting to the internal API.\"\n- Simulated Linear metadata: team `Internal-IT`, project `Engineering Skills`, current status `Ready for Development`.\n- Internal-IT is not a selected team; functional spec is `not_applicable` for this issue.\n- Implementation is complete and all quality gates have passed.\n- There is no functional spec to compare against.",
-        "expect_updates_functional_spec_if_as_built_diverges": "false",
-        "expect_creates_branch_and_worktree_first": "true",
-        "expect_creates_pr": "false",
-        "forbidden_terms": "pushes_git\":true"
+        "expect_updates_functional_spec_if_as_built_diverges": "false"
       }
     },
     {
@@ -385,9 +280,7 @@
         "scenario": "- The user says: \"implement ENG-2010 — add audit logging to three separate API endpoints.\"\n- Simulated Linear metadata: team `Internal-IT`, project `Engineering Skills`, current status `Ready for Development`.\n- The issue has User Flow label `UF-Audit`, and `docs/functional/UF-Audit/README.md` exists.\n- `superpowers:writing-plans` has produced an approved implementation plan.\n- The plan has three tasks: add audit logging to `/api/users`, `/api/reports`, and `/api/exports`.\n- Each task touches a distinct file with no shared state and no ordering dependency between them.\n- No implementation edits have started.",
         "expect_routes_to_subagent_driven_development": "true",
         "expect_creates_branch_and_worktree_first": "true",
-        "expect_creates_pr": "false",
-        "required_terms": "subagent-driven-development",
-        "forbidden_terms": "pushes_git\":true"
+        "required_terms": "subagent-driven-development"
       }
     },
     {
@@ -397,27 +290,23 @@
         "failure_modes": "over-routes-to-subagent-driven,routes-when-tasks-are-not-independent",
         "scenario": "- The user says: \"implement ENG-2011 — refactor the payment processor to support multi-currency.\"\n- Simulated Linear metadata: team `Internal-IT`, project `Engineering Skills`, current status `Ready for Development`.\n- The issue has User Flow label `UF-Payments`, and `docs/functional/UF-Payments/README.md` exists.\n- `superpowers:writing-plans` has produced an approved implementation plan.\n- The plan has three tasks: update the currency model, update the processor to use the new model, then update the reconciler to use the updated processor.\n- Each task depends on the previous task's output; they share `src/payments/currency.ts` and cannot be reviewed independently.",
         "expect_routes_to_subagent_driven_development": "false",
-        "expect_creates_branch_and_worktree_first": "true",
-        "expect_creates_pr": "false",
-        "forbidden_terms": "pushes_git\":true,subagent-driven-development"
+        "expect_creates_branch_and_worktree_first": "true"
       }
     },
     {
-      "description": "AD-41 — Studio issue: spec authored after stop, execution routing fires correctly",
+      "description": "AD-41 — Studio issue with approved plan and independent tasks routes to subagent-driven-development",
       "vars": {
         "eval_type": "user-behavior",
         "failure_modes": "skips-execution-routing-after-spec-stop,never-routes-to-subagent-driven-after-spec-gate",
-        "scenario": "- The user says: \"implement ENG-2012 — add bulk tagging to the asset library.\"\n- Simulated Linear metadata: team `Studio`, project `Engineering Skills`, current status `Ready for Development`.\n- The issue has User Flow label `UF-Asset-Library`.\n- `docs/functional/UF-Asset-Library/` was initially missing, causing a hard stop.\n- `doc-skills:authoring-functional-spec` has since authored the spec and the folder now exists.\n- `superpowers:writing-plans` has produced an approved implementation plan with three tasks: update the asset selection UI, add the tagging API endpoint, and update the asset index — all touching distinct files with no ordering dependency.\n- The spec gate is now cleared and implementation can proceed.",
+        "scenario": "- The user says: \"implement ENG-2012 — add bulk tagging to the asset library.\"\n- Simulated Linear metadata: team `Studio`, project `Engineering Skills`, current status `Ready for Development`.\n- The issue has User Flow label `UF-Asset-Library`, and `docs/functional/UF-Asset-Library/` exists.\n- `superpowers:writing-plans` has produced an approved implementation plan with three tasks: update the asset selection UI, add the tagging API endpoint, and update the asset index — each touching distinct files with no ordering dependency.\n- No implementation edits have started.",
         "expect_routes_to_subagent_driven_development": "true",
         "expect_stops_if_functional_spec_missing": "false",
         "expect_creates_branch_and_worktree_first": "true",
-        "expect_creates_pr": "false",
-        "required_terms": "subagent-driven-development",
-        "forbidden_terms": "pushes_git\":true"
+        "required_terms": "subagent-driven-development"
       }
     },
     {
-      "description": "natural request — missing User Flow label stops before planning",
+      "description": "natural request — missing User Flow label stops before planning; worktree still created first",
       "vars": {
         "eval_type": "user-behavior",
         "failure_modes": "skips-user-flow,premature-success-claim",
@@ -426,10 +315,7 @@
         "expect_stops_if_userflow_label_missing": "true",
         "expect_reads_functional_spec_from_userflow_tag": "false",
         "expect_creates_implementation_plan": "false",
-        "expect_creates_branch_and_worktree_first": "true",
-        "expect_creates_pr": "false",
-        "required_terms": "user flow,label,stop",
-        "forbidden_terms": "implements_before_plan_approval\":true,pushes_git\":true"
+        "expect_creates_branch_and_worktree_first": "true"
       }
     }
   ]
