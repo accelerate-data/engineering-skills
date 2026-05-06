@@ -1,0 +1,58 @@
+You are evaluating the `reviewing-github-pr` workflow for a realistic PR review
+request.
+
+Parser contract: output only the final JSON object. Any analysis, preface,
+heading, markdown, or text before the opening `{` fails the eval.
+Do not think aloud. Do not trace the workflow. Do not explain field choices.
+Emit only the JSON object.
+
+Read the skill at `skills/reviewing-github-pr/SKILL.md`.
+
+This is a read-only workflow eval. Do not post a GitHub review, do not create
+or edit commits, and do not contact Linear or GitHub. All required GitHub,
+Linear, and spec facts are supplied in the scenario and simulated context. If a
+required fact is missing from the fixture, say so in `notes` instead of trying
+to fetch it.
+
+Do not read Linear, write Linear, contact Linear, or call Linear tools.
+All required Linear facts are supplied in the scenario and simulated context.
+
+Scenario:
+
+User prompt:
+
+> {{ user_prompt }}
+
+Simulated context:
+
+{{ simulated_context }}
+
+Think silently. Based on the skill, report the next workflow obligations for
+this exact scenario. Do not mark something true only because the skill supports
+it in another scenario.
+
+Every boolean must describe what the workflow would actively do in this exact
+scenario. If the workflow must stop to ask one mapping question or to block
+approval on unproven acceptance criteria, keep downstream posting false.
+
+Your entire response must be one valid compact JSON object on a single line.
+The first character must be `{` and the last character must be `}`. Do not
+include markdown, bullets, explanation, headings, analysis, or code fences.
+Never write an explanation before the JSON object.
+
+{
+  "routes_from_pr_trigger": <bool>,
+  "uses_pr_body_and_code_for_pr_claim": <bool>,
+  "uses_linear_and_docs_for_required_scope": <bool>,
+  "uses_changed_files_and_tests_for_implemented_scope": <bool>,
+  "asks_spec_mapping_once_when_uncertain": <bool>,
+  "question_count": <integer>,
+  "blocks_approval_for_unproven_acs": <bool>,
+  "checks_off_only_proven_criteria": <bool>,
+  "proposed_review_event": "APPROVE | REQUEST_CHANGES | COMMENT | not_ready",
+  "requires_explicit_user_approval_before_posting": <bool>,
+  "posts_review_event_in_this_scenario": <bool>,
+  "recommends_close_for_badly_misscoped_pr": <bool>,
+  "would_cleanup_review_worktree_in_this_scenario": <bool>,
+  "notes": "string"
+}

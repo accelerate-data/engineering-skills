@@ -32,7 +32,7 @@ function isObject(value) {
 function listYamlFiles(root) {
   return fs
     .readdirSync(root, { withFileTypes: true })
-    .filter((entry) => entry.isFile() && /\.ya?ml$/.test(entry.name))
+    .filter((entry) => entry.isFile() && /\.(ya?ml|json)$/.test(entry.name))
     .map((entry) => path.join(root, entry.name))
     .sort();
 }

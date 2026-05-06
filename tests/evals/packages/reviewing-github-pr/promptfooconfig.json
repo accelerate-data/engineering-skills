@@ -1,0 +1,132 @@
+{
+  "description": "Reviewing-github-pr skill — PR-triggered review, scope framing, approval gates, and cleanup intent",
+  "metadata": {
+    "eval_tier": "standard"
+  },
+  "prompts": [
+    "file://../../prompts/skill-reviewing-github-pr.txt"
+  ],
+  "defaultTest": {
+    "assert": [
+      {
+        "type": "javascript",
+        "value": "file://../../assertions/check-reviewing-github-pr-contract.js"
+      }
+    ]
+  },
+  "tests": [
+    {
+      "description": "[smoke] reviewing-github-pr — PR-triggered ready review drafts approve but waits to post",
+      "vars": {
+        "eval_type": "user-behavior",
+        "failure_modes": "routes-from-linear-instead-of-pr,posts-review-without-approval,premature-success-claim",
+        "user_prompt": "Review PR #42 in this repo and tell me what you would post.",
+        "simulated_context": "PR trigger: open GitHub PR #42 in the current repository.\nLinked Linear issue: ENG-42 exists and provides acceptance criteria plus links to docs/design/reviewing-github-pr-skill-design.md and docs/functional/reviewing-github-pr.md.\nPR body: claims the change adds the reviewing-github-pr skill and its eval package.\nCode changes: new skill files, deterministic contract test, and eval files are present.\nTests changed: targeted tests and eval files match the PR claim.\nAcceptance criteria state: all relevant Linear criteria and unchecked PR-body task-list items are already proven by committed code and existing evidence.\nSpec mapping certainty: clear; no ambiguity remains.\nPosting approval: the user has not yet approved posting a GitHub review event.\nCleanup expectation: the temporary review worktree should still be removed before finishing.",
+        "expect_routes_from_pr_trigger": "true",
+        "expect_uses_pr_body_and_code_for_pr_claim": "true",
+        "expect_uses_linear_and_docs_for_required_scope": "true",
+        "expect_uses_changed_files_and_tests_for_implemented_scope": "true",
+        "expect_asks_spec_mapping_once_when_uncertain": "false",
+        "expect_question_count": "0",
+        "expect_blocks_approval_for_unproven_acs": "false",
+        "expect_checks_off_only_proven_criteria": "true",
+        "expected_proposed_review_event": "APPROVE",
+        "expect_requires_explicit_user_approval_before_posting": "true",
+        "expect_posts_review_event_in_this_scenario": "false",
+        "expect_recommends_close_for_badly_misscoped_pr": "false",
+        "expect_would_cleanup_review_worktree_in_this_scenario": "true",
+        "required_terms": "pr claim,required scope,implemented scope,draft,approve,approval,cleanup"
+      }
+    },
+    {
+      "description": "reviewing-github-pr — asks once when related functional spec mapping is uncertain",
+      "vars": {
+        "eval_type": "user-behavior",
+        "failure_modes": "guesses-spec-mapping,silent-ambiguity,posts-review-without-approval",
+        "user_prompt": "Please review https://github.com/accelerate-data/engineering-skills/pull/42.",
+        "simulated_context": "PR trigger: open GitHub PR #42 in the current repository.\nLinked Linear issue: ENG-42 exists with acceptance criteria and two plausible functional specs under docs/functional/ that might apply.\nPR body: claims the change adds review automation for GitHub PRs.\nCode changes: skill markdown and eval files are present.\nSpec mapping certainty: uncertain because docs/functional/reviewing-github-pr.md and docs/functional/pr-review-lifecycle.md both look relevant from the issue links.\nAcceptance criteria state: not reviewed yet because the workflow should stop to resolve the mapping question first.\nPosting approval: not provided.\nCleanup expectation: the temporary review worktree still needs cleanup before finishing the run.",
+        "expect_routes_from_pr_trigger": "true",
+        "expect_uses_pr_body_and_code_for_pr_claim": "true",
+        "expect_uses_linear_and_docs_for_required_scope": "true",
+        "expect_uses_changed_files_and_tests_for_implemented_scope": "true",
+        "expect_asks_spec_mapping_once_when_uncertain": "true",
+        "expect_question_count": "1",
+        "expected_proposed_review_event": "not_ready",
+        "expect_requires_explicit_user_approval_before_posting": "true",
+        "expect_posts_review_event_in_this_scenario": "false",
+        "expect_recommends_close_for_badly_misscoped_pr": "false",
+        "expect_would_cleanup_review_worktree_in_this_scenario": "true",
+        "required_terms": "ask,once,spec,mapping,not_ready,cleanup"
+      }
+    },
+    {
+      "description": "reviewing-github-pr — unproven Linear and PR-body acceptance criteria block approval",
+      "vars": {
+        "eval_type": "user-behavior",
+        "failure_modes": "approves-with-open-criteria,posts-review-without-approval,checks-off-unproven-work",
+        "user_prompt": "Review PR #42. The issue says most of it is done already.",
+        "simulated_context": "PR trigger: open GitHub PR #42 in the current repository.\nLinked Linear issue: ENG-42 exists with unchecked acceptance criteria.\nPR body: contains unchecked Markdown task-list items that describe review-posting behavior and cleanup.\nCode changes: partial skill scaffolding exists, but no evidence proves the posting gate or cleanup behavior yet.\nTests changed: none that prove the unchecked criteria.\nSpec mapping certainty: clear.\nAcceptance criteria state: at least one unchecked Linear criterion and one unchecked PR-body task-list item remain unproven after code inspection.\nPosting approval: not provided.\nCleanup expectation: the temporary review worktree still needs cleanup before finishing the run.",
+        "expect_routes_from_pr_trigger": "true",
+        "expect_uses_pr_body_and_code_for_pr_claim": "true",
+        "expect_uses_linear_and_docs_for_required_scope": "true",
+        "expect_uses_changed_files_and_tests_for_implemented_scope": "true",
+        "expect_asks_spec_mapping_once_when_uncertain": "false",
+        "expect_question_count": "0",
+        "expect_blocks_approval_for_unproven_acs": "true",
+        "expect_checks_off_only_proven_criteria": "true",
+        "expected_proposed_review_event": "REQUEST_CHANGES",
+        "expect_requires_explicit_user_approval_before_posting": "true",
+        "expect_posts_review_event_in_this_scenario": "false",
+        "expect_recommends_close_for_badly_misscoped_pr": "false",
+        "expect_would_cleanup_review_worktree_in_this_scenario": "true",
+        "required_terms": "unproven,acceptance criteria,request_changes,stop,next steps,cleanup"
+      }
+    },
+    {
+      "description": "reviewing-github-pr — explicit user approval allows posting the drafted approve review",
+      "vars": {
+        "eval_type": "user-behavior",
+        "failure_modes": "forgets-posting-gate,refuses-approved-posting-without-reason",
+        "user_prompt": "You already showed me the draft for PR #42. Post that approval review now.",
+        "simulated_context": "PR trigger: open GitHub PR #42 in the current repository.\nLinked Linear issue: ENG-42 exists and the required docs/specs are already mapped.\nPR body: aligned with the implemented change.\nCode changes: required scope is satisfied and targeted evidence already proved the remaining criteria.\nDraft status: a review draft was already presented to the user earlier in the workflow.\nPosting approval: explicit user approval to post the drafted GitHub review event is present in this message.\nCleanup expectation: the temporary review worktree should be removed after posting.",
+        "expect_routes_from_pr_trigger": "true",
+        "expect_uses_pr_body_and_code_for_pr_claim": "true",
+        "expect_uses_linear_and_docs_for_required_scope": "true",
+        "expect_uses_changed_files_and_tests_for_implemented_scope": "true",
+        "expect_asks_spec_mapping_once_when_uncertain": "false",
+        "expect_question_count": "0",
+        "expect_blocks_approval_for_unproven_acs": "false",
+        "expect_checks_off_only_proven_criteria": "true",
+        "expected_proposed_review_event": "APPROVE",
+        "expect_requires_explicit_user_approval_before_posting": "true",
+        "expect_posts_review_event_in_this_scenario": "true",
+        "expect_recommends_close_for_badly_misscoped_pr": "false",
+        "expect_would_cleanup_review_worktree_in_this_scenario": "true",
+        "required_terms": "explicit approval,post,approve,cleanup"
+      }
+    },
+    {
+      "description": "reviewing-github-pr — badly mis-scoped PR recommends close in a comment review",
+      "vars": {
+        "eval_type": "user-behavior",
+        "failure_modes": "forces-review-through-mis-scope,hides-close-recommendation,posts-review-without-approval",
+        "user_prompt": "Review PR #42 and tell me if it should go through.",
+        "simulated_context": "PR trigger: open GitHub PR #42 in the current repository.\nLinked Linear issue: ENG-42 is about adding the reviewing-github-pr skill with acceptance-criteria verification and cleanup behavior.\nPR body: claims to help the review workflow, but the diff mainly renames unrelated maintenance files and does not add the reviewing-github-pr skill at all.\nCode changes: substantially off-scope relative to the linked issue and related docs.\nTests changed: unrelated to the required review workflow.\nSpec mapping certainty: clear.\nAcceptance criteria state: the required reviewing-github-pr acceptance criteria are not implemented because the PR is mis-scoped.\nPosting approval: not provided.\nCleanup expectation: the temporary review worktree still needs cleanup before finishing the run.",
+        "expect_routes_from_pr_trigger": "true",
+        "expect_uses_pr_body_and_code_for_pr_claim": "true",
+        "expect_uses_linear_and_docs_for_required_scope": "true",
+        "expect_uses_changed_files_and_tests_for_implemented_scope": "true",
+        "expect_asks_spec_mapping_once_when_uncertain": "false",
+        "expect_question_count": "0",
+        "expect_blocks_approval_for_unproven_acs": "true",
+        "expect_checks_off_only_proven_criteria": "true",
+        "expected_proposed_review_event": "COMMENT",
+        "expect_requires_explicit_user_approval_before_posting": "true",
+        "expect_posts_review_event_in_this_scenario": "false",
+        "expect_recommends_close_for_badly_misscoped_pr": "true",
+        "expect_would_cleanup_review_worktree_in_this_scenario": "true",
+        "required_terms": "mis-scoped,close,comment,required scope,implemented scope,cleanup"
+      }
+    }
+  ]
+}

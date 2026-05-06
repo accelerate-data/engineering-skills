@@ -3,11 +3,12 @@ const path = require('node:path');
 const YAML = require('yaml');
 
 const LINEAR_ADJACENT_SKILLS = new Set([
-  'creating-feature-request',
+  'adding-roadmap-item',
   'creating-linear-issue',
   'implementing-linear-issue',
   'raising-linear-pr',
   'closing-linear-issue',
+  'reviewing-github-pr',
   'yolo',
 ]);
 
@@ -129,7 +130,7 @@ function checkEvalUserBehavior(repoRoot = path.resolve(__dirname, '..', '..', '.
   }
 
   const packageFiles = listFiles(path.join(evalRoot, 'packages'), (filePath) => {
-    return /\.ya?ml$/.test(filePath);
+    return /\.(ya?ml|json)$/.test(filePath);
   });
 
   for (const packagePath of packageFiles) {

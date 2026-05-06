@@ -22,12 +22,13 @@ Move completed implementation work into review. This skill owns final branch syn
 |---|---|
 | 1 | Verify the worktree is clean and expected implementation commits exist |
 | 2 | Fetch and rebase onto the default branch before final verification |
-| 3 | Run the acceptance-criteria gate from `references/pr-phase-gates.md` |
-| 4 | Run the design conformance gate from `references/pr-phase-gates.md` |
-| 5 | Run changed-area validation and stale targeted eval decisions |
-| 6 | Push the prepared branch |
-| 7 | Create or update the PR |
-| 8 | Move the Linear issue to `In Review` only after the PR exists |
+| 3 | Review the committed code, tests, and verification evidence before any AC decision |
+| 4 | Run the acceptance-criteria gate from `references/acceptance-criteria-gate.md` |
+| 5 | Run the design conformance gate from `references/design-conformance-gate.md` |
+| 6 | Run changed-area validation and stale targeted eval decisions |
+| 7 | Push the prepared branch |
+| 8 | Create or update the PR |
+| 9 | Move the Linear issue to `In Review` only after the PR exists |
 
 ## Hard Gates
 
@@ -40,10 +41,12 @@ Move completed implementation work into review. This skill owns final branch syn
 
 ## PR Phase Gates
 
-Use `references/pr-phase-gates.md` for acceptance-criteria and design-conformance mechanics.
+Use `references/acceptance-criteria-gate.md` for AC mechanics and
+`references/design-conformance-gate.md` for design-conformance mechanics.
 
 The key rules:
 
+- Review the committed code, tests, and verification evidence before any AC decision, even when every AC is already checked in Linear.
 - Check off only unchecked ACs already proven complete by committed work and evidence.
 - AC checkoff is Linear metadata only; it is not permission to change repository content.
 - Record design conformance as `pass`, `fail`, or `not_applicable` with checked paths.
@@ -80,6 +83,7 @@ Tool contract: use repo test commands from `repo-map.json`, `git status`, `git p
 
 ## References
 
-- [`references/pr-phase-gates.md`](references/pr-phase-gates.md) — AC and design conformance gate mechanics
+- [`references/acceptance-criteria-gate.md`](references/acceptance-criteria-gate.md) — AC gate mechanics
+- [`references/design-conformance-gate.md`](references/design-conformance-gate.md) — design conformance mechanics
 - [`references/promptfoo-db-gate.md`](references/promptfoo-db-gate.md) — stale targeted eval decisions and helper usage
 - [`references/git-and-pr.md`](references/git-and-pr.md) — branch sync, push, PR body, and phase boundaries

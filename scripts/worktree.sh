@@ -77,55 +77,6 @@ link_env_file() {
   echo "ENV: symlink $env_dst -> $env_src"
 }
 
-opencode_auth_json_path() {
-  local xdg_auth="${XDG_DATA_HOME:-$HOME/.local/share}/opencode/auth.json"
-  local legacy_auth="$HOME/.opencode/auth.json"
-
-  if [[ -n "${OPENCODE_AUTH_JSON:-}" ]]; then
-    printf '%s\n' "$OPENCODE_AUTH_JSON"
-  elif [[ -f "$xdg_auth" ]]; then
-    printf '%s\n' "$xdg_auth"
-  else
-    printf '%s\n' "$legacy_auth"
-  fi
-}
-
-link_promptfoo_state() {
-  local promptfoo_src="$repo_root/tests/evals/.promptfoo"
-  local promptfoo_dst="$worktree_path/tests/evals/.promptfoo"
-  local opencode_auth_src
-  local opencode_auth_dst="$promptfoo_src/opencode-runtime/data/opencode/auth.json"
-
-  opencode_auth_src="$(opencode_auth_json_path)"
-
-  if [[ ! -d "$worktree_path/tests/evals" ]]; then
-    echo "PROMPTFOO_DB: skipped (no tests/evals in worktree)"
-    return
-  fi
-
-  if [[ "$promptfoo_src" == "$promptfoo_dst" ]]; then
-    json_error \
-      "WORKTREE_PROMPTFOO_SELF_LINK" \
-      "link_promptfoo_state" \
-      "Refusing to replace the source Promptfoo state directory with a symlink to itself." \
-      "false" \
-      "" \
-      "Run this helper from the main checkout with a separate sibling worktree path."
-  fi
-
-  mkdir -p "$promptfoo_src"
-  mkdir -p "$(dirname "$opencode_auth_dst")"
-  if [[ -f "$opencode_auth_src" ]]; then
-    ln -sf "$opencode_auth_src" "$opencode_auth_dst"
-    echo "OPENCODE_AUTH: symlink $opencode_auth_dst -> $opencode_auth_src"
-  else
-    echo "OPENCODE_AUTH: skipped (no auth at $opencode_auth_src)"
-  fi
-
-  rm -rf "$promptfoo_dst"
-  ln -s "$promptfoo_src" "$promptfoo_dst"
-  echo "PROMPTFOO_DB: symlink $promptfoo_dst -> $promptfoo_src"
-}
 
 allow_direnv() {
   if ! command -v direnv &>/dev/null; then
@@ -148,41 +99,6 @@ allow_direnv() {
   echo "direnv: allowed $worktree_path"
 }
 
-bootstrap_eval_dependencies() {
-  local evals_dir="$worktree_path/tests/evals"
-  local npm_command=(
-    install
-    --no-audit
-    --no-fund
-  )
-  local npm_command_str="npm install --no-audit --no-fund"
-
-  if [[ ! -f "$evals_dir/package.json" ]]; then
-    echo "npm: skipped (no package.json in tests/evals)"
-    return
-  fi
-
-  if [[ -f "$evals_dir/package-lock.json" ]]; then
-    npm_command=(
-      ci
-      --no-audit
-      --no-fund
-    )
-    npm_command_str="npm ci --no-audit --no-fund"
-  fi
-
-  echo "npm: bootstrapping eval dependencies in $evals_dir with $npm_command_str"
-  (
-    cd "$evals_dir" &&
-      npm "${npm_command[@]}"
-  ) || json_error \
-    "WORKTREE_NPM_INSTALL_FAILED" \
-    "npm_install" \
-    "npm dependency bootstrap failed for worktree eval dependencies." \
-    "true" \
-    "$(retry_command)" \
-    "Run 'cd $evals_dir && $npm_command_str' to repair node dependencies, then rerun the worktree command."
-}
 
 existing_branch_worktree() {
   local target_branch="$1"
@@ -211,9 +127,7 @@ existing_branch_worktree() {
 
 bootstrap_worktree() {
   link_env_file
-  link_promptfoo_state
   allow_direnv
-  bootstrap_eval_dependencies
 }
 
 ensure_worktree_base() {

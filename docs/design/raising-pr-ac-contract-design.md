@@ -46,12 +46,14 @@ The AC gate has three states:
    - Proceed to automated validation and the promptfoo eval DB gate.
 
 2. **ACs complete but unchecked in Linear**
+   - Review the committed code, tests, and existing verification evidence first.
    - Verify completion from existing committed work and existing evidence only.
    - Check off the proven ACs in the main Linear issue requirements section.
    - Continue only if every AC is now checked.
    - Do not edit code or create implementation commits.
 
 3. **Any AC incomplete, unproven, blocked, or requiring code changes**
+   - Review the committed code, tests, and existing verification evidence first.
    - Stop before automated validation, evals, push, or PR creation.
    - Hand back to `implementing-linear-issue`.
    - Do not run this phase as a coding workflow.

@@ -1,6 +1,9 @@
 ---
 name: closing-linear-issue
-description: Use when a Linear issue already has a review-ready PR and this repository needs the merge, close, and cleanup phase
+description: >-
+  Use when the user says "close issue [ID]", "close [ID]", "finish closeout",
+  or when a Linear issue already has a review-ready PR and this repository
+  needs the merge, close, and cleanup phase
 argument-hint: "[issue-id-or-pr]"
 ---
 

@@ -29,16 +29,16 @@ Apply hard gates before implementation in this order:
 
 | Condition | Handoff |
 |---|---|
-| User asks to think, review, brainstorm, compare options, or not start coding | `superpowers:brainstorming` |
+| User explicitly asks to brainstorm or think through options, or a true unresolved fork remains after discovery | `superpowers:brainstorming` |
 | Functional behavior or product flow is missing, stale, or disputed | `authoring-functional-spec` |
 | Bug report, unexplained defect, reproduction failure, flaky behavior, regression, or unexpected test result | `superpowers:systematic-debugging`; show root cause and proposed fix, then proceed only after confirmation |
 | Durable architecture, data model, cross-service flow, security, migration, permissions, auditability, API/module boundary, or UI interaction contract is not covered | `authoring-design-spec` |
-| True fork, unresolved option, or unclear product/design choice remains after discovery | `superpowers:brainstorming` |
+| Issue touches 2+ modules, has 2+ viable implementation paths, or has meaningful sequencing risk across slices | Self-assess; ask the user once: "This looks complex because [X] — do you want to brainstorm the approach first?"; if yes → `superpowers:brainstorming`; if no → continue |
 | Non-bug implementation is ready after hard gates and discovery | `superpowers:writing-plans` |
 | Simple bug fix is confirmed after systematic debugging | Proceed directly if no plan-worthy complexity remains |
 | Complex bug fix is confirmed after systematic debugging | `superpowers:writing-plans` |
 
-Resume implementation only after the hard-gate outcome exists or the user explicitly narrows the issue out of that gate's scope.
+Resume implementation only after the hard-gate outcome exists or the user explicitly narrows the issue out of that gate's scope. Once a spec or User Flow stop clears, return to the normal routing decision for the approved plan — the cleared gate does not skip execution-phase routing.
 
 ## Gap Rules
 
@@ -49,13 +49,3 @@ Resume implementation only after the hard-gate outcome exists or the user explic
 | Two or more viable paths remain | Hand off to `superpowers:brainstorming` with context and a recommended starting option |
 | Hard context gap remains | Do not create an implementation plan |
 | Need user input from this skill | Do not ask ad hoc implementation questions; use the appropriate handoff |
-
-## Bug Fix Confirmation
-
-| Stage | Rule |
-|---|---|
-| Before fix edits | Use `superpowers:systematic-debugging` to reproduce or isolate the defect |
-| Before implementation | Show the root cause and proposed fix |
-| User confirmation | Proceed only after the user confirms the issue and fix direction |
-| Simple fix | May proceed without `superpowers:writing-plans` |
-| Complex or multi-module fix | Use `superpowers:writing-plans` before implementation |

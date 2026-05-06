@@ -16,10 +16,10 @@ This repository is a single plugin source repo, not a marketplace repo.
 ├── .codex-plugin/plugin.json
 ├── commands/
 ├── skills/
+│   ├── adding-roadmap-item/
 │   ├── adversarial-review/
 │   ├── closing-linear-issue/
 │   ├── code-simplifier/
-│   ├── creating-feature-request/
 │   ├── creating-linear-issue/
 │   ├── e2e-adding-scenario/
 │   ├── e2e-authoring-feature-file/
@@ -28,7 +28,9 @@ This repository is a single plugin source repo, not a marketplace repo.
 │   ├── explaining-code/
 │   ├── implementing-linear-issue/
 │   ├── maintain-github-repos/
+│   ├── maintaining-user-flows/
 │   ├── raising-linear-pr/
+│   ├── reviewing-github-pr/
 │   ├── writing-tests/
 │   └── yolo/
 └── README.md
@@ -158,10 +160,12 @@ npm run eval:creating-linear-issue
 npm run eval:creating-linear-issue-routing
 npm run eval:implementing-linear-issue
 npm run eval:raising-linear-pr
+npm run eval:reviewing-github-pr
 npm run eval:closing-linear-issue
-npm run eval:maintain-github-repos
-npm run eval:creating-feature-request
+npm run eval:maintaining-github-repos
+npm run eval:adding-roadmap-item
 npm run eval:writing-tests
+npm run eval:maintaining-user-flows
 npm run eval:coverage
 npm run eval:e2e-adding-scenario
 npm run eval:e2e-authoring-feature-file
@@ -182,10 +186,10 @@ This repository is licensed under Elastic License 2.0. See [LICENSE](./LICENSE).
 
 | Skill | Purpose |
 | --- | --- |
+| [`adding-roadmap-item`](./skills/adding-roadmap-item) | Add a roadmap item to the Roadmap (RO) team in Linear with User Flow tagging and live metadata resolution. |
 | [`adversarial-review`](./skills/adversarial-review) | Adversarial code review using the opposite model (Claude spawns Codex, Codex spawns Claude) to challenge large diffs from distinct critical lenses. |
 | [`closing-linear-issue`](./skills/closing-linear-issue) | Merge, close, and clean up branches and worktrees after a Linear issue's PR has been reviewed. |
 | [`code-simplifier`](./skills/code-simplifier) | Simplify recently modified code by removing needless complexity while preserving behavior and project standards. |
-| [`creating-feature-request`](./skills/creating-feature-request) | Log a feature request into the Roadmap (RO) team in Linear from free-form natural language. |
 | [`creating-linear-issue`](./skills/creating-linear-issue) | Draft or refine a Linear issue — preferred over the generic Linear skill for new-issue creation and decomposition. |
 | [`e2e-adding-scenario`](./skills/e2e-adding-scenario) | Append BDD scenarios to an existing `.feature` file in a Playwright+Claude e2e harness. Set `E2E_HARNESS_ROOT` when running from outside the harness. |
 | [`e2e-authoring-feature-file`](./skills/e2e-authoring-feature-file) | Author a new `.feature` file from scratch in a Playwright+Claude e2e harness. Set `E2E_HARNESS_ROOT` when running from outside the harness. |
@@ -194,6 +198,8 @@ This repository is licensed under Elastic License 2.0. See [LICENSE](./LICENSE).
 | [`explaining-code`](./skills/explaining-code) | Explain code with analogies, ASCII diagrams, and step-by-step walkthroughs with gotchas. |
 | [`implementing-linear-issue`](./skills/implementing-linear-issue) | Implement an approved Linear issue: branch/worktree setup, plan approval, checkpoint commits, quality gates — stops before the PR phase. |
 | [`maintain-github-repos`](./skills/maintain-github-repos) | Hygiene for `accelerate-data` GitHub org: decide which stale `dev*`/`scratch*` repos to archive or delete. |
+| [`maintaining-user-flows`](./skills/maintaining-user-flows) | Maintain canonical user flow inventory state across the Google Sheet and Linear "User Flow" labels, including add, retire, rename, merge, split, and drift checks. |
 | [`raising-linear-pr`](./skills/raising-linear-pr) | PR-phase workflow after implementation: verification rerun, AC completion check, push, PR creation, and `In Review` transition. |
+| [`reviewing-github-pr`](./skills/reviewing-github-pr) | Review an existing GitHub PR from the PR outward: frame claim vs required vs implemented scope, verify ACs, draft or post a GitHub review event, and clean up the temporary review worktree. |
 | [`writing-tests`](./skills/writing-tests) | Write, update, audit, or review unit and integration tests using Vladimir Khorikov's standards. |
 | [`yolo`](./skills/yolo) | Single-shot flow that creates an issue, implements it, and raises a PR in one invocation. |

@@ -1,0 +1,128 @@
+{
+  "description": "e2e-regenerating-from-guide skill — DATABASE_PATH gate, guide existence check, MAPPINGS separate commit, diff review, and no manual Gherkin",
+  "metadata": {
+    "eval_tier": "standard"
+  },
+  "prompts": [
+    "file://../../prompts/skill-e2e-regenerating-from-guide.txt"
+  ],
+  "defaultTest": {
+    "assert": [
+      {
+        "type": "javascript",
+        "value": "file://../../assertions/check-e2e-bdd-skills-contract.js"
+      }
+    ]
+  },
+  "tests": [
+    {
+      "description": "[smoke] MISSING STEP blocks BDD — handoff to extending-step-vocabulary before BDD runs",
+      "vars": {
+        "eval_type": "user-behavior",
+        "failure_modes": "manual-gherkin-edit,missing-guide,missing-database-gate,skips-diff-review",
+        "scenario": "- E2E_HARNESS_ROOT is set to /home/user/e2e-test-harness.\n- The harness .env contains: DATABASE_PATH=/home/user/app/data/db.sqlite\n- The user says: \"Regenerate features/settings/notifications.feature from the guide.\"\n- $APP_SRC/docs/user-guide/settings/notifications.md exists and is non-empty.\n- generate-features.sh contains the MAPPINGS pair for settings/notifications.md.\n- ./generate-features.sh ran and the output contains: \"# MISSING STEP: verify the Slack workspace is connected\".",
+        "expect_missing_step_blocks_bdd_loop": "true",
+        "expect_runs_generate_script_not_manual_gherkin": "true",
+        "expect_no_hardcoded_app_path": "true",
+        "expect_halts_on_missing_database_path": "false"
+      }
+    },
+    {
+      "description": "happy path — UPDATE mode, runs generate script, requires diff review",
+      "vars": {
+        "eval_type": "user-behavior",
+        "failure_modes": "manual-gherkin-edit,missing-guide,missing-database-gate,skips-diff-review",
+        "scenario": "- E2E_HARNESS_ROOT is set to /home/user/e2e-test-harness.\n- The harness .env contains: DATABASE_PATH=/home/user/app/data/db.sqlite\n- The user says: \"The settings/notifications.md guide changed. Regenerate features/settings/notifications.feature.\"\n- $APP_SRC/docs/user-guide/settings/notifications.md exists and is non-empty.\n- generate-features.sh already contains the MAPPINGS pair: \"settings/notifications.md:settings/notifications.feature\".\n- features/settings/notifications.feature exists with 4 scenarios.",
+        "expect_resolves_harness_root_from_env_var": "true",
+        "expect_halts_on_missing_database_path": "false",
+        "expect_runs_generate_script_not_manual_gherkin": "true",
+        "expect_requires_diff_review_before_commit": "true",
+        "expect_requires_separate_mappings_commit": "false",
+        "expect_no_hardcoded_app_path": "true"
+      }
+    },
+    {
+      "description": "halt — DATABASE_PATH missing from .env and E2E_APP_SRC not set",
+      "vars": {
+        "eval_type": "user-behavior",
+        "failure_modes": "manual-gherkin-edit,missing-guide,missing-database-gate,skips-diff-review",
+        "scenario": "- E2E_HARNESS_ROOT is not set. CWD is /home/user/e2e-test-harness which contains features/ and steps/.\n- The harness .env exists but DATABASE_PATH line is absent entirely.\n- E2E_APP_SRC is not set.\n- App-root auto-discovery finds no readable sibling or parent app root.\n- The user says: \"Regenerate features/settings/notifications.feature from the guide.\"",
+        "expect_halts_on_missing_database_path": "true",
+        "expect_falls_back_to_cwd_when_env_not_set": "true"
+      }
+    },
+    {
+      "description": "no guide — refuses to run generate script when guide file is missing",
+      "vars": {
+        "eval_type": "user-behavior",
+        "failure_modes": "manual-gherkin-edit,missing-guide,missing-database-gate,skips-diff-review",
+        "scenario": "- E2E_HARNESS_ROOT is set to /home/user/e2e-test-harness.\n- The harness .env contains: DATABASE_PATH=/home/user/app/data/db.sqlite\n- The user says: \"Regenerate features/plugins/plugin-crud.feature.\"\n- $APP_SRC/docs/user-guide/plugins/plugin-crud.md does NOT exist.",
+        "expect_refuses_to_regen_without_guide": "true",
+        "expect_runs_generate_script_not_manual_gherkin": "false",
+        "expect_no_hardcoded_app_path": "true"
+      }
+    },
+    {
+      "description": "CREATE mode — new MAPPINGS pair committed separately before regen",
+      "vars": {
+        "eval_type": "user-behavior",
+        "failure_modes": "manual-gherkin-edit,missing-guide,missing-database-gate,skips-diff-review",
+        "scenario": "- E2E_HARNESS_ROOT is set to /home/user/e2e-test-harness.\n- The harness .env contains: DATABASE_PATH=/home/user/app/data/db.sqlite\n- The user says: \"Create features/marketplace/listings.feature from the marketplace/listings.md guide.\"\n- $APP_SRC/docs/user-guide/marketplace/listings.md exists and is non-empty.\n- generate-features.sh does NOT contain a MAPPINGS pair for marketplace/listings.md yet.\n- features/marketplace/listings.feature does NOT exist yet.",
+        "expect_runs_generate_script_not_manual_gherkin": "true",
+        "expect_requires_separate_mappings_commit": "true",
+        "expect_no_hardcoded_app_path": "true",
+        "expect_halts_on_missing_database_path": "false"
+      }
+    },
+    {
+      "description": "E2E_APP_SRC set — skips DATABASE_PATH gate and proceeds to regen",
+      "vars": {
+        "eval_type": "user-behavior",
+        "failure_modes": "manual-gherkin-edit,missing-guide,missing-database-gate,skips-diff-review",
+        "scenario": "- E2E_HARNESS_ROOT is set to /home/user/e2e-test-harness.\n- E2E_APP_SRC is set to /home/user/app.\n- The harness .env exists but DATABASE_PATH is NOT set (commented out).\n- The user says: \"Regenerate features/settings/notifications.feature from the guide.\"\n- $E2E_APP_SRC/docs/user-guide/settings/notifications.md exists and is non-empty.\n- generate-features.sh already contains the MAPPINGS pair: \"settings/notifications.md:settings/notifications.feature\".\n- features/settings/notifications.feature already exists with 4 scenarios.",
+        "expect_uses_e2e_app_src_when_set": "true",
+        "expect_halts_on_missing_database_path": "false",
+        "expect_runs_generate_script_not_manual_gherkin": "true",
+        "expect_requires_diff_review_before_commit": "true",
+        "expect_no_hardcoded_app_path": "true"
+      }
+    },
+    {
+      "description": "halt — E2E_APP_SRC set but unreadable",
+      "vars": {
+        "eval_type": "user-behavior",
+        "failure_modes": "manual-gherkin-edit,missing-guide,missing-database-gate,skips-diff-review",
+        "scenario": "- E2E_HARNESS_ROOT is set to /home/user/e2e-test-harness.\n- E2E_APP_SRC is set to /home/user/missing-app, but that directory is not readable.\n- The harness .env contains no DATABASE_PATH.\n- The user says: \"Regenerate features/settings/notifications.feature from the guide.\"",
+        "expect_uses_e2e_app_src_when_set": "true",
+        "expect_halts_on_unreadable_e2e_app_src": "true",
+        "expect_halts_on_missing_database_path": "false",
+        "expect_runs_generate_script_not_manual_gherkin": "false",
+        "expect_no_hardcoded_app_path": "true"
+      }
+    },
+    {
+      "description": "CREATE mode — MAPPINGS pair already present but target feature is absent",
+      "vars": {
+        "eval_type": "user-behavior",
+        "failure_modes": "manual-gherkin-edit,missing-guide,missing-database-gate,skips-diff-review",
+        "scenario": "- E2E_HARNESS_ROOT is set to /home/user/e2e-test-harness.\n- The harness .env contains: DATABASE_PATH=/home/user/app/data/db.sqlite\n- The user says: \"Create features/settings/notifications.feature from settings/notifications.md.\"\n- $APP_SRC/docs/user-guide/settings/notifications.md exists and is non-empty.\n- generate-features.sh already contains the MAPPINGS pair: \"settings/notifications.md:settings/notifications.feature\".\n- features/settings/notifications.feature does NOT exist yet.",
+        "expect_classifies_mapping_present_feature_absent_as_create": "true",
+        "expect_requires_separate_mappings_commit": "false",
+        "expect_runs_generate_script_not_manual_gherkin": "true",
+        "expect_no_hardcoded_app_path": "true",
+        "expect_halts_on_missing_database_path": "false"
+      }
+    },
+    {
+      "description": "append redirect — quick-append request redirects to e2e-adding-scenario with overwrite warning",
+      "vars": {
+        "eval_type": "user-behavior",
+        "failure_modes": "manual-gherkin-edit,missing-guide,missing-database-gate,skips-diff-review",
+        "scenario": "- E2E_HARNESS_ROOT is set to /home/user/e2e-test-harness.\n- The harness .env contains: DATABASE_PATH=/home/user/app/data/db.sqlite\n- generate-features.sh contains MAPPINGS entry: \"settings/domains.md:settings/domain-crud.feature\".\n- features/settings/domain-crud.feature exists and is guide-backed.\n- The user says: \"Quickly append one scenario to features/settings/domain-crud.feature for the archive flow.\"",
+        "expect_redirects_append_to_adding_scenario": "true",
+        "expect_runs_generate_script_not_manual_gherkin": "false",
+        "expect_no_hardcoded_app_path": "true"
+      }
+    }
+  ]
+}

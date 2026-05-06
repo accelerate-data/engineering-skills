@@ -108,7 +108,7 @@ Use sibling worktrees at `../worktrees/<branch-name>` relative to the repo root.
 - Preserve the full branch name in the path, including prefixes such as `feature/`.
 - Use `./scripts/worktree.sh <branch-name>` from the main checkout as the canonical way to create or reattach a worktree and bootstrap local development state.
 - `scripts/worktree.sh` derives paths relative to the repository and must stay portable across developers and machines.
-- The worktree helper symlinks shared local state such as `.env` and `tests/evals/.promptfoo` from the main checkout into sibling worktrees.
+- The worktree helper symlinks `.env` from the main checkout into sibling worktrees.
 
 ## Skills
 
@@ -118,16 +118,18 @@ Use these repo-local skills when requests match:
 - `skills/implementing-linear-issue/SKILL.md` - implement a Linear issue
 - `skills/raising-linear-pr/SKILL.md` - run the PR phase for a completed issue
 - `skills/closing-linear-issue/SKILL.md` - merge, close, and clean up after review
+- `skills/reviewing-github-pr/SKILL.md` - review an existing GitHub PR end-to-end, verify ACs, draft or post the review event, and clean up the review worktree
 - `skills/yolo/SKILL.md` - single-shot flow: create issue, implement, and raise PR in one invocation
 - `skills/adversarial-review/SKILL.md` - run adversarial code review
 - `skills/explaining-code/SKILL.md` - explain code with diagrams and teaching-style breakdowns
-- `skills/creating-feature-request/SKILL.md` - create a feature request in Linear
+- `skills/adding-roadmap-item/SKILL.md` - add a roadmap item to the Roadmap (RO) team in Linear
 - `skills/code-simplifier/SKILL.md` - simplify recently modified code while preserving behavior
 - `skills/writing-tests/SKILL.md` - write, audit, or improve unit and integration tests (Khorikov standards)
 - `skills/e2e-adding-scenario/SKILL.md` - append BDD scenarios to an existing `.feature` file in a Playwright+Claude e2e harness (set `E2E_HARNESS_ROOT` when running from outside the harness)
 - `skills/e2e-authoring-feature-file/SKILL.md` - author a new `.feature` file from scratch in a Playwright+Claude e2e harness (set `E2E_HARNESS_ROOT` when running from outside the harness)
 - `skills/e2e-extending-step-vocabulary/SKILL.md` - add a missing step pattern to `steps/*.md` in a Playwright+Claude e2e harness (set `E2E_HARNESS_ROOT` when running from outside the harness)
 - `skills/e2e-regenerating-from-guide/SKILL.md` - regenerate a `.feature` file from its user-guide source page via `./generate-features.sh` (set `E2E_HARNESS_ROOT` when running from outside the harness)
+- `skills/maintaining-user-flows/SKILL.md` - add, retire, rename, merge, or split a canonical user flow in the Flow Inventory sheet and its paired Linear "User Flow" label
 
 ## Linear
 

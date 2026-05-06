@@ -7,11 +7,12 @@ const test = require('node:test');
 const { checkEvalUserBehavior } = require('./check-eval-user-behavior');
 
 const LINEAR_ADJACENT_SKILLS = [
-  'creating-feature-request',
+  'adding-roadmap-item',
   'creating-linear-issue',
   'implementing-linear-issue',
   'raising-linear-pr',
   'closing-linear-issue',
+  'reviewing-github-pr',
   'yolo',
 ];
 

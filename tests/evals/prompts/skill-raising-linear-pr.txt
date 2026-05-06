@@ -31,6 +31,22 @@ Every boolean must describe what the workflow would actively do in this exact
 scenario. If an earlier gate blocks the workflow, mark downstream validation,
 eval, push, PR, and Linear-transition actions false even if the skill supports
 them after a passing gate.
+If the acceptance-criteria gate stops the workflow, set
+`runs_design_conformance_gate`, `compares_design_to_implementation_evidence`,
+and `records_design_conformance_evidence` to false because the design gate does
+not run after an AC stop.
+Set `reviews_committed_code_before_ac_decision` to true for every ready-for-PR
+scenario in this skill, because the workflow reviews committed code, tests, and
+existing verification evidence before the AC gate even when every AC is already
+checked in Linear. Set it to false only if an earlier entry gate stops the
+workflow before that review can happen.
+Field semantics:
+- `stops_on_dirty_worktree` is true only when the entry worktree state is dirty.
+- `runs_skill_evals` is true only when the workflow would rerun targeted evals in this scenario.
+- `falls_back_to_eval_when_db_evidence_missing` is true only when DB evidence is missing or stale enough that the workflow must rerun targeted evals. If fresh passing DB evidence already exists, set it to false.
+- `checks_off_acceptance_criteria` is true only when this scenario includes at least one unchecked AC that is already proven complete and would be checked off now. If all ACs are already checked, set it to false.
+- `compares_design_to_implementation_evidence` is true only when local design references exist and the design gate actively compares them against implementation evidence.
+- `records_design_conformance_evidence` is true whenever the design gate runs, including a `not_applicable` outcome with empty checked paths. It is false only when the design gate does not run.
 Set `blocks_pr_for_design_mismatch_in_this_scenario` to true only when the design conformance result is `fail`. Set it to false when the design result is `pass` or `not_applicable`.
 If `checked_design_paths` is empty, set this to false.
 
@@ -46,6 +62,7 @@ Never write an explanation before the JSON object.
   "creates_final_commit": <bool>,
   "edits_code_in_pr_phase": <bool>,
   "stops_on_dirty_worktree": <bool>,
+  "reviews_committed_code_before_ac_decision": <bool>,
   "runs_required_validation": <bool>,
   "runs_skill_evals": <bool>,
   "checks_promptfoo_db_for_latest_passing_eval": <bool>,

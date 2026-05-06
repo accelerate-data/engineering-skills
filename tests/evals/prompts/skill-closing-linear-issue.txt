@@ -1,3 +1,38 @@
+{% if user_message %}
+You are an agent responding to a user message mid-conversation. Choose the next
+skill using only the available skill descriptions, not AGENTS.md or CLAUDE.md
+routing rules.
+
+Available skills and their descriptions:
+
+- closing-linear-issue: Use when the user says "close issue [ID]", "close [ID]",
+  "finish closeout", or when a Linear issue already has a review-ready PR and
+  this repository needs the merge, close, and cleanup phase.
+- implementing-linear-issue: Use when asked to implement, fix, build, or work on
+  an existing Linear issue in this repository, and coding should stop before PR
+  creation.
+- raising-linear-pr: Use when implementation is complete and the user asks to
+  raise, create, open, or submit a pull request for a Linear issue.
+
+Prior conversation context:
+
+- Implementation of the Linear issue is complete and a PR has been opened and reviewed.
+- No active skill is running.
+
+The user now says:
+"{{user_message}}"
+
+Analyze which skill should be triggered next.
+
+Output only a single compact JSON object. First character must be `{`.
+
+{
+  "detected_skill": "<skill-name or none>",
+  "trigger_found_in_message": <bool>,
+  "would_pause_current_flow": <bool>,
+  "notes": "string"
+}
+{% else %}
 You are evaluating the `closing-linear-issue` workflow for a realistic closeout
 request.
 
@@ -46,3 +81,4 @@ Never write an explanation before the JSON object.
   "checks_off_acceptance_criteria": <bool>,
   "notes": "string"
 }
+{% endif %}
