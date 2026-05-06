@@ -21,10 +21,6 @@ This repository is a single plugin source repo, not a marketplace repo.
 │   ├── closing-linear-issue/
 │   ├── code-simplifier/
 │   ├── creating-linear-issue/
-│   ├── e2e-adding-scenario/
-│   ├── e2e-authoring-feature-file/
-│   ├── e2e-extending-step-vocabulary/
-│   ├── e2e-regenerating-from-guide/
 │   ├── explaining-code/
 │   ├── implementing-linear-issue/
 │   ├── maintain-github-repos/
@@ -167,16 +163,16 @@ npm run eval:adding-roadmap-item
 npm run eval:writing-tests
 npm run eval:maintaining-user-flows
 npm run eval:coverage
-npm run eval:e2e-adding-scenario
-npm run eval:e2e-authoring-feature-file
-npm run eval:e2e-extending-step-vocabulary
-npm run eval:e2e-regenerating-from-guide
 npm run eval:codex-compatibility
 ```
 
 Metadata-only changes do not require running the full promptfoo eval suite, but
 the deterministic compatibility checks remain available through the commands
 above when skill content or Codex compatibility changes.
+
+The harness-facing e2e authoring skills now live in the standalone
+[`e2e-test-harness`](https://github.com/accelerate-data/e2e-test-harness)
+plugin repo rather than in `engineering-skills`.
 
 ## License
 
@@ -191,10 +187,6 @@ This repository is licensed under Elastic License 2.0. See [LICENSE](./LICENSE).
 | [`closing-linear-issue`](./skills/closing-linear-issue) | Merge, close, and clean up branches and worktrees after a Linear issue's PR has been reviewed. |
 | [`code-simplifier`](./skills/code-simplifier) | Simplify recently modified code by removing needless complexity while preserving behavior and project standards. |
 | [`creating-linear-issue`](./skills/creating-linear-issue) | Draft or refine a Linear issue — preferred over the generic Linear skill for new-issue creation and decomposition. |
-| [`e2e-adding-scenario`](./skills/e2e-adding-scenario) | Append BDD scenarios to an existing `.feature` file in a Playwright+Claude e2e harness. Set `E2E_HARNESS_ROOT` when running from outside the harness. |
-| [`e2e-authoring-feature-file`](./skills/e2e-authoring-feature-file) | Author a new `.feature` file from scratch in a Playwright+Claude e2e harness. Set `E2E_HARNESS_ROOT` when running from outside the harness. |
-| [`e2e-extending-step-vocabulary`](./skills/e2e-extending-step-vocabulary) | Add a missing step pattern to `steps/*.md` in a Playwright+Claude e2e harness. Set `E2E_HARNESS_ROOT` when running from outside the harness. |
-| [`e2e-regenerating-from-guide`](./skills/e2e-regenerating-from-guide) | Regenerate a `.feature` file from its user-guide source page via `./generate-features.sh`. Set `E2E_HARNESS_ROOT` when running from outside the harness. |
 | [`explaining-code`](./skills/explaining-code) | Explain code with analogies, ASCII diagrams, and step-by-step walkthroughs with gotchas. |
 | [`implementing-linear-issue`](./skills/implementing-linear-issue) | Implement an approved Linear issue: branch/worktree setup, plan approval, checkpoint commits, quality gates — stops before the PR phase. |
 | [`maintain-github-repos`](./skills/maintain-github-repos) | Hygiene for `accelerate-data` GitHub org: decide which stale `dev*`/`scratch*` repos to archive or delete. |

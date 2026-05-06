@@ -36,11 +36,11 @@
     },
     "skills": {
       "path": "skills/",
-      "description": "Canonical skill directories (17 skills). Each skill owns its SKILL.md and any supporting references, assets, scripts, or agents."
+      "description": "Canonical skill directories (13 skills). Each skill owns its SKILL.md and any supporting references, assets, scripts, or agents."
     },
     "eval_harness": {
       "path": "tests/evals/",
-      "description": "Promptfoo eval harness powered by @accelerate-data/promptfoo-eval-harness. Packages declare metadata.eval_tier (light/standard/high/x_high) and a single [smoke] test; the framework injects the OpenCode CLI provider at run time. Current packages cover the Linear workflow skills, adding-roadmap-item, code-simplifier, maintaining-github-repos, writing-tests, adversarial-review, explaining-code, maintaining-user-flows, reviewing-github-pr, the 4 e2e BDD authoring skills, yolo, bundled raising-linear-pr promptfoo DB gate helper tests, eval coverage reporting, Codex compatibility, and the static eval user-behavior quality check."
+      "description": "Promptfoo eval harness powered by @accelerate-data/promptfoo-eval-harness. Packages declare metadata.eval_tier (light/standard/high/x_high) and a single [smoke] test; the framework injects the OpenCode CLI provider at run time. Current packages cover the Linear workflow skills, adding-roadmap-item, code-simplifier, maintaining-github-repos, writing-tests, adversarial-review, explaining-code, maintaining-user-flows, reviewing-github-pr, yolo, bundled raising-linear-pr promptfoo DB gate helper tests, eval coverage reporting, Codex compatibility, and the static eval user-behavior quality check."
     },
     "scripts": {
       "path": "scripts/",
@@ -83,10 +83,6 @@
     "eval_writing_tests": "npm run eval:writing-tests",
     "eval_adversarial_review": "npm run eval:adversarial-review",
     "eval_explaining_code": "npm run eval:explaining-code",
-    "eval_e2e_adding_scenario": "npm run eval:e2e-adding-scenario",
-    "eval_e2e_authoring_feature_file": "npm run eval:e2e-authoring-feature-file",
-    "eval_e2e_extending_step_vocabulary": "npm run eval:e2e-extending-step-vocabulary",
-    "eval_e2e_regenerating_from_guide": "npm run eval:e2e-regenerating-from-guide",
     "eval_maintaining_user_flows": "npm run eval:maintaining-user-flows",
     "eval_reviewing_github_pr": "npm run eval:reviewing-github-pr",
     "eval_yolo": "npm run eval:yolo",

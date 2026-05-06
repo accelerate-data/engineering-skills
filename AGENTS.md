@@ -125,10 +125,6 @@ Use these repo-local skills when requests match:
 - `skills/adding-roadmap-item/SKILL.md` - add a roadmap item to the Roadmap (RO) team in Linear
 - `skills/code-simplifier/SKILL.md` - simplify recently modified code while preserving behavior
 - `skills/writing-tests/SKILL.md` - write, audit, or improve unit and integration tests (Khorikov standards)
-- `skills/e2e-adding-scenario/SKILL.md` - append BDD scenarios to an existing `.feature` file in a Playwright+Claude e2e harness (set `E2E_HARNESS_ROOT` when running from outside the harness)
-- `skills/e2e-authoring-feature-file/SKILL.md` - author a new `.feature` file from scratch in a Playwright+Claude e2e harness (set `E2E_HARNESS_ROOT` when running from outside the harness)
-- `skills/e2e-extending-step-vocabulary/SKILL.md` - add a missing step pattern to `steps/*.md` in a Playwright+Claude e2e harness (set `E2E_HARNESS_ROOT` when running from outside the harness)
-- `skills/e2e-regenerating-from-guide/SKILL.md` - regenerate a `.feature` file from its user-guide source page via `./generate-features.sh` (set `E2E_HARNESS_ROOT` when running from outside the harness)
 - `skills/maintaining-user-flows/SKILL.md` - add, retire, rename, merge, or split a canonical user flow in the Flow Inventory sheet and its paired Linear "User Flow" label
 
 ## Linear
