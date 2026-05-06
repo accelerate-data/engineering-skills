@@ -117,12 +117,37 @@ Search for stale ownership text and replace it with the new boundary: these work
 **Files:**
 - Modify: `.claude-plugin/plugin.json`
 - Modify: `.codex-plugin/plugin.json`
+- Modify: `/Users/hbanerjee/src/plugin-marketplace/.claude-plugin/marketplace.json`
+- Modify: `/Users/hbanerjee/src/plugin-marketplace/.agents/plugins/marketplace.json` if the `engineering-skills` entry description/category needs to change
 
 - [ ] **Step 1: Bump plugin versions in lockstep**
 
 Increase both manifest versions together because plugin content changed.
 
-- [ ] **Step 2: Run manifest validation**
+- [ ] **Step 2: Update marketplace entry text for `engineering-skills` if needed**
+
+If the `engineering-skills` marketplace entry description still implies ownership of the e2e harness skills, update it to reflect the narrower post-extraction scope.
+
+At minimum, review:
+
+- `/Users/hbanerjee/src/plugin-marketplace/.claude-plugin/marketplace.json`
+- `/Users/hbanerjee/src/plugin-marketplace/.agents/plugins/marketplace.json`
+
+Expected:
+
+- `engineering-skills` no longer reads like the owner of harness-facing e2e workflows
+
+- [ ] **Step 3: Bump marketplace metadata version**
+
+If either marketplace file changes during cleanup, bump:
+
+```json
+"/Users/hbanerjee/src/plugin-marketplace/.claude-plugin/marketplace.json.metadata.version"
+```
+
+This is required because the marketplace registry content changed.
+
+- [ ] **Step 4: Run manifest validation**
 
 Run:
 
@@ -135,7 +160,21 @@ Expected:
 
 - pass
 
-- [ ] **Step 3: Run deterministic eval checks still required by this repo**
+- [ ] **Step 5: Validate the marketplace repo if marketplace files changed**
+
+Run:
+
+```bash
+cd /Users/hbanerjee/src/plugin-marketplace
+python3 scripts/validate-marketplace.py
+```
+
+Expected:
+
+- pass
+- registry version bump and entry text changes are accepted
+
+- [ ] **Step 6: Run deterministic eval checks still required by this repo**
 
 Run:
 
@@ -167,7 +206,21 @@ Expected:
 
 - no remaining first-party ownership references
 
-- [ ] **Step 2: Commit cleanup in focused slices**
+- [ ] **Step 2: Confirm marketplace text and version are aligned**
+
+If the cleanup changed marketplace files, verify:
+
+```bash
+cd /Users/hbanerjee/src/plugin-marketplace
+rg -n "\"name\": \"engineering-skills\"|\"version\":" .claude-plugin/marketplace.json .agents/plugins/marketplace.json
+```
+
+Expected:
+
+- the `engineering-skills` entry reflects the post-extraction scope
+- the Claude marketplace metadata version was bumped
+
+- [ ] **Step 3: Commit cleanup in focused slices**
 
 Use commit boundaries such as:
 
@@ -175,4 +228,5 @@ Use commit boundaries such as:
 refactor(skills): remove e2e harness skills from engineering-skills
 refactor(evals): remove e2e skill eval ownership from engineering-skills
 chore(plugin): update engineering-skills manifests and repo guidance after e2e extraction
+chore(marketplace): update engineering-skills marketplace metadata after e2e extraction
 ```
