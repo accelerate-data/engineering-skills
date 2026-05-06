@@ -77,7 +77,7 @@
     "eval_implementing_linear_issue": "npm run eval:implementing-linear-issue",
     "eval_raising_linear_pr": "npm run eval:raising-linear-pr",
     "eval_closing_linear_issue": "npm run eval:closing-linear-issue",
-    "eval_maintain_github_repos": "npm run eval:maintain-github-repos",
+    "eval_maintaining_github_repos": "npm run eval:maintaining-github-repos",
     "eval_adding_roadmap_item": "npm run eval:adding-roadmap-item",
     "eval_code_simplifier": "npm run eval:code-simplifier",
     "eval_writing_tests": "npm run eval:writing-tests",

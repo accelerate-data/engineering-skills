@@ -10,7 +10,7 @@
     "eval:implementing-linear-issue": "ad-evals run packages/implementing-linear-issue/promptfooconfig.json",
     "eval:raising-linear-pr": "ad-evals run packages/raising-linear-pr/promptfooconfig.json",
     "eval:closing-linear-issue": "ad-evals run packages/closing-linear-issue/promptfooconfig.json",
-    "eval:maintain-github-repos": "ad-evals run packages/maintain-github-repos/promptfooconfig.json",
+    "eval:maintaining-github-repos": "ad-evals run packages/maintaining-github-repos/promptfooconfig.json",
     "eval:adding-roadmap-item": "ad-evals run packages/adding-roadmap-item/promptfooconfig.json",
     "eval:code-simplifier": "ad-evals run packages/code-simplifier/promptfooconfig.json",
     "eval:writing-tests": "ad-evals run packages/writing-tests/promptfooconfig.json",

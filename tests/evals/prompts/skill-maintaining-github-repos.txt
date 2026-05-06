@@ -1,0 +1,87 @@
+You are evaluating the `maintaining-github-repos` skill for realistic GitHub
+repository maintenance prompts.
+
+Parser contract: output only the final JSON object. Any analysis, preface,
+heading, markdown, or text before the opening `{` fails the eval. Do not think
+aloud. Do not describe a fixed workflow. Emit only the JSON object.
+
+Read `skills/maintaining-github-repos/SKILL.md`.
+
+This is a read-only knowledge-skill eval. Do not call GitHub, do not run
+scripts, and do not perform cleanup actions. All required repo or org facts are
+supplied in the prompt and simulated context. If a required fact is missing,
+report that the fixture is incomplete instead of inventing it.
+
+User prompt:
+
+> {{ user_prompt }}
+
+Simulated context:
+
+{{ simulated_context }}
+
+Think silently. Based on the skill, report the prompt-driven obligations and
+signals the skill should surface for this exact scenario.
+
+Field semantics:
+
+- `is_prompt_driven_knowledge_skill` is true only if the skill behaves like a
+  prompt-driven knowledge/reference skill rather than a fixed execution
+  workflow.
+- `rejects_fixed_workflow_contract` is true only if the skill should avoid
+  forcing a single procedural script or mandatory execution sequence in this
+  response shape.
+- `uses_repo_level_signals` is true only when the scenario is framed around a
+  single repository's facts.
+- `uses_org_level_safety_signals` is true only when the scenario includes
+  org-wide cleanup or destructive-scope safeguards.
+- `reports_branch_count_and_merge_split` is true only when the scenario should
+  explicitly surface total branch count plus merged-versus-remaining framing.
+- `reports_inactive_branch_threshold` is true only when the scenario should
+  explicitly surface the inactivity threshold for branches older than 5 days.
+- `reports_pr_pending_threshold` is true only when the scenario should
+  explicitly surface the PR pending threshold for items older than 48 hours.
+- `requires_preview_before_mutation` is true only when the scenario moves into
+  cleanup planning where preview-before-mutation remains a safeguard.
+- `requires_exact_scope_confirmation` is true only when the scenario involves
+  destructive scope that must stay exact before any cleanup action.
+- `prompt_obligations` must be an array of short strings naming the key
+  obligations/signals the skill should surface for this scenario. Use the
+  concrete scenario facts instead of generic labels when those facts are
+  supplied.
+- `notes` must be a short sentence that echoes the relevant scenario-specific
+  facts and thresholds verbatim when provided. For example, if the scenario
+  gives branch counts, inactivity ages, PR ages, or cleanup safeguards, include
+  the exact values such as `14`, `merged`, `remaining`, `5 days`, `48 hours`,
+  `preview`, and `exact scope` where applicable. For repo-level scenarios,
+  explicitly describe the result as a `prompt-driven knowledge check`.
+
+Repo-level wording requirements:
+
+- For branch-count scenarios, `prompt_obligations` or `notes` must explicitly
+  mention the supplied total count and the `merged` versus `remaining` split.
+- For inactive-branch scenarios, `prompt_obligations` or `notes` must
+  explicitly mention the `5 days` threshold in addition to any larger ages in
+  the scenario, and should use the word `inactive`.
+- For PR-aging scenarios, `prompt_obligations` or `notes` must explicitly
+  mention the `48 hours` threshold in addition to any larger ages in the
+  scenario, and should use the phrase `pull request` rather than only `PR`.
+
+Your entire response must be one valid compact JSON object on a single line. The
+first character must be `{` and the last character must be `}`. Do not include
+markdown, bullets, explanation, headings, analysis, or code fences.
+
+{
+  "skill_path": "string",
+  "is_prompt_driven_knowledge_skill": <bool>,
+  "rejects_fixed_workflow_contract": <bool>,
+  "uses_repo_level_signals": <bool>,
+  "uses_org_level_safety_signals": <bool>,
+  "reports_branch_count_and_merge_split": <bool>,
+  "reports_inactive_branch_threshold": <bool>,
+  "reports_pr_pending_threshold": <bool>,
+  "requires_preview_before_mutation": <bool>,
+  "requires_exact_scope_confirmation": <bool>,
+  "prompt_obligations": ["string"],
+  "notes": "string"
+}

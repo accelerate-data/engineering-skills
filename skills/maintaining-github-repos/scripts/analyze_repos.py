@@ -77,10 +77,26 @@ def fetch_all_repos(org):
 
         for repo in page_repos:
             repo_name = repo["name"]
+            created_at = (repo.get("created_at") or "")[:10]
 
             # Fetch up to 101 branches so we can detect the >100 truncation case.
             branches = gh_rest(f"/repos/{org}/{repo_name}/branches?per_page=101")
             branch_list_truncated = len(branches) > 100
+
+            if branch_list_truncated:
+                repos.append({
+                    "name": repo_name,
+                    "is_archived": repo.get("archived", False),
+                    "created_at": created_at,
+                    "latest_commit": (repo.get("pushed_at") or "")[:10] or "manual review",
+                    "latest_author": "-",
+                    "has_real_content": False,
+                    "all_files": [],
+                    "no_branches": False,
+                    "branch_list_truncated": True,
+                })
+                continue
+
             branches = branches[:100]
 
             latest_date = None
@@ -126,8 +142,6 @@ def fetch_all_repos(org):
                             all_files.add(name_lower)
                             if name_lower not in NOISE_FILES:
                                 has_real_content = True
-
-            created_at = (repo.get("created_at") or "")[:10]
             repos.append({
                 "name": repo_name,
                 "is_archived": repo.get("archived", False),

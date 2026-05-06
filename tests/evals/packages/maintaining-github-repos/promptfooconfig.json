@@ -1,0 +1,99 @@
+{
+  "description": "Maintaining-github-repos skill — prompt-driven knowledge contract and cleanup safeguards",
+  "metadata": {
+    "eval_tier": "standard"
+  },
+  "prompts": [
+    "file://../../prompts/skill-maintaining-github-repos.txt"
+  ],
+  "defaultTest": {
+    "assert": [
+      {
+        "type": "javascript",
+        "value": "file://../../assertions/check-maintaining-github-repos-contract.js"
+      }
+    ]
+  },
+  "tests": [
+    {
+      "description": "[smoke] repo branch inventory — surfaces branch count with merged versus remaining framing",
+      "vars": {
+        "eval_type": "user-behavior",
+        "failure_modes": "fixed-workflow-response,misses-branch-split-signal",
+        "user_prompt": "What should the maintaining-github-repos skill surface when a repo has 14 branches, 9 already merged, and 5 still remaining?",
+        "simulated_context": "- This is a prompt-driven knowledge check for one repository.\n- The repo facts are already known: total branches 14, merged branches 9, remaining branches 5.\n- No cleanup action is being requested yet.\n",
+        "expected_skill_path": "skills/maintaining-github-repos/SKILL.md",
+        "expect_is_prompt_driven_knowledge_skill": "true",
+        "expect_rejects_fixed_workflow_contract": "true",
+        "expect_uses_repo_level_signals": "true",
+        "expect_uses_org_level_safety_signals": "false",
+        "expect_reports_branch_count_and_merge_split": "true",
+        "expect_reports_inactive_branch_threshold": "false",
+        "expect_reports_pr_pending_threshold": "false",
+        "expect_requires_preview_before_mutation": "false",
+        "expect_requires_exact_scope_confirmation": "false",
+        "required_terms": "prompt-driven,knowledge,14,merged,remaining"
+      }
+    },
+    {
+      "description": "repo inactivity aging — surfaces inactive branches older than 5 days as a prompt signal",
+      "vars": {
+        "eval_type": "user-behavior",
+        "failure_modes": "misses-inactivity-threshold,workflow-instead-of-signal",
+        "user_prompt": "A repo has several branches that have been inactive for 6 and 11 days. What should this skill call out?",
+        "simulated_context": "- This is still a single-repo knowledge prompt.\n- The relevant branch-aging facts are already supplied.\n- No cleanup action has been approved or requested.\n",
+        "expected_skill_path": "skills/maintaining-github-repos/SKILL.md",
+        "expect_is_prompt_driven_knowledge_skill": "true",
+        "expect_rejects_fixed_workflow_contract": "true",
+        "expect_uses_repo_level_signals": "true",
+        "expect_uses_org_level_safety_signals": "false",
+        "expect_reports_branch_count_and_merge_split": "false",
+        "expect_reports_inactive_branch_threshold": "true",
+        "expect_reports_pr_pending_threshold": "false",
+        "expect_requires_preview_before_mutation": "false",
+        "expect_requires_exact_scope_confirmation": "false",
+        "required_terms": "5 days,inactive,6,11"
+      }
+    },
+    {
+      "description": "repo PR aging — surfaces pending PRs older than 48 hours as a prompt signal",
+      "vars": {
+        "eval_type": "user-behavior",
+        "failure_modes": "misses-pr-threshold,pretends-to-execute-workflow",
+        "user_prompt": "A repo has pull requests that have been waiting 49 hours and 72 hours. What should the skill emphasize?",
+        "simulated_context": "- This is a single-repo knowledge prompt.\n- The relevant PR-aging facts are already supplied.\n- No cleanup execution is in scope.\n",
+        "expected_skill_path": "skills/maintaining-github-repos/SKILL.md",
+        "expect_is_prompt_driven_knowledge_skill": "true",
+        "expect_rejects_fixed_workflow_contract": "true",
+        "expect_uses_repo_level_signals": "true",
+        "expect_uses_org_level_safety_signals": "false",
+        "expect_reports_branch_count_and_merge_split": "false",
+        "expect_reports_inactive_branch_threshold": "false",
+        "expect_reports_pr_pending_threshold": "true",
+        "expect_requires_preview_before_mutation": "false",
+        "expect_requires_exact_scope_confirmation": "false",
+        "required_terms": "48 hours,49,72"
+      }
+    },
+    {
+      "description": "org cleanup safety — preserves preview and exact-scope safeguards before destructive cleanup",
+      "vars": {
+        "eval_type": "user-behavior",
+        "failure_modes": "drops-preview-safeguard,drops-exact-scope-safeguard",
+        "user_prompt": "For an org-level cleanup pass, what safety obligations should the skill surface before anyone deletes or archives anything?",
+        "simulated_context": "- This is an org-level cleanup planning scenario.\n- The user is asking for safety guidance before destructive cleanup.\n- No exact scope has been approved yet.\n",
+        "expected_skill_path": "skills/maintaining-github-repos/SKILL.md",
+        "expect_is_prompt_driven_knowledge_skill": "true",
+        "expect_rejects_fixed_workflow_contract": "true",
+        "expect_uses_repo_level_signals": "false",
+        "expect_uses_org_level_safety_signals": "true",
+        "expect_reports_branch_count_and_merge_split": "false",
+        "expect_reports_inactive_branch_threshold": "false",
+        "expect_reports_pr_pending_threshold": "false",
+        "expect_requires_preview_before_mutation": "true",
+        "expect_requires_exact_scope_confirmation": "true",
+        "required_terms": "preview,exact scope,cleanup,safety"
+      }
+    }
+  ]
+}
