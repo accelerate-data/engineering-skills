@@ -1,6 +1,6 @@
 # Sheet Operations Reference
 
-Use this reference for all Google Sheets interactions in the `managing-user-flow` skill.
+Use this reference for all Google Sheets interactions in the `maintaining-user-flows` skill.
 Every operation (add, retire, rename, merge, split) follows these patterns.
 
 ## §1 Sheet Coordinates

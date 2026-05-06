@@ -4,7 +4,7 @@ description: Add a canonical user flow to the Flow Inventory sheet and create it
 
 # /add-flow
 
-Invoke `managing-user-flow` for the **add** operation.
+Invoke `maintaining-user-flows` for the **add** operation.
 
 ## Usage
 
@@ -13,7 +13,7 @@ Invoke `managing-user-flow` for the **add** operation.
 
 ## What this does
 
-Delegates to `Skill("managing-user-flow")` with operation = add. The skill:
+Delegates to `Skill("maintaining-user-flows")` with operation = add. The skill:
 
 1. Checks `gws auth status` and loads the current sheet and Linear labels.
 2. Validates that the canonical ID does not already exist in the sheet or Linear.

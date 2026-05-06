@@ -4,7 +4,7 @@ description: Split a canonical user flow into two new flows in the Flow Inventor
 
 # /split-flow
 
-Invoke `managing-user-flow` for the **split** operation.
+Invoke `maintaining-user-flows` for the **split** operation.
 
 ## Usage
 
@@ -12,7 +12,7 @@ Invoke `managing-user-flow` for the **split** operation.
 
 ## What this does
 
-Delegates to `Skill("managing-user-flow")` with operation = split. The skill:
+Delegates to `Skill("maintaining-user-flows")` with operation = split. The skill:
 
 1. Checks `gws auth status` and loads the current sheet and Linear labels.
 2. Validates that `<source-id>` exists and is not retired, and that both new IDs are unused.

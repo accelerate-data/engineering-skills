@@ -4,7 +4,7 @@ description: Rename a canonical user flow ID and title in the Flow Inventory she
 
 # /rename-flow
 
-Invoke `managing-user-flow` for the **rename** operation.
+Invoke `maintaining-user-flows` for the **rename** operation.
 
 ## Usage
 
@@ -13,7 +13,7 @@ Invoke `managing-user-flow` for the **rename** operation.
 
 ## What this does
 
-Delegates to `Skill("managing-user-flow")` with operation = rename. The skill:
+Delegates to `Skill("maintaining-user-flows")` with operation = rename. The skill:
 
 1. Checks `gws auth status` and loads the current sheet and Linear labels.
 2. Validates that `<old-id>` exists and is not retired, and that `<new-id>` is unused.

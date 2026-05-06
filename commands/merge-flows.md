@@ -4,7 +4,7 @@ description: Merge two canonical user flows into one in the Flow Inventory sheet
 
 # /merge-flows
 
-Invoke `managing-user-flow` for the **merge** operation.
+Invoke `maintaining-user-flows` for the **merge** operation.
 
 ## Usage
 
@@ -12,7 +12,7 @@ Invoke `managing-user-flow` for the **merge** operation.
 
 ## What this does
 
-Delegates to `Skill("managing-user-flow")` with operation = merge. The skill:
+Delegates to `Skill("maintaining-user-flows")` with operation = merge. The skill:
 
 1. Checks `gws auth status` and loads the current sheet and Linear labels.
 2. Validates that `<id-a>` and `<id-b>` both exist and are not retired, and that `<new-id>` is unused.

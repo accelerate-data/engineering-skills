@@ -1,8 +1,8 @@
-You are evaluating the `managing-user-flow` workflow for realistic flow-inventory maintenance requests.
+You are evaluating the `maintaining-user-flows` workflow for realistic flow-inventory maintenance requests.
 
 Parser contract: output only the final JSON object. Any analysis, preface, heading, markdown, or text before the opening `{` fails the eval. Do not think aloud. Do not trace the workflow. Do not explain field choices. Emit only the JSON object.
 
-Read `skills/managing-user-flow/SKILL.md` and any directly referenced materials needed for this scenario.
+Read `skills/maintaining-user-flows/SKILL.md` and any directly referenced materials needed for this scenario.
 
 This is a read-only workflow eval. Do not write to Google Sheets, do not call Linear tools, and do not perform external actions. All required sheet and Linear facts are supplied in the scenario and simulated context. If a required fact is missing, report that the fixture is incomplete instead of inventing it.
 

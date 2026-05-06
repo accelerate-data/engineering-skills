@@ -1,6 +1,6 @@
 # Rename Operation Reference
 
-Use this reference when `managing-user-flow` is invoked with `operation=rename`. Work through each section in order. Do not skip ahead to execution before validation and the Change Preview are complete.
+Use this reference when `maintaining-user-flows` is invoked with `operation=rename`. Work through each section in order. Do not skip ahead to execution before validation and the Change Preview are complete.
 
 ## §1 Validation
 

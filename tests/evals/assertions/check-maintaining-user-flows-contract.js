@@ -54,6 +54,6 @@ module.exports = (output, context) => {
   return {
     pass: true,
     score: 1,
-    reason: 'managing-user-flow skill contract matched expected workflow',
+    reason: 'maintaining-user-flows skill contract matched expected workflow',
   };
 };

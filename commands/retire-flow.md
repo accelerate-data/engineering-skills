@@ -4,7 +4,7 @@ description: Retire a canonical user flow in the Flow Inventory sheet and surfac
 
 # /retire-flow
 
-Invoke `managing-user-flow` for the **retire** operation.
+Invoke `maintaining-user-flows` for the **retire** operation.
 
 ## Usage
 
@@ -12,7 +12,7 @@ Invoke `managing-user-flow` for the **retire** operation.
 
 ## What this does
 
-Delegates to `Skill("managing-user-flow")` with operation = retire. The skill:
+Delegates to `Skill("maintaining-user-flows")` with operation = retire. The skill:
 
 1. Checks `gws auth status` and loads the current sheet and Linear labels.
 2. Validates that the canonical ID exists and is not already retired.

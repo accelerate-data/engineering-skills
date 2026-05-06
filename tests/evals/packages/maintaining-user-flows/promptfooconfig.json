@@ -1,16 +1,16 @@
 {
-  "description": "Managing-user-flow skill — flow inventory operations, confirmation gates, and post-write verification",
+  "description": "Maintaining-user-flows skill — flow inventory operations, confirmation gates, and post-write verification",
   "metadata": {
     "eval_tier": "standard"
   },
   "prompts": [
-    "file://../../prompts/skill-managing-user-flow.txt"
+    "file://../../prompts/skill-maintaining-user-flows.txt"
   ],
   "defaultTest": {
     "assert": [
       {
         "type": "javascript",
-        "value": "file://../../assertions/check-managing-user-flow-contract.js"
+        "value": "file://../../assertions/check-maintaining-user-flows-contract.js"
       }
     ]
   },

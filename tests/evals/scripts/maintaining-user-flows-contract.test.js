@@ -4,7 +4,7 @@ const path = require('node:path');
 const test = require('node:test');
 
 const REPO_ROOT = path.resolve(__dirname, '..', '..', '..');
-const SKILL_DIR = path.join(REPO_ROOT, 'skills', 'managing-user-flow');
+const SKILL_DIR = path.join(REPO_ROOT, 'skills', 'maintaining-user-flows');
 const SKILL_MD = path.join(SKILL_DIR, 'SKILL.md');
 const DRIFT_MD = path.join(SKILL_DIR, 'references', 'drift.md');
 const SHEET_OPS_MD = path.join(SKILL_DIR, 'references', 'sheet-ops.md');

@@ -1,5 +1,5 @@
 ---
-name: managing-user-flow
+name: maintaining-user-flows
 description: >-
   Use when adding, retiring, renaming, merging, splitting, or checking sync for
   a canonical user flow across the User-Flows-Details Sheet and Linear "User Flow" labels.
@@ -7,7 +7,7 @@ description: >-
 argument-hint: "add|retire|rename|merge|split|drift [canonical-id(s)]"
 ---
 
-# Managing User Flows
+# Maintaining User Flows
 
 ## When to Use
 

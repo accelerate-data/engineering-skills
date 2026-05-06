@@ -16,6 +16,7 @@
     "eval:adversarial-review": "npm --prefix tests/evals run eval:adversarial-review",
     "eval:explaining-code": "npm --prefix tests/evals run eval:explaining-code",
     "eval:yolo": "npm --prefix tests/evals run eval:yolo",
+    "eval:maintaining-user-flows": "npm --prefix tests/evals run eval:maintaining-user-flows",
     "eval:coverage": "npm --prefix tests/evals run eval:coverage",
     "eval:codex-compatibility": "npm --prefix tests/evals run eval:codex-compatibility",
     "check:eval-user-behavior": "npm --prefix tests/evals run check:eval-user-behavior",

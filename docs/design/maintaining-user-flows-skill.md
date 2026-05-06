@@ -1,4 +1,4 @@
-# managing-user-flows Skill — Design Document
+# maintaining-user-flows Skill — Design Document
 
 **Status:** Approved
 **Issue:** AD-31
@@ -8,7 +8,7 @@
 
 ## Background
 
-AD-31 ("Add flow inventory sync skill") and AD-43 ("managing-user-flow: new engineering-skills skill") were merged by design review. AD-31 is the surviving issue; AD-43 is closed as duplicate. This document is the canonical design incorporating all ACs from both issues.
+AD-31 ("Add flow inventory sync skill") and AD-43 ("maintaining-user-flows: new engineering-skills skill") were merged by design review. AD-31 is the surviving issue; AD-43 is closed as duplicate. This document is the canonical design incorporating all ACs from both issues.
 
 The two issues shared: five write operations (add, retire, rename, merge, split), a confirmation gate, `gws` CLI for sheet ops, Linear MCP for label management, and manual label archiving. AD-31 added drift detection and post-change verification; AD-43 contributed the engineering-skills file structure and plugin packaging requirements.
 
@@ -138,7 +138,7 @@ Never silently swallow a failure.
 ## File Structure
 
 ```text
-skills/managing-user-flows/
+skills/maintaining-user-flows/
   SKILL.md
   references/
     sheet-ops.md
@@ -160,7 +160,7 @@ commands/
 
 ```yaml
 ---
-name: managing-user-flows
+name: maintaining-user-flows
 description: >-
   Use when adding, retiring, renaming, merging, splitting, or checking sync for
   a canonical user flow across the User-Flows-Details Sheet and Linear "User Flow" labels.
@@ -189,7 +189,7 @@ User reviews and adjusts assignments, then confirms. The Change Preview follows 
 
 ### Skill structure
 
-- [ ] `skills/managing-user-flows/SKILL.md` exists with correct frontmatter, Phase 0 preamble, 6-operation routing table (add / retire / rename / merge / split / drift), confirmation gate contract, and safety rails
+- [ ] `skills/maintaining-user-flows/SKILL.md` exists with correct frontmatter, Phase 0 preamble, 6-operation routing table (add / retire / rename / merge / split / drift), confirmation gate contract, and safety rails
 - [ ] `references/sheet-ops.md` documents sheet constants, Phase 0 auth check, full-sheet read, canonical-ID lookup, cell update pattern, append-row pattern, and "never do this" constraints
 - [ ] Reference files exist for all 6 operations: `add.md`, `retire.md`, `rename.md`, `merge.md`, `split.md`, `drift.md`
 - [ ] Command wrappers exist for the 5 write operations: `add-flow.md`, `retire-flow.md`, `rename-flow.md`, `merge-flows.md`, `split-flow.md`
@@ -230,7 +230,7 @@ User reviews and adjusts assignments, then confirms. The Change Preview follows 
 
 - [ ] Both `.claude-plugin/plugin.json` and `.codex-plugin/plugin.json` are version-bumped in lockstep (minor bump)
 - [ ] `npm run validate:plugin-manifests` exits zero
-- [ ] `repo-map.json` updated: skills count incremented, `managing-user-flows` entry added
+- [ ] `repo-map.json` updated: skills count incremented, `maintaining-user-flows` entry added
 - [ ] All new `.md` files pass `markdownlint`
 
 ---

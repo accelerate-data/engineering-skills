@@ -128,7 +128,7 @@ Use these repo-local skills when requests match:
 - `skills/e2e-authoring-feature-file/SKILL.md` - author a new `.feature` file from scratch in a Playwright+Claude e2e harness (set `E2E_HARNESS_ROOT` when running from outside the harness)
 - `skills/e2e-extending-step-vocabulary/SKILL.md` - add a missing step pattern to `steps/*.md` in a Playwright+Claude e2e harness (set `E2E_HARNESS_ROOT` when running from outside the harness)
 - `skills/e2e-regenerating-from-guide/SKILL.md` - regenerate a `.feature` file from its user-guide source page via `./generate-features.sh` (set `E2E_HARNESS_ROOT` when running from outside the harness)
-- `skills/managing-user-flow/SKILL.md` - add, retire, rename, merge, or split a canonical user flow in the Flow Inventory sheet and its paired Linear "User Flow" label
+- `skills/maintaining-user-flows/SKILL.md` - add, retire, rename, merge, or split a canonical user flow in the Flow Inventory sheet and its paired Linear "User Flow" label
 
 ## Linear
 
