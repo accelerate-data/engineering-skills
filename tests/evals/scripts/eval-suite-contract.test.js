@@ -5,7 +5,6 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
 const test = require('node:test');
-const yaml = require('js-yaml');
 
 const EVAL_ROOT = path.resolve(__dirname, '..');
 const PACKAGE_ROOT = path.join(EVAL_ROOT, 'packages');
@@ -33,7 +32,18 @@ function collectPackageConfigs(rootDir) {
 }
 
 function readConfig(relativePath) {
-  return yaml.load(fs.readFileSync(path.join(EVAL_ROOT, relativePath), 'utf8'));
+  const filePath = path.join(EVAL_ROOT, relativePath);
+  const text = fs.readFileSync(filePath, 'utf8');
+
+  if (filePath.endsWith('.json')) {
+    return JSON.parse(text);
+  }
+
+  // Keep JSON-only worktrees dependency-free while still supporting YAML when
+  // the eval suite chooses to use it.
+  // eslint-disable-next-line global-require, import/no-dynamic-require
+  const yaml = require('js-yaml');
+  return yaml.load(text);
 }
 
 test('every package config declares a supported metadata.eval_tier', () => {

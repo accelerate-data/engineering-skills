@@ -198,7 +198,9 @@ test('raising-linear-pr contract requires reviewing committed code before AC che
     'raising-linear-pr skill must reference the dedicated design-conformance gate file',
   );
   assert.equal(
-    acGate.includes('Review the committed code, tests, and existing verification evidence first.'),
+    /Review the committed code, tests, and existing verification evidence first/.test(
+      acGate.replace(/\s+/g, ' '),
+    ),
     true,
     'raising-linear-pr AC gate reference must require committed-evidence review first',
   );
