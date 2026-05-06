@@ -25,7 +25,7 @@ Implement an existing Linear issue, but stop before PR creation. This skill owns
 | 3 | Read the Linear issue, and for Studio, Roadmap, and Utilities issues require a User Flow label plus matching `docs/functional/<User Flow label>/` folder |
 | 4 | Read the functional spec, search the codebase, find related design docs and implementation plans |
 | 5 | Apply pre-implementation handoffs from `references/discovery-and-routing.md` |
-| 6 | After discovery, self-assess complexity: if the issue touches 2+ modules, has 2+ viable implementation paths, or has sequencing risk across slices, ask the user once whether to brainstorm first; route to `superpowers:brainstorming` if yes, or if the user explicitly requests brainstorming, or if real unresolved forks remain |
+| 6 | Self-assess complexity after discovery and apply pre-implementation routing from `references/discovery-and-routing.md` |
 | 7 | For bugs, use `superpowers:systematic-debugging`, show root cause and proposed fix, then proceed only after confirmation |
 | 8 | Before invoking `superpowers:writing-plans`, invoke `writing-tests` to enumerate the complete test scenario set and produce a coverage map; simple confirmed single-module bug fixes that skip `writing-plans` also skip `writing-tests` |
 | 9 | Use `superpowers:writing-plans` for non-bug implementation, complex bug fixes, multi-module changes, refactors, or durable design work |
@@ -58,33 +58,6 @@ Implement an existing Linear issue, but stop before PR creation. This skill owns
 - Move `Todo` to `In Progress` and assign to `me`.
 - Move `In Review` back to `In Progress` before continuing.
 
-## Discovery Contract
-
-After branch and worktree setup (Steps 1–2), and before asking the user anything:
-A missing User Flow label or `docs/functional/` folder must not skip or prevent branch/worktree creation.
-
-- read the Linear issue description, comments, attachments, labels, and linked documents
-- identify the issue's Linear team
-- for Studio, Roadmap, and Utilities issues, stop if the issue is missing a User Flow label
-- for Studio, Roadmap, and Utilities issues, stop if the User Flow label does not have an exact matching folder at `docs/functional/<User Flow label>/`
-- for Studio, Roadmap, and Utilities issues, read the matching functional spec from that folder before the implementation plan is created
-- search the codebase
-- search `docs/design/` for related design documents
-- search `docs/plan/` for a related implementation plan
-
-For selected-team issues, include the functional spec path, related design-doc paths, and related implementation-plan path in the plan and every substantive Linear implementation update. For other teams, include related design-doc and implementation-plan paths when present, and record functional spec as `not_applicable`.
-
-## Implementation Contract
-
-- Use `superpowers:systematic-debugging` before fixing bugs, failures, flakiness, regressions, or unexpected behavior.
-- For bug fixes, show the root cause and proposed fix before editing the fix, and proceed only after the user confirms the issue and fix direction.
-- Simple confirmed bug fixes do not require a `superpowers:writing-plans` implementation plan. Use `superpowers:writing-plans` when the bug fix is complex, spans multiple modules, changes architecture, or has meaningful sequencing risk.
-- Use `superpowers:test-driven-development` when the implementation slice needs test-first behavior coverage. Bug fixes may use TDD or add a regression test after root-cause isolation when that is the safer fit.
-- Use `writing-tests` to enumerate test scenarios and produce a coverage map before invoking `superpowers:writing-plans`; simple confirmed single-module bug fixes that skip `writing-plans` also skip this step.
-- Use `superpowers:receiving-code-review` before applying quality-gate, human, or external review feedback.
-- Use `doc-skills:authoring-user-guide` when changed end-user UI, CLI, or documented workflow needs user-facing docs.
-- Stay within issue scope and stop if work escapes the ticket boundary.
-
 ## Completion Gates
 
 Before handoff:
@@ -103,7 +76,6 @@ Before handoff:
 - branch or worktree setup fails
 - User Flow label is missing from a Studio, Roadmap, or Utilities Linear issue
 - `docs/functional/<User Flow label>/` is missing for a Studio, Roadmap, or Utilities Linear issue
-- A spec/User-Flow stop on a Studio, Roadmap, or Utilities issue does not bypass execution-phase routing — once the spec gate is cleared, return to the normal routing decision for the approved plan
 - permanent file deletion or new external dependency is needed
 - unresolved architecture, product, security, data, migration, or interface fork
 - unresolved error after two attempts

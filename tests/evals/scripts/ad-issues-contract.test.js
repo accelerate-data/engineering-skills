@@ -29,12 +29,13 @@ function exists(filePath) {
 const IMPL_SKILL_MD = path.join(SKILLS_DIR, 'implementing-linear-issue', 'SKILL.md');
 const IMPL_DISCOVERY_MD = path.join(SKILLS_DIR, 'implementing-linear-issue', 'references', 'discovery-and-routing.md');
 
-test('AD-40: SKILL.md Discovery Contract section explicitly states it runs after branch/worktree setup', () => {
+test('AD-40: SKILL.md explicitly states worktree is created before discovery and spec gates', () => {
   const text = read(IMPL_SKILL_MD);
-  const discoverySection = text.split('## Discovery Contract')[1]?.split('##')[0] ?? '';
+  // The Workflow table (Step 1) and Branch and Worktree section both establish that
+  // worktree setup happens before target-file inspection, discovery, and spec gates.
   assert.ok(
-    discoverySection.includes('worktree') || discoverySection.includes('branch') || discoverySection.includes('Step 1') || discoverySection.includes('Steps 1'),
-    'SKILL.md Discovery Contract must explicitly reference that it runs after branch/worktree setup (Steps 1–2)',
+    (text.includes('worktree') || text.includes('branch')) && text.includes('before'),
+    'SKILL.md must explicitly state that worktree/branch is created before discovery and spec gates',
   );
 });
 

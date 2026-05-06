@@ -24,7 +24,8 @@
         "expect_searches_codebase_before_asking_user": "false",
         "expect_stops_if_functional_spec_missing": "true",
         "expect_creates_implementation_plan": "false",
-        "expect_creates_branch_and_worktree_first": "true"
+        "expect_creates_branch_and_worktree_first": "true",
+        "required_terms": "worktree"
       }
     },
     {
