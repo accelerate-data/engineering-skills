@@ -281,6 +281,7 @@ module.exports = (output, context) => {
     ['reads_git_branch_name_from_linear', parseExpectedBoolean(context.vars.expect_reads_git_branch_name_from_linear)],
     ['uses_worktree_script', parseExpectedBoolean(context.vars.expect_uses_worktree_script)],
     ['hands_off_to_writing_skills', parseExpectedBoolean(context.vars.expect_hands_off_to_writing_skills)],
+    ['uses_writing_skills_for_skill_content', parseExpectedBoolean(context.vars.expect_uses_writing_skills_for_skill_content)],
   ];
 
   for (const [field, expected] of checks) {

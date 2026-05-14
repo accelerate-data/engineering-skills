@@ -6,6 +6,7 @@ Use this reference during Phase 4 execution, after the routing decision is compl
 
 | Area | Rule |
 |---|---|
+| Skill or agent content | Use `superpowers:writing-skills` for progressive discovery, reference placement, repetition checks, and skill TDD discipline |
 | Implementation | Use `superpowers:test-driven-development` when the slice needs test-first behavior coverage |
 | Behavior changes | Start each slice with RED, then GREEN, then REFACTOR |
 | Bug fixes | May use TDD or add regression coverage after root-cause isolation when that is the safer fit |
@@ -14,9 +15,9 @@ Use this reference during Phase 4 execution, after the routing decision is compl
 | Slicing | Work in end-to-end slices that can be reviewed independently |
 | Commits | Create checkpoint commits after major green slices |
 
-## Quality Gates
+## Quality Gate Details
 
-Before handoff:
+The gate list lives in SKILL.md Phase 4 step 11. This reference provides runner and context details.
 
 | Gate | Runner | Context |
 |---|---|---|

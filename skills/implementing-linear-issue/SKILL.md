@@ -57,24 +57,24 @@ After discovery, evaluate the conditions below. **The first matching condition w
 | 2 | Functional behavior or product flow is missing, stale, or disputed | `authoring-functional-spec` |
 | 3 | Bug report, unexplained defect, reproduction failure, flaky behavior, regression, or unexpected test result | `superpowers:systematic-debugging` |
 | 4 | Durable architecture, data model, cross-service flow, security, migration, permissions, auditability, API/module boundary, or UI interaction contract is not covered | `authoring-design-spec` |
-| 5 | Issue targets skill or agent content (title/description/labels reference "skill", "agent", or "prompt"; target files under `skills/`, `.opencode/skills/`, `.opencode/agents/`; or work modifies a `SKILL.md`, agent prompt, or skill reference) | `superpowers:writing-skills` |
-| 6 | Issue asks to simplify, untangle, modularize, split, consolidate, or replace existing code without behavior change | `superpowers:writing-plans` |
-| 7 | Non-bug implementation, multi-module change, or complex bug fix is ready after hard gates and discovery | `writing-tests`, then `superpowers:writing-plans` |
-| 8 | Simple confirmed single-module bug fix with root cause isolated and fix direction confirmed by user | Phase 4 (skip step 9) |
+| 5 | Issue asks to simplify, untangle, modularize, split, consolidate, or replace existing code without behavior change | `superpowers:writing-plans` |
+| 6 | Non-bug implementation, multi-module change, or complex bug fix is ready after hard gates and discovery | `writing-tests`, then `superpowers:writing-plans` |
+| 7 | Simple confirmed single-module bug fix with root cause isolated and fix direction confirmed by user | Phase 4 (skip step 9) |
 
-After the invoked skill completes, proceed to Phase 4. Paths 1-4 return to this routing table for re-evaluation. Path 5 owns its own execution and skips Phase 4.
+After the invoked skill completes, proceed to Phase 4. Paths 1-4 return to this routing table for re-evaluation.
 
-### Phase 4: Execution (runs after the chosen path completes)
+### Phase 4: Execution
 
 | Step | Requirement |
 |---|---|
-| 9 | If a plan was created, route to `superpowers:subagent-driven-development` when it has 2+ tasks with no shared files and no ordering dependency; otherwise implement sequentially |
-| 10 | Implement using `references/implementation-quality.md`; use `superpowers:test-driven-development` where the slice needs test-first behavior coverage |
-| 11 | Update Linear with source traceability and AC status using `references/linear-update-and-handoff.md` |
-| 12 | Run required validation and independent subagent quality gates from `references/implementation-quality.md` |
-| 13 | Use `superpowers:receiving-code-review` before applying any quality-gate, human, or external review feedback |
-| 14 | Resolve verified feedback, update Linear, create the final implementation commit, and leave the worktree clean |
-| 15 | Stop with a clean worktree and hand off to `raising-linear-pr`; do not push or create a PR |
+| 9 | If a plan was created, route to `superpowers:subagent-driven-development` when it has 2+ tasks with no shared files and no ordering dependency; otherwise implement sequentially using `references/implementation-quality.md` |
+| 10 | Update Linear with source traceability and AC status using `references/linear-update-and-handoff.md` |
+| 11 | Run required validation and independent subagent quality gates: changed-area validation, affected skill evals, code review (`superpowers:requesting-code-review`), simplification review (`code-simplifier`), test coverage review (`superpowers:requesting-code-review`), and acceptance-criteria review |
+| 12 | Use `superpowers:receiving-code-review` before applying any quality-gate, human, or external review feedback |
+| 13 | Check off only completed acceptance criteria in the main Linear requirements section |
+| 14 | Post a final Linear implementation note that references the functional spec, related design documents, related implementation plan, verification, review outcomes, and remaining risks |
+| 15 | Create the final implementation commit and leave the worktree clean |
+| 16 | Stop with a clean worktree and hand off to `raising-linear-pr`; do not push or create a PR |
 
 ## Required References
 
@@ -97,19 +97,6 @@ After the invoked skill completes, proceed to Phase 4. Paths 1-4 return to this 
 - Stop on `Done`, `Cancelled`, or `Duplicate`.
 - Move `Todo` to `In Progress` and assign to `me`.
 - Move `In Review` back to `In Progress` before continuing.
-
-## Completion Gates
-
-Before handoff:
-
-- run changed-area validation and affected skill evals
-- run code review through `superpowers:requesting-code-review` as an independent subagent gate
-- run simplification review through `code-simplifier` as an independent subagent gate
-- run test coverage review through `superpowers:requesting-code-review` with a test-coverage-focused brief as an independent subagent gate
-- run acceptance-criteria review as an independent subagent gate
-- check off only completed acceptance criteria in the main Linear requirements section
-- post a final Linear implementation note that references the functional spec, related design documents, related implementation plan, verification, review outcomes, and remaining risks
-- create the final implementation commit and leave the worktree clean
 
 ## Stop Conditions
 

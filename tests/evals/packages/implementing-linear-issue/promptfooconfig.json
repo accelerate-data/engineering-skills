@@ -72,14 +72,14 @@
       }
     },
     {
-      "description": "natural request — complex architecture needs design doc handoff",
+      "description": "AD-51 — skill/agent changes use writing-skills as an implementation discipline",
       "vars": {
         "eval_type": "user-behavior",
-        "failure_modes": "misses-required-handoff,acts-before-reading-local-context",
-        "scenario": "- The user says: \"implement ENG-1043. This changes how tenant permissions are modeled across the API, jobs, and audit logs, so don't just patch it.\"\n- Simulated Linear metadata: team `Internal-IT`, project `Engineering Skills`, current status `Ready for Development`.\n- The Linear issue exists but has no linked design doc.\n- The issue has User Flow label `UF-Tenant-Permissions`, and `docs/functional/UF-Tenant-Permissions/README.md` exists.\n- Codebase review finds durable authorization and audit-log architecture decisions are missing.\n- This is a hard gate before implementation planning or implementation edits.\n- No implementation edits have started.",
-        "expect_searches_codebase_before_asking_user": "true",
-        "expect_hands_off_to_authoring_design_spec": "true",
-        "required_terms": "authoring-design-spec"
+        "failure_modes": "implements-skill-change-without-writing-skills,misses-skill-authoring-discipline",
+        "scenario": "- The user says: \"implement AD-51 — add a writing-skills handoff to the implementing-linear-issue skill for skill/agent changes.\"\n- Simulated Linear metadata: team `Accelerate Data`, project `Internal-IT`, current status `Backlog`.\n- The Linear issue title and description reference \"skill\" and \"writing-skills\".\n- The target files are `skills/implementing-linear-issue/SKILL.md` and `skills/implementing-linear-issue/references/discovery-and-routing.md`.\n- This is a skill authoring task: the work involves modifying an existing SKILL.md and adding a handoff rule.\n- During Phase 4 execution, the agent should use `superpowers:writing-skills` as an implementation discipline for skill/agent content, per the Coding Discipline rules in `references/implementation-quality.md`.\n- No branch or worktree exists yet.",
+        "expect_creates_branch_and_worktree_first": "true",
+        "expect_uses_writing_skills_for_skill_content": "true",
+        "required_terms": "writing-skills"
       }
     },
     {
