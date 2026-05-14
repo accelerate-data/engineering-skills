@@ -332,14 +332,186 @@
       }
     },
     {
-      "description": "AD-51 — skill/agent enhancement routes to writing-skills before implementation",
+      "description": "AD-51 — skill/agent changes use writing-skills as an implementation discipline",
       "vars": {
         "eval_type": "user-behavior",
-        "failure_modes": "misses-skill-authoring-handoff,implements-skill-change-without-writing-skills",
-        "scenario": "- The user says: \"implement AD-51 — add a writing-skills handoff to the implementing-linear-issue skill for skill/agent changes.\"\n- Simulated Linear metadata: team `Accelerate Data`, project `Internal-IT`, current status `Backlog`.\n- The Linear issue title and description reference \"skill\" and \"writing-skills\".\n- The target files are `skills/implementing-linear-issue/SKILL.md` and `skills/implementing-linear-issue/references/discovery-and-routing.md`.\n- This is a skill authoring task: the work involves modifying an existing SKILL.md and adding a handoff rule.\n- The skill should detect that the target content is skill/agent documentation and hand off to `superpowers:writing-skills` before writing-plans or implementation edits.\n- No branch or worktree exists yet.",
+        "failure_modes": "implements-skill-change-without-writing-skills,misses-skill-authoring-discipline",
+        "scenario": "- The user says: \"implement AD-51 — add a writing-skills handoff to the implementing-linear-issue skill for skill/agent changes.\"\n- Simulated Linear metadata: team `Accelerate Data`, project `Internal-IT`, current status `Backlog`.\n- The Linear issue title and description reference \"skill\" and \"writing-skills\".\n- The target files are `skills/implementing-linear-issue/SKILL.md` and `skills/implementing-linear-issue/references/discovery-and-routing.md`.\n- This is a skill authoring task: the work involves modifying an existing SKILL.md and adding a handoff rule.\n- During Phase 4 execution, the agent should use `superpowers:writing-skills` as an implementation discipline for skill/agent content, per the Coding Discipline rules in `references/implementation-quality.md`.\n- No branch or worktree exists yet.",
         "expect_creates_branch_and_worktree_first": "true",
-        "expect_hands_off_to_writing_skills": "true",
+        "expect_uses_writing_skills_for_skill_content": "true",
         "required_terms": "writing-skills"
+      }
+    },
+    {
+      "description": "worktree setup failure stops immediately before discovery",
+      "vars": {
+        "eval_type": "user-behavior",
+        "failure_modes": "continues-after-worktree-failure,edits-before-worktree",
+        "scenario": "- The user says: \"implement ENG-3001 — fix the export timeout.\"\n- Simulated Linear metadata: team `Internal-IT`, project `Engineering Skills`, current status `Ready for Development`.\n- The Linear issue has `gitBranchName` set to `feature/eng-3001-export-timeout`.\n- Worktree creation fails because the branch name contains an invalid character.\n- The skill must stop immediately at Phase 1 step 3 and report the exact failing command.\n- No discovery, routing, or implementation edits should occur.",
+        "expect_creates_branch_and_worktree_first": "true",
+        "expect_stops_on_branch_or_worktree_failure": "true",
+        "expect_searches_codebase_before_asking_user": "false",
+        "expect_creates_implementation_plan": "false"
+      }
+    },
+    {
+      "description": "missing referenced design doc routes through design handoff",
+      "vars": {
+        "eval_type": "user-behavior",
+        "failure_modes": "implements-without-design-doc,skips-design-handoff",
+        "scenario": "- The user says: \"implement ENG-3002 — add the new audit trail endpoint.\"\n- Simulated Linear metadata: team `Internal-IT`, project `Engineering Skills`, current status `Ready for Development`.\n- The Linear issue references a design document at `docs/design/audit-trail/README.md`.\n- Codebase and doc search find no file at that path.\n- The missing design doc is a hard context gap before implementation planning.",
+        "expect_searches_related_design_docs": "true",
+        "expect_hands_off_to_authoring_design_spec": "true",
+        "required_terms": "authoring-design-spec"
+      }
+    },
+    {
+      "description": "path 1-4 return to routing table after skill completes",
+      "vars": {
+        "eval_type": "user-behavior",
+        "failure_modes": "skips-rerouting-after-handoff,proceeds-directly-to-implementation",
+        "scenario": "- The user says: \"implement ENG-3003 for the new notification system.\"\n- Simulated Linear metadata: team `Internal-IT`, project `Engineering Skills`, current status `Ready for Development`.\n- The issue describes two viable notification strategies with no chosen path.\n- `superpowers:brainstorming` completes and selects the queue-based approach.\n- After brainstorming, the agent must return to the Phase 3 routing table for re-evaluation before proceeding to implementation.\n- No implementation edits have started.",
+        "expect_hands_off_to_brainstorming": "true",
+        "expect_uses_writing_plans_before_implementation": "true",
+        "required_terms": "brainstorming,writing-plans"
+      }
+    },
+    {
+      "description": "quality gates run all 6 independent checks before handoff",
+      "vars": {
+        "eval_type": "user-behavior",
+        "failure_modes": "skips-quality-gates,partial-quality-gates",
+        "scenario": "- The user says: \"implement ENG-3004 — add the report export feature.\"\n- Simulated Linear metadata: team `Internal-IT`, project `Engineering Skills`, current status `Ready for Development`.\n- Implementation is complete and all local validation passes.\n- The agent must run all 6 quality gates: changed-area validation, affected skill evals, code review, simplification review, test coverage review, and acceptance-criteria review.\n- No handoff until all gates pass.",
+        "expect_runs_required_validation": "true",
+        "expect_uses_independent_review_agents": "true",
+        "expect_runs_code_review": "true",
+        "expect_runs_simplification_review": "true",
+        "expect_runs_test_coverage_review": "true",
+        "expect_runs_acceptance_criteria_review": "true"
+      }
+    },
+    {
+      "description": "AC checkoff only marks completed criteria, not all",
+      "vars": {
+        "eval_type": "user-behavior",
+        "failure_modes": "checks-off-unproven-ac,marks-incomplete-ac-as-done",
+        "scenario": "- The user says: \"implement ENG-3005 — add bulk export to the dashboard.\"\n- Simulated Linear metadata: team `Internal-IT`, project `Engineering Skills`, current status `Ready for Development`.\n- The Linear issue has 5 acceptance criteria. Implementation covers 3 of them; 2 require additional backend work.\n- The agent must check off only the 3 completed criteria in the main Linear requirements section.\n- The 2 incomplete criteria must remain unchecked.",
+        "expect_checks_off_acceptance_criteria": "true",
+        "expect_checks_off_only_proven_acceptance_criteria": "true"
+      }
+    },
+    {
+      "description": "final implementation commit created before handoff",
+      "vars": {
+        "eval_type": "user-behavior",
+        "failure_modes": "no-final-commit,skips-final-commit",
+        "scenario": "- The user says: \"implement ENG-3006 — add the user preferences endpoint.\"\n- Simulated Linear metadata: team `Internal-IT`, project `Engineering Skills`, current status `Ready for Development`.\n- Implementation and all quality gates are complete.\n- The agent must create a final implementation commit before handing off to `raising-linear-pr`.",
+        "expect_creates_final_commit": "true"
+      }
+    },
+    {
+      "description": "boundary enforcement — no push, PR, or In Review from this phase",
+      "vars": {
+        "eval_type": "user-behavior",
+        "failure_modes": "pushes-from-implementation,moves-to-in-review-too-early,creates-pr-from-implementation",
+        "scenario": "- The user says: \"implement ENG-3007 and push it when done.\"\n- Simulated Linear metadata: team `Internal-IT`, project `Engineering Skills`, current status `Ready for Development`.\n- Implementation is complete and all quality gates pass.\n- The agent must stop before pushing, creating a PR, or moving the issue to `In Review`.\n- The next skill is `raising-linear-pr`.",
+        "expect_creates_pr": "false",
+        "expect_pushes_branch": "false",
+        "expect_moves_issue_to_in_review": "false"
+      }
+    },
+    {
+      "description": "existing tests read before changing",
+      "vars": {
+        "eval_type": "user-behavior",
+        "failure_modes": "changes-tests-without-reading,skips-existing-tests",
+        "scenario": "- The user says: \"implement ENG-3008 — update the export service retry logic.\"\n- Simulated Linear metadata: team `Internal-IT`, project `Engineering Skills`, current status `Ready for Development`.\n- The export service has existing tests in `src/services/export.test.ts`.\n- The agent must read existing tests before changing them or adding new ones.",
+        "expect_searches_codebase_before_asking_user": "true",
+        "required_terms": "existing tests"
+      }
+    },
+    {
+      "description": "checkpoint commits after major green slices",
+      "vars": {
+        "eval_type": "user-behavior",
+        "failure_modes": "single-monolithic-commit,skips-checkpoint-commits",
+        "scenario": "- The user says: \"implement ENG-3009 — add the notification preferences UI with 3 distinct sections.\"\n- Simulated Linear metadata: team `Internal-IT`, project `Engineering Skills`, current status `Ready for Development`.\n- The implementation plan defines 3 slices: email preferences, push preferences, and SMS preferences.\n- Each slice is independently reviewable and should have its own checkpoint commit.",
+        "expect_creates_checkpoint_commits": "true"
+      }
+    },
+    {
+      "description": "functional spec reconciliation for Studio skill/agent changes",
+      "vars": {
+        "eval_type": "user-behavior",
+        "failure_modes": "skips-spec-reconciliation-for-skill,ships-with-stale-spec",
+        "scenario": "- The user says: \"implement ENG-3010 — update the skill authoring documentation to include the new TDD workflow.\"\n- Simulated Linear metadata: team `Studio`, project `Engineering Skills`, current status `Ready for Development`.\n- The issue has User Flow label `UF-Skill-Authoring`, and `docs/functional/UF-Skill-Authoring/README.md` exists.\n- Implementation adds the TDD workflow to the skill documentation, which the functional spec does not describe.\n- After quality gates pass, the agent must compare as-built behavior against the functional spec and route to `authoring-functional-spec` if they diverge.",
+        "expect_updates_functional_spec_if_as_built_diverges": "true",
+        "required_terms": "authoring-functional-spec"
+      }
+    },
+    {
+      "description": "duplicate AC section prevention",
+      "vars": {
+        "eval_type": "user-behavior",
+        "failure_modes": "creates-duplicate-ac-section,duplicates-acceptance-criteria",
+        "scenario": "- The user says: \"implement ENG-3011 — add the dashboard caching layer.\"\n- Simulated Linear metadata: team `Internal-IT`, project `Engineering Skills`, current status `Ready for Development`.\n- The Linear issue already has an acceptance-criteria section in the main requirements.\n- The agent must not create a duplicate acceptance-criteria section when posting the final Linear implementation note.",
+        "expect_uses_generic_issue_linking_language": "false"
+      }
+    },
+    {
+      "description": "final status reports all required fields",
+      "vars": {
+        "eval_type": "user-behavior",
+        "failure_modes": "incomplete-final-status,missing-final-status-fields",
+        "scenario": "- The user says: \"implement ENG-3012 — add the webhook retry queue.\"\n- Simulated Linear metadata: team `Internal-IT`, project `Engineering Skills`, current status `Ready for Development`.\n- Implementation and all quality gates are complete.\n- The final Linear implementation note must report: branch name, worktree path, checkpoint commit SHAs, final implementation commit SHA, clean git status, verification run, source traceability paths, and remaining risks.",
+        "expect_posts_linear_note_with_tests_and_next_steps": "true",
+        "required_terms": "branch,worktree,commit,verification"
+      }
+    },
+    {
+      "description": "refactor behavior boundary defined before structural changes",
+      "vars": {
+        "eval_type": "user-behavior",
+        "failure_modes": "refactor-without-behavior-boundary,changes-behavior-during-refactor",
+        "scenario": "- The user says: \"implement ENG-3013 — untangle the payment module without changing behavior.\"\n- Simulated Linear metadata: team `Internal-IT`, project `Engineering Skills`, current status `Ready for Development`.\n- The issue asks to simplify, untangle, and modularize the payment module without behavior change.\n- The implementation plan must define what must not change from the user's perspective before structural changes begin.",
+        "expect_uses_writing_plans_before_implementation": "true",
+        "expect_creates_implementation_plan": "true",
+        "required_terms": "behavior"
+      }
+    },
+    {
+      "description": "refactor checkpoints are runnable and reviewable",
+      "vars": {
+        "eval_type": "user-behavior",
+        "failure_modes": "non-runnable-refactor-steps,unreviewable-refactor-checkpoints",
+        "scenario": "- The user says: \"implement ENG-3014 — break the monolithic importer into safe incremental steps.\"\n- Simulated Linear metadata: team `Internal-IT`, project `Engineering Skills`, current status `Ready for Development`.\n- The issue asks to split the importer into safe steps without behavior change.\n- Each checkpoint in the implementation plan must be independently runnable and reviewable.",
+        "expect_creates_implementation_plan": "true",
+        "expect_creates_checkpoint_commits": "true"
+      }
+    },
+    {
+      "description": "interface design execution routes to writing-plans after design spec",
+      "vars": {
+        "eval_type": "user-behavior",
+        "failure_modes": "implements-before-interface-design,skips-writing-plans-after-design",
+        "scenario": "- The user says: \"implement ENG-3015 — design and build the new settings API.\"\n- Simulated Linear metadata: team `Internal-IT`, project `Engineering Skills`, current status `Ready for Development`.\n- The issue asks for an API with no approved shape.\n- After `authoring-design-spec` produces the interface decision, the agent must route to `superpowers:writing-plans` before implementation.",
+        "expect_hands_off_to_authoring_design_spec": "true",
+        "expect_uses_writing_plans_before_implementation": "true",
+        "required_terms": "authoring-design-spec,writing-plans"
+      }
+    },
+    {
+      "description": "skill/agent work runs Phase 4 steps 10-16 after writing-skills",
+      "vars": {
+        "eval_type": "user-behavior",
+        "failure_modes": "skips-phase-4-for-skill-work,no-linear-update-for-skill",
+        "scenario": "- The user says: \"implement ENG-3016 — add the new code-simplifier skill documentation.\"\n- Simulated Linear metadata: team `Accelerate Data`, project `Internal-IT`, current status `Ready for Development`.\n- The issue targets creating a new skill under `skills/code-simplifier/`.\n- The agent uses `superpowers:writing-skills` as an implementation discipline.\n- After writing-skills completes, the agent must still run Phase 4 steps 10-16: Linear updates, quality gates, AC checkoff, final note, final commit, and handoff to `raising-linear-pr`.",
+        "expect_creates_branch_and_worktree_first": "true",
+        "expect_uses_writing_skills_for_skill_content": "true",
+        "expect_updates_linear_with_ac_status": "true",
+        "expect_posts_linear_note_with_tests_and_next_steps": "true",
+        "expect_creates_final_commit": "true",
+        "expect_creates_pr": "false"
       }
     }
   ]
