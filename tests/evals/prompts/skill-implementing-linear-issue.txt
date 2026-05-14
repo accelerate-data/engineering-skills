@@ -95,6 +95,7 @@ Return JSON only with this shape:
   "updates_functional_spec_if_as_built_diverges": <bool>,
   "reads_git_branch_name_from_linear": <bool>,
   "uses_worktree_script": <bool>,
+  "hands_off_to_writing_skills": <bool>,
   "notes": "string"
 }
 ```

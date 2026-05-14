@@ -26,17 +26,18 @@ Implement an existing Linear issue, but stop before PR creation. This skill owns
 | 4 | Read the Linear issue, and for Studio, Roadmap, and Utilities issues require a User Flow label plus matching `docs/functional/<User Flow label>/` folder |
 | 5 | Read the functional spec, search the codebase, find related design docs and implementation plans |
 | 6 | Apply pre-implementation handoffs from `references/discovery-and-routing.md` |
-| 7 | Self-assess complexity after discovery and apply pre-implementation routing from `references/discovery-and-routing.md` |
-| 8 | For bugs, use `superpowers:systematic-debugging`, show root cause and proposed fix, then proceed only after confirmation |
-| 9 | Before invoking `superpowers:writing-plans`, invoke `writing-tests` to enumerate the complete test scenario set and produce a coverage map; simple confirmed single-module bug fixes that skip `writing-plans` also skip `writing-tests` |
-| 10 | Use `superpowers:writing-plans` for non-bug implementation, complex bug fixes, multi-module changes, refactors, or durable design work |
-| 11 | After plan approval, route to `superpowers:subagent-driven-development` if the plan has 2+ tasks with no shared files and no ordering dependency; otherwise implement sequentially |
-| 12 | Implement using `references/implementation-quality.md`; use `superpowers:test-driven-development` where the slice needs test-first behavior coverage |
-| 13 | Update Linear with source traceability and AC status using `references/linear-update-and-handoff.md` |
-| 14 | Run required validation and independent subagent quality gates from `references/implementation-quality.md` |
-| 15 | Use `superpowers:receiving-code-review` before applying any quality-gate, human, or external review feedback |
-| 16 | Resolve verified feedback, update Linear, create the final implementation commit, and leave the worktree clean |
-| 17 | Stop with a clean worktree and hand off to `raising-linear-pr`; do not push or create a PR |
+| 7 | If the issue targets skill or agent content, hand off to `superpowers:writing-skills` before writing-plans or implementation edits |
+| 8 | Self-assess complexity after discovery and apply pre-implementation routing from `references/discovery-and-routing.md` |
+| 9 | For bugs, use `superpowers:systematic-debugging`, show root cause and proposed fix, then proceed only after confirmation |
+| 10 | Before invoking `superpowers:writing-plans`, invoke `writing-tests` to enumerate the complete test scenario set and produce a coverage map; simple confirmed single-module bug fixes that skip `writing-plans` also skip `writing-tests` |
+| 11 | Use `superpowers:writing-plans` for non-bug implementation, complex bug fixes, multi-module changes, refactors, or durable design work |
+| 12 | After plan approval, route to `superpowers:subagent-driven-development` if the plan has 2+ tasks with no shared files and no ordering dependency; otherwise implement sequentially |
+| 13 | Implement using `references/implementation-quality.md`; use `superpowers:test-driven-development` where the slice needs test-first behavior coverage |
+| 14 | Update Linear with source traceability and AC status using `references/linear-update-and-handoff.md` |
+| 15 | Run required validation and independent subagent quality gates from `references/implementation-quality.md` |
+| 16 | Use `superpowers:receiving-code-review` before applying any quality-gate, human, or external review feedback |
+| 17 | Resolve verified feedback, update Linear, create the final implementation commit, and leave the worktree clean |
+| 18 | Stop with a clean worktree and hand off to `raising-linear-pr`; do not push or create a PR |
 
 ## Required References
 
@@ -45,6 +46,7 @@ Implement an existing Linear issue, but stop before PR creation. This skill owns
 - [`references/linear-update-and-handoff.md`](references/linear-update-and-handoff.md) for Linear update content, source traceability, and handoff boundaries.
 - [`references/refactor-planning.md`](references/refactor-planning.md) when the issue requires a major refactor.
 - [`references/interface-design.md`](references/interface-design.md) when API, module, component, or UI interface design is unclear.
+- `superpowers:writing-skills` when the issue targets skill or agent content.
 
 ## Branch and Worktree
 

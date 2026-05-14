@@ -330,6 +330,17 @@
         "expect_creates_implementation_plan": "false",
         "expect_creates_branch_and_worktree_first": "true"
       }
+    },
+    {
+      "description": "AD-51 — skill/agent enhancement routes to writing-skills before implementation",
+      "vars": {
+        "eval_type": "user-behavior",
+        "failure_modes": "misses-skill-authoring-handoff,implements-skill-change-without-writing-skills",
+        "scenario": "- The user says: \"implement AD-51 — add a writing-skills handoff to the implementing-linear-issue skill for skill/agent changes.\"\n- Simulated Linear metadata: team `Accelerate Data`, project `Internal-IT`, current status `Backlog`.\n- The Linear issue title and description reference \"skill\" and \"writing-skills\".\n- The target files are `skills/implementing-linear-issue/SKILL.md` and `skills/implementing-linear-issue/references/discovery-and-routing.md`.\n- This is a skill authoring task: the work involves modifying an existing SKILL.md and adding a handoff rule.\n- The skill should detect that the target content is skill/agent documentation and hand off to `superpowers:writing-skills` before writing-plans or implementation edits.\n- No branch or worktree exists yet.",
+        "expect_creates_branch_and_worktree_first": "true",
+        "expect_hands_off_to_writing_skills": "true",
+        "required_terms": "writing-skills"
+      }
     }
   ]
 }
