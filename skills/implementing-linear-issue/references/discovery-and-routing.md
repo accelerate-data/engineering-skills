@@ -34,7 +34,7 @@ Apply hard gates before implementation in this order:
 | Bug report, unexplained defect, reproduction failure, flaky behavior, regression, or unexpected test result | `superpowers:systematic-debugging`; show root cause and proposed fix, then proceed only after confirmation |
 | Durable architecture, data model, cross-service flow, security, migration, permissions, auditability, API/module boundary, or UI interaction contract is not covered | `authoring-design-spec` |
 | Issue touches 2+ modules, has 2+ viable implementation paths, or has meaningful sequencing risk across slices | Self-assess; ask the user once: "This looks complex because [X] — do you want to brainstorm the approach first?"; if yes → `superpowers:brainstorming`; if no → continue |
-| Issue targets skill or agent content (title/description/labels reference "skill", "agent", or "prompt"; changed files under `skills/`, `.opencode/skills/`, `.opencode/agents/`; or work modifies a `SKILL.md`, agent prompt, or skill reference) | `superpowers:writing-skills` |
+| Issue targets skill or agent content (title/description/labels reference "skill", "agent", or "prompt" or work modifies a `SKILL.md`, agent prompt, or skill reference) | `superpowers:writing-skills` |
 | Non-bug implementation is ready after hard gates and discovery | `superpowers:writing-plans` |
 | Simple bug fix is confirmed after systematic debugging | Proceed directly if no plan-worthy complexity remains |
 | Complex bug fix is confirmed after systematic debugging | `superpowers:writing-plans` |
