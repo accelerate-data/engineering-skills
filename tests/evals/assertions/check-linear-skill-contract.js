@@ -278,6 +278,8 @@ module.exports = (output, context) => {
     ],
     ['ignores_past_milestones', parseExpectedBoolean(context.vars.expect_ignores_past_milestones)],
     ['asks_user_to_choose_milestone', parseExpectedBoolean(context.vars.expect_asks_user_to_choose_milestone)],
+    ['reads_git_branch_name_from_linear', parseExpectedBoolean(context.vars.expect_reads_git_branch_name_from_linear)],
+    ['uses_worktree_script', parseExpectedBoolean(context.vars.expect_uses_worktree_script)],
   ];
 
   for (const [field, expected] of checks) {
