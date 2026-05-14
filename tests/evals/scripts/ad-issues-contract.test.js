@@ -27,7 +27,6 @@ function exists(filePath) {
 // ============================================================================
 
 const IMPL_SKILL_MD = path.join(SKILLS_DIR, 'implementing-linear-issue', 'SKILL.md');
-const IMPL_DISCOVERY_MD = path.join(SKILLS_DIR, 'implementing-linear-issue', 'references', 'discovery-and-routing.md');
 
 test('AD-40: SKILL.md explicitly states worktree is created before discovery and spec gates', () => {
   const text = read(IMPL_SKILL_MD);
@@ -48,11 +47,11 @@ test('AD-40: SKILL.md states that a missing spec or User Flow label must not ski
   );
 });
 
-test('AD-40: discovery-and-routing.md states it is used after branch/worktree setup', () => {
-  const text = read(IMPL_DISCOVERY_MD);
+test('AD-40: SKILL.md Phase 2 discovery states it runs after branch/worktree setup', () => {
+  const text = read(IMPL_SKILL_MD);
   assert.ok(
-    text.includes('after branch/worktree setup') || text.includes('after branch and worktree'),
-    'discovery-and-routing.md must state it is used after branch/worktree setup',
+    text.includes('Phase 2: Discovery') && (text.includes('Phase 1: Setup') || text.includes('after branch/worktree')),
+    'SKILL.md must order Phase 2 discovery after Phase 1 branch/worktree setup',
   );
 });
 
