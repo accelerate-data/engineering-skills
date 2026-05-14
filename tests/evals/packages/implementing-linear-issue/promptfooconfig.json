@@ -307,6 +307,18 @@
       }
     },
     {
+      "description": "AD-48 — skill reads gitBranchName from Linear issue and creates worktree via script before implementation",
+      "vars": {
+        "eval_type": "user-behavior",
+        "failure_modes": "skips-git-branch-name-lookup,creates-worktree-with-wrong-path,edits-before-worktree",
+        "scenario": "- The user says: \"implement AD-48 — the implementing-linear-issue skill is missing the worktree setup step.\"\n- Simulated Linear metadata: team `Accelerate Data`, project `Internal-IT`, current status `Backlog`.\n- The Linear issue has `gitBranchName` set to `feature/ad-48-implementing-linear-issue-skill-missing-worktree-setup-step`.\n- The issue is a skill documentation fix; no codebase implementation edits are needed beyond the skill file.\n- The skill must read the `gitBranchName` field from the Linear issue metadata before any work begins.\n- The skill must create the worktree at `../worktrees/<branchName>` using `./scripts/worktree.sh <branchName>` from the repo root.\n- No branch or worktree exists yet.",
+        "expect_reads_git_branch_name_from_linear": "true",
+        "expect_creates_branch_and_worktree_first": "true",
+        "expect_uses_worktree_script": "true",
+        "required_terms": "gitBranchName,worktree.sh"
+      }
+    },
+    {
       "description": "natural request — missing User Flow label stops before planning; worktree still created first",
       "vars": {
         "eval_type": "user-behavior",

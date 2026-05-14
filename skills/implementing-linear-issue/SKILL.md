@@ -20,22 +20,23 @@ Implement an existing Linear issue, but stop before PR creation. This skill owns
 
 | Step | Requirement |
 |---|---|
-| 1 | Create or reuse the issue branch and worktree before target-file inspection or edits |
-| 2 | Stop immediately if branch or worktree setup fails |
-| 3 | Read the Linear issue, and for Studio, Roadmap, and Utilities issues require a User Flow label plus matching `docs/functional/<User Flow label>/` folder |
-| 4 | Read the functional spec, search the codebase, find related design docs and implementation plans |
-| 5 | Apply pre-implementation handoffs from `references/discovery-and-routing.md` |
-| 6 | Self-assess complexity after discovery and apply pre-implementation routing from `references/discovery-and-routing.md` |
-| 7 | For bugs, use `superpowers:systematic-debugging`, show root cause and proposed fix, then proceed only after confirmation |
-| 8 | Before invoking `superpowers:writing-plans`, invoke `writing-tests` to enumerate the complete test scenario set and produce a coverage map; simple confirmed single-module bug fixes that skip `writing-plans` also skip `writing-tests` |
-| 9 | Use `superpowers:writing-plans` for non-bug implementation, complex bug fixes, multi-module changes, refactors, or durable design work |
-| 10 | After plan approval, route to `superpowers:subagent-driven-development` if the plan has 2+ tasks with no shared files and no ordering dependency; otherwise implement sequentially |
-| 11 | Implement using `references/implementation-quality.md`; use `superpowers:test-driven-development` where the slice needs test-first behavior coverage |
-| 12 | Update Linear with source traceability and AC status using `references/linear-update-and-handoff.md` |
-| 13 | Run required validation and independent subagent quality gates from `references/implementation-quality.md` |
-| 14 | Use `superpowers:receiving-code-review` before applying any quality-gate, human, or external review feedback |
-| 15 | Resolve verified feedback, update Linear, create the final implementation commit, and leave the worktree clean |
-| 16 | Stop with a clean worktree and hand off to `raising-linear-pr`; do not push or create a PR |
+| 1 | Read the Linear issue to retrieve `gitBranchName` from the issue metadata |
+| 2 | Create or checkout the worktree at `../worktrees/<branchName>` using `./scripts/worktree.sh <branchName>` from the repo root |
+| 3 | Stop immediately if branch or worktree setup fails |
+| 4 | Read the Linear issue, and for Studio, Roadmap, and Utilities issues require a User Flow label plus matching `docs/functional/<User Flow label>/` folder |
+| 5 | Read the functional spec, search the codebase, find related design docs and implementation plans |
+| 6 | Apply pre-implementation handoffs from `references/discovery-and-routing.md` |
+| 7 | Self-assess complexity after discovery and apply pre-implementation routing from `references/discovery-and-routing.md` |
+| 8 | For bugs, use `superpowers:systematic-debugging`, show root cause and proposed fix, then proceed only after confirmation |
+| 9 | Before invoking `superpowers:writing-plans`, invoke `writing-tests` to enumerate the complete test scenario set and produce a coverage map; simple confirmed single-module bug fixes that skip `writing-plans` also skip `writing-tests` |
+| 10 | Use `superpowers:writing-plans` for non-bug implementation, complex bug fixes, multi-module changes, refactors, or durable design work |
+| 11 | After plan approval, route to `superpowers:subagent-driven-development` if the plan has 2+ tasks with no shared files and no ordering dependency; otherwise implement sequentially |
+| 12 | Implement using `references/implementation-quality.md`; use `superpowers:test-driven-development` where the slice needs test-first behavior coverage |
+| 13 | Update Linear with source traceability and AC status using `references/linear-update-and-handoff.md` |
+| 14 | Run required validation and independent subagent quality gates from `references/implementation-quality.md` |
+| 15 | Use `superpowers:receiving-code-review` before applying any quality-gate, human, or external review feedback |
+| 16 | Resolve verified feedback, update Linear, create the final implementation commit, and leave the worktree clean |
+| 17 | Stop with a clean worktree and hand off to `raising-linear-pr`; do not push or create a PR |
 
 ## Required References
 
