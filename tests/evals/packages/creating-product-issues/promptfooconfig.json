@@ -36,7 +36,7 @@
         "expect_proposes_user_flow_child_label": "true",
         "expect_reads_functional_spec_before_issue_creation": "true",
         "expect_confirms_critical_fields_with_user": "true",
-        "expect_creates_issue_before_plan_approval": "false",
+        "expect_creates_issue_without_draft_approval": "false",
         "expect_issue_body_references_functional_spec": "true"
       }
     },
@@ -50,7 +50,7 @@
         "expected_team_name": "Finance",
         "expect_team_in_allowlist": "false",
         "expect_stops_on_off_list_team": "true",
-        "expect_creates_issue_before_plan_approval": "false",
+        "expect_creates_issue_without_draft_approval": "false",
         "expect_sets_project": "false",
         "expect_sets_milestone": "false",
         "expect_sets_cycle": "false"
@@ -85,7 +85,7 @@
         "expect_team_in_allowlist": "true",
         "expect_uses_brainstorming_for_non_trivial_feature": "true",
         "expect_uses_issue_breakdown_reference": "true",
-        "expect_creates_issue_before_plan_approval": "false"
+        "expect_creates_issue_without_draft_approval": "false"
       }
     },
     {
@@ -99,7 +99,7 @@
         "expect_team_in_allowlist": "true",
         "expect_proposes_user_flow_child_label": "true",
         "expect_lists_close_alternatives_in_confirmation": "true",
-        "expect_creates_issue_before_plan_approval": "false"
+        "expect_creates_issue_without_draft_approval": "false"
       }
     },
     {
@@ -112,8 +112,7 @@
         "expected_team_name": "Utilities",
         "expect_team_in_allowlist": "true",
         "expect_looks_up_linear_user_by_email": "true",
-        "expect_stops_on_owner_email_lookup_failure": "true",
-        "expect_creates_issue_before_plan_approval": "false"
+        "expect_stops_on_owner_email_lookup_failure": "true"
       }
     }
   ]
