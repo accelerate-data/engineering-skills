@@ -1,0 +1,60 @@
+{
+  "description": "Implementing-linear-issue skill — Phase 3 routing: debugging and design spec",
+  "metadata": {
+    "eval_tier": "high"
+  },
+  "prompts": [
+    "file://../../prompts/skill-implementing-linear-issue.txt"
+  ],
+  "defaultTest": {
+    "assert": [
+      {
+        "type": "javascript",
+        "value": "file://../../assertions/check-linear-skill-contract.js"
+      }
+    ]
+  },
+  "tests": [
+    {
+      "description": "[smoke] natural request — bug issue needs systematic debugging before fix",
+      "vars": {
+        "user_prompt": "fix ENG-1047. Users get a 500 when they export after filtering by owner.",
+        "simulated_context": "- Simulated Linear metadata: team `Internal-IT`, project `Engineering Skills`, current status `Ready for Development`.\n- The Linear issue is a bug report with a production symptom but no root cause identified yet.\n- The issue has User Flow label `UF-Exports`, and `docs/functional/UF-Exports/README.md` exists.\n- Codebase review finds likely export and filter code paths, but the failing condition has not been reproduced or isolated.\n- No implementation edits have started.",
+        "eval_type": "user-behavior",
+        "failure_modes": "misses-required-handoff,premature-success-claim",
+        "scenario": "Evaluate the next workflow obligations from the user prompt and simulated context above.",
+        "required_terms": "systematic-debugging"
+      }
+    },
+    {
+      "description": "natural request — flaky test issue routes to systematic debugging",
+      "vars": {
+        "eval_type": "user-behavior",
+        "failure_modes": "misses-required-handoff,implements-before-debugging",
+        "scenario": "- The user says: \"fix ENG-1044 — the export test is flaky and fails intermittently.\"\n- Simulated Linear metadata: team `Internal-IT`, project `Engineering Skills`, current status `Ready for Development`.\n- The Linear issue is a bug report about flaky test behavior.\n- The issue has User Flow label `UF-Exports`, and `docs/functional/UF-Exports/README.md` exists.\n- Codebase review finds the export service and its tests, but the root cause of the flakiness is unknown.\n- No implementation edits have started.",
+        "required_terms": "systematic-debugging"
+      }
+    },
+    {
+      "description": "natural request — UI work with no approved interface needs design spec before coding",
+      "vars": {
+        "eval_type": "user-behavior",
+        "failure_modes": "misses-required-handoff,acts-before-reading-local-context",
+        "scenario": "- The user says: \"implement ENG-1046. Add the new settings panel UI.\"\n- Simulated Linear metadata: team `Internal-IT`, project `Engineering Skills`, current status `Ready for Development`.\n- The Linear issue exists but does not define the settings panel states, interactions, or component contract.\n- The issue has User Flow label `UF-Settings-Panel`, and `docs/functional/UF-Settings-Panel/README.md` exists.\n- Codebase review finds this affects the settings page, shared form components, and persisted preferences.\n- No design doc exists for the settings panel UI interaction contract.\n- No implementation edits have started.",
+        "expect_hands_off_to_authoring_design_spec": "true",
+        "required_terms": "authoring-design-spec"
+      }
+    },
+    {
+      "description": "interface design execution routes to writing-plans after design spec",
+      "vars": {
+        "eval_type": "user-behavior",
+        "failure_modes": "implements-before-interface-design,skips-writing-plans-after-design",
+        "scenario": "- The user says: \"implement ENG-3015 — design and build the new settings API.\"\n- Simulated Linear metadata: team `Internal-IT`, project `Engineering Skills`, current status `Ready for Development`.\n- The issue asks for an API with no approved shape.\n- After `authoring-design-spec` completes and produces the interface decision, the agent re-evaluates the routing table.\n- The issue is now a multi-module implementation with a chosen path, matching Priority 6.",
+        "expect_uses_writing_tests_before_plan": "true",
+        "expect_uses_writing_plans_before_implementation": "true",
+        "required_terms": "writing-tests,writing-plans"
+      }
+    }
+  ]
+}

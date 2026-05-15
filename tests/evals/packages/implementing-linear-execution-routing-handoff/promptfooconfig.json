@@ -1,0 +1,81 @@
+{
+  "description": "Implementing-linear-issue skill — Phase 4 execution: subagent routing, handoff boundaries, and final note shape",
+  "metadata": {
+    "eval_tier": "high"
+  },
+  "prompts": [
+    "file://../../prompts/skill-implementing-linear-issue.txt"
+  ],
+  "defaultTest": {
+    "assert": [
+      {
+        "type": "javascript",
+        "value": "file://../../assertions/check-linear-skill-contract.js"
+      }
+    ]
+  },
+  "tests": [
+    {
+      "description": "[smoke] AD-41 — plan with 2+ independent tasks routes to subagent-driven-development",
+      "vars": {
+        "eval_type": "user-behavior",
+        "failure_modes": "misses-subagent-driven-routing,implements-sequentially-despite-independent-tasks",
+        "scenario": "- The user says: \"implement ENG-2010 — add audit logging to three separate API endpoints.\"\n- Simulated Linear metadata: team `Internal-IT`, project `Engineering Skills`, current status `Ready for Development`.\n- The issue has User Flow label `UF-Audit`, and `docs/functional/UF-Audit/README.md` exists.\n- `superpowers:writing-plans` has produced an approved implementation plan.\n- The plan has three tasks: add audit logging to `/api/users`, `/api/reports`, and `/api/exports`.\n- Each task touches a distinct file with no shared state and no ordering dependency between them.\n- No implementation edits have started.",
+        "expect_routes_to_subagent_driven_development": "true",
+        "expect_creates_branch_and_worktree_first": "true",
+        "required_terms": "subagent"
+      }
+    },
+    {
+      "description": "AD-41 — plan with shared-file sequential tasks implements sequentially without subagent routing",
+      "vars": {
+        "eval_type": "user-behavior",
+        "failure_modes": "over-routes-to-subagent-driven,routes-when-tasks-are-not-independent",
+        "scenario": "- The user says: \"implement ENG-2011 — refactor the payment processor to support multi-currency.\"\n- Simulated Linear metadata: team `Internal-IT`, project `Engineering Skills`, current status `Ready for Development`.\n- The issue has User Flow label `UF-Payments`, and `docs/functional/UF-Payments/README.md` exists.\n- `superpowers:writing-plans` has produced an approved implementation plan.\n- The plan has three tasks: update the currency model, update the processor to use the new model, then update the reconciler to use the updated processor.\n- Each task depends on the previous task's output; they share `src/payments/currency.ts` and cannot be reviewed independently.",
+        "expect_routes_to_subagent_driven_development": "false",
+        "expect_creates_branch_and_worktree_first": "true"
+      }
+    },
+    {
+      "description": "AD-41 — Studio issue with approved plan and independent tasks routes to subagent-driven-development",
+      "vars": {
+        "eval_type": "user-behavior",
+        "failure_modes": "skips-execution-routing-after-spec-stop,never-routes-to-subagent-driven-after-spec-gate",
+        "scenario": "- The user says: \"implement ENG-2012 — add bulk tagging to the asset library.\"\n- Simulated Linear metadata: team `Studio`, project `Engineering Skills`, current status `Ready for Development`.\n- The issue has User Flow label `UF-Asset-Library`, and `docs/functional/UF-Asset-Library/` exists.\n- The required functional spec folder already exists, so no User Flow or functional-spec hard gate is blocking execution routing.\n- `superpowers:writing-plans` has produced an approved implementation plan with three tasks: update the asset selection UI, add the tagging API endpoint, and update the asset index — each touching distinct files with no ordering dependency.\n- The next workflow obligation is the execution routing decision for that approved plan.\n- No implementation edits have started.",
+        "expect_routes_to_subagent_driven_development": "true",
+        "expect_creates_branch_and_worktree_first": "true",
+        "required_terms": "subagent"
+      }
+    },
+    {
+      "description": "boundary enforcement — no push, PR, or In Review from this phase",
+      "vars": {
+        "eval_type": "user-behavior",
+        "failure_modes": "pushes-from-implementation,moves-to-in-review-too-early,creates-pr-from-implementation",
+        "scenario": "- The user says: \"implement ENG-3007 and push it when done.\"\n- Simulated Linear metadata: team `Internal-IT`, project `Engineering Skills`, current status `Ready for Development`.\n- Implementation is complete and all quality gates pass.\n- The agent must stop before pushing, creating a PR, or moving the issue to `In Review`.\n- The next skill is `raising-linear-pr`.",
+        "expect_creates_pr": "false",
+        "expect_pushes_branch": "false",
+        "expect_moves_issue_to_in_review": "false"
+      }
+    },
+    {
+      "description": "duplicate AC section prevention",
+      "vars": {
+        "eval_type": "user-behavior",
+        "failure_modes": "creates-duplicate-ac-section,duplicates-acceptance-criteria",
+        "scenario": "- The user says: \"implement ENG-3011 — add the dashboard caching layer.\"\n- Simulated Linear metadata: team `Internal-IT`, project `Engineering Skills`, current status `Ready for Development`.\n- The Linear issue already has an acceptance-criteria section in the main requirements.\n- The agent must not create a duplicate acceptance-criteria section when posting the final Linear implementation note.",
+        "expect_uses_generic_issue_linking_language": "false"
+      }
+    },
+    {
+      "description": "final status reports all required fields",
+      "vars": {
+        "eval_type": "user-behavior",
+        "failure_modes": "incomplete-final-status,missing-final-status-fields",
+        "scenario": "- The user says: \"implement ENG-3012 — add the webhook retry queue.\"\n- Simulated Linear metadata: team `Internal-IT`, project `Engineering Skills`, current status `Ready for Development`.\n- Implementation and all quality gates are complete.\n- The final Linear implementation note must report: branch name, worktree path, checkpoint commit SHAs, final implementation commit SHA, clean git status, verification run, source traceability paths, and remaining risks.",
+        "expect_posts_linear_note_with_tests_and_next_steps": "true",
+        "required_terms": "branch,worktree,commit"
+      }
+    }
+  ]
+}

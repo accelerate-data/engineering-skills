@@ -1,0 +1,85 @@
+{
+  "description": "Implementing-linear-issue skill — Phase 3 routing: brainstorming and functional spec handoffs",
+  "metadata": {
+    "eval_tier": "high"
+  },
+  "prompts": [
+    "file://../../prompts/skill-implementing-linear-issue.txt"
+  ],
+  "defaultTest": {
+    "assert": [
+      {
+        "type": "javascript",
+        "value": "file://../../assertions/check-linear-skill-contract.js"
+      }
+    ]
+  },
+  "tests": [
+    {
+      "description": "[smoke] natural request — user asks to think through approach before implementing",
+      "vars": {
+        "user_prompt": "implement ENG-1041, but think through the approach with me before you start coding.",
+        "simulated_context": "- Simulated Linear metadata: team `Internal-IT`, project `Engineering Skills`, current status `Ready for Development`.\n- The Linear issue exists and describes a normal backend behavior change.\n- The issue has User Flow label `UF-Notification-Rules`, and `docs/functional/UF-Notification-Rules/README.md` exists.\n- Codebase review can identify the likely files and no design doc gap is evident.\n- The issue touches one module.\n- No implementation edits have started.",
+        "eval_type": "user-behavior",
+        "failure_modes": "implements-before-brainstorming,acts-before-reading-local-context",
+        "scenario": "Evaluate the next workflow obligations from the user prompt and simulated context above. The user explicitly asks to think through the approach, which matches Priority 1 in the routing table.",
+        "expect_hands_off_to_brainstorming": "true",
+        "required_terms": "brainstorming"
+      }
+    },
+    {
+      "description": "natural request — stale product behavior needs functional spec handoff",
+      "vars": {
+        "eval_type": "user-behavior",
+        "failure_modes": "skips-functional-spec,misses-required-handoff",
+        "scenario": "- The user says: \"implement ENG-1052 for saved exports, but the issue and the user flow doc disagree about what happens after the export expires.\"\n- Simulated Linear metadata: team `Internal-IT`, project `Engineering Skills`, current status `Ready for Development`.\n- The Linear issue exists and has User Flow label `UF-Saved-Exports`.\n- `docs/functional/UF-Saved-Exports/README.md` exists, but it conflicts with the issue acceptance criteria — the functional behavior is disputed.\n- Codebase review finds likely export-history files, but product behavior is stale or disputed.\n- No implementation edits have started.\n- This matches Priority 2 in the routing table: functional behavior is disputed between the issue and the user flow doc.",
+        "expect_hands_off_to_authoring_functional_spec": "true",
+        "required_terms": "authoring-functional-spec"
+      }
+    },
+    {
+      "description": "AD-35 — multi-module issue with 2+ strategies triggers brainstorming handoff",
+      "vars": {
+        "eval_type": "user-behavior",
+        "failure_modes": "skips-complexity-assessment,implements-before-brainstorming",
+        "scenario": "- The user says: \"implement ENG-2001 for the new notification routing system.\"\n- Simulated Linear metadata: team `Internal-IT`, project `Engineering Skills`, current status `Ready for Development`.\n- The Linear issue has User Flow label `UF-Notifications`, and `docs/functional/UF-Notifications/README.md` exists.\n- Codebase review shows the work spans `src/notifications/router`, `src/workers/delivery`, and `src/app/settings/notifications` — three distinct modules.\n- The issue describes two viable delivery strategies (push vs. queue-based) with no chosen path.\n- No implementation edits have started.",
+        "expect_hands_off_to_brainstorming": "true",
+        "expect_creates_branch_and_worktree_first": "true",
+        "required_terms": "brainstorming"
+      }
+    },
+    {
+      "description": "AD-35 — single-module obvious issue does not trigger brainstorming",
+      "vars": {
+        "eval_type": "user-behavior",
+        "failure_modes": "over-routes-to-brainstorming,adds-unnecessary-friction",
+        "scenario": "- The user says: \"implement ENG-2002 — add a missing null check in the user serializer.\"\n- Simulated Linear metadata: team `Internal-IT`, project `Engineering Skills`, current status `Ready for Development`.\n- The issue has User Flow label `UF-User-Profile`, and `docs/functional/UF-User-Profile/README.md` exists.\n- Codebase review finds a single file `src/serializers/user.ts` with one clear fix location.\n- There is one obvious fix path: add a null guard before the property access.\n- No implementation edits have started.",
+        "expect_hands_off_to_brainstorming": "false",
+        "expect_creates_branch_and_worktree_first": "true"
+      }
+    },
+    {
+      "description": "AD-35 — user declines brainstorming, skill routes to writing-tests then writing-plans",
+      "vars": {
+        "eval_type": "user-behavior",
+        "failure_modes": "ignores-user-no-answer,routes-to-brainstorming-anyway",
+        "scenario": "- The user says: \"implement ENG-2003 for the caching layer. I know it touches a few modules but just implement it — no need to brainstorm.\"\n- Simulated Linear metadata: team `Internal-IT`, project `Engineering Skills`, current status `Ready for Development`.\n- The issue has User Flow label `UF-Cache`, and `docs/functional/UF-Cache/README.md` exists.\n- Codebase review shows the work spans `src/cache/store` and `src/api/middleware` — two modules.\n- The user's message pre-empts the complexity question: they have explicitly declined brainstorming upfront.\n- The skill must treat the user's statement as an answer and not route to brainstorming.\n- No implementation edits have started.",
+        "expect_hands_off_to_brainstorming": "false",
+        "expect_uses_writing_tests_before_plan": "true",
+        "expect_uses_writing_plans_before_implementation": "true",
+        "expect_creates_branch_and_worktree_first": "true"
+      }
+    },
+    {
+      "description": "path 1-4 return to routing table after skill completes",
+      "vars": {
+        "eval_type": "user-behavior",
+        "failure_modes": "skips-rerouting-after-handoff,proceeds-directly-to-implementation",
+        "scenario": "- The user says: \"implement ENG-3003 for the new notification system.\"\n- Simulated Linear metadata: team `Internal-IT`, project `Engineering Skills`, current status `Ready for Development`.\n- The issue describes two viable notification strategies with no chosen path.\n- `superpowers:brainstorming` was invoked and completed, selecting the queue-based approach.\n- After brainstorming, the agent returns to the Phase 3 routing table for re-evaluation.\n- The issue is now a multi-module implementation with a chosen path, matching Priority 6.\n- No implementation edits have started.",
+        "expect_uses_writing_tests_before_plan": "true",
+        "expect_uses_writing_plans_before_implementation": "true",
+        "required_terms": "writing-tests,writing-plans"
+      }
+    }
+  ]
+}

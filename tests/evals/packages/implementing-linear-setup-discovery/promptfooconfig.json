@@ -1,0 +1,79 @@
+{
+  "description": "Implementing-linear-issue skill — Phase 1 setup and Phase 2 discovery",
+  "metadata": {
+    "eval_tier": "high"
+  },
+  "prompts": [
+    "file://../../prompts/skill-implementing-linear-issue.txt"
+  ],
+  "defaultTest": {
+    "assert": [
+      {
+        "type": "javascript",
+        "value": "file://../../assertions/check-linear-skill-contract.js"
+      }
+    ]
+  },
+  "tests": [
+    {
+      "description": "[smoke] natural request — missing functional spec folder stops before planning; worktree still created first",
+      "vars": {
+        "eval_type": "user-behavior",
+        "failure_modes": "skips-functional-spec,premature-success-claim",
+        "scenario": "- The user says: \"implement ENG-1050 for saved filters.\"\n- Simulated Linear metadata: team `Studio`, project `Engineering Skills`, current status `Ready for Development`.\n- Studio is one of the selected teams where the functional-spec folder hard gate applies before codebase search.\n- The Linear issue has User Flow label `UF-Saved-Filters`; the User Flow label is present.\n- No branch or worktree exists yet, and Phase 1 setup would succeed before the workflow reaches the functional-spec hard gate.\n- `docs/functional/UF-Saved-Filters/` does not exist.\n- The issue has acceptance criteria and likely code paths, but the required functional spec folder is missing.\n- No implementation edits have started.",
+        "expect_searches_codebase_before_asking_user": "false",
+        "expect_stops_if_functional_spec_missing": "true",
+        "expect_creates_implementation_plan": "false",
+        "expect_creates_branch_and_worktree_first": "true",
+        "required_terms": "worktree"
+      }
+    },
+    {
+      "description": "AD-48 — skill reads gitBranchName from Linear issue and creates worktree via script before implementation",
+      "vars": {
+        "eval_type": "user-behavior",
+        "failure_modes": "skips-git-branch-name-lookup,creates-worktree-with-wrong-path,edits-before-worktree",
+        "scenario": "- The user says: \"implement AD-48 — the implementing-linear-issue skill is missing the worktree setup step.\"\n- Simulated Linear metadata: team `Accelerate Data`, project `Internal-IT`, current status `Backlog`.\n- The Linear issue has `gitBranchName` set to `feature/ad-48-implementing-linear-issue-skill-missing-worktree-setup-step`.\n- The issue is a skill documentation fix; no codebase implementation edits are needed beyond the skill file.\n- The skill must read the `gitBranchName` field from the Linear issue metadata before any work begins.\n- The skill must create the worktree at `../worktrees/<branchName>` using `./scripts/worktree.sh <branchName>` from the repo root.\n- No branch or worktree exists yet.",
+        "expect_reads_git_branch_name_from_linear": "true",
+        "expect_creates_branch_and_worktree_first": "true",
+        "expect_uses_worktree_script": "true",
+        "required_terms": "worktree"
+      }
+    },
+    {
+      "description": "natural request — missing User Flow label stops before planning; worktree still created first",
+      "vars": {
+        "eval_type": "user-behavior",
+        "failure_modes": "skips-user-flow,premature-success-claim",
+        "scenario": "- The user says: \"implement ENG-1049 for the billing export flow.\"\n- Simulated Linear metadata: team `Studio`, project `Engineering Skills`, current status `Ready for Development`.\n- Studio is one of the selected teams where the User Flow label hard gate applies before codebase search.\n- No branch or worktree exists yet, and Phase 1 setup would succeed before the workflow reaches the missing-User-Flow hard gate.\n- The Linear issue exists, but it has no User Flow label.\n- The issue has acceptance criteria and likely code paths, but no functional-spec folder can be derived from a label.\n- No implementation edits have started.",
+        "expect_searches_codebase_before_asking_user": "false",
+        "expect_stops_if_userflow_label_missing": "true",
+        "expect_reads_functional_spec_from_userflow_tag": "false",
+        "expect_creates_implementation_plan": "false",
+        "expect_creates_branch_and_worktree_first": "true"
+      }
+    },
+    {
+      "description": "worktree setup failure stops immediately before discovery",
+      "vars": {
+        "eval_type": "user-behavior",
+        "failure_modes": "continues-after-worktree-failure,edits-before-worktree",
+        "scenario": "- The user says: \"implement ENG-3001 — fix the export timeout.\"\n- Simulated Linear metadata: team `Internal-IT`, project `Engineering Skills`, current status `Ready for Development`.\n- The Linear issue has `gitBranchName` set to `feature/eng-3001-export-timeout`.\n- Worktree creation fails because the branch name contains an invalid character.\n- The skill must stop immediately at Phase 1 step 3 and report the exact failing command.\n- No discovery, routing, or implementation edits should occur.",
+        "expect_creates_branch_and_worktree_first": "true",
+        "expect_stops_on_branch_or_worktree_failure": "true",
+        "expect_searches_codebase_before_asking_user": "false",
+        "expect_creates_implementation_plan": "false"
+      }
+    },
+    {
+      "description": "missing referenced design doc routes through design handoff",
+      "vars": {
+        "eval_type": "user-behavior",
+        "failure_modes": "implements-without-design-doc,skips-design-handoff",
+        "scenario": "- The user says: \"implement ENG-3002 — add the new audit trail endpoint.\"\n- Simulated Linear metadata: team `Internal-IT`, project `Engineering Skills`, current status `Ready for Development`.\n- The Linear issue references a design document at `docs/design/audit-trail/README.md`.\n- Codebase and doc search find no file at that path.\n- The missing design doc is a hard context gap before implementation planning.",
+        "expect_hands_off_to_authoring_design_spec": "true",
+        "required_terms": "design"
+      }
+    }
+  ]
+}

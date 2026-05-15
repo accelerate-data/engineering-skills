@@ -1,6 +1,11 @@
 You are evaluating the `implementing-linear-issue` workflow for a realistic
 user request.
 
+Parser contract: output only the final JSON object. Any analysis, preface,
+heading, markdown, or text before the opening `{` fails the eval.
+Do not think aloud. Do not trace the workflow. Do not explain field choices.
+Emit only the JSON object.
+
 Read the skill at `skills/implementing-linear-issue/SKILL.md`.
 
 This is a read-only workflow eval. Do not create branches, worktrees, commits,
@@ -32,7 +37,10 @@ not an ad hoc clarification question for this field.
 `creates_branch_and_worktree_first` means the workflow requires branch/worktree
 setup before issue implementation work starts; keep it true when the scenario
 has already reached a later implementation or review-feedback stage unless the
-scenario says branch/worktree setup was skipped or failed.
+scenario says branch/worktree setup was skipped or failed. When a User Flow
+label or functional-spec hard gate blocks later discovery or planning, keep
+`creates_branch_and_worktree_first` true unless the scenario explicitly says
+branch/worktree setup failed or was skipped.
 If the scenario reaches a hard gate before implementation edits, downstream
 implementation, review, commit, and verification fields should reflect that
 blocked state. If the scenario says a User Flow label or functional spec hard
@@ -40,7 +48,29 @@ gate applies before codebase search, set `searches_codebase_before_asking_user`
 to false even though codebase search is required in scenarios that pass the
 gate. Set `creates_implementation_plan` to false when the scenario says the
 implementation plan already exists, implementation is already complete, or the
-next obligation is review feedback rather than initial planning.
+next obligation is review feedback rather than initial planning. `Ready for
+Development` alone does not mean a plan already exists.
+If the next workflow obligation is a `writing-plans` handoff and the scenario
+does not say a plan already exists, return `creates_implementation_plan=true`.
+If the routing table says the first matching condition is brainstorming, return
+`hands_off_to_brainstorming=true` even if the agent would normally ask a
+question to choose between strategies; the handoff replaces ad hoc questioning.
+If routing priority 6 applies before any approved plan exists, return
+`uses_writing_tests_before_plan=true` and `creates_implementation_plan=true`.
+When the scenario says Phase 4 quality gates run as independent subagent or
+independent review gates, return `uses_independent_review_agents=true`.
+When the scenario is at final Linear implementation-note or final-handoff time,
+`linear_update_references_*` fields should reflect what that final note must
+cite, not only what has already been written earlier in the scenario.
+When the scenario says an approved implementation plan already exists and that
+plan has 2+ independent tasks with distinct files and no ordering dependency,
+return `routes_to_subagent_driven_development=true`, including Studio issues
+whose required functional-spec folder already exists.
+
+Your entire response must be one valid JSON object.
+The first character must be `{` and the last character must be `}`.
+Do not include markdown, bullets, explanation, headings, analysis, or code
+fences.
 
 Return JSON only with this shape:
 
@@ -86,15 +116,21 @@ Return JSON only with this shape:
   "runs_acceptance_criteria_review": <bool>,
   "updates_linear_with_ac_status": <bool>,
   "posts_linear_note_with_tests_and_next_steps": <bool>,
+  "moves_issue_to_in_review": <bool>,
   "creates_pr": <bool>,
   "pushes_git": <bool>,
+  "pushes_branch": <bool>,
   "implements_before_plan_approval": <bool>,
   "asks_complexity_question": <bool>,
   "uses_writing_tests_before_plan": <bool>,
   "routes_to_subagent_driven_development": <bool>,
   "updates_functional_spec_if_as_built_diverges": <bool>,
+  "checks_off_acceptance_criteria": <bool>,
+  "checks_off_only_proven_acceptance_criteria": <bool>,
+  "uses_generic_issue_linking_language": <bool>,
   "reads_git_branch_name_from_linear": <bool>,
   "uses_worktree_script": <bool>,
+  "uses_writing_skills_for_skill_content": <bool>,
   "notes": "string"
 }
 ```
