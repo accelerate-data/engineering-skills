@@ -17,7 +17,7 @@ Use this reference during Phase 4 execution, after the routing decision is compl
 
 ## Quality Gate Details
 
-The gate list lives in SKILL.md Phase 4 step 11. This reference provides runner and context details.
+The gate list lives in SKILL.md Phase 4 step 11. This reference provides runner and context details. Code review is a required Phase 4 quality gate, not an optional follow-up when someone happens to ask for review.
 
 | Gate | Runner | Context |
 |---|---|---|

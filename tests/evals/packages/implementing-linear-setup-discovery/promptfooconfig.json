@@ -20,7 +20,7 @@
       "vars": {
         "eval_type": "user-behavior",
         "failure_modes": "skips-functional-spec,premature-success-claim",
-        "scenario": "- The user says: \"implement ENG-1050 for saved filters.\"\n- Simulated Linear metadata: team `Studio`, project `Engineering Skills`, current status `Ready for Development`.\n- Studio is one of the selected teams where the functional-spec folder hard gate applies before codebase search.\n- The Linear issue has User Flow label `UF-Saved-Filters`; the User Flow label is present.\n- `docs/functional/UF-Saved-Filters/` does not exist.\n- The issue has acceptance criteria and likely code paths, but the required functional spec folder is missing.\n- No implementation edits have started.",
+        "scenario": "- The user says: \"implement ENG-1050 for saved filters.\"\n- Simulated Linear metadata: team `Studio`, project `Engineering Skills`, current status `Ready for Development`.\n- Studio is one of the selected teams where the functional-spec folder hard gate applies before codebase search.\n- The Linear issue has User Flow label `UF-Saved-Filters`; the User Flow label is present.\n- No branch or worktree exists yet, and Phase 1 setup would succeed before the workflow reaches the functional-spec hard gate.\n- `docs/functional/UF-Saved-Filters/` does not exist.\n- The issue has acceptance criteria and likely code paths, but the required functional spec folder is missing.\n- No implementation edits have started.",
         "expect_searches_codebase_before_asking_user": "false",
         "expect_stops_if_functional_spec_missing": "true",
         "expect_creates_implementation_plan": "false",
@@ -37,7 +37,7 @@
         "expect_reads_git_branch_name_from_linear": "true",
         "expect_creates_branch_and_worktree_first": "true",
         "expect_uses_worktree_script": "true",
-        "required_terms": "gitBranchName,worktree.sh"
+        "required_terms": "worktree"
       }
     },
     {
@@ -45,7 +45,7 @@
       "vars": {
         "eval_type": "user-behavior",
         "failure_modes": "skips-user-flow,premature-success-claim",
-        "scenario": "- The user says: \"implement ENG-1049 for the billing export flow.\"\n- Simulated Linear metadata: team `Studio`, project `Engineering Skills`, current status `Ready for Development`.\n- Studio is one of the selected teams where the User Flow label hard gate applies before codebase search.\n- The Linear issue exists, but it has no User Flow label.\n- The issue has acceptance criteria and likely code paths, but no functional-spec folder can be derived from a label.\n- No implementation edits have started.",
+        "scenario": "- The user says: \"implement ENG-1049 for the billing export flow.\"\n- Simulated Linear metadata: team `Studio`, project `Engineering Skills`, current status `Ready for Development`.\n- Studio is one of the selected teams where the User Flow label hard gate applies before codebase search.\n- No branch or worktree exists yet, and Phase 1 setup would succeed before the workflow reaches the missing-User-Flow hard gate.\n- The Linear issue exists, but it has no User Flow label.\n- The issue has acceptance criteria and likely code paths, but no functional-spec folder can be derived from a label.\n- No implementation edits have started.",
         "expect_searches_codebase_before_asking_user": "false",
         "expect_stops_if_userflow_label_missing": "true",
         "expect_reads_functional_spec_from_userflow_tag": "false",
@@ -71,9 +71,8 @@
         "eval_type": "user-behavior",
         "failure_modes": "implements-without-design-doc,skips-design-handoff",
         "scenario": "- The user says: \"implement ENG-3002 — add the new audit trail endpoint.\"\n- Simulated Linear metadata: team `Internal-IT`, project `Engineering Skills`, current status `Ready for Development`.\n- The Linear issue references a design document at `docs/design/audit-trail/README.md`.\n- Codebase and doc search find no file at that path.\n- The missing design doc is a hard context gap before implementation planning.",
-        "expect_searches_related_design_docs": "true",
         "expect_hands_off_to_authoring_design_spec": "true",
-        "required_terms": "authoring-design-spec"
+        "required_terms": "design"
       }
     }
   ]

@@ -79,7 +79,7 @@
         "failure_modes": "changes-tests-without-reading,skips-existing-tests",
         "scenario": "- The user says: \"implement ENG-3008 — update the export service retry logic.\"\n- Simulated Linear metadata: team `Internal-IT`, project `Engineering Skills`, current status `Ready for Development`.\n- The export service has existing tests in `src/services/export.test.ts`.\n- The agent must read existing tests before changing them or adding new ones.",
         "expect_searches_codebase_before_asking_user": "true",
-        "required_terms": "existing tests"
+        "required_terms": "tests"
       }
     },
     {

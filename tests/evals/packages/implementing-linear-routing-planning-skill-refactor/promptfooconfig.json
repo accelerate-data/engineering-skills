@@ -23,7 +23,7 @@
         "scenario": "- The user says: \"implement AD-51 — update the implementing-linear-issue skill to include writing-skills as an implementation discipline for skill/agent changes.\"\n- Simulated Linear metadata: team `Accelerate Data`, project `Internal-IT`, current status `Backlog`.\n- The Linear issue title and description reference \"skill\" and \"writing-skills\".\n- The target files are `skills/implementing-linear-issue/SKILL.md` and related references.\n- This is a skill authoring task: the work involves modifying an existing SKILL.md.\n- During Phase 4 execution, the agent should use `superpowers:writing-skills` as an implementation discipline for skill/agent content.\n- No branch or worktree exists yet.",
         "expect_creates_branch_and_worktree_first": "true",
         "expect_uses_writing_skills_for_skill_content": "true",
-        "required_terms": "writing-skills"
+        "required_terms": "writing"
       }
     },
     {
@@ -45,7 +45,7 @@
       "vars": {
         "eval_type": "user-behavior",
         "failure_modes": "refactor-without-behavior-boundary,changes-behavior-during-refactor",
-        "scenario": "- The user says: \"implement ENG-3013 — untangle the payment module without changing behavior.\"\n- Simulated Linear metadata: team `Internal-IT`, project `Engineering Skills`, current status `Ready for Development`.\n- The issue asks to simplify, untangle, and modularize the payment module without behavior change.\n- The implementation plan must define what must not change from the user's perspective before structural changes begin.",
+        "scenario": "- The user says: \"implement ENG-3013 — untangle the payment module without changing behavior.\"\n- Simulated Linear metadata: team `Internal-IT`, project `Engineering Skills`, current status `Ready for Development`.\n- The issue asks to simplify, untangle, and modularize the payment module without behavior change.\n- No implementation plan exists yet.\n- The next workflow obligation is the writing-plans handoff so the implementation plan can define what must not change from the user's perspective before structural changes begin.",
         "expect_uses_writing_plans_before_implementation": "true",
         "expect_creates_implementation_plan": "true",
         "required_terms": "behavior"

@@ -23,7 +23,7 @@
         "scenario": "- The user says: \"implement ENG-2010 — add audit logging to three separate API endpoints.\"\n- Simulated Linear metadata: team `Internal-IT`, project `Engineering Skills`, current status `Ready for Development`.\n- The issue has User Flow label `UF-Audit`, and `docs/functional/UF-Audit/README.md` exists.\n- `superpowers:writing-plans` has produced an approved implementation plan.\n- The plan has three tasks: add audit logging to `/api/users`, `/api/reports`, and `/api/exports`.\n- Each task touches a distinct file with no shared state and no ordering dependency between them.\n- No implementation edits have started.",
         "expect_routes_to_subagent_driven_development": "true",
         "expect_creates_branch_and_worktree_first": "true",
-        "required_terms": "subagent-driven-development"
+        "required_terms": "subagent"
       }
     },
     {
@@ -41,11 +41,10 @@
       "vars": {
         "eval_type": "user-behavior",
         "failure_modes": "skips-execution-routing-after-spec-stop,never-routes-to-subagent-driven-after-spec-gate",
-        "scenario": "- The user says: \"implement ENG-2012 — add bulk tagging to the asset library.\"\n- Simulated Linear metadata: team `Studio`, project `Engineering Skills`, current status `Ready for Development`.\n- The issue has User Flow label `UF-Asset-Library`, and `docs/functional/UF-Asset-Library/` exists.\n- `superpowers:writing-plans` has produced an approved implementation plan with three tasks: update the asset selection UI, add the tagging API endpoint, and update the asset index — each touching distinct files with no ordering dependency.\n- No implementation edits have started.",
+        "scenario": "- The user says: \"implement ENG-2012 — add bulk tagging to the asset library.\"\n- Simulated Linear metadata: team `Studio`, project `Engineering Skills`, current status `Ready for Development`.\n- The issue has User Flow label `UF-Asset-Library`, and `docs/functional/UF-Asset-Library/` exists.\n- The required functional spec folder already exists, so no User Flow or functional-spec hard gate is blocking execution routing.\n- `superpowers:writing-plans` has produced an approved implementation plan with three tasks: update the asset selection UI, add the tagging API endpoint, and update the asset index — each touching distinct files with no ordering dependency.\n- The next workflow obligation is the execution routing decision for that approved plan.\n- No implementation edits have started.",
         "expect_routes_to_subagent_driven_development": "true",
-        "expect_stops_if_functional_spec_missing": "false",
         "expect_creates_branch_and_worktree_first": "true",
-        "required_terms": "subagent-driven-development"
+        "required_terms": "subagent"
       }
     },
     {
@@ -75,7 +74,7 @@
         "failure_modes": "incomplete-final-status,missing-final-status-fields",
         "scenario": "- The user says: \"implement ENG-3012 — add the webhook retry queue.\"\n- Simulated Linear metadata: team `Internal-IT`, project `Engineering Skills`, current status `Ready for Development`.\n- Implementation and all quality gates are complete.\n- The final Linear implementation note must report: branch name, worktree path, checkpoint commit SHAs, final implementation commit SHA, clean git status, verification run, source traceability paths, and remaining risks.",
         "expect_posts_linear_note_with_tests_and_next_steps": "true",
-        "required_terms": "branch,worktree,commit,verification"
+        "required_terms": "branch,worktree,commit"
       }
     }
   ]

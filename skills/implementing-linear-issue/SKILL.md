@@ -72,7 +72,7 @@ After the invoked skill completes, proceed to Phase 4. Paths 1-4 return to this 
 | 9a | Read existing tests before changing or adding tests for the affected modules |
 | 9b | For Studio, Roadmap, and Utilities issues, after quality gates pass and before handoff, compare as-built behavior against the functional spec; if they diverge, route to `authoring-functional-spec` to reconcile |
 | 10 | Update Linear with source traceability and AC status using `references/linear-update-and-handoff.md` |
-| 11 | Run required validation and independent subagent quality gates: changed-area validation, affected skill evals, code review (`superpowers:requesting-code-review`), simplification review (`superpowers:code-simplifier`), test coverage review (`superpowers:requesting-code-review`), and acceptance-criteria review |
+| 11 | Run required validation and all required independent subagent quality gates before handoff. These always include changed-area validation, affected skill evals, code review (`superpowers:requesting-code-review`), simplification review (`superpowers:code-simplifier`), test coverage review (`superpowers:requesting-code-review`), and acceptance-criteria review |
 | 12 | Use `superpowers:receiving-code-review` before applying any quality-gate, human, or external review feedback |
 | 13 | Check off only completed acceptance criteria in the main Linear requirements section |
 | 14 | Post a final Linear implementation note that references the functional spec, related design documents, related implementation plan, verification, review outcomes, and remaining risks |
