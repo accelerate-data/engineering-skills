@@ -31,7 +31,7 @@ Owner is resolved from the static team-to-owner map in `field-resolution.md`, no
 | Operation | Rule |
 |---|---|
 | Lookup source | The email for the resolved team comes from the `field-resolution.md` allowlist (`uk@acceleratedata.ai` for Studio, `hb@acceleratedata.ai` for Utilities). |
-| User resolution | Resolve the Linear user from that email using the available Linear MCP user-lookup tool (e.g., `mcp__claude_ai_Linear__list_users` filtered by email, or `mcp__claude_ai_Linear__get_user`). |
+| User resolution | Resolve the Linear user from that email using the available Linear MCP user-lookup tool (list users filtered by email, or get a single user by ID once the email has been mapped). |
 | Failure handling | If the user-by-email lookup fails, retry once. If the second call also fails, stop and report the exact failing call. Do not fall back to leaving the issue unassigned and do not fall back to the issue creator. |
 | Hard-coding | Do not hard-code Linear user IDs; always resolve at runtime from the email. |
 
