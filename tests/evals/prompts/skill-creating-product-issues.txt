@@ -90,7 +90,7 @@ Return one valid JSON object with exactly these keys:
   "uses_bug_intake_reference": <bool>,
   "captures_expected_actual_repro_consistency": <bool>,
   "confirms_critical_fields_with_user": <bool>,
-  "creates_issue_before_plan_approval": <bool>,
+  "creates_issue_without_draft_approval": <bool>,
   "issue_body_references_functional_spec": <bool>,
   "issue_body_references_design_doc": <bool>,
   "notes": "string"
