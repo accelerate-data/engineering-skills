@@ -1,0 +1,105 @@
+You are evaluating a skill workflow in this repository.
+
+{% if user_message %}
+You are an agent responding to a user message mid-conversation. Choose the next
+skill using only the available skill descriptions, not AGENTS.md or CLAUDE.md
+routing rules.
+
+Available skills and their descriptions:
+
+- creating-product-issues: Use when filing, logging, raising, reporting, or
+  submitting a product issue, feature request, bug, or feedback for the Studio
+  or Utilities product areas in Linear.
+- creating-linear-issue: Use when the user asks to create, file, log, open,
+  draft, refine, decompose, or turn a request, bug, spike, or follow-up into a
+  Linear issue or Linear ticket before work continues.
+- linear: Manage issues, projects, and team workflows in Linear. Use when the
+  user wants to read, create, or update tickets in Linear.
+
+Do not read Linear, write Linear, contact Linear, or call Linear tools. All
+required Linear facts are supplied in the scenario and simulated context. If a
+required Linear fact is missing from the scenario, report that the fixture is
+incomplete instead of trying to fetch it.
+
+The user now says:
+"{{user_message}}"
+
+Analyze which skill should be triggered next.
+
+This routing branch is classification-only. Return JSON only with this shape:
+
+{
+  "detected_skill": "creating-product-issues | creating-linear-issue | linear | none",
+  "trigger_found_in_message": <bool>,
+  "would_pause_current_flow": <bool>,
+  "reason": "string"
+}
+
+Use exactly one of these string values for detected_skill: "creating-product-issues", "creating-linear-issue", "linear", or "none".
+{% else %}
+Read the skill at `skills/creating-product-issues/SKILL.md` and its references.
+
+This is a read-only workflow eval. Do not create a Linear issue, contact Linear,
+modify files, or perform any external action.
+
+Do not read Linear, query Linear, write Linear, create Linear issues, update
+Linear issues, contact Linear, or call Linear tools. All required Linear facts
+are supplied in the scenario and simulated context. If a required Linear fact is
+missing from the scenario, report that the fixture is incomplete instead of
+trying to fetch it.
+
+When the skill would normally read local files or Linear metadata, treat the
+simulated context below as the discovered evidence. Report whether the workflow
+requires those lookup steps for this scenario; do not perform the lookups.
+
+The user says:
+
+> {{ user_prompt }}
+
+Simulated context:
+
+{{ simulated_context }}
+
+Based on the skill, report the next workflow obligations for this scenario. Do
+not mark something true only because the skill supports it in another scenario.
+
+Return one valid JSON object with exactly these keys:
+
+{
+  "team_name": "string",
+  "team_in_allowlist": <bool>,
+  "stops_on_off_list_team": <bool>,
+  "issue_kind": "feature | bug | spike",
+  "resolved_owner_email": "string",
+  "resolves_owner_from_static_map": <bool>,
+  "looks_up_linear_user_by_email": <bool>,
+  "stops_on_owner_email_lookup_failure": <bool>,
+  "sets_project": <bool>,
+  "sets_milestone": <bool>,
+  "sets_cycle": <bool>,
+  "requires_user_flow_label": <bool>,
+  "reads_user_flow_labels_live": <bool>,
+  "proposes_user_flow_child_label": <bool>,
+  "asks_user_to_pick_user_flow": <bool>,
+  "lists_close_alternatives_in_confirmation": <bool>,
+  "reads_functional_spec_before_issue_creation": <bool>,
+  "stops_if_functional_spec_missing": <bool>,
+  "searches_related_design_docs": <bool>,
+  "uses_brainstorming_for_non_trivial_feature": <bool>,
+  "uses_issue_breakdown_reference": <bool>,
+  "uses_bug_intake_reference": <bool>,
+  "captures_expected_actual_repro_consistency": <bool>,
+  "confirms_critical_fields_with_user": <bool>,
+  "creates_issue_before_plan_approval": <bool>,
+  "issue_body_references_functional_spec": <bool>,
+  "issue_body_references_design_doc": <bool>,
+  "notes": "string"
+}
+
+Use booleans for boolean fields and strings for string fields. `issue_kind` must
+be one of `feature`, `bug`, or `spike`. Use exactly the key names shown above.
+
+Do not include commentary, markdown fences, refusal text, or prefaces before or
+after the JSON object. The first character of your response must be `{` and the
+last character must be `}`.
+{% endif %}
