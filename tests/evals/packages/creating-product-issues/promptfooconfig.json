@@ -1,7 +1,7 @@
 {
   "description": "creating-product-issues skill — Studio/Utilities-only product issue intake",
   "metadata": {
-    "eval_tier": "light"
+    "eval_tier": "standard"
   },
   "prompts": [
     "file://../../prompts/skill-creating-product-issues.txt"
