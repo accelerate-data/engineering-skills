@@ -115,6 +115,7 @@ Use sibling worktrees at `../worktrees/<branch-name>` relative to the repo root.
 Use these repo-local skills when requests match:
 
 - `skills/creating-linear-issue/SKILL.md` - create or refine a Linear issue
+- `skills/creating-product-issues/SKILL.md` - file a product issue into Linear's Studio or Utilities team
 - `skills/implementing-linear-issue/SKILL.md` - implement a Linear issue
 - `skills/raising-linear-pr/SKILL.md` - run the PR phase for a completed issue
 - `skills/closing-linear-issue/SKILL.md` - merge, close, and clean up after review
