@@ -57,10 +57,10 @@ test('AD-40: SKILL.md Phase 2 discovery states it runs after branch/worktree set
 
 test('AD-40: implementing-linear-issue smoke eval asserts worktree is created when spec gate fires', () => {
   const config = JSON.parse(
-    read(path.join(EVALS_ROOT, 'packages', 'implementing-linear-issue', 'promptfooconfig.json')),
+    read(path.join(EVALS_ROOT, 'packages', 'implementing-linear-setup-discovery', 'promptfooconfig.json')),
   );
   const smokeTest = config.tests.find((t) => t.description?.includes('[smoke]'));
-  assert.ok(smokeTest, 'implementing-linear-issue eval must have a [smoke] test');
+  assert.ok(smokeTest, 'implementing-linear-setup-discovery eval must have a [smoke] test');
   assert.equal(
     String(smokeTest.vars?.expect_creates_branch_and_worktree_first),
     'true',

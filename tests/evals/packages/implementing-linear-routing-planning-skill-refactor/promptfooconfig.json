@@ -1,0 +1,65 @@
+{
+  "description": "Implementing-linear-issue skill — Phase 3 routing: skill authoring and refactor planning discipline",
+  "metadata": {
+    "eval_tier": "high"
+  },
+  "prompts": [
+    "file://../../prompts/skill-implementing-linear-issue.txt"
+  ],
+  "defaultTest": {
+    "assert": [
+      {
+        "type": "javascript",
+        "value": "file://../../assertions/check-linear-skill-contract.js"
+      }
+    ]
+  },
+  "tests": [
+    {
+      "description": "[smoke] AD-51 — skill/agent changes use writing-skills as an implementation discipline",
+      "vars": {
+        "eval_type": "user-behavior",
+        "failure_modes": "implements-skill-change-without-writing-skills,misses-skill-authoring-discipline",
+        "scenario": "- The user says: \"implement AD-51 — update the implementing-linear-issue skill to include writing-skills as an implementation discipline for skill/agent changes.\"\n- Simulated Linear metadata: team `Accelerate Data`, project `Internal-IT`, current status `Backlog`.\n- The Linear issue title and description reference \"skill\" and \"writing-skills\".\n- The target files are `skills/implementing-linear-issue/SKILL.md` and related references.\n- This is a skill authoring task: the work involves modifying an existing SKILL.md.\n- During Phase 4 execution, the agent should use `superpowers:writing-skills` as an implementation discipline for skill/agent content.\n- No branch or worktree exists yet.",
+        "expect_creates_branch_and_worktree_first": "true",
+        "expect_uses_writing_skills_for_skill_content": "true",
+        "required_terms": "writing-skills"
+      }
+    },
+    {
+      "description": "skill/ agent work runs Phase 4 steps 10-16 after writing-skills discipline",
+      "vars": {
+        "eval_type": "user-behavior",
+        "failure_modes": "skips-phase-4-for-skill-work,no-linear-update-for-skill",
+        "scenario": "- The user says: \"implement ENG-3016 — add the new code-simplifier skill documentation.\"\n- Simulated Linear metadata: team `Accelerate Data`, project `Internal-IT`, current status `Ready for Development`.\n- The issue targets creating a new skill under `skills/code-simplifier/`.\n- The agent uses `superpowers:writing-skills` as an implementation discipline during Phase 4.\n- After implementation completes, the agent must still run Phase 4 steps 10-16: Linear updates, quality gates, AC checkoff, final note, final commit, and handoff to `raising-linear-pr`.",
+        "expect_creates_branch_and_worktree_first": "true",
+        "expect_uses_writing_skills_for_skill_content": "true",
+        "expect_updates_linear_with_ac_status": "true",
+        "expect_posts_linear_note_with_tests_and_next_steps": "true",
+        "expect_creates_final_commit": "true",
+        "expect_creates_pr": "false"
+      }
+    },
+    {
+      "description": "refactor behavior boundary defined before structural changes",
+      "vars": {
+        "eval_type": "user-behavior",
+        "failure_modes": "refactor-without-behavior-boundary,changes-behavior-during-refactor",
+        "scenario": "- The user says: \"implement ENG-3013 — untangle the payment module without changing behavior.\"\n- Simulated Linear metadata: team `Internal-IT`, project `Engineering Skills`, current status `Ready for Development`.\n- The issue asks to simplify, untangle, and modularize the payment module without behavior change.\n- The implementation plan must define what must not change from the user's perspective before structural changes begin.",
+        "expect_uses_writing_plans_before_implementation": "true",
+        "expect_creates_implementation_plan": "true",
+        "required_terms": "behavior"
+      }
+    },
+    {
+      "description": "refactor checkpoints are runnable and reviewable",
+      "vars": {
+        "eval_type": "user-behavior",
+        "failure_modes": "non-runnable-refactor-steps,unreviewable-refactor-checkpoints",
+        "scenario": "- The user says: \"implement ENG-3014 — break the monolithic importer into safe incremental steps.\"\n- Simulated Linear metadata: team `Internal-IT`, project `Engineering Skills`, current status `Ready for Development`.\n- The issue asks to split the importer into safe steps without behavior change.\n- Each checkpoint in the implementation plan must be independently runnable and reviewable.",
+        "expect_creates_implementation_plan": "true",
+        "expect_creates_checkpoint_commits": "true"
+      }
+    }
+  ]
+}

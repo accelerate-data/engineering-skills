@@ -1,0 +1,78 @@
+{
+  "description": "Implementing-linear-issue skill — Phase 3 routing: writing-plans, writing-tests, and bug/implementation planning",
+  "metadata": {
+    "eval_tier": "high"
+  },
+  "prompts": [
+    "file://../../prompts/skill-implementing-linear-issue.txt"
+  ],
+  "defaultTest": {
+    "assert": [
+      {
+        "type": "javascript",
+        "value": "file://../../assertions/check-linear-skill-contract.js"
+      }
+    ]
+  },
+  "tests": [
+    {
+      "description": "[smoke] natural request — multi-module implementation needs writing-plans first",
+      "vars": {
+        "user_prompt": "implement ENG-1042. It touches the API route, background worker, and dashboard state, so make a real plan before coding.",
+        "simulated_context": "- Simulated Linear metadata: team `Internal-IT`, project `Engineering Skills`, current status `Ready for Development`.\n- The Linear issue exists and the acceptance criteria are clear.\n- The issue has User Flow label `UF-Dashboard-Sync`, and `docs/functional/UF-Dashboard-Sync/README.md` exists.\n- Codebase review confirms the work spans `src/server/routes`, `src/workers`, and `src/app/dashboard`.\n- Existing functional and design docs cover the behavior; no new design decision is needed.\n- No implementation edits have started.",
+        "eval_type": "user-behavior",
+        "failure_modes": "misses-required-handoff,acts-before-reading-local-context",
+        "scenario": "Evaluate the next workflow obligations from the user prompt and simulated context above.",
+        "expect_searches_codebase_before_asking_user": "true",
+        "expect_creates_implementation_plan": "true",
+        "expect_uses_writing_plans_before_implementation": "true",
+        "required_terms": "writing-plans"
+      }
+    },
+    {
+      "description": "AD-36 — non-trivial implementation requires writing-tests before writing-plans",
+      "vars": {
+        "eval_type": "user-behavior",
+        "failure_modes": "skips-test-scenario-planning,creates-plan-without-coverage-map",
+        "scenario": "- The user says: \"implement ENG-2004 — add webhook delivery retry logic.\"\n- Simulated Linear metadata: team `Internal-IT`, project `Engineering Skills`, current status `Ready for Development`.\n- The issue has User Flow label `UF-Webhooks`, and `docs/functional/UF-Webhooks/README.md` exists.\n- Codebase review shows the work touches `src/webhooks/delivery`, `src/workers/retry`, and related tests.\n- No implementation plan exists yet.\n- No implementation edits have started.",
+        "expect_uses_writing_tests_before_plan": "true",
+        "expect_uses_writing_plans_before_implementation": "true",
+        "expect_creates_implementation_plan": "true",
+        "required_terms": "writing-tests,writing-plans"
+      }
+    },
+    {
+      "description": "AD-36 — complex multi-module bug fix after debugging requires writing-tests before writing-plans",
+      "vars": {
+        "eval_type": "user-behavior",
+        "failure_modes": "skips-test-scenario-planning-for-bug,creates-bug-fix-plan-without-coverage-map",
+        "scenario": "- The user says: \"fix ENG-2005 — the payment reconciliation job produces incorrect totals when multiple currencies are involved.\"\n- Simulated Linear metadata: team `Internal-IT`, project `Engineering Skills`, current status `Ready for Development`.\n- The issue has User Flow label `UF-Payments`, and `docs/functional/UF-Payments/README.md` exists.\n- `superpowers:systematic-debugging` has already isolated the root cause: a rounding error in `src/payments/reconcile.ts` that propagates through `src/workers/reconcile-job.ts` and the reporting aggregator.\n- The fix requires changes across three files and has complex edge cases across currency combinations.\n- After debugging isolates a multi-module root cause, the agent re-evaluates the routing table and matches Priority 6.",
+        "expect_uses_writing_tests_before_plan": "true",
+        "expect_uses_writing_plans_before_implementation": "true",
+        "required_terms": "writing-tests,writing-plans"
+      }
+    },
+    {
+      "description": "AD-36 — simple single-module bug fix after debugging proceeds to Phase 4",
+      "vars": {
+        "eval_type": "user-behavior",
+        "failure_modes": "over-gates-simple-bug,requires-plan-for-trivial-fix",
+        "scenario": "- The user says: \"fix ENG-2006 — the date formatter crashes on null input.\"\n- Simulated Linear metadata: team `Internal-IT`, project `Engineering Skills`, current status `Ready for Development`.\n- The issue has User Flow label `UF-Reports`, and `docs/functional/UF-Reports/README.md` exists.\n- `superpowers:systematic-debugging` has isolated the root cause: a missing null guard in `src/utils/date-formatter.ts`.\n- The user has confirmed the root cause and fix direction.\n- The fix is a single null check in one file with no sequencing risk.\n- After debugging isolates a single-module root cause confirmed by the user, the agent re-evaluates the routing table and matches Priority 7.",
+        "expect_uses_writing_tests_before_plan": "false",
+        "expect_uses_writing_plans_before_implementation": "false"
+      }
+    },
+    {
+      "description": "natural request — major refactor needs a written plan before behavior-preserving changes",
+      "vars": {
+        "eval_type": "user-behavior",
+        "failure_modes": "misses-required-handoff,acts-before-reading-local-context",
+        "scenario": "- The user says: \"implement ENG-1045. The old importer is tangled; refactor it without changing behavior and break it into safe steps.\"\n- Simulated Linear metadata: team `Internal-IT`, project `Engineering Skills`, current status `Ready for Development`.\n- The Linear issue exists and describes a behavior-preserving cleanup.\n- The issue has User Flow label `UF-Importer`, and `docs/functional/UF-Importer/README.md` exists.\n- Codebase review finds the refactor crosses parser, validation, and import job modules.\n- Existing architecture is still valid; no new design decision is needed.\n- No implementation edits have started.",
+        "expect_searches_codebase_before_asking_user": "true",
+        "expect_uses_writing_plans_before_implementation": "true",
+        "expect_creates_implementation_plan": "true",
+        "required_terms": "writing-plans"
+      }
+    }
+  ]
+}

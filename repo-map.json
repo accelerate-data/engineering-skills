@@ -40,7 +40,7 @@
     },
     "eval_harness": {
       "path": "tests/evals/",
-      "description": "Promptfoo eval harness powered by @accelerate-data/promptfoo-eval-harness. Packages declare metadata.eval_tier (light/standard/high/x_high) and a single [smoke] test; the framework injects the OpenCode CLI provider at run time. Current packages cover the Linear workflow skills, adding-roadmap-item, code-simplifier, maintaining-github-repos, writing-tests, adversarial-review, explaining-code, maintaining-user-flows, reviewing-github-pr, yolo, bundled raising-linear-pr promptfoo DB gate helper tests, eval coverage reporting, Codex compatibility, and the static eval user-behavior quality check."
+      "description": "Promptfoo eval harness powered by @accelerate-data/promptfoo-eval-harness. Packages declare metadata.eval_tier (light/standard/high/x_high) and a single [smoke] test; the framework injects the OpenCode CLI provider at run time. Current packages cover the Linear workflow skills, adding-roadmap-item, code-simplifier, maintaining-github-repos, writing-tests, adversarial-review, explaining-code, maintaining-user-flows, reviewing-github-pr, yolo, bundled raising-linear-pr promptfoo DB gate helper tests, eval coverage reporting, Codex compatibility, and the static eval user-behavior quality check. The implementing-linear-issue skill is split into 8 sub-packages for targeted runs: setup-discovery, routing-brainstorming, routing-debugging-design, routing-planning-core, routing-planning-skill-refactor, execution-quality-gates, execution-spec-docs, and execution-routing-handoff."
     },
     "scripts": {
       "path": "scripts/",
@@ -74,7 +74,14 @@
     "eval_regression": "npm run eval:regression",
     "eval_harness_smoke": "npm run eval:harness-smoke",
     "eval_creating_linear_issue": "npm run eval:creating-linear-issue",
-    "eval_implementing_linear_issue": "npm run eval:implementing-linear-issue",
+    "eval_implementing_linear_setup_discovery": "npm run eval:implementing-linear-setup-discovery",
+    "eval_implementing_linear_routing_brainstorming": "npm run eval:implementing-linear-routing-brainstorming",
+    "eval_implementing_linear_routing_debugging_design": "npm run eval:implementing-linear-routing-debugging-design",
+    "eval_implementing_linear_routing_planning_core": "npm run eval:implementing-linear-routing-planning-core",
+    "eval_implementing_linear_routing_planning_skill_refactor": "npm run eval:implementing-linear-routing-planning-skill-refactor",
+    "eval_implementing_linear_execution_quality_gates": "npm run eval:implementing-linear-execution-quality-gates",
+    "eval_implementing_linear_execution_spec_docs": "npm run eval:implementing-linear-execution-spec-docs",
+    "eval_implementing_linear_execution_routing_handoff": "npm run eval:implementing-linear-execution-routing-handoff",
     "eval_raising_linear_pr": "npm run eval:raising-linear-pr",
     "eval_closing_linear_issue": "npm run eval:closing-linear-issue",
     "eval_maintaining_github_repos": "npm run eval:maintaining-github-repos",

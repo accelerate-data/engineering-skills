@@ -1,0 +1,80 @@
+{
+  "description": "Implementing-linear-issue skill — Phase 4 execution: source traceability, user docs, and spec reconciliation",
+  "metadata": {
+    "eval_tier": "high"
+  },
+  "prompts": [
+    "file://../../prompts/skill-implementing-linear-issue.txt"
+  ],
+  "defaultTest": {
+    "assert": [
+      {
+        "type": "javascript",
+        "value": "file://../../assertions/check-linear-skill-contract.js"
+      }
+    ]
+  },
+  "tests": [
+    {
+      "description": "[smoke] natural request — linked functional spec, design doc, and plan are read and cited in Linear updates",
+      "vars": {
+        "eval_type": "user-behavior",
+        "failure_modes": "acts-before-reading-local-context,misses-required-handoff",
+        "scenario": "- The user says: \"implement ENG-1048 for the export history flow.\"\n- Simulated Linear metadata: team `Studio`, project `Engineering Skills`, current status `Ready for Development`.\n- The Linear issue has User Flow label `UF-Export-History`.\n- `docs/functional/UF-Export-History/README.md` exists and defines the product behavior.\n- Codebase and doc search find a related design document at `docs/design/export-history/README.md`.\n- Codebase and doc search find an existing implementation plan at `docs/plan/ENG-1048-export-history.md`.\n- The issue's behavior and design are already approved; implementation can proceed after normal plan approval.",
+        "expect_searches_related_design_docs": "true",
+        "expect_tracks_related_implementation_plan": "true",
+        "expect_linear_update_references_functional_spec": "true",
+        "expect_linear_update_references_design_doc": "true",
+        "expect_linear_update_references_implementation_plan": "true"
+      }
+    },
+    {
+      "description": "natural request — end-user workflow change needs user guide updates as part of implementation scope",
+      "vars": {
+        "eval_type": "user-behavior",
+        "failure_modes": "misses-user-docs,ships-without-updating-user-guide",
+        "scenario": "- The user says: \"implement ENG-1053. This adds a visible bulk archive action to the Reports page, so make sure the docs get updated too.\"\n- Simulated Linear metadata: team `Internal-IT`, project `Engineering Skills`, current status `Ready for Development`.\n- The Linear issue exists and has clear acceptance criteria.\n- The issue has User Flow label `UF-Reports-Bulk-Actions`, and `docs/functional/UF-Reports-Bulk-Actions/README.md` exists.\n- Codebase and design-doc search find no unresolved product or design fork.\n- The change affects end-user UI labels and workflow documentation.",
+        "expect_searches_codebase_before_asking_user": "true",
+        "required_terms": "user guide,user docs"
+      }
+    },
+    {
+      "description": "AD-38 — as-built behavior diverges from functional spec, routes to authoring-functional-spec",
+      "vars": {
+        "eval_type": "user-behavior",
+        "failure_modes": "skips-spec-reconciliation,ships-with-stale-spec",
+        "scenario": "- The user says: \"implement ENG-2007 — add inline editing to the report builder.\"\n- Simulated Linear metadata: team `Studio`, project `Engineering Skills`, current status `Ready for Development`.\n- The issue has User Flow label `UF-Report-Builder`, and `docs/functional/UF-Report-Builder/README.md` exists.\n- Implementation is complete and all quality gates have passed.\n- The functional spec describes inline editing as only available to admin users.\n- The implementation, per the acceptance criteria, makes inline editing available to all users with edit permissions — a broader behavior than what the spec describes.\n- The as-built behavior and the functional spec do not match.",
+        "expect_updates_functional_spec_if_as_built_diverges": "true",
+        "required_terms": "authoring-functional-spec"
+      }
+    },
+    {
+      "description": "AD-38 — functional spec already current, records verification and proceeds to handoff",
+      "vars": {
+        "eval_type": "user-behavior",
+        "failure_modes": "incorrectly-routes-to-spec-update,false-positive-spec-reconciliation",
+        "scenario": "- The user says: \"implement ENG-2008 — add CSV export to the dashboard.\"\n- Simulated Linear metadata: team `Studio`, project `Engineering Skills`, current status `Ready for Development`.\n- The issue has User Flow label `UF-Dashboard-Export`, and `docs/functional/UF-Dashboard-Export/README.md` exists.\n- Implementation is complete and all quality gates have passed.\n- The functional spec accurately describes CSV export as available to all dashboard users with view permissions.\n- The implementation matches the functional spec exactly — no behavior was added, removed, or changed beyond what the spec describes.",
+        "expect_updates_functional_spec_if_as_built_diverges": "false"
+      }
+    },
+    {
+      "description": "AD-38 — Internal-IT issue, spec reconciliation gate does not apply",
+      "vars": {
+        "eval_type": "user-behavior",
+        "failure_modes": "applies-spec-reconciliation-to-non-selected-team",
+        "scenario": "- The user says: \"implement ENG-2009 — add rate limiting to the internal API.\"\n- Simulated Linear metadata: team `Internal-IT`, project `Engineering Skills`, current status `Ready for Development`.\n- Internal-IT is not a selected team; functional spec is `not_applicable` for this issue.\n- Implementation is complete and all quality gates have passed.\n- There is no functional spec to compare against.",
+        "expect_updates_functional_spec_if_as_built_diverges": "false"
+      }
+    },
+    {
+      "description": "functional spec reconciliation for Studio skill/agent changes",
+      "vars": {
+        "eval_type": "user-behavior",
+        "failure_modes": "skips-spec-reconciliation-for-skill,ships-with-stale-spec",
+        "scenario": "- The user says: \"implement ENG-3010 — update the skill authoring documentation to include the new TDD workflow.\"\n- Simulated Linear metadata: team `Studio`, project `Engineering Skills`, current status `Ready for Development`.\n- The issue has User Flow label `UF-Skill-Authoring`, and `docs/functional/UF-Skill-Authoring/README.md` exists.\n- Implementation adds the TDD workflow to the skill documentation, which the functional spec does not describe.\n- After quality gates pass, the agent must compare as-built behavior against the functional spec and route to `authoring-functional-spec` if they diverge.",
+        "expect_updates_functional_spec_if_as_built_diverges": "true",
+        "required_terms": "authoring-functional-spec"
+      }
+    }
+  ]
+}
