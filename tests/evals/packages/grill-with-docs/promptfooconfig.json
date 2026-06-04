@@ -1,0 +1,68 @@
+{
+  "description": "grill-with-docs skill — stress-tests a plan against the domain model, sharpens terminology, and updates CONTEXT.md / ADRs inline",
+  "metadata": {
+    "eval_tier": "standard"
+  },
+  "prompts": [
+    "file://../../prompts/skill-grill-with-docs.txt"
+  ],
+  "defaultTest": {
+    "assert": [
+      {
+        "type": "javascript",
+        "value": "file://../../assertions/check-grill-with-docs-contract.js"
+      }
+    ]
+  },
+  "tests": [
+    {
+      "description": "[smoke] glossary conflict — challenges the term and resolves it into CONTEXT.md",
+      "vars": {
+        "eval_type": "user-behavior",
+        "failure_modes": "batches-questions,ignores-glossary,skips-codebase-exploration,over-offers-adrs",
+        "scenario": "- The user wants to stress-test a plan to add \"order cancellation.\"\n- A root `CONTEXT.md` already defines \"cancellation\" as voiding an unshipped order, but the user is describing a partial refund of a shipped order.\n- The user keeps using \"cancellation\" for both meanings.",
+        "expect_uses_grill_with_docs_skill": "true",
+        "expect_asks_questions_one_at_a_time": "true",
+        "expect_provides_recommended_answer_per_question": "true",
+        "expect_challenges_against_glossary": "true",
+        "expect_sharpens_fuzzy_terminology": "true",
+        "expect_updates_context_md_inline": "true"
+      }
+    },
+    {
+      "description": "fuzzy term — proposes a precise canonical term before proceeding",
+      "vars": {
+        "eval_type": "user-behavior",
+        "failure_modes": "batches-questions,ignores-glossary,skips-codebase-exploration",
+        "scenario": "- The user repeatedly says \"account\" while describing the plan.\n- Sometimes they mean the paying Customer and sometimes the login User.\n- No glossary entry exists yet for either term.",
+        "expect_uses_grill_with_docs_skill": "true",
+        "expect_asks_questions_one_at_a_time": "true",
+        "expect_sharpens_fuzzy_terminology": "true",
+        "expect_updates_context_md_inline": "true",
+        "expect_creates_files_lazily": "true"
+      }
+    },
+    {
+      "description": "code contradiction — checks the claim against the codebase",
+      "vars": {
+        "eval_type": "user-behavior",
+        "failure_modes": "skips-codebase-exploration,ignores-glossary,batches-questions",
+        "scenario": "- The user states that partial cancellation of individual line items is already supported.\n- The existing `cancelOrder` function only transitions an entire Order to a `Cancelled` state.\n- The question of whether line-item cancellation exists can be answered from the code.",
+        "expect_uses_grill_with_docs_skill": "true",
+        "expect_explores_codebase_when_answerable": "true",
+        "expect_cross_references_with_code": "true",
+        "expect_asks_questions_one_at_a_time": "true"
+      }
+    },
+    {
+      "description": "ADR restraint — skips the ADR for an easily reversible choice",
+      "vars": {
+        "eval_type": "user-behavior",
+        "failure_modes": "over-offers-adrs,treats-context-as-spec",
+        "scenario": "- During grilling, the user decides to name a helper function `formatInvoiceLine`.\n- The choice is trivially reversible, unsurprising, and involved no real trade-off.\n- No `docs/adr/` directory exists yet.",
+        "expect_uses_grill_with_docs_skill": "true",
+        "expect_offers_adr_for_this_decision": "false"
+      }
+    }
+  ]
+}

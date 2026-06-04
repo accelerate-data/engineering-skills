@@ -1,0 +1,29 @@
+You are evaluating the `grill-with-docs` workflow for a realistic
+plan-stress-testing request.
+
+Read `skills/grill-with-docs/SKILL.md`, `skills/grill-with-docs/CONTEXT-FORMAT.md`,
+and `skills/grill-with-docs/ADR-FORMAT.md`.
+
+Scenario:
+
+{{scenario}}
+
+Based on the skill, report the next workflow obligations for this scenario.
+
+Return JSON only with this shape:
+
+```json
+{
+  "uses_grill_with_docs_skill": <bool>,
+  "asks_questions_one_at_a_time": <bool>,
+  "provides_recommended_answer_per_question": <bool>,
+  "explores_codebase_when_answerable": <bool>,
+  "challenges_against_glossary": <bool>,
+  "sharpens_fuzzy_terminology": <bool>,
+  "cross_references_with_code": <bool>,
+  "updates_context_md_inline": <bool>,
+  "offers_adr_for_this_decision": <bool>,
+  "creates_files_lazily": <bool>,
+  "notes": "string"
+}
+```
