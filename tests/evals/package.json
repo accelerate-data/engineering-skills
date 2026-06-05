@@ -7,6 +7,8 @@
     "eval:regression": "ad-evals regression",
     "eval:harness-smoke": "ad-evals run packages/harness-smoke/promptfooconfig.json",
     "eval:creating-linear-issue": "ad-evals run packages/creating-linear-issue/promptfooconfig.json",
+    "eval:creating-product-issues": "ad-evals run packages/creating-product-issues/promptfooconfig.json",
+    "eval:implementing-linear-issue": "ad-evals run packages/implementing-linear-issue/promptfooconfig.json",
     "eval:implementing-linear-setup-discovery": "ad-evals run packages/implementing-linear-setup-discovery/promptfooconfig.json",
     "eval:implementing-linear-routing-brainstorming": "ad-evals run packages/implementing-linear-routing-brainstorming/promptfooconfig.json",
     "eval:implementing-linear-routing-debugging-design": "ad-evals run packages/implementing-linear-routing-debugging-design/promptfooconfig.json",
