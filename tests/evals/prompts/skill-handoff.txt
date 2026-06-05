@@ -1,0 +1,25 @@
+You are evaluating the `handoff` workflow for a realistic
+conversation-handoff request.
+
+Read `skills/handoff/SKILL.md`.
+
+Scenario:
+
+{{scenario}}
+
+Based on the skill, report the next workflow obligations for this scenario.
+
+Return JSON only with this shape:
+
+```json
+{
+  "uses_handoff_skill": <bool>,
+  "writes_to_temp_directory": <bool>,
+  "avoids_writing_to_workspace": <bool>,
+  "includes_suggested_skills_section": <bool>,
+  "references_existing_artifacts_instead_of_duplicating": <bool>,
+  "redacts_sensitive_information": <bool>,
+  "tailors_to_provided_focus": <bool>,
+  "notes": "string"
+}
+```

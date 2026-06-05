@@ -127,12 +127,21 @@ function formatMetadataSummary(packageSummaries) {
     .join('\n');
 }
 
+function skillHasEvalPackage(skill, evalPackages) {
+  if (evalPackages.has(skill)) {
+    return true;
+  }
+
+  const prefix = `${skill.replace(/-issue$/, '')}-`;
+  return [...evalPackages].some((packageName) => packageName.startsWith(prefix));
+}
+
 function main() {
   const skills = listDirectories(skillsRoot).filter((skill) => {
     return fs.existsSync(path.join(skillsRoot, skill, 'SKILL.md'));
   });
   const evalPackages = new Set(listDirectories(packagesRoot));
-  const uncovered = skills.filter((skill) => !evalPackages.has(skill));
+  const uncovered = skills.filter((skill) => !skillHasEvalPackage(skill, evalPackages));
   const expectedUncovered = readBaseline();
 
   const unexpectedUncovered = uncovered.filter((skill) => !expectedUncovered.includes(skill));

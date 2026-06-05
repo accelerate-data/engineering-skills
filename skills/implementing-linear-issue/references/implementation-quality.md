@@ -1,42 +1,12 @@
 # Implementation Quality
 
-Use this reference once discovery and hard-gate routing are complete.
-
-## Implementation Plan
-
-Before invoking `superpowers:writing-plans`, must invoke `writing-tests` to enumerate the complete test scenario set and produce a coverage map across unit, integration, and Promptfoo evals. Scenarios that cannot be automated must be explicitly identified with justification. Simple confirmed single-module bug fixes that do not require `writing-plans` also skip `writing-tests`.
-
-Use `superpowers:writing-plans` to create or resume the implementation plan under `docs/plan/` before non-bug implementation, multi-module changes, refactors, complex bug fixes, or durable design work. A simple confirmed bug fix may proceed without a written implementation plan after systematic debugging shows the root cause and proposed fix, and the user confirms the fix direction.
-
-After plan approval, check whether the plan contains 2+ tasks with no shared files and no ordering dependency between them. If yes, route to `superpowers:subagent-driven-development`. When in doubt, treat tasks as independent if they can be reviewed separately. Otherwise implement sequentially.
-
-| Plan item | Requirement |
-|---|---|
-| Approach | Chosen approach and rejected alternatives when relevant |
-| Change scope | Files or modules expected to change inside the isolated worktree |
-| Slices | Commit checkpoints or slice boundaries for multi-step work |
-| Tests | Unit, integration, eval, and manual-test scope |
-| Skill evals | Affected skill or plugin eval coverage |
-| Functional spec | Path from `docs/functional/<User Flow label>/` |
-| Design docs | Related `docs/design/` paths, or `not_applicable` after search |
-| Implementation plan | Path under `docs/plan/` |
-| Independent gates | Subagent reviewers for code review, simplification, test coverage, and AC review |
-| Manual checks | Scope, or `No manual tests required.` |
-
-## Bug Fix Path
-
-| Stage | Requirement |
-|---|---|
-| Investigation | Use `superpowers:systematic-debugging` before fix edits |
-| Evidence | Show root cause and proposed fix |
-| Confirmation | Wait for user confirmation of the issue and fix direction |
-| Simple fix | Proceed without `superpowers:writing-plans` if no plan-worthy complexity remains |
-| Complex fix | Use `superpowers:writing-plans` before implementation |
+Use this reference during Phase 4 execution, after the routing decision is complete and the plan is approved.
 
 ## Coding Discipline
 
 | Area | Rule |
 |---|---|
+| Skill or agent content | Use `superpowers:writing-skills` for progressive discovery, reference placement, repetition checks, and skill TDD discipline |
 | Implementation | Use `superpowers:test-driven-development` when the slice needs test-first behavior coverage |
 | Behavior changes | Start each slice with RED, then GREEN, then REFACTOR |
 | Bug fixes | May use TDD or add regression coverage after root-cause isolation when that is the safer fit |
@@ -45,9 +15,9 @@ After plan approval, check whether the plan contains 2+ tasks with no shared fil
 | Slicing | Work in end-to-end slices that can be reviewed independently |
 | Commits | Create checkpoint commits after major green slices |
 
-## Quality Gates
+## Quality Gate Details
 
-Before handoff:
+The gate list lives in SKILL.md Phase 4 step 11. This reference provides runner and context details. Code review is a required Phase 4 quality gate, not an optional follow-up when someone happens to ask for review.
 
 | Gate | Runner | Context |
 |---|---|---|

@@ -20,6 +20,7 @@ Update Linear as a living snapshot:
 | Duplicate sections | Do not create a duplicate acceptance-criteria section |
 | Implementation status | Summarize work, tests, evals, manual checks, and review outcomes |
 | AC review conclusions | Include only when needed to explain blockers or follow-up |
+| References | Cite exact spec, design-doc, and implementation-plan paths; do not fall back to generic "see issue" language |
 
 ## Handoff Boundary
 
