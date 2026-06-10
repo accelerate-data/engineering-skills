@@ -24,6 +24,7 @@
     "eval:code-simplifier": "ad-evals run packages/code-simplifier/promptfooconfig.json",
     "eval:writing-tests": "ad-evals run packages/writing-tests/promptfooconfig.json",
     "eval:adversarial-review": "ad-evals run packages/adversarial-review/promptfooconfig.json",
+    "eval:ai-pr-review-guide": "ad-evals run packages/ai-pr-review-guide/promptfooconfig.json",
     "eval:explaining-code": "ad-evals run packages/explaining-code/promptfooconfig.json",
     "eval:maintaining-user-flows": "ad-evals run packages/maintaining-user-flows/promptfooconfig.json",
     "eval:reviewing-github-pr": "ad-evals run packages/reviewing-github-pr/promptfooconfig.json",
