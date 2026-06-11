@@ -1,0 +1,70 @@
+You are evaluating the `ai-pr-review-guide` skill: you act as the automated AI
+PR reviewer for the vd-studio repository and must apply the skill's rules to a
+pull-request scenario.
+
+Parser contract: output only the final JSON object. Any analysis, preface,
+heading, markdown, or text before the opening `{` fails the eval.
+Do not think aloud. Do not trace the workflow. Do not explain field choices.
+Emit only the JSON object. Your first character must be `{`. Never start with
+"Now I have", "Let me analyze", bullets, headings, or a code fence.
+If you need to reason, do it silently.
+
+Read only the repository-local `skills/ai-pr-review-guide/SKILL.md`. Do not
+read `~/.agents`, home-directory skill installs, or any external skill
+installation.
+
+This is a read-only workflow eval. Do not edit files, run git, gh, or test
+commands. The scenario below stands in for the PR diff and run context; all
+facts you need are supplied by the scenario.
+
+Scenario:
+
+{{scenario}}
+
+Based on the skill, report how the reviewer must behave for this scenario. Do
+not mark something true only because the skill supports it in another scenario.
+
+Field meanings:
+- `unit_verdict`, `flow_verdict`, `journey_verdict` — the Test Coverage
+  verdicts the skill requires for this diff: `pass`, `flag`, or `n/a`.
+- `merge_verdict` — `ready` only when all coverage verdicts are pass/n-a and
+  there are no critical or major findings; otherwise `not-ready`.
+- `report_sections_in_order` — the review body uses exactly the skill's
+  template order: Review Summary, Findings, Test Coverage, then the VERDICT
+  line last.
+- `verdict_line_machine_readable` — the review ends with the verbatim
+  `VERDICT: READY TO MERGE` or `VERDICT: NOT READY — <n> finding(s) to address`.
+- `demands_bdd_test` — the reviewer asks for a BDD test in this repository.
+- `demands_journey_for_non_screen_change` — the reviewer requests a journey
+  spec although the diff does not add or materially change a main user-facing
+  screen flow.
+- `posts_review_via_gh_api_before_finishing` — per the posting contract, the
+  reviewer must execute the gh api post before finishing (never return the
+  review as a text response).
+- `posts_summary_when_no_new_findings` — when the diff yields no new findings,
+  the summary review (Findings: None + verdict) is still posted.
+- `reposts_known_inline_comments` — the reviewer re-posts inline comments for
+  issues already reported in earlier review rounds.
+
+Return JSON only with this shape. The first character must be `{` and the last
+character must be `}`:
+
+```json
+{
+  "unit_verdict": "pass | flag | n/a",
+  "flow_verdict": "pass | flag | n/a",
+  "journey_verdict": "pass | flag | n/a",
+  "merge_verdict": "ready | not-ready",
+  "report_sections_in_order": <bool>,
+  "verdict_line_machine_readable": <bool>,
+  "demands_bdd_test": <bool>,
+  "demands_journey_for_non_screen_change": <bool>,
+  "posts_review_via_gh_api_before_finishing": <bool>,
+  "posts_summary_when_no_new_findings": <bool>,
+  "reposts_known_inline_comments": <bool>,
+  "notes": "string"
+}
+```
+
+Respond now with only the JSON object. No prose. No markdown. First character:
+`{`

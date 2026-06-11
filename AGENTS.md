@@ -126,6 +126,7 @@ Use these repo-local skills when requests match:
 - `skills/adding-roadmap-item/SKILL.md` - add a roadmap item to the Roadmap (RO) team in Linear
 - `skills/code-simplifier/SKILL.md` - simplify recently modified code while preserving behavior
 - `skills/writing-tests/SKILL.md` - write, audit, or improve unit and integration tests (Khorikov standards)
+- `skills/ai-pr-review-guide/SKILL.md` - review contract for vd-studio's automated AI PR reviewer (coverage verdicts, report format, merge verdict); master copy synced to vd-studio
 - `skills/maintaining-user-flows/SKILL.md` - add, retire, rename, merge, or split a canonical user flow in the Flow Inventory sheet and its paired Linear "User Flow" label
 - `skills/grill-with-docs/SKILL.md` - stress-test a plan against the domain model, sharpen terminology, and update CONTEXT.md / ADRs inline (integrated verbatim, MIT, see skill `ATTRIBUTION.md`)
 - `skills/handoff/SKILL.md` - compact the current conversation into a temp-directory handoff document for a fresh agent (integrated verbatim, MIT, see skill `ATTRIBUTION.md`)
