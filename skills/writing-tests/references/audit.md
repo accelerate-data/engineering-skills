@@ -14,14 +14,14 @@ When a source file has colocated tests, audit them against the 4 Pillars before 
 
 - Are assertions on observable behaviour (`getState()`, `result.current`, response body)?
 - Any assertions on implementation details (`toHaveBeenCalledWith` on internal helpers)?
-- Are integration tests mocking **managed** deps (own stores/services/DB)? They shouldn't.
+- Are tests mocking **managed** deps (own stores/services/DB)? They shouldn't.
 - Are unit tests using mocks at all? They shouldn't — domain code has no collaborators.
 
 ### Pillar 3 — Fast feedback
 
 - Any `setTimeout`, `sleep`, or real network in unit tests?
 - Any real filesystem writes (vs. in-memory)?
-- Does the file run in reasonable time (unit <5s, integration <30s)?
+- Does the file run in reasonable time (unit/component <5s)? A slow unit file is a sign of hidden integration — see naming below.
 
 ### Pillar 4 — Maintainability
 
@@ -32,8 +32,8 @@ When a source file has colocated tests, audit them against the 4 Pillars before 
 
 ## Conventions
 
-- File naming: unit = `*.test.ts`, integration = `*.integration.test.ts`
-- Classification match: domain → unit file, controller → integration file
+- File naming: unit/component = `*.test.ts` (or `*.test.tsx`). `*.integration.test.*` is not a valid test type — flag any such file to delete or relocate to the repo's flow / e2e layer.
+- Classification match: domain → unit file; a controller's cross-module behaviour → flow / e2e layer, not a unit file. Flag any `*.test.ts` that boots the full app or wires real DB / HTTP / multiple modules together (hidden integration).
 - No `fireEvent` in component tests (use `userEvent.setup()`)
 - Query by role/text, not CSS class
 
@@ -73,7 +73,7 @@ Always end the audit with a concrete recommendation — never leave the user to 
 ## When to delete an existing test
 
 - Asserts on implementation details, breaks on every refactor (high cost, low benefit)
-- Duplicates another test at a different level (unit + integration covering same happy path)
+- Duplicates another test at a different level (unit + flow/e2e covering the same happy path)
 - Tests trivial code (getters, one-line pass-throughs)
 - Written just to hit a coverage number
 

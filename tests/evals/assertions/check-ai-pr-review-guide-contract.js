@@ -4,6 +4,7 @@ const STRING_FIELDS = new Set([
   'unit_verdict',
   'flow_verdict',
   'journey_verdict',
+  'integration_test_verdict',
   'merge_verdict',
 ]);
 

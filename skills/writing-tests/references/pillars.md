@@ -45,7 +45,7 @@ Test observable behaviour, not implementation details.
 
 ### Pillar 3 — Fast feedback
 
-Unit <5s/file, integration <30s/suite. No `sleep`, no `setTimeout`, no real network in unit tests.
+Unit/component <5s/file; the repo's flow / e2e suite is slower and runs separately. No `sleep`, no `setTimeout`, no real network in unit tests.
 
 ### Pillar 4 — Maintainability
 

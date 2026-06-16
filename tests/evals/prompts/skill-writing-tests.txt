@@ -28,6 +28,15 @@ Field meaning: `returns_to_tdd_for_green` means that after the expected RED
 test is written, GREEN/REFACTOR belongs to the TDD workflow rather than the
 writing-tests workflow stopping as a post-feature red failure.
 
+Field meaning: `routes_controller_to_flow_layer` means a Controller's
+cross-module behaviour is covered by the repo's flow / end-to-end layer, not by
+an integration test authored by this skill. `forbids_integration_test_files`
+means the skill refuses to create `*.integration.test.*` files.
+`forbids_hidden_integration_in_unit` means it refuses to put full-app, real
+DB/HTTP, or cross-module wiring inside a `*.test.ts`/`*.test.tsx` unit file.
+`unit_tests_cover_intended_behaviour_only` means unit/component tests assert only
+the intended behaviour of the unit under test.
+
 Return JSON only with this shape. The first character must be `{` and the last
 character must be `}`:
 
@@ -77,7 +86,10 @@ character must be `}`:
   "reviews_test_quality_findings": <bool>,
   "requires_adversarial_review_for_deep_review": <bool>,
   "classifies_domain_unit": <bool>,
-  "classifies_controller_integration": <bool>,
+  "routes_controller_to_flow_layer": <bool>,
+  "forbids_integration_test_files": <bool>,
+  "forbids_hidden_integration_in_unit": <bool>,
+  "unit_tests_cover_intended_behaviour_only": <bool>,
   "classifies_trivial_skip": <bool>,
   "recommends_humble_object": <bool>,
   "handles_llm_boundary": <bool>,

@@ -23,10 +23,12 @@
         "scenario": "- The PR adds src/server/modules/monitoring/services/latency-bucket.service.ts: a new exported bucketLatencies() function with branching logic (negative-sample filtering, bucket placement, overflow counting, p95 calculation).\n- The diff contains NO test files of any kind.\n- No previous reviews exist on this PR.\n- The diff does not touch any backend route, API, persistence, or UI screen.",
         "expect_unit_verdict": "flag",
         "expect_flow_verdict": "n/a",
+        "expect_integration_test_verdict": "n/a",
         "expect_merge_verdict": "not-ready",
         "expect_report_sections_in_order": "true",
         "expect_verdict_line_machine_readable": "true",
         "expect_demands_bdd_test": "false",
+        "expect_summary_posted_once_top_level": "true",
         "expect_posts_review_via_gh_api_before_finishing": "true"
       }
     },
@@ -36,6 +38,7 @@
         "scenario": "- The PR adds the same latency-bucket service AND a co-located __tests__/latency-bucket.service.test.ts covering bounds placement, overflow, negative samples, empty input, and p95.\n- The diff is backend-internal: no route changes, no user-facing screen flow changes.\n- No previous reviews exist on this PR.",
         "expect_unit_verdict": "pass",
         "expect_journey_verdict": "n/a",
+        "expect_integration_test_verdict": "pass",
         "expect_demands_journey_for_non_screen_change": "false",
         "expect_demands_bdd_test": "false",
         "expect_verdict_line_machine_readable": "true"
@@ -47,6 +50,7 @@
         "scenario": "- The PR adds GET /monitoring/latency-buckets to src/server/modules/monitoring/monitoring.router.ts (new backend API endpoint with auth middleware and query validation), plus the service and its co-located unit tests.\n- Nothing under tests/flows/ is added or changed in the diff.\n- The diff does not add or change any user-facing screen flow.\n- No previous reviews exist on this PR.",
         "expect_unit_verdict": "pass",
         "expect_flow_verdict": "flag",
+        "expect_integration_test_verdict": "pass",
         "expect_merge_verdict": "not-ready",
         "expect_demands_bdd_test": "false"
       }
@@ -58,6 +62,7 @@
         "expect_unit_verdict": "pass",
         "expect_flow_verdict": "n/a",
         "expect_journey_verdict": "n/a",
+        "expect_integration_test_verdict": "pass",
         "expect_merge_verdict": "ready",
         "expect_report_sections_in_order": "true",
         "expect_verdict_line_machine_readable": "true",
@@ -68,8 +73,10 @@
       "description": "no-new-findings re-review — summary still posted, known inline comments not re-posted",
       "vars": {
         "scenario": "- This PR was reviewed in earlier rounds; all previously reported issues are addressed and their threads resolved.\n- The new commit only rewords a comment block inside an agent skill file; the reviewer finds no new issues.\n- The previous review history is supplied and says: do not repeat comments that have already been made.",
+        "expect_integration_test_verdict": "n/a",
         "expect_merge_verdict": "ready",
         "expect_posts_summary_when_no_new_findings": "true",
+        "expect_summary_posted_once_top_level": "true",
         "expect_posts_review_via_gh_api_before_finishing": "true",
         "expect_reposts_known_inline_comments": "false"
       }
@@ -81,8 +88,38 @@
         "expect_unit_verdict": "pass",
         "expect_flow_verdict": "pass",
         "expect_journey_verdict": "flag",
+        "expect_integration_test_verdict": "pass",
         "expect_merge_verdict": "not-ready",
         "expect_demands_bdd_test": "false"
+      }
+    },
+    {
+      "description": "integration test file introduced — integration verdict flags and PR is not ready",
+      "vars": {
+        "scenario": "- The PR adds src/server/modules/domains/__tests__/domains.integration.test.ts: it imports createApp, opens a real database, and drives POST /api/domains over supertest end-to-end across several modules.\n- The diff adds no other test files.\n- No previous reviews exist on this PR.",
+        "expect_integration_test_verdict": "flag",
+        "expect_merge_verdict": "not-ready",
+        "expect_report_sections_in_order": "true",
+        "expect_verdict_line_machine_readable": "true",
+        "expect_posts_review_via_gh_api_before_finishing": "true"
+      }
+    },
+    {
+      "description": "hidden integration inside a unit-named test file — integration verdict flags",
+      "vars": {
+        "scenario": "- The PR adds a co-located __tests__/domain-router.test.ts that boots the full Express app via createApp, connects to a real PGlite database, and exercises three real service modules over HTTP with supertest.\n- The file is named like a unit test (*.test.ts) but is integration by behaviour.\n- No previous reviews exist on this PR.",
+        "expect_integration_test_verdict": "flag",
+        "expect_merge_verdict": "not-ready",
+        "expect_demands_bdd_test": "false"
+      }
+    },
+    {
+      "description": "unit test with a single real managed dependency — integration verdict does not false-positive",
+      "vars": {
+        "scenario": "- The PR adds a co-located __tests__/intent-store.test.ts for a Zustand store: it imports the real store (a managed dependency the unit owns), resets it in beforeEach, and asserts state transitions. There is no app boot, no HTTP, no cross-module wiring, and no external service.\n- The diff is a single store module plus this unit test.\n- The reviewer found no critical or major issues.\n- No previous reviews exist on this PR.",
+        "expect_unit_verdict": "pass",
+        "expect_integration_test_verdict": "pass",
+        "expect_merge_verdict": "ready"
       }
     }
   ]
