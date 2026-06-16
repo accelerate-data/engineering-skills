@@ -27,8 +27,14 @@ not mark something true only because the skill supports it in another scenario.
 Field meanings:
 - `unit_verdict`, `flow_verdict`, `journey_verdict` — the Test Coverage
   verdicts the skill requires for this diff: `pass`, `flag`, or `n/a`.
-- `merge_verdict` — `ready` only when all coverage verdicts are pass/n-a and
-  there are no critical or major findings; otherwise `not-ready`.
+- `integration_test_verdict` — `flag` if the diff introduces an integration
+  test (a `*.integration.test.*` file, or hidden integration — full-app /
+  real DB-HTTP / cross-module wiring — inside a `*.test.ts`/`*.test.tsx` unit
+  file); `pass` if test files were added or changed and none are integration
+  tests; `n/a` if the diff adds or changes no test files.
+- `merge_verdict` — `ready` only when all coverage verdicts (including
+  `integration_test_verdict`) are pass/n-a, the diff's tests pass, and there are
+  no critical or major findings; otherwise `not-ready`.
 - `report_sections_in_order` — the review body uses exactly the skill's
   template order: Review Summary, Findings, Test Coverage, then the VERDICT
   line last.
@@ -45,6 +51,9 @@ Field meanings:
   the summary review (Findings: None + verdict) is still posted.
 - `reposts_known_inline_comments` — the reviewer re-posts inline comments for
   issues already reported in earlier review rounds.
+- `summary_posted_once_top_level` — the structured report is posted exactly once
+  as a single top-level PR comment, never as an inline comment and never
+  duplicated; inline comments are only the default plugin's per-finding comments.
 
 Return JSON only with this shape. The first character must be `{` and the last
 character must be `}`:
@@ -54,6 +63,7 @@ character must be `}`:
   "unit_verdict": "pass | flag | n/a",
   "flow_verdict": "pass | flag | n/a",
   "journey_verdict": "pass | flag | n/a",
+  "integration_test_verdict": "pass | flag | n/a",
   "merge_verdict": "ready | not-ready",
   "report_sections_in_order": <bool>,
   "verdict_line_machine_readable": <bool>,
@@ -61,6 +71,7 @@ character must be `}`:
   "demands_journey_for_non_screen_change": <bool>,
   "posts_review_via_gh_api_before_finishing": <bool>,
   "posts_summary_when_no_new_findings": <bool>,
+  "summary_posted_once_top_level": <bool>,
   "reposts_known_inline_comments": <bool>,
   "notes": "string"
 }

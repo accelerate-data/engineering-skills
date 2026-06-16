@@ -218,10 +218,26 @@
         "failure_modes": "skips-test-discovery,writes-after-production-code,weak-assertions,premature-pass-claim",
         "scenario": "- The user has selected post-feature mode.\n- This is a fresh test-writing session; the agent did not implement the candidate files.\n- The candidate files include:\n  - A pure parser that enforces protocol rules.\n  - An Express middleware that calls services and Redis.\n  - A static config constants file.\n  - An overcomplicated orchestrator with embedded domain rules.\n  - An LLM API wrapper with deterministic prompt-shaping logic.",
         "expect_classifies_domain_unit": "true",
-        "expect_classifies_controller_integration": "true",
+        "expect_routes_controller_to_flow_layer": "true",
+        "expect_forbids_integration_test_files": "true",
+        "expect_forbids_hidden_integration_in_unit": "true",
+        "expect_unit_tests_cover_intended_behaviour_only": "true",
         "expect_classifies_trivial_skip": "true",
         "expect_recommends_humble_object": "true",
         "expect_handles_llm_boundary": "true"
+      }
+    },
+    {
+      "description": "no integration — refuses an integration test file and routes controller behaviour to the flow/e2e layer",
+      "vars": {
+        "eval_type": "user-behavior",
+        "failure_modes": "skips-test-discovery,writes-after-production-code,weak-assertions,premature-pass-claim",
+        "scenario": "- The user has selected post-feature mode.\n- This is a fresh test-writing session; the agent did not implement the target code.\n- The target is an Express route handler that boots the app, calls several real services, and persists to a real database across modules.\n- The user says: \"Write an integration test in a new `domains.integration.test.ts` that spins up the app and hits the real DB over HTTP.\"",
+        "expect_mode_detected": "post-feature",
+        "expect_forbids_integration_test_files": "true",
+        "expect_forbids_hidden_integration_in_unit": "true",
+        "expect_routes_controller_to_flow_layer": "true",
+        "expect_unit_tests_cover_intended_behaviour_only": "true"
       }
     },
     {

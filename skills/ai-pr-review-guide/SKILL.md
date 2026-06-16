@@ -9,7 +9,7 @@ description: Use when reviewing a vd-studio pull request as the automated AI PR 
 
 Studio-specific review contract for the automated PR reviewer. Supplements the
 OpenHands plugin's default `code-review` skill: the default owns general review
-judgment (bugs, security, taste); this skill owns the three test-coverage
+judgment (bugs, security, taste); this skill owns the four test-coverage
 checks, the fixed report format, the merge-readiness verdict, and the posting
 contract.
 
@@ -19,7 +19,7 @@ there); the copy deployed in vd-studio at `.agents/skills/ai-pr-review-guide.md`
 is synced byte-for-byte from it. Edit only the master, run its evals, re-sync
 (AD-55).
 
-# Test-coverage review (mandatory, three independent checks)
+# Test-coverage review (mandatory, four independent checks)
 
 The test architecture is defined in vd-studio's
 `docs/design/test-architecture/README.md`: tests target the features in
@@ -61,6 +61,17 @@ in this repository.
 A feature diff that touches none of the applicable lanes above needs an
 explicit justification in the PR description — otherwise flag it.
 
+## 4. No integration tests
+
+There is no integration tier; cross-module behaviour is covered by deep-flow
+(check 2). Judge each added/changed test by its **code, not its filename** — flag
+any test whose body boots the full app/router, hits a real DB/HTTP/filesystem/
+external service, or wires several real modules together end-to-end, in ANY file
+(a `*.test.ts(x)` unit file, a `*.integration.test.*` file, anything). A unit test
+using one real managed dep it owns (its store, an in-process DB) is fine; the line
+is cross-module / full-app / real-I/O wiring. When flagging, say where it goes:
+deep-flow for cross-module, unit for pure logic.
+
 # Review report format (use this exact structure every time)
 
 The top-level review body MUST follow this template, in this order:
@@ -76,6 +87,7 @@ The top-level review body MUST follow this template, in this order:
 - Unit: <pass | flag | n/a> — <one line>
 - Flow: <pass | flag | n/a> — <one line>
 - Journey: <pass | flag | n/a> — <one line>
+- Integration: <pass | flag | n/a> — <one line>
 
 VERDICT: READY TO MERGE
 ```
@@ -83,21 +95,17 @@ VERDICT: READY TO MERGE
 The last line is the merge-readiness verdict, exactly one of (verbatim,
 machine-readable):
 
-- `VERDICT: READY TO MERGE` — all coverage verdicts pass/n-a and no critical or major findings.
+- `VERDICT: READY TO MERGE` — all coverage verdicts pass/n-a, the diff's tests pass (a known-failing or unjustified-skip test blocks), and no critical or major findings.
 - `VERDICT: NOT READY — <n> finding(s) to address`
 
 A review without this structure and verdict line is incomplete.
 
 # Posting contract
 
-The review is NOT complete until it has been posted to the PR via `gh api`
-(inline comments + summary). Returning the review as a text response is a
-failed run.
-
-Post the summary review even when there are NO new findings — a "Findings:
-None" review ending in `VERDICT: READY TO MERGE` is the required per-commit
-merge-readiness signal, not duplicate noise. Skip re-posting inline comments
-for already-reported issues, but never skip the summary review itself.
-
-If posting fails, fix the request and retry at most twice. If it still fails,
-post a single plain summary comment as fallback, then finish and report the error.
+Post via `gh api`, never as a text response. The summary report is **one
+top-level comment per commit** — never inline, never duplicated. Inline comments
+are the default `code-review` plugin's per-finding comments only. Post the
+summary even with no new findings ("Findings: None" + `VERDICT: READY TO
+MERGE`); skip re-posting already-reported inline comments, never skip the
+summary. On post failure, retry twice, then post a plain summary fallback and
+report the error.

@@ -27,7 +27,7 @@ We follow the **Classical school**, not the London school.
 | TanStack QueryClient | ❌ Managed — new per test | `new QueryClient()` |
 | React child component (heavy/irrelevant) | ✅ Last resort — module-boundary with minimal shape | `vi.mock('../HeavyChild', ...)` |
 
-**On databases:** Khorikov argues against in-memory fakes (transaction semantics, constraint enforcement diverge from real DB). For integration tests, use the real DB. For unit tests, don't involve the DB at all.
+**On databases:** Khorikov argues against in-memory fakes (transaction semantics, constraint enforcement diverge from real DB). A unit test of domain logic should not involve the DB at all. A test that needs a real DB across modules or over HTTP is a flow / e2e test owned by the repo's higher layer — keep it out of `*.test.ts` unit files.
 
 ## Module boundary mocking (React components, last resort)
 
@@ -43,16 +43,11 @@ Return minimal shape, NOT fake behaviour. Prefer importing the real store and re
 
 ## "Are you testing the mock?" self-check
 
-After writing an integration test, ask:
+After writing any test, ask:
 
 1. If I delete the implementation and replace it with `throw new Error('not implemented')`, does my test still pass? → **Yes = testing the mock, not the code.**
 2. If I refactor the implementation (rename a helper, inline a call), does my test break even though behaviour is identical? → **Yes = testing implementation details.**
 
-## Integration testing rules
+## Flow / end-to-end tests — not authored here
 
-| Rule | Why |
-|---|---|
-| Integration tests = happy path only | Edge cases are cheaper in unit tests |
-| Use real managed deps (DB, store) | Mocking them means you're not testing the actual code |
-| Mock only unmanaged deps | External calls are slow, flaky, cost money |
-| Max 3 layers of indirection | More = design smell |
+This skill writes unit and component tests only. Behaviour that needs the full app, a real DB over HTTP, or several real services wired together is a flow / end-to-end test owned by the repo's higher test layer. Do not author it here, and do not disguise it as a `*.test.ts` unit file. The managed-vs-unmanaged discipline above still governs wherever such a test lives: real managed deps, mock only unmanaged ones, happy path, max ~3 layers of indirection.

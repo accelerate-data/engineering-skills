@@ -1,6 +1,6 @@
 ---
 name: writing-tests
-description: Use when test quality decisions are needed for new, changed, brittle, missing, or review-requested unit/integration tests, including tests-first work, assertion choice, mock boundaries, lifecycle scenarios, or independent test-session handoff.
+description: Use when test quality decisions are needed for new, changed, brittle, missing, or review-requested unit or component tests, including tests-first work, assertion choice, mock boundaries, lifecycle scenarios, or independent test-session handoff.
 ---
 
 # Writing Tests
@@ -57,7 +57,7 @@ Detailed gate rules and report format: `references/workflow.md`.
 ## Workflow
 
 1. **Discover target.** Non-TDD: use branch diff, issue context, explicit user target, then search. TDD: use requirement/spec. Confirm the file list or TDD target with the user.
-2. **Classify.** Domain -> unit tests, Controller -> integration happy path, Trivial -> skip, Overcomplicated -> Humble Object refactor recommendation, LLM-boundary -> deterministic unit tests + mocked API. Load `references/classification.md`.
+2. **Classify.** Domain -> unit tests, Controller -> unit-test any pure logic you extract; its cross-module orchestration belongs to the repo's flow / end-to-end layer, never an integration test authored here, Trivial -> skip, Overcomplicated -> Humble Object refactor recommendation, LLM-boundary -> deterministic unit tests + mocked API. Load `references/classification.md`.
 3. **Audit existing tests.** Always check colocated tests before proposing new ones. Load `references/audit.md`.
 4. **Recommend behaviours.** Lead with your recommendation and post the exact header `## Approved behaviours`. Do not use variations. Wait for user approval before writing.
 5. **Write tests.** Discover the runner first. Assertion order: output > state > communication. Mock only unmanaged external dependencies. Load `references/assertions.md` and `references/mocking.md`.
@@ -66,9 +66,17 @@ Detailed gate rules and report format: `references/workflow.md`.
 For stateful code, add lifecycle scenarios from `lifecycle-checklists.md`.
 For skills, slash commands, and agent prompts, test behaviour with evals. Load `references/agent-artifact-evals.md`.
 
+## Test scope — unit and component only
+
+Authors unit and component tests only, each covering just the intended behaviour of the unit. No integration tests:
+
+- **Never create `*.integration.test.*` files** — not a valid test type here.
+- **No hidden integration in a unit file** — a `*.test.ts(x)` must not boot the full app/router, hit a real DB/HTTP/filesystem/external service, or wire several real modules together. That's a flow / end-to-end test, owned by the repo's higher layer, not here.
+- Real ≠ integration: using one real **managed** dep a unit owns (its store, an in-process DB) and mocking only **unmanaged** deps is correct unit practice (`references/mocking.md`). Integration = cross-module / full-app wiring, not "a real dependency".
+
 ## Mode Notes
 
-- **TDD:** `writing-tests` is the RED-phase quality companion. It writes and verifies the failing test; the TDD workflow owns later production-code GREEN/REFACTOR work.
+- **TDD:** `writing-tests` is the RED-phase quality companion. It writes and verifies the failing test; the TDD workflow owns later production-code GREEN/REFACTOR work. The unit/component-only scope (no integration tests) holds across the cycle — carry it into the `superpowers:test-driven-development` handoff.
 - **While-building:** test each implementation slice immediately and report slice status.
 - **Post-feature:** run discovery, then workflow per file in Domain -> Controller order.
 - **Update:** identify tests covering the changed files, then audit and improve them in place after approval.

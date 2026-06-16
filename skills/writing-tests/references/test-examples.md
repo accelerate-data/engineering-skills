@@ -29,7 +29,7 @@ describe('parseSSEBuffer', () => {
 
 **Rules:**
 
-- No `vi.mock`, no `vi.fn()`. If you need them, it's an integration test.
+- No `vi.mock`, no `vi.fn()` — a pure function has nothing to mock.
 - Assert on the return value only.
 - One behaviour per `it()`, AAA structure, test body under 15 lines.
 
@@ -81,9 +81,9 @@ describe('userSchema', () => {
 });
 ```
 
-## Integration Test — Hook with Store (State-based)
+## Component Test — Hook with Store (State-based)
 
-**File:** `{source-name}.integration.test.ts`
+**File:** `{source-name}.test.tsx` — in scope: jsdom, real store (managed), mock only infra. No app boot, no real DB/HTTP.
 
 ```typescript
 import { describe, it, expect, beforeEach, vi } from 'vitest';
@@ -112,43 +112,22 @@ describe('useChatActions', () => {
 });
 ```
 
-## Integration Test — Express Route (State-based)
+## Not a unit test — full-app / real-DB flows
+
+A test that boots the app, opens a real DB, and drives it over HTTP exercises many modules at once. That is a **flow / end-to-end test** owned by the repo's higher test layer — it does **not** belong in a `*.test.ts` unit file, and never in a `*.integration.test.*` file (not a valid test type here).
 
 ```typescript
-import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+// ❌ Not here: this boots createApp + a real DB and drives it over HTTP.
+// It is a flow / e2e test — put it in the repo's flow layer, not a *.test.ts.
 import request from 'supertest';
 import { createApp } from '../../../app';
-import { createDb, closeDb } from '../../../db/memory';
+import { createDb } from '../../../db/memory';
 
-describe('POST /api/domains', () => {
-  let app: ReturnType<typeof createApp>;
-  let db: ReturnType<typeof createDb>;
-
-  beforeEach(() => {
-    db = createDb();  // in-memory SQLite — MANAGED, use real
-    app = createApp({ db });
-  });
-
-  afterEach(() => closeDb(db));
-
-  it('creates a domain and returns 201 with the new id', async () => {
-    const res = await request(app)
-      .post('/api/domains')
-      .send({ name: 'new-domain' })
-      .expect(201);
-
-    expect(res.body.id).toBeDefined();
-    const row = db.query('SELECT * FROM domains WHERE id = ?').get(res.body.id);
-    expect(row.name).toBe('new-domain');
-  });
-});
+const app = createApp({ db: createDb() });
+await request(app).post('/api/domains').send({ name: 'new-domain' }).expect(201);
 ```
 
-**Rules:**
-
-- Use in-memory SQLite, not mocks.
-- Assert on response AND real DB state.
-- Don't mock your own services — wire them up for real.
+To cover this at the unit level instead, extract the pure logic (request validation, the shape of the created record) via Humble Object and unit-test that; leave the wired-up request/DB path to the flow layer.
 
 ## Communication-based Example (use sparingly)
 
@@ -200,7 +179,7 @@ describe('ConfirmButton', () => {
 - `screen.getByRole` / `getByText`, never query by CSS class.
 - Communication-based on `onConfirm` is valid here — it's the component's outbound contract.
 
-## Factory Pattern (for integration tests with complex state)
+## Factory Pattern (for tests with complex state)
 
 ```typescript
 function makeState(overrides: Partial<StreamState> = {}): StreamState {

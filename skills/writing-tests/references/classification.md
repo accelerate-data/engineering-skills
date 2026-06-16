@@ -13,22 +13,22 @@ Two axes: **domain significance** (does the code enforce business rules?) and **
                  ├──────────────┼──────────────────┤
         Low      │   TRIVIAL    │   CONTROLLER     │
                  │              │                  │
-                 │   Skip       │ Integration test │
-                 │              │   (happy path)   │
+                 │   Skip       │ Flow / e2e layer │
+                 │              │    (not here)    │
                  └──────────────┴──────────────────┘
 ```
 
 | Category | Test type | Test doubles |
 |---|---|---|
 | **Domain** | Unit — all branches, edge cases | None (pure functions) |
-| **Controller** | Integration — happy path only | Mocks for unmanaged deps, real managed deps |
+| **Controller** | Not authored here — its cross-module behaviour is covered by the repo's flow / e2e layer (happy path). Unit-test any pure logic you extract. | — |
 | **Trivial** | Skip | — |
 | **Overcomplicated** | **Refactor first** via Humble Object | — |
 | **LLM-boundary** (codebase extension) | Unit test deterministic part | Mock the API |
 
 **Domain significance ≠ complex code.** A 3-line function enforcing `endDate >= startDate` is domain code.
 
-**Test-value ranking:** Domain > Controller > Trivial. Spend tokens on Domain first.
+**Test-value ranking (this skill):** Domain first. A Controller's behaviour is covered by the repo's flow / e2e layer, not by this skill; Trivial is skipped.
 
 ## Domain signals — these are domain code even when short
 
@@ -50,7 +50,7 @@ Two axes: **domain significance** (does the code enforce business rules?) and **
 When code is overcomplicated, don't "test as-is":
 
 1. **Extract** the domain logic into a pure function → becomes Domain (unit-testable, all branches)
-2. **Leave behind** the thin orchestrator → becomes Controller (integration-testable, happy path)
+2. **Leave behind** the thin orchestrator → becomes Controller, whose cross-module behaviour is covered by the repo's flow / e2e layer (happy path) — not an integration test authored here
 3. **Test both normally**
 
 When proposing refactor, name the pattern and point at the specific function to extract. Never just say "split it up".
@@ -60,5 +60,5 @@ When proposing refactor, name the pattern and point at the specific function to 
 - **Zustand store file** = domain (state transitions). Hooks consuming it + driving UI = controller.
 - **Zod schema** = domain. Test with `safeParse(valid)` and `safeParse(invalid)`.
 - **Pure React component** (no state, no effects, no store reads) = trivial. Skip.
-- **Effectful hooks** (`useChatScroll`, `useIntentManager`) = controller. Integration-test.
-- **Express middleware** = controller. Integration-test with real request lifecycle.
+- **Effectful hooks** (`useChatScroll`, `useIntentManager`) = controller. Component-test the UI behaviour they drive (jsdom, real store, mock infra); leave cross-module orchestration to the flow / e2e layer.
+- **Express middleware** = controller. Its real request-lifecycle behaviour belongs to the repo's flow / e2e layer; unit-test any pure logic you extract from it.
