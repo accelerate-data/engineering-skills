@@ -42,9 +42,9 @@
     "view": "ad-evals view"
   },
   "dependencies": {
-    "@accelerate-data/promptfoo-eval-harness": "^0.1.0",
+    "@accelerate-data/promptfoo-eval-harness": "^1.5.0",
     "js-yaml": "^4.1.1",
-    "promptfoo": "0.121.9",
+    "promptfoo": "0.121.17",
     "yaml": "2.8.3"
   }
 }

@@ -43,7 +43,8 @@ real backend, real DB, real agent runtime; LLM and outside services faked via
 `tests/twins/`). Looking at the diff: does it change feature behaviour —
 backend API, authorization/RBAC, persistence, audit, domain/intent lifecycle,
 source/platform setup? If yes, a flow spec should have been added or updated —
-flag if not. If the diff changes an outside-service integration, the matching
+flag if not, and when you flag, name the gap (see "Naming the gap when a lane
+flags"). If the diff changes an outside-service integration, the matching
 twin in `tests/twins/` likely needs updating too.
 
 ## 3. UI journey coverage (deliberately few — do not over-ask)
@@ -53,7 +54,8 @@ Playwright, curated to the main user-facing screen flows). Expect a journey
 addition ONLY when the diff adds or materially changes a main user-facing
 screen flow. Do NOT request a journey for every feature PR — per the test
 architecture, 1:1 journey-per-feature is an explicit anti-pattern; deep flows
-own the behaviour.
+own the behaviour. When a journey verdict does flag, name the gap (see "Naming
+the gap when a lane flags").
 
 BDD suites live in the sibling repository `vd-e2e-bdd` and are never expected
 in this repository.
@@ -71,6 +73,50 @@ external service, or wires several real modules together end-to-end, in ANY file
 using one real managed dep it owns (its store, an in-process DB) is fine; the line
 is cross-module / full-app / real-I/O wiring. When flagging, say where it goes:
 deep-flow for cross-module, unit for pure logic.
+
+Verdict for this lane: `flag` if the diff adds or changes an integration test;
+`pass` if the diff adds or changes any test file and none are integration
+tests (a one-line edit to an existing unit test still counts as a changed test
+file); `n/a` only when the diff adds or changes no test file at all.
+
+# Naming the gap when a lane flags
+
+A flagged Flow or Journey lane must name the gap — never a vague "add a test"
+and never a menu of speculative scenarios (authors ignore those). The gap is
+**diff-scoped**: a specific behaviour THIS PR changed that has no test. Never
+report pre-existing coverage gaps for behaviour the PR did not touch, even when
+the area is under-covered overall.
+
+This rides entirely on checks 2 and 3 — it adds no new reason to flag. A lane
+is binary: `pass`, or `flag` with a named gap (`n/a` when the lane does not
+apply). Do not name a spec file for a lane that did not flag.
+
+When check 2 (Flow) or check 3 (Journey) flags, then for each touched
+functional area (cap at 3):
+
+1. Map the changed paths to a functional area and its spec files using the
+   reviewed repo's own index files: `repo-map.json` (path → module), then
+   `test-map.json` and `docs/functional/README.md` (module → area and its
+   flow/journey specs).
+2. Read that area's `docs/functional/<area>/README.md` only enough to name the
+   changed behaviour precisely. Do not read module source beyond the diff or
+   crawl unrelated specs — this review runs under a time budget.
+3. Under the flagged lane's line in the Test Coverage block, add one nested
+   bullet per uncovered changed behaviour, naming the target spec file (an
+   existing one to extend, or the conventional
+   `tests/flows/__tests__/<area>.flow.spec.ts` /
+   `tests/e2e/journeys/<area>.journey.spec.ts` path) and the specific
+   behaviour. For example:
+
+   - Flow: flag — `domains` change has no deep-flow coverage.
+     - `tests/flows/__tests__/domain-crud.flow.spec.ts`: DELETE /domains/:id with child intents is not exercised (assert 409, nothing deleted)
+
+4. If the path → area mapping is ambiguous (a cross-cutting change), name the
+   2–3 candidate spec files instead of guessing one.
+5. Beyond 3 flagged areas, stop listing and write: `N more areas flagged — narrow the PR or see test-map.json`.
+6. Do not repeat a gap already named in an earlier review round unless the new
+   commit adds further uncovered behaviour (see the posting contract's
+   review-history rule).
 
 # Review report format (use this exact structure every time)
 
@@ -91,6 +137,10 @@ The top-level review body MUST follow this template, in this order:
 
 VERDICT: READY TO MERGE
 ```
+
+When a lane flags, its `Test Coverage` line may carry nested sub-bullets
+naming the gap and target spec file (see "Naming the gap when a lane flags").
+The four sections and the final `VERDICT:` line stay in this exact order.
 
 The last line is the merge-readiness verdict, exactly one of (verbatim,
 machine-readable):
