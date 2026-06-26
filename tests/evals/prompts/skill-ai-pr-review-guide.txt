@@ -54,6 +54,14 @@ Field meanings:
 - `summary_posted_once_top_level` — the structured report is posted exactly once
   as a single top-level PR comment, never as an inline comment and never
   duplicated; inline comments are only the default plugin's per-finding comments.
+- `flow_flag_names_spec_file` — when `flow_verdict` is `flag`, the review names
+  a target `tests/flows/__tests__/*.flow.spec.ts` file AND the specific
+  uncovered behaviour the diff changed. `false` whenever `flow_verdict` is not
+  `flag`. Naming a spec file for a lane that did not flag is wrong.
+- `journey_flag_names_spec_file` — the same for journeys: when
+  `journey_verdict` is `flag`, the review names a target
+  `tests/e2e/journeys/*.journey.spec.ts` file AND the specific uncovered
+  user-facing behaviour. `false` whenever `journey_verdict` is not `flag`.
 
 Return JSON only with this shape. The first character must be `{` and the last
 character must be `}`:
@@ -73,6 +81,8 @@ character must be `}`:
   "posts_summary_when_no_new_findings": <bool>,
   "summary_posted_once_top_level": <bool>,
   "reposts_known_inline_comments": <bool>,
+  "flow_flag_names_spec_file": <bool>,
+  "journey_flag_names_spec_file": <bool>,
   "notes": "string"
 }
 ```

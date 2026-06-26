@@ -23,6 +23,7 @@
         "scenario": "- The PR adds src/server/modules/monitoring/services/latency-bucket.service.ts: a new exported bucketLatencies() function with branching logic (negative-sample filtering, bucket placement, overflow counting, p95 calculation).\n- The diff contains NO test files of any kind.\n- No previous reviews exist on this PR.\n- The diff does not touch any backend route, API, persistence, or UI screen.",
         "expect_unit_verdict": "flag",
         "expect_flow_verdict": "n/a",
+        "expect_flow_flag_names_spec_file": "false",
         "expect_integration_test_verdict": "n/a",
         "expect_merge_verdict": "not-ready",
         "expect_report_sections_in_order": "true",
@@ -37,11 +38,14 @@
       "vars": {
         "scenario": "- The PR adds the same latency-bucket service AND a co-located __tests__/latency-bucket.service.test.ts covering bounds placement, overflow, negative samples, empty input, and p95.\n- The diff is backend-internal: no route changes, no user-facing screen flow changes.\n- No previous reviews exist on this PR.",
         "expect_unit_verdict": "pass",
+        "expect_flow_verdict": "n/a",
         "expect_journey_verdict": "n/a",
         "expect_integration_test_verdict": "pass",
         "expect_demands_journey_for_non_screen_change": "false",
         "expect_demands_bdd_test": "false",
-        "expect_verdict_line_machine_readable": "true"
+        "expect_verdict_line_machine_readable": "true",
+        "expect_flow_flag_names_spec_file": "false",
+        "expect_journey_flag_names_spec_file": "false"
       }
     },
     {
@@ -52,6 +56,18 @@
         "expect_flow_verdict": "flag",
         "expect_integration_test_verdict": "pass",
         "expect_merge_verdict": "not-ready",
+        "expect_demands_bdd_test": "false",
+        "expect_flow_flag_names_spec_file": "true",
+        "expect_journey_flag_names_spec_file": "false"
+      }
+    },
+    {
+      "description": "small diff-scoped change in an under-covered module — gap names only the changed behaviour, not the module's other gaps",
+      "vars": {
+        "scenario": "- The PR adds one new branch to an existing handler in src/server/modules/domains/domains.router.ts: DELETE /domains/:id now rejects deletion when the domain has child intents (returns 409).\n- The domains module already has tests/flows/__tests__/domain-crud.flow.spec.ts covering create and list, but nothing exercises the new delete-with-children rejection.\n- The module has many other untested behaviours unrelated to this diff.\n- No previous reviews exist on this PR.",
+        "expect_flow_verdict": "flag",
+        "expect_flow_flag_names_spec_file": "true",
+        "expect_journey_flag_names_spec_file": "false",
         "expect_demands_bdd_test": "false"
       }
     },
@@ -66,7 +82,9 @@
         "expect_merge_verdict": "ready",
         "expect_report_sections_in_order": "true",
         "expect_verdict_line_machine_readable": "true",
-        "expect_demands_journey_for_non_screen_change": "false"
+        "expect_demands_journey_for_non_screen_change": "false",
+        "expect_flow_flag_names_spec_file": "false",
+        "expect_journey_flag_names_spec_file": "false"
       }
     },
     {
@@ -87,10 +105,12 @@
         "scenario": "- The PR adds a new main user-facing screen: a Latency dashboard page with navigation entry, filter form, and error states, wired to the new backend endpoint.\n- The diff includes backend flow specs under tests/flows/ and co-located unit/component tests, but nothing under tests/e2e/journeys/ is added or changed.\n- No previous reviews exist on this PR.",
         "expect_unit_verdict": "pass",
         "expect_flow_verdict": "pass",
+        "expect_flow_flag_names_spec_file": "false",
         "expect_journey_verdict": "flag",
         "expect_integration_test_verdict": "pass",
         "expect_merge_verdict": "not-ready",
-        "expect_demands_bdd_test": "false"
+        "expect_demands_bdd_test": "false",
+        "expect_journey_flag_names_spec_file": "true"
       }
     },
     {
