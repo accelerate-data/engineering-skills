@@ -1,0 +1,94 @@
+You are evaluating the `installing-studio-with-vibedata` skill: you act as the
+agent driving the vibedata CLI conversationally for a customer, and must apply
+the skill's rules to the situation below.
+
+Parser contract: output only the final JSON object. Any analysis, preface,
+heading, markdown, or text before the opening `{` fails the eval. Do not think
+aloud. Do not trace the workflow. Emit only the JSON object. Your first
+character must be `{`. If you need to reason, do it silently.
+
+Read only the repository-local `skills/installing-studio-with-vibedata/SKILL.md`
+and its `references/` files. Do not read `~/.agents`, home-directory skill
+installs, or any external skill installation.
+
+This is a read-only workflow eval. Do not edit files or run git, docker, az,
+kubectl, or vibedata commands. The situation below stands in for the live
+environment; all facts you need are supplied by it.
+
+Situation:
+
+{{scenario}}
+
+Based on the skill, report how the agent must behave for this situation. Do not
+mark something true only because the skill supports it in another situation.
+
+Field meanings:
+- `path` — which path the skill takes for this situation: `docker` (one
+  machine), `kubernetes` (a cluster), or `unclear` (must ask first).
+- `blocks_on_prereq` — a required prerequisite is missing, so the skill stops
+  and hands back the fix instead of running install.
+- `states_az_optional` — on the Docker path, the skill states `az login` is
+  optional / Fabric-only (not a blocking prerequisite).
+- `cloud_supported` — the requested cloud is implemented today (Azure true;
+  AWS/GCP false).
+- `says_not_supported_yet` — for an unimplemented cloud, the skill says it is
+  not supported yet rather than attempting it.
+- `surfaces_raw_unsupported_error` — the skill runs the command anyway and
+  shows a raw `UnsupportedCloud` error/traceback (a failure).
+- `claims_created_azure_infra` — the skill claims it created Azure infra
+  (cluster, storage share, Key Vault, Front Door). The installer creates
+  nothing in Azure, so this must be false.
+- `hands_off_infra_command` — for infra the installer cannot create, the skill
+  hands back the exact `az` command for the customer to run.
+- `placeholder_has_verify_command` — when it fills a missing secret, the skill
+  also gives the command to verify it.
+- `invents_k8s_vibedata_command` — the skill invents a `vibedata` command that
+  does not exist for Kubernetes (e.g. `vibedata update kubernetes`,
+  `vibedata compose` on k8s, `vibedata cleanup` for k8s). Must be false.
+- `routes_k8s_day2_to_argo` — for a k8s upgrade/day-2 goal, the skill routes to
+  Argo CD / `kubectl` / `az`, not a `vibedata` command.
+- `conflates_logins` — the skill treats `vibedata login` (into Studio),
+  `az login` (Azure), and `gh auth login` (GitHub) as the same sign-in. Must be
+  false.
+- `drives_cli` — the skill runs the real CLI command (not just prints doc
+  steps).
+- `asks_first` — the situation is ambiguous (machine vs cluster not stated), so
+  the skill asks the routing question before doing anything.
+- `reports_service_urls` — after a successful install, the skill reports the
+  outcome / where to reach Studio.
+- `fix_command` — the exact command the skill hands back for a blocked
+  prerequisite (empty string if not applicable).
+- `secret_names` — the array of secret NAMES the skill says must exist in the
+  vault for this install (empty array if not applicable). Use the exact names.
+- `install_flags` — the array of flags the skill runs the install command with
+  (empty array if not applicable). Use the exact flag names.
+
+Return JSON only with this shape. The first character must be `{` and the last
+character must be `}`:
+
+```json
+{
+  "path": "docker | kubernetes | unclear",
+  "blocks_on_prereq": <bool>,
+  "states_az_optional": <bool>,
+  "cloud_supported": <bool>,
+  "says_not_supported_yet": <bool>,
+  "surfaces_raw_unsupported_error": <bool>,
+  "claims_created_azure_infra": <bool>,
+  "hands_off_infra_command": <bool>,
+  "placeholder_has_verify_command": <bool>,
+  "invents_k8s_vibedata_command": <bool>,
+  "routes_k8s_day2_to_argo": <bool>,
+  "conflates_logins": <bool>,
+  "drives_cli": <bool>,
+  "asks_first": <bool>,
+  "reports_service_urls": <bool>,
+  "fix_command": "string",
+  "secret_names": ["string"],
+  "install_flags": ["string"],
+  "notes": "string"
+}
+```
+
+Respond now with only the JSON object. No prose. No markdown. First character:
+`{`

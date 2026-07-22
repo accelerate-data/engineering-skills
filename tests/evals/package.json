@@ -31,6 +31,7 @@
     "eval:yolo": "ad-evals run packages/yolo/promptfooconfig.json",
     "eval:grill-with-docs": "ad-evals run packages/grill-with-docs/promptfooconfig.json",
     "eval:handoff": "ad-evals run packages/handoff/promptfooconfig.json",
+    "eval:installing-studio-with-vibedata": "ad-evals run packages/installing-studio-with-vibedata/promptfooconfig.json",
     "eval:coverage": "node scripts/check-skill-eval-coverage.js",
     "eval:codex-compatibility": "node scripts/check-codex-compatibility.js",
     "check:eval-user-behavior": "node scripts/check-eval-user-behavior.js",
