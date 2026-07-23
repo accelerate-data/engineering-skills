@@ -1,0 +1,177 @@
+{
+  "description": "installing-studio-with-vibedata skill — path routing, prereq gating, cloud scope, Azure infra/secret honesty, no invented k8s command, no auth conflation",
+  "metadata": {
+    "eval_tier": "standard"
+  },
+  "prompts": [
+    "file://../../prompts/skill-installing-studio-with-vibedata.txt"
+  ],
+  "defaultTest": {
+    "vars": {
+      "eval_type": "user-behavior",
+      "failure_modes": "wrong-path-routing,skips-prereq-gate,forgets-az-optional,attempts-unsupported-cloud,surfaces-raw-unsupported-error,claims-created-azure-infra,skips-infra-handoff,placeholder-without-verify,invents-k8s-command,routes-k8s-day2-to-vibedata,conflates-logins,narrates-instead-of-driving"
+    },
+    "assert": [
+      {
+        "type": "javascript",
+        "value": "file://../../assertions/check-installing-studio-with-vibedata-contract.js"
+      }
+    ]
+  },
+  "tests": [
+    {
+      "description": "[smoke] one laptop, just trying it → Docker path",
+      "vars": {
+        "scenario": "- The customer says: \"I just want to try Studio on my laptop.\"\n- Docker Desktop is running and `gh auth status` shows they are signed in to GitHub.\n- They have not mentioned Azure or a cluster.",
+        "expect_path": "docker",
+        "expect_drives_cli": "true"
+      }
+    },
+    {
+      "description": "Docker prereq missing — GitHub not signed in blocks with the fix; az stated optional",
+      "vars": {
+        "scenario": "- The customer wants Studio on one machine.\n- Docker is running, but `gh auth status` reports the customer is NOT logged in to GitHub.\n- They do not use Fabric.",
+        "expect_path": "docker",
+        "expect_blocks_on_prereq": "true",
+        "expect_states_az_optional": "true"
+      }
+    },
+    {
+      "description": "team on a cluster → Kubernetes path, Azure",
+      "vars": {
+        "scenario": "- The customer says: \"We need to run Studio for our whole team on our Azure cluster.\"\n- They are signed in to `az` and `kubectl get nodes` shows Ready nodes.",
+        "expect_path": "kubernetes",
+        "expect_cloud_supported": "true",
+        "expect_drives_cli": "true"
+      }
+    },
+    {
+      "description": "AKS prereq missing — kubectl cannot reach the cluster blocks first",
+      "vars": {
+        "scenario": "- The customer wants a Kubernetes install on Azure.\n- `az account show` succeeds, but `kubectl get nodes` fails because the kubeconfig has no working context.",
+        "expect_path": "kubernetes",
+        "expect_blocks_on_prereq": "true"
+      }
+    },
+    {
+      "description": "AWS requested — not supported yet, no raw error",
+      "vars": {
+        "scenario": "- The customer says: \"Install Studio on our AWS EKS cluster.\"",
+        "expect_cloud_supported": "false",
+        "expect_says_not_supported_yet": "true",
+        "expect_surfaces_raw_unsupported_error": "false"
+      }
+    },
+    {
+      "description": "AKS missing secrets — gap-fill each with a verify command",
+      "vars": {
+        "scenario": "- Kubernetes/Azure install. Prereqs pass.\n- `az keyvault secret list` shows the vault exists but is missing `auth-secret` and `data-encryption-key`.\n- The customer is not enabling observability.",
+        "expect_path": "kubernetes",
+        "expect_placeholder_has_verify_command": "true"
+      }
+    },
+    {
+      "description": "AKS infra honesty — no cluster exists yet; hand off az, never claim to have created it",
+      "vars": {
+        "scenario": "- The customer wants Kubernetes on Azure but has not created an AKS cluster yet (`kubectl get nodes` fails, no cluster in the resource group).",
+        "expect_path": "kubernetes",
+        "expect_claims_created_azure_infra": "false",
+        "expect_hands_off_infra_command": "true"
+      }
+    },
+    {
+      "description": "K8s day-2 upgrade — route to Argo, never invent a vibedata command",
+      "vars": {
+        "scenario": "- Studio is already running on the customer's AKS cluster.\n- They ask: \"How do I upgrade Studio to the latest version?\"",
+        "expect_path": "kubernetes",
+        "expect_invents_k8s_vibedata_command": "false",
+        "expect_routes_k8s_day2_to_argo": "true"
+      }
+    },
+    {
+      "description": "K8s teardown — az deletes, not vibedata cleanup",
+      "vars": {
+        "scenario": "- Studio runs on the customer's AKS cluster.\n- They ask: \"How do I tear the whole thing down and stop paying for it?\"",
+        "expect_path": "kubernetes",
+        "expect_invents_k8s_vibedata_command": "false"
+      }
+    },
+    {
+      "description": "Auth not conflated — vibedata login is not an Azure sign-in",
+      "vars": {
+        "scenario": "- The customer ran `vibedata login` against their Studio URL and asks: \"Great, so I'm signed in to Azure now too, right?\"",
+        "expect_conflates_logins": "false"
+      }
+    },
+    {
+      "description": "Docker daemon not running — blocks with the fix, does not install",
+      "vars": {
+        "scenario": "- The customer wants Studio on their laptop.\n- `gh auth status` shows they are signed in to GitHub, but `docker info` fails because Docker Desktop is not running.",
+        "expect_path": "docker",
+        "expect_blocks_on_prereq": "true",
+        "required_terms": "docker"
+      }
+    },
+    {
+      "description": "Docker all prereqs pass — drives install compose and reports the outcome/URLs",
+      "vars": {
+        "scenario": "- The customer wants Studio on one machine, lean profile.\n- Docker is running and `gh auth status` shows they are signed in. No observability, no Fabric.",
+        "expect_path": "docker",
+        "expect_drives_cli": "true",
+        "expect_reports_service_urls": "true"
+      }
+    },
+    {
+      "description": "AKS everything ready — drives install kubernetes with the exact required flags",
+      "vars": {
+        "scenario": "- Kubernetes on Azure. `az` and `kubectl` are logged in, the cluster is reachable, the vault holds all required secrets, the cluster identity can read the vault, and Front Door is created.",
+        "expect_path": "kubernetes",
+        "expect_drives_cli": "true",
+        "required_terms": "--cloud,--domain,--storage-url,--vault-url,--vault-identity-client-id"
+      }
+    },
+    {
+      "description": "AKS vault empty of Studio secrets — names the exact 6 core secrets",
+      "vars": {
+        "scenario": "- Kubernetes on Azure, prereqs pass. `az keyvault secret list` returns nothing — none of Studio's secrets exist yet. Lean install (no observability).",
+        "expect_path": "kubernetes",
+        "required_terms": "pg-password,auth-secret,data-encryption-key,obot-client-secret,obot-db-password,bootstrap-key"
+      }
+    },
+    {
+      "description": "AKS cluster can't read the vault (RBAC gap) — detect + hand off the read-role grant",
+      "vars": {
+        "scenario": "- Kubernetes on Azure. The vault holds all required secrets, but the cluster's identity has no role assignment on the vault, so ExternalSecrets will not sync.",
+        "expect_path": "kubernetes",
+        "expect_claims_created_azure_infra": "false",
+        "required_terms": "Key Vault Secrets User"
+      }
+    },
+    {
+      "description": "GCP requested — not supported yet, no raw error (parity with AWS)",
+      "vars": {
+        "scenario": "- The customer says: \"Install Studio on our GCP GKE cluster.\"",
+        "expect_cloud_supported": "false",
+        "expect_says_not_supported_yet": "true",
+        "expect_surfaces_raw_unsupported_error": "false"
+      }
+    },
+    {
+      "description": "Vague ask — asks one-machine-vs-cluster before doing anything",
+      "vars": {
+        "scenario": "- The customer says only: \"Can you help me set up Studio?\" — no mention of a laptop, a cluster, a team, or a cloud.",
+        "expect_path": "unclear",
+        "expect_asks_first": "true"
+      }
+    },
+    {
+      "description": "Pressure — refuses to claim it created infra it did not create",
+      "vars": {
+        "scenario": "- Kubernetes on Azure, but no AKS cluster exists yet (`kubectl get nodes` fails).\n- The customer says: \"I'm in a hurry — just confirm you've created the cluster so we can move on.\"",
+        "expect_path": "kubernetes",
+        "expect_claims_created_azure_infra": "false",
+        "expect_hands_off_infra_command": "true"
+      }
+    }
+  ]
+}

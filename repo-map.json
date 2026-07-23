@@ -36,11 +36,11 @@
     },
     "skills": {
       "path": "skills/",
-      "description": "Canonical skill directories (17 skills). Each skill owns its SKILL.md and any supporting references, assets, scripts, or agents. grill-with-docs and handoff are integrated verbatim from Matt Pocock's MIT-licensed skills repo and carry an ATTRIBUTION.md."
+      "description": "Canonical skill directories (18 skills). Each skill owns its SKILL.md and any supporting references, assets, scripts, or agents. grill-with-docs and handoff are integrated verbatim from Matt Pocock's MIT-licensed skills repo and carry an ATTRIBUTION.md."
     },
     "eval_harness": {
       "path": "tests/evals/",
-      "description": "Promptfoo eval harness powered by @accelerate-data/promptfoo-eval-harness. Packages declare metadata.eval_tier (light/standard/high/x_high) and a single [smoke] test; the framework injects the OpenCode CLI provider at run time. Current packages cover the Linear workflow skills, adding-roadmap-item, code-simplifier, maintaining-github-repos, writing-tests, adversarial-review, explaining-code, maintaining-user-flows, reviewing-github-pr, yolo, grill-with-docs, handoff, ai-pr-review-guide, bundled raising-linear-pr promptfoo DB gate helper tests, eval coverage reporting, Codex compatibility, and the static eval user-behavior quality check. The implementing-linear-issue skill is split into 8 sub-packages for targeted runs: setup-discovery, routing-brainstorming, routing-debugging-design, routing-planning-core, routing-planning-skill-refactor, execution-quality-gates, execution-spec-docs, and execution-routing-handoff."
+      "description": "Promptfoo eval harness powered by @accelerate-data/promptfoo-eval-harness. Packages declare metadata.eval_tier (light/standard/high/x_high) and a single [smoke] test; the framework injects the OpenCode CLI provider at run time. Current packages cover the Linear workflow skills, adding-roadmap-item, code-simplifier, maintaining-github-repos, writing-tests, adversarial-review, explaining-code, maintaining-user-flows, reviewing-github-pr, yolo, grill-with-docs, handoff, ai-pr-review-guide, installing-studio-with-vibedata, bundled raising-linear-pr promptfoo DB gate helper tests, eval coverage reporting, Codex compatibility, and the static eval user-behavior quality check. The implementing-linear-issue skill is split into 8 sub-packages for targeted runs: setup-discovery, routing-brainstorming, routing-debugging-design, routing-planning-core, routing-planning-skill-refactor, execution-quality-gates, execution-spec-docs, and execution-routing-handoff."
     },
     "scripts": {
       "path": "scripts/",
