@@ -26,6 +26,10 @@ Ask two things, then run it:
 - **Observability?** Lean by default (~3.5 GB images). `--with-observability`
   adds LGTM+Alloy; `--full-observability` adds Langfuse too (~11 GB). Sizes the
   host — the optional containers carry hard memory caps; core services don't.
+  On a **re-install** the flag is not optional: a run that names no profile
+  blocks and prints both the keep and the remove command, so nobody loses
+  observability (and its Langfuse data) by forgetting a flag.
+  `--no-observability` is the only way to remove it.
 - **Reached from another machine / using a companion app off-host?** Pass
   `--studio-url http://<host-ip>:5173` (that one value drives Studio + Obot +
   Grafana/Langfuse logins; `http://host[:port]` only, no HTTPS for Local
@@ -80,8 +84,9 @@ laptop, then `vibedata install compose` again. Sessions bind-mount under
 | Goal | Command |
 | --- | --- |
 | Update to a new version | update the binary first, then `vibedata update compose` (reuses state, preserves the observability profile + data) |
-| Start / stop / restart | `vibedata compose up [--with-observability \| --full-observability] \| down \| restart` (`down` preserves data) |
-| Change LAN address / topology | re-run `install compose` with the new `--studio-url` / observability flag |
+| Start / stop / restart | `vibedata compose up [--with-observability \| --full-observability \| --no-observability] \| down \| restart` (`down` preserves data; `up` with no flag keeps the installed profile) |
+| Change LAN address / topology | re-run `install compose` with the new `--studio-url` **and** the profile flag you want kept — omitting it blocks rather than silently removing observability |
+| Back up / restore | `vibedata backup compose` → `DATA_DIR/backups`; `vibedata restore compose` restores a package in place |
 | Sign CLI in/out of Studio | `vibedata login [--studio-url URL]` / `vibedata logout` |
 | Tear down | `vibedata cleanup [--force \| -y] [--keep-images]` — removes this project's containers, network, volumes, images; **preserves `DATA_DIR`**; prompts unless `--force` |
 

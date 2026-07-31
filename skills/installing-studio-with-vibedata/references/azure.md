@@ -27,7 +27,21 @@ export FD_PROFILE=studio-fd FD_ENDPOINT=studio
 | AKS cluster | `az group create …` → `az aks create … --enable-managed-identity --generate-ssh-keys` → `az aks get-credentials -g $RG -n $AKS` | `kubectl get nodes` → `Ready` |
 | Azure Files **NFS v4.1** share | `az storage account create --sku Premium_LRS --kind FileStorage --https-only false` + `az storage share-rm create --enabled-protocols NFS` + subnet service-endpoint & network rules (deny by default) | `az storage account show … --query networkRuleSet` |
 | Key Vault | `az keyvault create --name $VAULT -g $RG` (+ RBAC below) | `az keyvault show --name $VAULT` |
-| Front Door edge (**required** — SSO refuses plain HTTP) | `az afd profile create --sku Standard_AzureFrontDoor` (Premium for Private Link) + `az afd endpoint create` | endpoint `hostName` becomes `--domain` |
+| Front Door edge (**required** — SSO refuses plain HTTP) | `az afd profile create --sku Standard_AzureFrontDoor --origin-response-timeout-seconds 240` (Premium for Private Link) + `az afd endpoint create` | endpoint `hostName` becomes `--domain`; `az afd profile show … --query originResponseTimeoutSeconds` → `240` |
+
+**Never leave the origin timeout at Azure's 30s default.** It is how long Front
+Door waits for Studio before returning `504`, and opening an Intent takes longer
+— Studio clones the repo and starts an agent pod (~40s warm, ~110s the first
+time a node pulls the agent image). At 30s the edge gives up mid-open, and
+because the caller disconnected Studio discards the half-built agent and starts
+over on the retry, so users see repeated gateway errors on a working install.
+240 is the Azure maximum. Existing profile, no reinstall needed:
+
+```bash
+az afd profile update --profile-name $FD_PROFILE -g $RG --origin-response-timeout-seconds 240
+```
+
+Allow a few minutes for it to reach every edge location before retesting.
 
 ## Detect vault state + cluster read access (RBAC)
 
