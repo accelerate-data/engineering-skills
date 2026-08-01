@@ -45,6 +45,8 @@ genuinely unclear — ask.
 | Check the OS keyring | `vibedata auth keyring-check` | same |
 | Update to a new version | update the binary, then `vibedata update compose` | **no CLI** — Argo CD auto-rolls the published release behind the upgrade gate |
 | Start / stop / restart | `vibedata compose up \| down \| restart` | **no CLI** — `kubectl` / Argo; pause the cluster with `az aks stop` / `az aks start` |
+| Back up | `vibedata backup compose` → `DATA_DIR/backups` (no flags) | `vibedata backup kubernetes --to <share-url>` → an existing second share |
+| Restore | `vibedata restore compose` (in place, no flags) | `vibedata restore kubernetes --from <share>/<package>` — see the k8s file's caveat before relying on it |
 | Tear down | `vibedata cleanup` (Compose project only) | **no CLI** — `az` resource deletes (`az aks delete`, `az afd profile delete`, `az storage account delete`, `az keyvault delete`) |
 | Fabric cloud/GitHub creds | in-container `az login` / `gh` (walk them through it) | the cluster identity + vault secrets set up during prereqs |
 
@@ -79,15 +81,26 @@ genuinely unclear — ask.
 
 ```
 vibedata version
-vibedata install compose [--with-observability | --full-observability] [--studio-url http://host[:port]]
+vibedata install compose [--with-observability | --full-observability | --no-observability] [--studio-url http://host[:port]]
 vibedata install kubernetes --cloud azure --domain … --storage-url … --vault-url … --vault-identity-client-id …
-                            [--with-observability | --full-observability] [--kube-context] [--storage-resource-group] [--timeout] [--kubeconfig]
+                            [--with-observability | --full-observability | --no-observability]
+                            [--version] [--kube-context] [--storage-resource-group] [--timeout] [--kubeconfig]
 vibedata update compose
-vibedata compose up | down | restart
+vibedata compose up [--with-observability | --full-observability | --no-observability] | down | restart
+vibedata backup  compose                      # → DATA_DIR/backups
+vibedata backup  kubernetes --to <share-url> [--name] [--cloud] [--kube-context] [--kubeconfig] [--storage-resource-group]
+vibedata restore compose
+vibedata restore kubernetes --from <share-url>[/<package>] [--list] [--force] [--yes] [--with-langfuse] [--cloud] [--kube-context] [--kubeconfig] [--storage-resource-group]
 vibedata login | logout   [--studio-url URL]
 vibedata auth keyring-check
 vibedata cleanup [--force | -y] [--keep-images]      # Compose project only
 ```
+
+An observability profile is **never** inferred from silence: omitting the flag
+on either `install` blocks and prints both the keep and the remove command, and
+`compose up` starts the installed profile unchanged. Only `--no-observability`
+removes it. `install kubernetes --version` pins one release instead of tracking
+the auto-upgrade channel — the recovery install, not the normal one.
 
 Global `--json` (machine-readable, event streams) and `--verbose` work on every
 command. `install kubernetes` with no flags opens an interactive form
