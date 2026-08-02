@@ -143,9 +143,16 @@ default (no flag) are far lighter.
 
 ## 5. Go live + first login
 
-The ingress is private until you wire the cloud's HTTPS edge (cloud file) —
-required, because SSO refuses plain HTTP. Then read the `bootstrap-key` from the
-vault (cloud file) and open `/login` to create the first admin.
+**Before wiring the edge, apply the cloud file's ingress LB health-probe
+fix.** A default AKS internal LB health-probes `/`, which ingress-nginx 404s
+on, so every node reads unhealthy and the LB silently drops all inbound
+traffic — invisibly to in-cluster tests. See the cloud file for the exact
+annotation and how to verify it.
+
+The ingress is private until you then wire the cloud's HTTPS edge (cloud
+file) — required, because SSO refuses plain HTTP. Then read the
+`bootstrap-key` from the vault (cloud file) and open `/login` to create the
+first admin.
 
 ## Day-2 (no vibedata CLI for k8s)
 
