@@ -140,9 +140,13 @@ is the easy mistake:
 
 ```bash
 az network vnet subnet update -g $RG --vnet-name <vnet> --name <pls-subnet> \
-  --disable-private-endpoint-network-policies true \
-  --disable-private-link-service-network-policies true
+  --private-endpoint-network-policies Disabled \
+  --private-link-service-network-policies Disabled
 ```
+
+Use these flag forms, not `--disable-private-endpoint-network-policies` /
+`--disable-private-link-service-network-policies`: `az` marks those deprecated
+and prints a replacement warning.
 
 The internal LB (`kubernetes-internal`) lives in the AKS node resource group
 (`MC_*`), not `$RG` — `--lb-frontend-ip-configs` needs the **full
@@ -159,17 +163,32 @@ az network private-link-service create -g $RG --name $PLS --location $LOCATION \
   --lb-frontend-ip-configs "$LB_FRONTEND_ID"
 ```
 
-**2. Point the Front Door origin at it.** `--shared-private-link-resource`
-must be a **single JSON string** with `private-link` as a nested `{id: ...}`
-object — space-separated `key=value` and flat-JSON forms both fail:
+**2. Create the origin group** — probe `/healthz`, the same path the LB fix
+above made healthy:
+
+```bash
+az afd origin-group create --resource-group $RG --profile-name $FD_PROFILE \
+  --origin-group-name studio-og \
+  --probe-request-type GET --probe-protocol Http --probe-path /healthz \
+  --probe-interval-in-seconds 100 --sample-size 4 \
+  --successful-samples-required 3 --additional-latency-in-milliseconds 50
+```
+
+**3. Point the Front Door origin at the PLS.** `--host-name` is the internal
+LB's **private IP** (`kubectl -n ingress-nginx get svc
+ingress-nginx-controller -o jsonpath='{.status.loadBalancer.ingress[0].ip}'`)
+— an AKS internal LB has no FQDN. `--shared-private-link-resource` must be a
+**single JSON string** with `private-link` as a nested `{id: ...}` object;
+space-separated `key=value` and flat-JSON forms both fail:
 
 ```bash
 PLS_ID=$(az network private-link-service show -g $RG --name $PLS --query id -o tsv)
 
 az afd origin create --resource-group $RG --profile-name $FD_PROFILE \
-  --origin-group-name <origin-group> --origin-name <origin-name> \
-  --host-name <internal-lb-fqdn> --origin-host-header "$FD_HOST" \
-  --enforce-certificate-name-check true \
+  --origin-group-name studio-og --origin-name studio-ingress \
+  --host-name <internal-lb-private-ip> --origin-host-header "$FD_HOST" \
+  --http-port 80 --https-port 443 --priority 1 --weight 1000 \
+  --enabled-state Enabled --enforce-certificate-name-check true \
   --shared-private-link-resource "{\"private-link\":{\"id\":\"$PLS_ID\"},\"private-link-location\":\"$LOCATION\",\"request-message\":\"studio access\"}"
 ```
 
@@ -177,9 +196,21 @@ az afd origin create --resource-group $RG --profile-name $FD_PROFILE \
 `false` for any Private Link origin (`EnforceCertificateNameCheck must be
 enabled for Private Link`), even when the route forwards over plain HTTP.
 
-**3. Approve the private endpoint connection.** Ownership of both sides does
+**4. Create the route.** Without it Front Door has nowhere to send requests
+and returns its own 404 forever:
+
+```bash
+az afd route create --resource-group $RG --profile-name $FD_PROFILE \
+  --endpoint-name $FD_ENDPOINT --route-name studio-route \
+  --origin-group studio-og --supported-protocols Http Https \
+  --forwarding-protocol HttpOnly --https-redirect Enabled \
+  --link-to-default-domain Enabled
+```
+
+**5. Approve the private endpoint connection.** Ownership of both sides does
 not auto-approve it — the connection request comes from Microsoft's own
-Front-Door-managed subscription, not yours:
+Front-Door-managed subscription, not yours. It appears within ~15-60s of
+route creation:
 
 ```bash
 PE_ID=$(az network private-link-service show -g $RG --name $PLS \
