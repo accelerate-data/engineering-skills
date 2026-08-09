@@ -162,27 +162,66 @@ first admin.
 
 | Goal | How |
 | --- | --- |
-| Upgrade | **automatic** — a published release rolls out via Argo CD behind the safety gate. No `vibedata` command; do not invent one. |
+| Upgrade | **not automatic, and no `vibedata` command** — see "Upgrades" below. Argo tracks the channel and reports `OutOfSync`; nothing rolls out until a sync is requested. |
 | Health | `kubectl -n argocd get applications` and `kubectl -n studio get pods` |
 | Pause / teardown | cloud file (the cloud's stop/delete commands). `vibedata cleanup` is **Docker-only** — it does not apply here. |
 | Grow the database disk | Postgres starts on a 5 GiB PVC `data-postgres-0`. Check with `kubectl -n studio exec postgres-0 -- df -h /var/lib/postgresql/data`; grow by patching the PVC's `storage` request — AKS's `managed-csi` expands online, no downtime. |
-| Back up | `vibedata backup kubernetes --to <backup-share-url> [--name <package>]` — an EXISTING second share, not DATA_DIR |
+| Back up | `vibedata backup kubernetes --to <backup-share-url> [--name <package>]` — an EXISTING second share, not DATA_DIR. Created during prereqs (cloud file); there is no command to make one. |
 | List packages | `vibedata restore kubernetes --from <backup-share-url> --list` |
-| Restore | `vibedata restore kubernetes --from <share>/<package> [--force] [--yes] [--with-langfuse]` — replaces this cluster's databases and data files in place; `--force` is required when the target already holds data. Read the caveat below first. |
+| Restore | `vibedata restore kubernetes --from <share>/<package> [--yes] [--with-langfuse]` — the supported path is a fresh cluster, so it refuses one that already holds data. See "Recovering a failed upgrade". |
 | CLI sign-in to Studio | `vibedata login [--studio-url URL]` / `logout` (same as Docker) |
 
-## Known issue — restore is unsafe once an agent has run
+## Upgrades — asked for, never automatic
 
-Until a release carrying the fix ships, treat `vibedata backup/restore
-kubernetes` as unreliable on a cluster where Intents have run. DATA_DIR has two
-writers — the backend as uid 1001, agent pods as uid 10001 — and its files are
-mode 0600, so there is no group access between them. The backup/restore worker
-runs as 1001, which means it cannot read the agent's files (the package is
-silently short, with no error) and cannot overwrite them coming back in:
+Studio never upgrades itself. Argo tracks the release channel and reports the
+new version `OutOfSync`, then waits: an automatic sync would roll a release out
+before any backup existed. **Back up first** — migrations have no down-path, so
+a bad upgrade is recovered from a backup, not rolled back.
 
-```text
-RESTORE_FAILED: tar: can't remove old file openhands/conversations/…: Permission denied
+Prefer the repo's reference script over driving it by hand:
+`scripts/devops/upgrade-with-recovery.sh` drains users behind the edge, backs
+up, syncs, health-checks, and either restores the edge or runs the recovery.
+Before touching anything it checks there is a newer release, that the app is not
+pinned, that regional vCPU quota has room for a recovery cluster, and that the
+vault holds every secret the new version needs — a release can add a secret, and
+syncing the chart alone cannot deliver one. It reads secret *names* only, so
+whoever runs it needs `az keyvault secret show` or it refuses to start. Copy and
+adapt its cloud-specific parts.
+
+By hand it is two commands — request the sync, then watch it:
+
+```bash
+kubectl -n argocd annotate application studio-app argocd.argoproj.io/refresh=hard --overwrite
+kubectl -n argocd patch application studio-app --type merge \
+  -p '{"operation":{"sync":{"prune":true,"syncStrategy":{"hook":{}}}}}'
 ```
 
-Tell operators to treat such packages as partial. A cluster with no Intent
-history is unaffected, so a backup taken before first use is still sound.
+The in-cluster gate runs on every sync: it blocks new logins, waits for
+in-flight agent work, and only then swaps the version.
+
+A secret added to the vault is not in the cluster yet — it re-reads hourly.
+Force it with
+`kubectl -n studio annotate externalsecret studio-secrets force-sync=$(date +%s) --overwrite`.
+
+## Recovering a failed upgrade
+
+Restoring **over** the broken cluster is not the supported path. Recovery builds
+a new one and leaves the old running — it is the only place the failure can be
+reproduced.
+
+1. Take the edge offline (cloud file), leaving the cluster up.
+2. `--list` the packages and pick the version that ran *before* the upgrade, not
+   the newest.
+3. Create a new cluster and a new data share, **reusing the same vault**, storage
+   account and edge. A new vault means a new `data-encryption-key`, which means
+   every stored credential is unreadable. Needs a second cluster's worth of vCPU
+   quota — confirm that before an outage, not during one.
+4. Install that version pinned: `vibedata install kubernetes … --version vX.Y.Z`,
+   using the matching `vibedata` binary (CLI and Studio pair 1:1). Without
+   `--version` it tracks the open channel and pulls the release that just failed.
+5. `vibedata restore kubernetes --from <share>/<package>` into it. Add
+   `--with-langfuse` only if Langfuse's trace store survived, else its dashboards
+   point at nothing.
+6. Repeat the in-Studio `gh` / `az` sign-ins — token caches are not in a backup.
+7. Point the edge at the new cluster, verify, and only later delete the
+   quarantined one.

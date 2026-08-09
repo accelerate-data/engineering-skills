@@ -27,6 +27,7 @@ export PLS=studio-pls                                # Private Link Service (Pre
 | Providers (first run) | `az provider register --namespace Microsoft.{ContainerService,Compute,Network,Storage,KeyVault}` | `az provider show --namespace Microsoft.ContainerService --query registrationState -o tsv` → `Registered` |
 | AKS cluster | `az group create …` → `az aks create … --enable-managed-identity --generate-ssh-keys` → `az aks get-credentials -g $RG -n $AKS` | `kubectl get nodes` → `Ready` |
 | Azure Files **NFS v4.1** share | `az storage account create --sku Premium_LRS --kind FileStorage --https-only false` + `az storage share-rm create --enabled-protocols NFS` + subnet service-endpoint & network rules (deny by default) | `az storage account show … --query networkRuleSet` |
+| A **second** NFS share for backups | another `az storage share-rm create --enabled-protocols NFS` on the same account | `az storage share-rm list … -o table` shows both |
 | Key Vault | `az keyvault create --name $VAULT -g $RG` (+ RBAC below) | `az keyvault show --name $VAULT` |
 | Front Door edge (**required** — SSO refuses plain HTTP) | `az afd profile create --sku Standard_AzureFrontDoor --origin-response-timeout-seconds 240` (Premium for Private Link) + `az afd endpoint create` | endpoint `hostName` becomes `--domain`; `az afd profile show … --query originResponseTimeoutSeconds` → `240` |
 
@@ -236,6 +237,28 @@ so redo this Phase after a re-install.
 ```bash
 az keyvault secret show --vault-name $VAULT --name bootstrap-key --query value -o tsv   # one-time admin key → open /login
 ```
+
+## Backup + recovery values (k8s file owns the sequence)
+
+The backup share URL is the storage account's file endpoint plus the **second**
+share name:
+
+```bash
+BACKUP_URL="$(az storage account show -g $RG -n $STORAGE --query primaryEndpoints.file -o tsv)$BACKUP_SHARE"
+```
+
+Recovery step 1 — take the edge offline without deleting anything. Disable the
+**route**, not the origin: Azure refuses to disable the last origin in a route's
+origin group.
+
+```bash
+az afd route update --route-name studio-route --endpoint-name $FD_ENDPOINT \
+  --profile-name $FD_PROFILE --resource-group $RG --enabled-state Disabled
+```
+
+The recovery cluster reuses this RG's vault, storage account and Front Door —
+only the cluster and data share are new, so plan for a second cluster's worth of
+regional vCPU quota.
 
 ## Pause / teardown
 
