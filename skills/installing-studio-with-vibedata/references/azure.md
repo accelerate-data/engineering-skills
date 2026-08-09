@@ -68,11 +68,14 @@ Writing needs the **Key Vault Secrets Officer** role on yourself (propagates
 az keyvault secret set --vault-name $VAULT --name pg-password         --value "$(openssl rand -hex 24)"
 az keyvault secret set --vault-name $VAULT --name auth-secret         --value "$(openssl rand -base64 32)"
 az keyvault secret set --vault-name $VAULT --name data-encryption-key --value "$(openssl rand -base64 32)"
+az keyvault secret set --vault-name $VAULT --name data-encryption-key-id --value "k1"
+az keyvault secret set --vault-name $VAULT --name data-encryption-retired-keys --value "{}"
 az keyvault secret set --vault-name $VAULT --name obot-client-secret  --value "$(openssl rand -base64 32)"
 az keyvault secret set --vault-name $VAULT --name obot-db-password    --value "$(openssl rand -hex 24)"
+az keyvault secret set --vault-name $VAULT --name obot-tunnel-peer-token --value "$(openssl rand -base64 32)"
 az keyvault secret set --vault-name $VAULT --name bootstrap-key       --value "$(openssl rand -base64 16)"
 # --with-observability: grafana-client-secret (b64 32), grafana-admin-password (b64 24)
-# --full-observability adds 9 langfuse-* (langfuse-encryption-key MUST be `openssl rand -hex 32` = 64 hex;
+# --full-observability adds 10 langfuse-* (langfuse-encryption-key MUST be `openssl rand -hex 32` = 64 hex;
 #   langfuse-init-project-public-key = pk-lf-<16 hex>, langfuse-init-project-secret-key = sk-lf-<24 hex>)
 ```
 

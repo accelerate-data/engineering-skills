@@ -54,21 +54,25 @@ A **missing** secret means its ExternalSecret never syncs and pods won't start,
 so every name must exist in the cloud's vault before install. The *values* are
 self-generated and the *set/verify commands* are cloud-specific (cloud file).
 
-- **6 core (always):** `pg-password`, `auth-secret`, `data-encryption-key`,
-  `obot-client-secret`, `obot-db-password`, `bootstrap-key`.
+- **9 core (always):** `pg-password`, `auth-secret`, `data-encryption-key`,
+  `data-encryption-key-id` (`k1` on a new install),
+  `data-encryption-retired-keys` (`{}` on a new install), `obot-client-secret`,
+  `obot-db-password`, `obot-tunnel-peer-token`, `bootstrap-key`.
 - **`--with-observability` adds 2:** `grafana-client-secret`,
   `grafana-admin-password`.
-- **`--full-observability` adds those 2 and 9:** `langfuse-salt`,
+- **`--full-observability` adds those 2 and 10:** `langfuse-salt`,
   `langfuse-nextauth-secret`, `langfuse-encryption-key` (64 hex),
-  `langfuse-client-secret`, `langfuse-clickhouse-password`,
-  `langfuse-redis-password`, `langfuse-minio-password`,
-  `langfuse-init-project-public-key`, `langfuse-init-project-secret-key`.
+  `langfuse-client-secret`, `langfuse-db-password`,
+  `langfuse-clickhouse-password`, `langfuse-redis-password`,
+  `langfuse-minio-password`, `langfuse-init-project-public-key`,
+  `langfuse-init-project-secret-key`.
 
 A cloud whose file share needs a mount key adds `storage-key` to the core set.
-Azure Files NFS v4.1 mounts key-free, so on Azure the core set is the 6 above.
-The authority is `required_vault_keys()` in `cli/vibedata/src/vibedata/k8s/render.py`,
-which derives the list from what the profile actually renders — read it there
-rather than trusting this list if the two ever disagree.
+Azure Files NFS v4.1 mounts key-free, so on Azure the core set is the 9 above.
+This list drifts as the installer gains secrets, so print the authoritative set
+instead of trusting it: `vibedata install kubernetes --list-secrets` (plus the
+profile flag), which needs no cluster, vault or share. It derives from what the
+profile actually renders, so it cannot disagree with what the install demands.
 
 ## 4. Drive the install
 
