@@ -169,8 +169,8 @@
       "vars": {
         "eval_type": "user-behavior",
         "failure_modes": "over-mocks,wrong-lane",
-        "user_prompt": "The bug only appears when a real background runtime is reclaimed while the user is away, and a stubbed status never reproduces it. Which lane?",
-        "simulated_context": "- The condition depends on a real container lifecycle.\n- A stubbed status cannot produce the transition.\n- The scenario runs end to end through the interface.\n",
+        "user_prompt": "The bug only shows when the user's live background session is reclaimed while they are on another screen, and a stubbed status never reproduces it. The whole scenario is clicked through the app in a real browser. Which lane?",
+        "simulated_context": "- The user drives every step on screen, in a real browser.\n- The condition needs a genuinely live background session, reclaimed for real.\n- A stubbed status cannot produce the transition.\n- Nothing about image start-up, routing, or sign-on is involved.\n",
         "expected_skill_path": "skills/reproducing-bug/SKILL.md",
         "expect_lane": "journey-real-runtime"
       }

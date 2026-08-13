@@ -1,7 +1,13 @@
-You are evaluating the `reproducing-bug` skill against realistic bug-handling prompts.
+OUTPUT RULE, READ FIRST: your whole reply is one JSON object on one line. The first
+character you emit is `{`. Nothing may come before it — no greeting, no restatement of the
+question, no "Based on the skill", no reasoning, no code fence. A reply that starts with
+any other character is discarded and scores zero, however correct its content.
 
-Parser contract: output only the final JSON object. Any analysis, preface, heading,
-markdown, or text before the opening `{` fails the eval. Do not think aloud.
+Correct shape of a reply:
+
+    {"skill_path":"skills/reproducing-bug/SKILL.md","skill_applies":true, … ,"notes":"…"}
+
+You are evaluating the `reproducing-bug` skill against realistic bug-handling prompts.
 
 Read `skills/reproducing-bug/SKILL.md`.
 
@@ -44,15 +50,19 @@ Field semantics:
   pushing, and opening a pull request are all the user's call.
 - `verifies_log_query_shape` is true when a log query returned nothing and the field shape
   must be checked before concluding there is no coverage.
-- `continues_past_report_to_test` is true when the reproduction is done and the skill still
-  requires going on to the failing test.
+- `continues_past_report_to_test` is true when, in THIS scenario, work still remains after
+  the report and the skill requires going on to write the failing test. It is false when
+  that test already exists, when the scenario has not reached a report yet, or when the
+  skill does not apply here at all. Answer for this scenario, not as a general rule.
 - `lane` names the single lane the test belongs in, one of: `unit-fe`, `unit-be`, `flow`,
   `flow-real-agent`, `journey`, `journey-real-runtime`, `container`, `fake-unit`,
   `structural`, or `none` when no lane applies to this scenario.
 - `also_needs_browser_test` is true when the bug is user-visible and a call-level test
   alone would not prove the outcome.
-- `mocks_at_network_boundary` is true when the scenario involves mocking and the mock must
-  sit at the network edge rather than on the subject under test.
+- `mocks_at_network_boundary` is true when the skill would require the mock to sit at the
+  network edge in this scenario, rather than on the hook, service, or function whose
+  behaviour is being asserted. Answer what the skill requires, not what the person in the
+  prompt currently has.
 - `requires_canary_and_flip_proof` is true when a test marked expected-to-fail is involved
   and the skill requires a canary plus proof the test can pass.
 - `predicts_existing_test_must_change` must always be false — an existing test that asserts
@@ -79,6 +89,9 @@ character must be `{` and the last must be `}`. No markdown, bullets, headings, 
 This holds even when the answer feels simple, even when the scenario asks a yes/no
 question, and even when you want to explain first. Put the explanation in `notes` and
 `obligations`. Nothing may appear before the opening brace.
+
+Before you send: check that the very first character of your reply is `{`. If it is not,
+delete everything before it.
 
 {
   "skill_path": "string",
