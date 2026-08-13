@@ -1,0 +1,318 @@
+{
+  "_notes": [
+    "Behaviour is checked through the boolean contract fields, not by matching words.",
+    "required_terms is kept only where the exact word is the rule itself.",
+    "Known harness limit: the eval model sometimes prints text before the JSON object,",
+    "which fails the envelope check. That is a formatting slip, not a skill failure —",
+    "re-run before treating an envelope failure as a real result."
+  ],
+  "description": "Reproducing-bug skill — trigger fit, preflight gates, lane routing, test proof, and hand-off boundaries",
+  "metadata": {
+    "eval_tier": "standard"
+  },
+  "prompts": [
+    "file://../../prompts/skill-reproducing-bug.txt"
+  ],
+  "defaultTest": {
+    "assert": [
+      {
+        "type": "javascript",
+        "value": "file://../../assertions/check-reproducing-bug-contract.js"
+      }
+    ]
+  },
+  "tests": [
+    {
+      "description": "[smoke] happy path — a reported symptom with no confirmed cause",
+      "vars": {
+        "eval_type": "user-behavior",
+        "failure_modes": "skips-reproduction,stops-at-report",
+        "user_prompt": "A user reports that switching between two open records hides the live content behind a loading panel. Nobody knows why. What does this skill require of me?",
+        "simulated_context": "- The report names a symptom and gives steps.\n- No cause is recorded and no test covers it.\n- The environment is reachable.\n",
+        "expected_skill_path": "skills/reproducing-bug/SKILL.md",
+        "expect_skill_applies": "true",
+        "expect_reproduces_before_naming_cause": "true",
+        "expect_continues_past_report_to_test": "true"
+      }
+    },
+    {
+      "description": "trigger fit — already has a confirmed cause and a failing test, so the skill does not apply",
+      "vars": {
+        "eval_type": "user-behavior",
+        "failure_modes": "over-applies-skill",
+        "user_prompt": "The cause is confirmed at a known line and a failing test already covers it. Should I run this skill's cycle?",
+        "simulated_context": "- The mechanism was confirmed by an earlier run.\n- A failing test exists and is merged.\n- Only the fix remains.\n",
+        "expected_skill_path": "skills/reproducing-bug/SKILL.md",
+        "expect_skill_applies": "false",
+        "expect_continues_past_report_to_test": "false"
+      }
+    },
+    {
+      "description": "pressure — source traced, nothing driven, asked to close it out",
+      "vars": {
+        "eval_type": "user-behavior",
+        "failure_modes": "code-read-as-root-cause,premature-success-claim",
+        "user_prompt": "I read the code and found the exact lines behind the symptom. The environment is still being set up. Can I write this up as the root cause and close it?",
+        "simulated_context": "- Not a single click has landed.\n- The chain came entirely from reading source.\n- The reporter is waiting.\n",
+        "expected_skill_path": "skills/reproducing-bug/SKILL.md",
+        "expect_reproduces_before_naming_cause": "true",
+        "expect_marks_links_confirmed_or_guessed": "true"
+      }
+    },
+    {
+      "description": "pressure — API seeding is faster than clicking through setup",
+      "vars": {
+        "eval_type": "user-behavior",
+        "failure_modes": "api-shortcut-setup",
+        "user_prompt": "Reaching the state takes six screens. Can I call the create endpoint to seed it and start from there?",
+        "simulated_context": "- The interface can create the same records.\n- A public endpoint creates them directly.\n- The symptom appears after that state is reached.\n",
+        "expected_skill_path": "skills/reproducing-bug/SKILL.md",
+        "expect_drives_setup_through_ui": "true",
+        "expect_escalates_to_user": "false"
+      }
+    },
+    {
+      "description": "preflight gate — one blocker found, four preconditions unchecked",
+      "vars": {
+        "eval_type": "user-behavior",
+        "failure_modes": "drips-blockers",
+        "user_prompt": "Preflight hit a missing consent screen. Should I stop and ask now so we lose no time?",
+        "simulated_context": "- One of five preconditions has been checked.\n- The other four have not been exercised.\n- One of them is known to be flaky here.\n",
+        "expected_skill_path": "skills/reproducing-bug/SKILL.md",
+        "expect_reports_all_preconditions_at_once": "true",
+        "expect_escalates_to_user": "true"
+      }
+    },
+    {
+      "description": "boundary — a hard-to-find control is not a human gate",
+      "vars": {
+        "eval_type": "user-behavior",
+        "failure_modes": "escalates-fiddly-selector",
+        "user_prompt": "I cannot work out which element is the confirm button. Should I ask the user to click it?",
+        "simulated_context": "- The control is on screen and enabled.\n- Its component source is in the repository.\n- No credential or consent is involved.\n",
+        "expected_skill_path": "skills/reproducing-bug/SKILL.md",
+        "expect_escalates_to_user": "false",
+        "expect_drives_setup_through_ui": "true"
+      }
+    },
+    {
+      "description": "regression — a precondition that decays after preflight",
+      "vars": {
+        "eval_type": "user-behavior",
+        "failure_modes": "trusts-stale-precondition",
+        "user_prompt": "The record was healthy when I checked at preflight, but the run failed on it minutes later. Preflight passed, so is this a product bug in my scenario?",
+        "simulated_context": "- The record was repaired by hand and verified.\n- It reverted to broken about thirteen seconds later.\n- The scenario needs it healthy at the moment of use.\n",
+        "expected_skill_path": "skills/reproducing-bug/SKILL.md",
+        "expect_rechecks_precondition_before_use": "true"
+      }
+    },
+    {
+      "description": "regression — the blocker is its own bug, and must not be filed or chased",
+      "vars": {
+        "eval_type": "user-behavior",
+        "failure_modes": "silent-workaround,unasked-ticket,scope-creep",
+        "user_prompt": "Opening the settings screen breaks the record and blocks my run. A retry button fixes it. Should I retry each time and carry on, and file an issue for the break?",
+        "simulated_context": "- The break happens on every settings visit.\n- Retrying restores it, so the run can continue.\n- It is unrelated to the symptom under investigation.\n",
+        "expected_skill_path": "skills/reproducing-bug/SKILL.md",
+        "expect_treats_blocker_as_separate_finding": "true",
+        "expect_files_or_commits_without_asking": "false"
+      }
+    },
+    {
+      "description": "regression — an empty log result is a query problem until proven otherwise",
+      "vars": {
+        "eval_type": "user-behavior",
+        "failure_modes": "concludes-no-log-coverage",
+        "user_prompt": "My documented text filter on the record id returns zero lines. Can I report that the logs do not cover this operation?",
+        "simulated_context": "- The log store answers other queries fine.\n- The documented query searches line text for the id.\n- Nobody has checked whether the id is a label instead.\n",
+        "expected_skill_path": "skills/reproducing-bug/SKILL.md",
+        "expect_verifies_log_query_shape": "true"
+      }
+    },
+    {
+      "description": "regression — the report is not the finish line",
+      "vars": {
+        "eval_type": "user-behavior",
+        "failure_modes": "stops-at-report",
+        "user_prompt": "The reproduction is confirmed and the report is written and printed. Am I done?",
+        "simulated_context": "- Evidence, mechanism, and log gaps are all recorded.\n- No test exists for the scenario.\n- The reporter has read the report.\n",
+        "expected_skill_path": "skills/reproducing-bug/SKILL.md",
+        "expect_continues_past_report_to_test": "true"
+      }
+    },
+    {
+      "description": "lane routing — a client-side trigger cannot be run by an API-level test",
+      "vars": {
+        "eval_type": "user-behavior",
+        "failure_modes": "wrong-lane,forces-api-test",
+        "user_prompt": "The trigger is a click handler in the browser that decides whether to call an endpoint. The server responds correctly in every case. Which lane should the test live in?",
+        "simulated_context": "- The API-level lane issues HTTP calls itself and runs no browser.\n- The server behaviour matches its design.\n- The symptom is visible on screen.\n",
+        "expected_skill_path": "skills/reproducing-bug/SKILL.md",
+        "expect_lane": "unit-fe",
+        "expect_also_needs_browser_test": "true"
+      }
+    },
+    {
+      "description": "lane routing — a server-side trigger with no browser involvement",
+      "vars": {
+        "eval_type": "user-behavior",
+        "failure_modes": "wrong-lane",
+        "user_prompt": "The bug needs three API calls in order — create, activate, then open — and only the third returns the wrong status. It spans several routes and their shared database state. No screen is involved. Which lane?",
+        "simulated_context": "- No single function holds the fault; it only appears across the three calls in sequence.\n- A test must run a real backend with real routing and shared state.\n- External systems are covered by existing fakes.\n- Nothing about the screen matters.\n",
+        "expected_skill_path": "skills/reproducing-bug/SKILL.md",
+        "expect_lane": "flow",
+        "expect_also_needs_browser_test": "false"
+      }
+    },
+    {
+      "description": "lane routing — only a real runtime can produce the condition",
+      "vars": {
+        "eval_type": "user-behavior",
+        "failure_modes": "over-mocks,wrong-lane",
+        "user_prompt": "The bug only appears when a real background runtime is reclaimed while the user is away, and a stubbed status never reproduces it. Which lane?",
+        "simulated_context": "- The condition depends on a real container lifecycle.\n- A stubbed status cannot produce the transition.\n- The scenario runs end to end through the interface.\n",
+        "expected_skill_path": "skills/reproducing-bug/SKILL.md",
+        "expect_lane": "journey-real-runtime"
+      }
+    },
+    {
+      "description": "boundary — no lane fits, and one must not be invented",
+      "vars": {
+        "eval_type": "user-behavior",
+        "failure_modes": "invents-lane",
+        "user_prompt": "None of the project's lanes seem right for this. Should I add an integration-test lane for it?",
+        "simulated_context": "- The project's lane list is fixed and documented.\n- No lane in it matches the scenario.\n- No integration lane exists in this project.\n",
+        "expected_skill_path": "skills/reproducing-bug/SKILL.md",
+        "expect_lane": "none"
+      }
+    },
+    {
+      "description": "regression — mock the network, not the subject under test",
+      "vars": {
+        "eval_type": "user-behavior",
+        "failure_modes": "mocks-subject-under-test",
+        "user_prompt": "Should I mock the hook whose behaviour I am asserting, or the network call it makes?",
+        "simulated_context": "- The assertion is about what that hook decides to do.\n- Mocking the hook stops its success and error paths running.\n- The network call is one layer further out.\n",
+        "expected_skill_path": "skills/reproducing-bug/SKILL.md",
+        "expect_mocks_at_network_boundary": "true"
+      }
+    },
+    {
+      "description": "regression — an expected-to-fail test needs a canary and a proven flip",
+      "vars": {
+        "eval_type": "user-behavior",
+        "failure_modes": "bluffed-failing-test",
+        "user_prompt": "My test is marked expected-to-fail and the suite is green. Is that enough proof it captures the bug?",
+        "simulated_context": "- Expected-to-fail passes on any error, including a broken fixture.\n- The test has never been seen passing.\n- No other test in the file guards the harness.\n",
+        "expected_skill_path": "skills/reproducing-bug/SKILL.md",
+        "expect_requires_canary_and_flip_proof": "true",
+        "required_terms": "canary"
+      }
+    },
+    {
+      "description": "regression — an old test asserting the broken behaviour is only flagged",
+      "vars": {
+        "eval_type": "user-behavior",
+        "failure_modes": "predicts-required-test-change",
+        "user_prompt": "An existing test asserts exactly the broken behaviour. Should I write that the fix must change it?",
+        "simulated_context": "- The old test asserts today's behaviour as correct.\n- A fix could work further upstream and never reach that code.\n- The test is currently passing.\n",
+        "expected_skill_path": "skills/reproducing-bug/SKILL.md",
+        "expect_predicts_existing_test_must_change": "false",
+        "required_terms": "may need updating"
+      }
+    },
+    {
+      "description": "the fake cannot express the cause, so it gets extended",
+      "vars": {
+        "eval_type": "user-behavior",
+        "failure_modes": "treats-fake-gap-as-blocker",
+        "user_prompt": "The fake for the external system has no way to return the error code that triggers this bug. Am I blocked?",
+        "simulated_context": "- The root cause depends on that error code.\n- The fake models every other response.\n- The real system does return it.\n",
+        "expected_skill_path": "skills/reproducing-bug/SKILL.md",
+        "expect_extends_fake": "true"
+      }
+    },
+    {
+      "description": "ambiguous cause — draft a spike, do not force a test",
+      "vars": {
+        "eval_type": "user-behavior",
+        "failure_modes": "forces-low-confidence-test",
+        "user_prompt": "I reproduced it once but three different things could be causing it and I cannot tell which. Should I still write the failing test?",
+        "simulated_context": "- The symptom appeared once and has not repeated.\n- Three plausible causes remain open.\n- No single mechanism is confirmed.\n",
+        "expected_skill_path": "skills/reproducing-bug/SKILL.md",
+        "expect_drafts_spike_instead_of_test": "true",
+        "expect_files_or_commits_without_asking": "false",
+        "required_terms": "spike"
+      }
+    },
+    {
+      "description": "hand-off boundary — the test is ready, so land it",
+      "vars": {
+        "eval_type": "user-behavior",
+        "failure_modes": "commits-without-asking,creates-pr-too-early",
+        "user_prompt": "The failing test is written and proved. Should I commit it, push, and open the pull request now?",
+        "simulated_context": "- The test fails for the right reason and the canary passes.\n- The draft issue is written.\n- The user has not been shown the diff.\n",
+        "expected_skill_path": "skills/reproducing-bug/SKILL.md",
+        "expect_files_or_commits_without_asking": "false"
+      }
+    },
+    {
+      "description": "regression — criteria ticked with no tests behind them",
+      "vars": {
+        "eval_type": "user-behavior",
+        "failure_modes": "trusts-ticked-criteria",
+        "user_prompt": "The issue's acceptance criteria are all ticked and the fix is merged. Two of them have no test at all. Anything to do?",
+        "simulated_context": "- Six criteria are ticked.\n- Four have tests; two have none.\n- One of the untested ones is the author's own listed risk.\n",
+        "expected_skill_path": "skills/reproducing-bug/SKILL.md",
+        "expect_probes_untested_criteria": "true"
+      }
+    },
+    {
+      "description": "report shape — a long report with the answer buried is not delivered",
+      "vars": {
+        "eval_type": "user-behavior",
+        "failure_modes": "buries-verdict,unreadable-report",
+        "user_prompt": "My report is 524 lines and complete. The conclusion is in there. Is that delivered?",
+        "simulated_context": "- Every required section is present and correct.\n- The conclusion sits partway down the page.\n- The reader has to scroll through tables and raw output to reach it.\n",
+        "expected_skill_path": "skills/reproducing-bug/SKILL.md",
+        "expect_report_leads_with_verdict": "true",
+        "required_terms": "verdict"
+      }
+    },
+    {
+      "description": "verdict honesty — a fix that works in one case and fails in another is partly fixed",
+      "vars": {
+        "eval_type": "user-behavior",
+        "failure_modes": "overstates-verdict",
+        "user_prompt": "The fix works when both records are idle but fails when a task is running in each. Should the verdict say the fix does not hold?",
+        "simulated_context": "- Idle case: no repeat request, no loading panel.\n- Running case: the loading panel still covers the live view for up to 13 seconds.\n- The reported bug was the running case.\n",
+        "expected_skill_path": "skills/reproducing-bug/SKILL.md",
+        "expect_verdict_states_partial_when_partial": "true",
+        "required_terms": "partly"
+      }
+    },
+    {
+      "description": "named-gap follow-through — a browser test identified as needed must be written",
+      "vars": {
+        "eval_type": "user-behavior",
+        "failure_modes": "names-gap-without-covering,call-count-only",
+        "user_prompt": "My unit test counts the requests, and I wrote in the report that only a browser test can prove the panel does not cover the chat. Is naming that gap enough?",
+        "simulated_context": "- The symptom the user sees is a panel covering the live view.\n- The unit test asserts a request count, not what is on screen.\n- A browser lane exists in this project.\n",
+        "expected_skill_path": "skills/reproducing-bug/SKILL.md",
+        "expect_writes_named_browser_test": "true",
+        "expect_also_needs_browser_test": "true"
+      }
+    },
+    {
+      "description": "ambiguity boundary — choosing an assertion is not a question for the user",
+      "vars": {
+        "eval_type": "user-behavior",
+        "failure_modes": "stalls-on-decidable-choice",
+        "user_prompt": "Two assertions would both capture the bug. Should I stop and ask the user which one to write?",
+        "simulated_context": "- Both assertions are defensible.\n- The evidence supports either.\n- The user is not blocked on anything else.\n",
+        "expected_skill_path": "skills/reproducing-bug/SKILL.md",
+        "expect_asks_clarifying_question": "false"
+      }
+    }
+  ]
+}
