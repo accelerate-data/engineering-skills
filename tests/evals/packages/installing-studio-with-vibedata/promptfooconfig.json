@@ -131,11 +131,11 @@
       }
     },
     {
-      "description": "AKS vault empty of Studio secrets — names the exact 6 core secrets",
+      "description": "AKS vault empty of Studio secrets — names the exact 9 core secrets",
       "vars": {
         "scenario": "- Kubernetes on Azure, prereqs pass. `az keyvault secret list` returns nothing — none of Studio's secrets exist yet. Lean install (no observability).",
         "expect_path": "kubernetes",
-        "required_terms": "pg-password,auth-secret,data-encryption-key,obot-client-secret,obot-db-password,bootstrap-key"
+        "required_terms": "pg-password,auth-secret,data-encryption-key-id,data-encryption-retired-keys,obot-client-secret,obot-db-password,obot-tunnel-peer-token,bootstrap-key"
       }
     },
     {

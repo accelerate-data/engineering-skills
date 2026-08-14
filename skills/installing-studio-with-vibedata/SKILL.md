@@ -43,11 +43,11 @@ genuinely unclear — ask.
 | Sign the CLI in to Studio | `vibedata login [--studio-url URL]` | same |
 | Sign the CLI out | `vibedata logout` | same |
 | Check the OS keyring | `vibedata auth keyring-check` | same |
-| Update to a new version | update the binary, then `vibedata update compose` | **no CLI** — Argo CD auto-rolls the published release behind the upgrade gate |
+| Update to a new version | update the binary, then `vibedata update compose` | **no CLI, and not automatic** — Studio never upgrades itself. Argo reports the release `OutOfSync` and waits for a requested sync, so a backup can exist first (k8s file) |
 | Start / stop / restart | `vibedata compose up \| down \| restart` | **no CLI** — `kubectl` / Argo; pause the cluster with `az aks stop` / `az aks start` |
 | Back up | `vibedata backup compose` → `DATA_DIR/backups` (no flags) | `vibedata backup kubernetes --to <share-url>` → an existing second share |
-| Restore | `vibedata restore compose` (in place, no flags) | `vibedata restore kubernetes --from <share>/<package>` — see the k8s file's caveat before relying on it |
-| Tear down | `vibedata cleanup` (Compose project only) | **no CLI** — `az` resource deletes (`az aks delete`, `az afd profile delete`, `az storage account delete`, `az keyvault delete`) |
+| Restore | `vibedata restore compose` (in place, no flags) | `vibedata restore kubernetes --from <share>/<package>` — recovery restores into a **new** cluster, not over the broken one (k8s file) |
+| Tear down | `vibedata cleanup` (Compose project only) | **no CLI** — ordered `az` resource deletes, order and gotchas in the cloud file (`az aks delete`, `az afd profile delete`, `az network private-link-service delete`, `az storage account delete`, `az keyvault delete`) |
 | Fabric cloud/GitHub creds | in-container `az login` / `gh` (walk them through it) | the cluster identity + vault secrets set up during prereqs |
 
 ## Hard gates (never violate)
