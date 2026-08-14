@@ -31,6 +31,7 @@
     "eval:coverage": "npm --prefix tests/evals run eval:coverage",
     "eval:codex-compatibility": "npm --prefix tests/evals run eval:codex-compatibility",
     "check:eval-user-behavior": "npm --prefix tests/evals run check:eval-user-behavior",
+    "eval:reproducing-bug": "npm --prefix tests/evals run eval:reproducing-bug",
     "eval:writing-tests": "npm --prefix tests/evals run eval:writing-tests",
     "test:promptfoo-db-gate": "npm --prefix tests/evals run test:promptfoo-db-gate",
     "validate:plugin-manifests": "python3 scripts/validate_plugin_manifests.py",
