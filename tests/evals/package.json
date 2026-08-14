@@ -22,6 +22,7 @@
     "eval:maintaining-github-repos": "ad-evals run packages/maintaining-github-repos/promptfooconfig.json",
     "eval:adding-roadmap-item": "ad-evals run packages/adding-roadmap-item/promptfooconfig.json",
     "eval:code-simplifier": "ad-evals run packages/code-simplifier/promptfooconfig.json",
+    "eval:reproducing-bug": "ad-evals run packages/reproducing-bug/promptfooconfig.json",
     "eval:writing-tests": "ad-evals run packages/writing-tests/promptfooconfig.json",
     "eval:adversarial-review": "ad-evals run packages/adversarial-review/promptfooconfig.json",
     "eval:ai-pr-review-guide": "ad-evals run packages/ai-pr-review-guide/promptfooconfig.json",
