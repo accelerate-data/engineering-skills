@@ -7,7 +7,6 @@
     "eval:regression": "npm --prefix tests/evals run eval:regression",
     "eval:harness-smoke": "npm --prefix tests/evals run eval:harness-smoke",
     "eval:creating-linear-issue": "npm --prefix tests/evals run eval:creating-linear-issue",
-    "eval:creating-product-issues": "npm --prefix tests/evals run eval:creating-product-issues",
     "eval:implementing-linear-issue": "npm --prefix tests/evals run eval:implementing-linear-issue",
     "eval:implementing-linear-setup-discovery": "npm --prefix tests/evals run eval:implementing-linear-setup-discovery",
     "eval:implementing-linear-routing-brainstorming": "npm --prefix tests/evals run eval:implementing-linear-routing-brainstorming",
