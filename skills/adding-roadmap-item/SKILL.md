@@ -5,6 +5,7 @@ description: >-
   propose a product roadmap candidate, or log RO-team roadmap intake in Linear.
   Not for generic Linear issue creation, bug reports, or implementation tickets.
 version: 3.2.0
+disable-model-invocation: true
 ---
 
 # Adding Roadmap Items

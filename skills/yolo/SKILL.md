@@ -5,6 +5,7 @@ description: >-
   uninterrupted flow, asks to yolo a change, says do it all, or requests a
   single-shot create-implement-PR workflow.
 argument-hint: "[feature description]"
+disable-model-invocation: true
 ---
 
 # Yolo — Single-Shot Feature Delivery
