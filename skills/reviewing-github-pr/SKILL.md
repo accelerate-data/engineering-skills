@@ -2,6 +2,7 @@
 name: reviewing-github-pr
 description: Use when a user asks to review an existing GitHub PR end-to-end, including PR checkout, scope framing, acceptance-criteria verification, draft review preparation, and gated posting of a GitHub PR review event.
 argument-hint: "[pr-url|pr-number|branch]"
+disable-model-invocation: true
 ---
 
 # Reviewing PRs

@@ -4,6 +4,7 @@ description: >-
   Use when answering org-level or repo-level GitHub maintenance questions about
   repository inventory, branch health, PR backlog, or safe cleanup follow-up.
 argument-hint: "org|repo|branches|prs|cleanup"
+disable-model-invocation: true
 ---
 
 # Maintaining GitHub Repos
