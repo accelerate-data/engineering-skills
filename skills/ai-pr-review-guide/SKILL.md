@@ -150,6 +150,13 @@ machine-readable):
 
 A review without this structure and verdict line is incomplete.
 
+# Working within the iteration budget
+
+The review runs under a fixed iteration budget, and every wasted step shortens the review.
+
+- The PR diff is already in your prompt. Read it there instead of regenerating it. If you must run git, diff against the remote-tracking ref (`git diff origin/<base>...HEAD`): the checkout is the PR head branch and may have no local base branch.
+- Do not query CI status or check runs (`gh pr checks`, the checks API). The token cannot read them and the review does not depend on them.
+
 # Posting contract
 
 Post via `gh api`, never as a text response. The summary report is **one
