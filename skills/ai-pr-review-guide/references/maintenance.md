@@ -40,3 +40,6 @@ diff scenarios with known answers (seeded from the VD-2105 benchmark):
 - clean diff → quiet review, READY verdict
 - no-new-findings re-review → summary still posted (posting contract)
 - report format → fixed section order + machine-readable verdict line
+- test-harness change → human review required, no AI-only ready verdict
+- service-twin change → human review required, no AI-only ready verdict
+- ordinary flow spec added → human review must NOT be required
