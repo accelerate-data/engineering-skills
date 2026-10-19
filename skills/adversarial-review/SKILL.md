@@ -9,10 +9,9 @@ schedule: "After cook sessions that produce large diffs (200+ lines), implement 
 
 # Adversarial Review
 
-Spawn reviewers on the **opposite model** to challenge work. Reviewers attack from distinct lenses grounded in the bundled review lens definitions. The deliverable is a synthesized verdict; do not make changes.
+Spawn independent subagents to challenge work from distinct lenses grounded in the bundled review lens definitions. The deliverable is a synthesized verdict; do not make changes.
 
-**Hard constraint:** Reviewers MUST run via the opposite model's CLI (`codex exec` or
-`claude -p`). Do NOT use subagents, the Agent tool, or any internal delegation mechanism as reviewers — those run on *your own* model, which defeats the purpose.
+**Hard constraint:** Use the current environment's native subagent tools for reviewers. Same-model subagents are supported; independence comes from separate review contexts and assigned lenses. Do not launch reviewer model CLIs (`codex exec`, `claude -p`, or equivalents).
 
 ## Step 1 — Load Review Lenses
 
@@ -33,34 +32,15 @@ Assess change size:
 | Medium | 50–200 lines, 3–5 files | 2 (Skeptic + Architect) |
 | Large | 200+ lines or 5+ files | 3 (Skeptic + Architect + Minimalist) |
 
-## Step 3 — Detect Model and Spawn Reviewers
+## Step 3 — Spawn Independent Reviewers
 
-Create a temp directory for reviewer output:
+Use the native delegation tools exposed by the current environment (for example, Codex `spawn_agent` or Claude Code's Agent tool). Use the current environment's default subagent model unless the user specifies a supported model; no opposite-model selection is required.
 
-```sh
-REVIEW_DIR=$(mktemp -d /tmp/adversarial-review.XXXXXX)
-```
+Create one fresh subagent per selected lens. Give each reviewer the same review scope and intent plus its own lens, without the lead's conclusions or other reviewers' findings. Prefer an isolated context when supported (for example, `fork_turns: "none"` on Codex). Reviewers inspect the work read-only and return findings directly; they must not edit files or delegate further.
 
-Determine which model you are, then spawn reviewers on the opposite:
+Dispatch reviewers in parallel within available concurrency limits. If capacity is limited, run the remaining lenses in subsequent batches without dropping any. Track each subagent ID, assigned lens, completion status, and returned findings. Separate output files are not required.
 
-**If you are Claude** → spawn Codex reviewers via `codex exec`:
-
-```sh
-codex exec --skip-git-repo-check -o "$REVIEW_DIR/skeptic.md" "prompt" 2>/dev/null
-```
-
-Use `--profile edit` only if the reviewer needs to run tests. Default to read-only.
-Run reviewer commands concurrently with your environment's available shell background mechanism and wait for every output file before synthesis.
-
-**If you are Codex** → spawn Claude reviewers via `claude` CLI:
-
-```sh
-claude -p "prompt" > "$REVIEW_DIR/skeptic.md" 2>/dev/null
-```
-
-Run reviewer commands concurrently with your environment's available shell background mechanism and wait for every output file before synthesis.
-
-Name each output file after the lens: `skeptic.md`, `architect.md`, `minimalist.md`.
+If native delegation is unavailable, report that the adversarial review is incomplete. Do not substitute a CLI reviewer or present a lead-only review as a completed independent review.
 
 ### Reviewer prompt template
 
@@ -68,32 +48,26 @@ Each reviewer gets a single prompt containing:
 
 1. The stated intent (from Step 2)
 2. Their assigned lens (full text from references/reviewer-lenses.md)
-3. The code or diff to review
+3. The code or diff to review, or exact accessible workspace paths and base/head references; include enough context to inspect the same scope independently
 4. Instructions: "You are an adversarial reviewer. Your job is to find real problems, not validate the work. Be specific — cite files, lines, and concrete failure scenarios.
    Rate each finding: high (blocks ship), medium (should fix), low (worth noting).
-   Write findings as a numbered markdown list to your output file."
+   Return findings as a numbered markdown list in your final response, or explicitly state that you found no issues. Do not edit files or spawn further reviewers."
 
-Spawn all reviewers in parallel.
+Wait for every selected reviewer to complete before synthesis.
 
 ## Step 4 — Verify and Synthesize Verdict
 
-Before reading reviewer output, log which CLI was used and confirm the output files exist:
+Verify each selected lens has a completed subagent result. A completed response explicitly stating no findings is valid; a missing, empty, failed, or timed-out response is not a clean review. Retry a failed reviewer when possible and record any unresolved failure by lens.
 
-```sh
-echo "reviewer_cli=codex|claude"
-ls "$REVIEW_DIR"/*.md
-```
+Read every completed result and deduplicate overlapping findings. Include reviewer coverage (lens, subagent ID, and status) in the report. If any selected lens remains unresolved, label the verdict **INCOMPLETE**, present available findings as partial, and do not issue PASS.
 
-If any output file is missing or empty, note the failure in the verdict — do not silently skip a reviewer.
-
-Read each reviewer's output file from `$REVIEW_DIR/`. Deduplicate overlapping findings.
 Produce a single verdict:
 
 ```text
 ## Intent
 <what the author is trying to achieve>
 
-## Verdict: PASS | CONTESTED | REJECT
+## Verdict: PASS | CONTESTED | REJECT | INCOMPLETE
 <one-line summary>
 
 ## Findings
@@ -112,7 +86,8 @@ For each finding:
 
 **Verdict logic:**
 
-- **PASS** — no high-severity findings
+- **INCOMPLETE** — a selected reviewer did not return a usable result; this takes precedence over the other verdicts
+- **PASS** — all selected reviewers completed and there are no high-severity findings
 - **CONTESTED** — high-severity findings but reviewers disagree on them
 - **REJECT** — high-severity findings with reviewer consensus
 

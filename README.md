@@ -183,7 +183,7 @@ This repository is licensed under Elastic License 2.0. See [LICENSE](./LICENSE).
 | Skill | Purpose |
 | --- | --- |
 | [`adding-roadmap-item`](./skills/adding-roadmap-item) | Add a roadmap item to the Roadmap (RO) team in Linear with User Flow tagging and live metadata resolution. |
-| [`adversarial-review`](./skills/adversarial-review) | Adversarial code review using the opposite model (Claude spawns Codex, Codex spawns Claude) to challenge large diffs from distinct critical lenses. |
+| [`adversarial-review`](./skills/adversarial-review) | Adversarial code review using independent native subagents to challenge large diffs from distinct critical lenses. |
 | [`closing-linear-issue`](./skills/closing-linear-issue) | Merge, close, and clean up branches and worktrees after a Linear issue's PR has been reviewed. |
 | [`code-simplifier`](./skills/code-simplifier) | Simplify recently modified code by removing needless complexity while preserving behavior and project standards. |
 | [`creating-linear-issue`](./skills/creating-linear-issue) | Draft or refine a Linear issue — preferred over the generic Linear skill for new-issue creation and decomposition. |
