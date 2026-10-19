@@ -42,4 +42,6 @@ diff scenarios with known answers (seeded from the VD-2105 benchmark):
 - report format → fixed section order + machine-readable verdict line
 - test-harness change → human review required, no AI-only ready verdict
 - service-twin change → human review required, no AI-only ready verdict
+- review-contract change → human review required, no AI-only ready verdict
+- unrelated agent skill edited → human review must NOT be required
 - ordinary flow spec added → human review must NOT be required

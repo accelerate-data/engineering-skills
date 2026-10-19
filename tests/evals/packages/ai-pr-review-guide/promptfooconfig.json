@@ -90,7 +90,7 @@
     {
       "description": "no-new-findings re-review — summary still posted, known inline comments not re-posted",
       "vars": {
-        "scenario": "- This PR was reviewed in earlier rounds; all previously reported issues are addressed and their threads resolved.\n- The new commit only rewords a comment block inside an agent skill file; the reviewer finds no new issues.\n- The previous review history is supplied and says: do not repeat comments that have already been made.",
+        "scenario": "- This PR was reviewed in earlier rounds; all previously reported issues are addressed and their threads resolved.\n- The new commit only rewords a comment block in src/server/modules/intents/repair.ts; the reviewer finds no new issues.\n- The previous review history is supplied and says: do not repeat comments that have already been made.",
         "expect_integration_test_verdict": "n/a",
         "expect_merge_verdict": "ready",
         "expect_posts_summary_when_no_new_findings": "true",
@@ -175,6 +175,31 @@
         "expect_merge_verdict": "ready",
         "expect_flow_verdict": "pass",
         "expect_integration_test_verdict": "pass",
+        "expect_flow_flag_names_spec_file": "false"
+      }
+    },
+    {
+      "description": "review-contract change — human review required, no AI-only ready verdict",
+      "vars": {
+        "scenario": "- The PR changes .agents/skills/custom-codereview-guide.md, adding a row to the verdict-to-event mapping for the human-review verdict.\n- The PR also changes .agents/skills/ai-pr-review-guide.md, adding the review contract to the surfaces that require human sign-off.\n- No file under src/ changes. The diff adds no test files.\n- No previous reviews exist on this PR.",
+        "expect_unit_verdict": "n/a",
+        "expect_flow_verdict": "n/a",
+        "expect_journey_verdict": "n/a",
+        "expect_integration_test_verdict": "n/a",
+        "expect_merge_verdict": "human-review",
+        "expect_human_review_required": "true",
+        "expect_report_sections_in_order": "true",
+        "expect_verdict_line_machine_readable": "true",
+        "expect_flow_flag_names_spec_file": "false"
+      }
+    },
+    {
+      "description": "unrelated agent skill edited — human review must NOT be required",
+      "vars": {
+        "scenario": "- The PR edits .agents/skills/creating-linear-issue.md, clarifying when an issue should be split into sub-issues.\n- The PR changes no harness file, no service twin, no test config, no review-contract file, and no product source file under src/.\n- No previous reviews exist on this PR.",
+        "expect_human_review_required": "false",
+        "expect_merge_verdict": "ready",
+        "expect_integration_test_verdict": "n/a",
         "expect_flow_flag_names_spec_file": "false"
       }
     }
