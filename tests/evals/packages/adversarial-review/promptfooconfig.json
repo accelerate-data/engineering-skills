@@ -1,5 +1,5 @@
 {
-  "description": "adversarial-review skill — realistic critical review requests",
+  "description": "adversarial-review skill \u2014 realistic critical review requests",
   "metadata": {
     "eval_tier": "standard"
   },
@@ -16,12 +16,12 @@
   },
   "tests": [
     {
-      "description": "[smoke] synthesis — verifies outputs and renders judgment",
+      "description": "[smoke] synthesis \u2014 verifies outputs and renders judgment",
       "vars": {
         "eval_type": "user-behavior",
-        "failure_modes": "same-model-review,serial-reviewers,missing-review-lenses,premature-synthesis",
+        "failure_modes": "cli-reviewers,serial-reviewers,missing-review-lenses,premature-synthesis",
         "scenario": "- One reviewer output is missing, and two reviewers produced overlapping medium findings.\n- The final answer must synthesize, deduplicate, and judge the findings.",
-        "expect_verifies_cli_and_outputs_before_synthesis": "true",
+        "expect_verifies_subagent_results_before_synthesis": "true",
         "expect_notes_missing_or_empty_reviewers": "true",
         "expect_synthesizes_verdict_sections": "true",
         "expect_deduplicates_findings": "true",
@@ -30,27 +30,37 @@
       }
     },
     {
-      "description": "opposite model — uses CLI reviewers, not same-model delegation",
+      "description": "native subagents \u2014 independent reviewers without model CLIs",
       "vars": {
         "eval_type": "user-behavior",
-        "failure_modes": "same-model-review,serial-reviewers,missing-review-lenses,premature-synthesis",
-        "scenario": "- The user says: \"run adversarial review on this PR diff.\"\n- The lead agent is Codex.\n- Same-model subagents are available, but would not provide adversarial model diversity.",
-        "expect_uses_opposite_model_cli": "true",
-        "expect_avoids_same_model_subagents": "true",
+        "failure_modes": "cli-reviewers,serial-reviewers,missing-review-lenses,premature-synthesis",
+        "scenario": "- The user says: \"run adversarial review on this PR diff.\"\n- The lead agent is Codex.\n- Native same-model subagents and other-model CLIs are available.",
+        "expect_uses_opposite_model_cli": "false",
+        "expect_uses_native_subagents": "true",
         "expect_loads_reviewer_lenses": "true",
         "expect_states_author_intent": "true"
       }
     },
     {
-      "description": "large diff — selects 3 lens reviewers and runs them in parallel",
+      "description": "large diff \u2014 selects 3 lens reviewers and runs them in parallel",
       "vars": {
         "eval_type": "user-behavior",
-        "failure_modes": "same-model-review,serial-reviewers,missing-review-lenses,premature-synthesis",
+        "failure_modes": "cli-reviewers,serial-reviewers,missing-review-lenses,premature-synthesis",
         "scenario": "- The diff changes 8 files and 420 lines.\n- The diff is large enough to need the full review treatment.\n- The user expects a normal adversarial-review result.",
         "expect_selects_reviewer_count_by_size": "true",
         "expect_uses_three_reviewers_for_large": "true",
         "expect_spawns_reviewers_in_parallel": "true",
-        "expect_writes_lens_named_output_files": "true"
+        "expect_tracks_results_by_lens": "true"
+      }
+    },
+    {
+      "description": "unavailable delegation \u2014 report incomplete review without CLI fallback",
+      "vars": {
+        "eval_type": "user-behavior",
+        "failure_modes": "cli-fallback,false-pass",
+        "scenario": "- Native subagent tools are unavailable.\n- Other-model CLIs are installed.\n- The user requests an adversarial review before shipping.",
+        "expect_uses_opposite_model_cli": "false",
+        "expect_reports_incomplete_review": "true"
       }
     }
   ]

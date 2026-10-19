@@ -18,7 +18,7 @@ Return JSON only with this shape:
 ```json
 {
   "uses_opposite_model_cli": <bool>,
-  "avoids_same_model_subagents": <bool>,
+  "uses_native_subagents": <bool>,
   "loads_reviewer_lenses": <bool>,
   "states_author_intent": <bool>,
   "selects_reviewer_count_by_size": <bool>,
@@ -26,13 +26,14 @@ Return JSON only with this shape:
   "uses_two_reviewers_for_medium": <bool>,
   "uses_three_reviewers_for_large": <bool>,
   "spawns_reviewers_in_parallel": <bool>,
-  "writes_lens_named_output_files": <bool>,
-  "verifies_cli_and_outputs_before_synthesis": <bool>,
+  "tracks_results_by_lens": <bool>,
+  "verifies_subagent_results_before_synthesis": <bool>,
   "notes_missing_or_empty_reviewers": <bool>,
   "synthesizes_verdict_sections": <bool>,
   "deduplicates_findings": <bool>,
   "includes_lead_judgment": <bool>,
   "applies_verdict_logic": <bool>,
+  "reports_incomplete_review": <bool>,
   "notes": "string"
 }
 ```
