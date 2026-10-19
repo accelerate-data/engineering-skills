@@ -1,5 +1,5 @@
 {
-  "description": "ai-pr-review-guide skill — coverage verdicts, report format, merge-readiness verdict, and posting contract for the automated PR reviewer",
+  "description": "ai-pr-review-guide skill — coverage verdicts, report format, merge-readiness verdict, validation-infrastructure human-review gate, and posting contract for the automated PR reviewer",
   "metadata": {
     "eval_tier": "standard"
   },
@@ -7,7 +7,7 @@
   "defaultTest": {
     "vars": {
       "eval_type": "user-behavior",
-      "failure_modes": "skips-coverage-verdicts,misses-missing-unit-tests,misses-missing-flow-spec,over-asks-journey,demands-bdd,wrong-report-format,text-finish-without-posting,skips-clean-summary"
+      "failure_modes": "skips-coverage-verdicts,misses-missing-unit-tests,misses-missing-flow-spec,over-asks-journey,demands-bdd,wrong-report-format,text-finish-without-posting,skips-clean-summary,misses-validation-infra-human-review,false-positives-human-review-on-ordinary-tests"
     },
     "assert": [
       {
@@ -140,6 +140,42 @@
         "expect_unit_verdict": "pass",
         "expect_integration_test_verdict": "pass",
         "expect_merge_verdict": "ready"
+      }
+    },
+    {
+      "description": "test-harness change — human review required, no AI-only ready verdict",
+      "vars": {
+        "scenario": "- The PR changes tests/world/create-world.ts: the createWorld harness now defaults a flow's auth posture to 'ambient' when the caller omits it, and gains a new seedOwnerUser() helper that seeds a stock user holding the vibedata_owner role.\n- The PR also changes tests/helpers/agent-container-reaper.ts, raising the reaper timeout from 30s to 90s.\n- No file under src/ changes. The diff adds no test files.\n- No previous reviews exist on this PR.",
+        "expect_unit_verdict": "n/a",
+        "expect_flow_verdict": "n/a",
+        "expect_journey_verdict": "n/a",
+        "expect_integration_test_verdict": "n/a",
+        "expect_merge_verdict": "human-review",
+        "expect_human_review_required": "true",
+        "expect_report_sections_in_order": "true",
+        "expect_verdict_line_machine_readable": "true",
+        "expect_flow_flag_names_spec_file": "false"
+      }
+    },
+    {
+      "description": "service-twin change — human review required, no AI-only ready verdict",
+      "vars": {
+        "scenario": "- The PR changes tests/twins/github/handlers.ts: the fake GitHub service twin's pull-request-creation handler now returns a 201 body without the number field.\n- The PR also re-records tests/twins/github/cassettes/createPullRequest.json to match that body.\n- No file under src/ changes. The diff adds no test files.\n- No previous reviews exist on this PR.",
+        "expect_merge_verdict": "human-review",
+        "expect_human_review_required": "true",
+        "expect_report_sections_in_order": "true",
+        "expect_verdict_line_machine_readable": "true"
+      }
+    },
+    {
+      "description": "ordinary flow spec added — human review must NOT be required",
+      "vars": {
+        "scenario": "- The PR adds tests/flows/__tests__/domains-delete-guard.flow.spec.ts, covering that DELETE /domains/:id rejects a domain that still has child intents with 409.\n- The PR changes no harness file, no service twin, no test config, and no product source file under src/.\n- No previous reviews exist on this PR.",
+        "expect_human_review_required": "false",
+        "expect_merge_verdict": "ready",
+        "expect_flow_verdict": "pass",
+        "expect_integration_test_verdict": "pass",
+        "expect_flow_flag_names_spec_file": "false"
       }
     }
   ]

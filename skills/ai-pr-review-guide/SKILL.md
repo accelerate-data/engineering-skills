@@ -10,8 +10,8 @@ description: Use when reviewing a vd-studio pull request as the automated AI PR 
 Studio-specific review contract for the automated PR reviewer. Supplements the
 OpenHands plugin's default `code-review` skill: the default owns general review
 judgment (bugs, security, taste); this skill owns the four test-coverage
-checks, the fixed report format, the merge-readiness verdict, and the posting
-contract.
+checks, the validation-infrastructure human-review rule, the fixed report
+format, the merge-readiness verdict, and the posting contract.
 
 **Maintenance:** the master and its evals live in
 `engineering-skills/skills/ai-pr-review-guide/` (see `references/maintenance.md`
@@ -118,6 +118,36 @@ functional area (cap at 3):
    commit adds further uncovered behaviour (see the posting contract's
    review-history rule).
 
+# Validation-infrastructure changes require human review (mandatory)
+
+The test harness and the service twins define what PR validation trusts. A diff
+that weakens either can turn the lanes greener without the product changing, so
+an AI-only approval is never review-complete for those surfaces — a human
+reviewer must sign off.
+
+Trigger the rule when the diff adds, changes, or deletes any of:
+
+- **Test harness** — `tests/world/**` (the `createWorld` world harness and lane
+  boot), `tests/helpers/**`, `tests/fixtures/**`, `config/vitest/**`,
+  `tests/run.sh`, or `scripts/devops/world-lane-linux/**`.
+- **Service twins** — anything under `tests/twins/**`: a fake, its registry
+  entry, a twin unit test, or a committed cassette/recording.
+
+Ordinary app tests never trigger it. A co-located `src/**/__tests__/**` file, a
+`tests/flows/__tests__/*.flow.spec.ts` flow spec, a
+`tests/e2e/journeys/*.journey.spec.ts` journey spec, or any other product test
+added alongside a change is ordinary even when it lives under `tests/`. The rule
+keys on the surface a path belongs to, never on the word "test" appearing in it.
+
+When the rule triggers:
+
+1. List each changed surface under `## Human Review Required` (see the report
+   format): the path and what changed about it.
+2. State plainly that the change requires a human reviewer before the PR is
+   treated as review-complete, and why — the surface decides what the lanes
+   trust.
+3. Do not emit `VERDICT: READY TO MERGE`; use the human-review verdict below.
+
 # Review report format (use this exact structure every time)
 
 The top-level review body MUST follow this template, in this order:
@@ -128,6 +158,9 @@ The top-level review body MUST follow this template, in this order:
 
 ## Findings
 <one bullet per finding posted inline, with severity — or "None.">
+
+## Human Review Required
+<one bullet per validation-infrastructure surface the diff changes, naming the path — or "None.">
 
 ## Test Coverage
 - Unit: <pass | flag | n/a> — <one line>
@@ -140,13 +173,22 @@ VERDICT: READY TO MERGE
 
 When a lane flags, its `Test Coverage` line may carry nested sub-bullets
 naming the gap and target spec file (see "Naming the gap when a lane flags").
-The four sections and the final `VERDICT:` line stay in this exact order.
+When the validation-infrastructure rule triggers, its section carries one plain
+bullet per changed surface and the review ends with the human-review verdict.
+The sections above and the final `VERDICT:` line stay in this exact order.
 
 The last line is the merge-readiness verdict, exactly one of (verbatim,
 machine-readable):
 
-- `VERDICT: READY TO MERGE` — all coverage verdicts pass/n-a, the diff's tests pass (a known-failing or unjustified-skip test blocks), and no critical or major findings.
+- `VERDICT: READY TO MERGE` — all coverage verdicts pass/n-a, no
+  validation-infrastructure surface changed, the diff's tests pass (a
+  known-failing or unjustified-skip test blocks), and no critical or major
+  findings.
 - `VERDICT: NOT READY — <n> finding(s) to address`
+- `VERDICT: HUMAN REVIEW REQUIRED — <n> validation-infrastructure surface(s) changed` — no blocking finding, but the diff changes the test harness or a service twin, so a human reviewer must sign off before the PR is review-complete.
+
+Precedence: `NOT READY` wins over `HUMAN REVIEW REQUIRED` when both apply; the
+`## Human Review Required` section still lists the surfaces either way.
 
 A review without this structure and verdict line is incomplete.
 
@@ -162,7 +204,6 @@ The review runs under a fixed iteration budget, and every wasted step shortens t
 Post via `gh api`, never as a text response. The summary report is **one
 top-level comment per commit** — never inline, never duplicated. Inline comments
 are the default `code-review` plugin's per-finding comments only. Post the
-summary even with no new findings ("Findings: None" + `VERDICT: READY TO
-MERGE`); skip re-posting already-reported inline comments, never skip the
-summary. On post failure, retry twice, then post a plain summary fallback and
-report the error.
+summary even with no new findings ("Findings: None" + the verdict line); skip
+re-posting already-reported inline comments, never skip the summary. On post
+failure, retry twice, then post a plain summary fallback and report the error.

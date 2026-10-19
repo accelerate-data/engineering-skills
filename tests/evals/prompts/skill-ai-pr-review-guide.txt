@@ -33,13 +33,19 @@ Field meanings:
   file); `pass` if test files were added or changed and none are integration
   tests; `n/a` if the diff adds or changes no test files.
 - `merge_verdict` — `ready` only when all coverage verdicts (including
-  `integration_test_verdict`) are pass/n-a, the diff's tests pass, and there are
-  no critical or major findings; otherwise `not-ready`.
+  `integration_test_verdict`) are pass/n-a, no validation-infrastructure surface
+  changed, the diff's tests pass, and there are no critical or major findings;
+  `human-review` when the diff changes the test harness or a service twin, so the
+  skill requires human sign-off instead of an AI-only ready verdict; otherwise
+  `not-ready`.
+- `human_review_required` — true when the skill requires a human reviewer before
+  the PR may be treated as review-complete on this diff.
 - `report_sections_in_order` — the review body uses exactly the skill's
-  template order: Review Summary, Findings, Test Coverage, then the VERDICT
-  line last.
+  template order: Review Summary, Findings, Human Review Required, Test Coverage,
+  then the VERDICT line last.
 - `verdict_line_machine_readable` — the review ends with the verbatim
-  `VERDICT: READY TO MERGE` or `VERDICT: NOT READY — <n> finding(s) to address`.
+  `VERDICT: READY TO MERGE`, `VERDICT: NOT READY — <n> finding(s) to address`, or
+  `VERDICT: HUMAN REVIEW REQUIRED — <n> validation-infrastructure surface(s) changed`.
 - `demands_bdd_test` — the reviewer asks for a BDD test in this repository.
 - `demands_journey_for_non_screen_change` — the reviewer requests a journey
   spec although the diff does not add or materially change a main user-facing
@@ -72,7 +78,8 @@ character must be `}`:
   "flow_verdict": "pass | flag | n/a",
   "journey_verdict": "pass | flag | n/a",
   "integration_test_verdict": "pass | flag | n/a",
-  "merge_verdict": "ready | not-ready",
+  "merge_verdict": "ready | not-ready | human-review",
+  "human_review_required": <bool>,
   "report_sections_in_order": <bool>,
   "verdict_line_machine_readable": <bool>,
   "demands_bdd_test": <bool>,
