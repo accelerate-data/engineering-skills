@@ -25,8 +25,13 @@ Based on the skill, report how the reviewer must behave for this scenario. Do
 not mark something true only because the skill supports it in another scenario.
 
 Field meanings:
-- `unit_verdict`, `flow_verdict`, `journey_verdict` — the Test Coverage
-  verdicts the skill requires for this diff: `pass`, `flag`, or `n/a`.
+- `unit_verdict`, `flow_verdict`, `journey_verdict` — the Test Coverage verdicts
+  for this diff, each judged on its own lane: `pass` if tests covering that lane
+  were added or changed, `flag` if the lane's behaviour changed without such
+  coverage, and `n/a` if the diff neither changes anything that lane covers nor
+  adds a test for it. Adding a flow spec alone is `flow_verdict: pass` and
+  `n/a` for the other two; a backend-internal service change with no route or
+  screen change is `n/a` for flow and journey.
 - `integration_test_verdict` — `flag` if the diff introduces an integration
   test (a `*.integration.test.*` file, or hidden integration — full-app /
   real DB-HTTP / cross-module wiring — inside a `*.test.ts`/`*.test.tsx` unit
@@ -35,9 +40,9 @@ Field meanings:
 - `merge_verdict` — `ready` only when all coverage verdicts (including
   `integration_test_verdict`) are pass/n-a, no validation-infrastructure surface
   changed, the diff's tests pass, and there are no critical or major findings;
-  `human-review` when the diff changes the test harness or a service twin, so the
-  skill requires human sign-off instead of an AI-only ready verdict; otherwise
-  `not-ready`.
+  `human-review` when the diff changes the test harness, a service twin, or the
+  review contract itself, so the skill requires human sign-off instead of an
+  AI-only ready verdict; otherwise `not-ready`.
 - `human_review_required` — true when the skill requires a human reviewer before
   the PR may be treated as review-complete on this diff.
 - `report_sections_in_order` — the review body uses exactly the skill's
