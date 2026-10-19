@@ -191,7 +191,7 @@ machine-readable):
   known-failing or unjustified-skip test blocks), and no critical or major
   findings.
 - `VERDICT: NOT READY — <n> finding(s) to address`
-- `VERDICT: HUMAN REVIEW REQUIRED — <n> validation-infrastructure surface(s) changed` — no blocking finding, but the diff changes the test harness or a service twin, so a human reviewer must sign off before the PR is review-complete.
+- `VERDICT: HUMAN REVIEW REQUIRED — <n> validation-infrastructure surface(s) changed` — no blocking finding, but the diff changes the test harness, a service twin, or the review contract itself, so a human reviewer must sign off before the PR is review-complete.
 
 Precedence: `NOT READY` wins over `HUMAN REVIEW REQUIRED` when both apply; the
 `## Human Review Required` section still lists the surfaces either way.
