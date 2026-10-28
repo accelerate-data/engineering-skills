@@ -138,17 +138,10 @@ Value positions (zero-based index in the inner array):
 
 ## §8 Post-Write Cache Mutation
 
-Post-write verification must use the updated cached state rather than re-fetching the
-sheet.
+Post-write verification must use the updated cached state rather than re-fetching the sheet.
 
-- After a successful sheet cell update, mutate the cached row in memory before any
-  later step reads that row again.
-- After a successful row append, append the same 13-value row to the cached sheet
-  data in memory. This applies to any appended flow row, including add, merge, and
-  split.
-- After a successful label creation, add the new label to the cached Linear label list
-  in memory.
-- After a successful re-tag batch, update the cached issue-to-label mapping in working
-  memory if the current operation needs post-write verification messaging.
-- Do not re-fetch the sheet for verification. Re-fetching Linear labels is still
-  optional only for manual-archive lookup in long-running sessions.
+- After a successful sheet cell update, mutate the cached row in memory before any later step reads that row again.
+- After a successful row append, append the same 13-value row to the cached sheet data in memory. This applies to any appended flow row, including add, merge, and split.
+- After a successful label creation, add the new label to the cached Linear label list in memory.
+- After a successful re-tag batch, update the cached issue-to-label mapping in working memory if the current operation needs post-write verification messaging.
+- Do not re-fetch the sheet for verification. Re-fetching Linear labels is still optional only for manual-archive lookup in long-running sessions.

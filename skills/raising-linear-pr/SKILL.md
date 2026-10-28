@@ -28,7 +28,10 @@ Move completed implementation work into review. This skill owns final branch syn
 | 6 | Run changed-area validation and stale targeted eval decisions |
 | 7 | Push the prepared branch |
 | 8 | Create or update the PR |
-| 9 | Move the Linear issue to `In Review` only after the PR exists |
+| 9 | Run the AI PR review via an independent subagent using `ai-pr-review-guide` |
+| 10 | If the verdict is NOT READY, present findings to the user with a fix-vs-reject proposal and apply the decision |
+| 11 | Carry the AI review result in the PR body |
+| 12 | Move the Linear issue to `In Review` only after the PR exists |
 
 ## Hard Gates
 
@@ -57,6 +60,16 @@ The key rules:
 Run repo validation commands from `repo-map.json` for the changed area.
 
 Use `references/promptfoo-db-gate.md` for stale targeted eval decisions. Do not run the full promptfoo suite by default. Run targeted evals when DB evidence is missing or stale; skip only when the latest fully passing DB run is newer than the latest content-relevant Git change.
+
+## AI PR Review
+
+Run after the PR exists, via an independent subagent (never inline self-review).
+Give it the PR URL/number, the PR diff, the PR description, and the repo indexes (`repo-map.json`, `test-map.json`, `docs/functional/`) so it can apply `ai-pr-review-guide` including its PR-description justification check.
+
+- On `VERDICT: READY TO MERGE`: proceed to PR-body carry and `In Review`.
+- On `VERDICT: NOT READY`: present the findings to the user with a per-finding proposal — fix it (hand back to `implementing-linear-issue`, then re-run PR-phase gates from step 1) or reject it (record justification).
+- Do not edit files, stage, or commit in this phase.
+- Do not move to `In Review` until the user decides and the PR body carries the outcome.
 
 ## Git and PR Operations
 

@@ -1,7 +1,6 @@
 # Acceptance Criteria Gate
 
-Use this gate after the feature branch is rebased and before design
-conformance, validation, push, PR creation, or `In Review`.
+Use this gate after the feature branch is rebased and before design conformance, validation, push, PR creation, or `In Review`.
 
 Review the committed code, tests, and existing verification evidence first,
 even when every AC is already checked in Linear. Only after that review may the

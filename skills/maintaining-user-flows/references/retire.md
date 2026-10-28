@@ -119,9 +119,7 @@ Before surfacing the manual archive step, update the cached state in memory:
 
 - set column H to `retired` in the cached sheet row for `<canonical-id>`
 
-If the label exists, keep it in the cached Linear label list for verification output because
-archiving is still a manual step. This keeps the cached state aligned with what actually
-happened without re-fetching the sheet.
+If the label exists, keep it in the cached Linear label list for verification output because archiving is still a manual step. This keeps the cached state aligned with what actually happened without re-fetching the sheet.
 
 If the label was found in §1.4, present the following to the user:
 
