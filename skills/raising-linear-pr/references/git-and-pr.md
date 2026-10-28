@@ -27,6 +27,7 @@ The dirty-worktree rule is always part of this PR workflow. A clean worktree mea
 - Include issue-linking lines for the actual Linear issue IDs, for example `Fixes ENG-1023`.
 - Use real Linear identifiers and existing repository convention, not a hardcoded workspace-specific placeholder prefix.
 - Preserve the implementation summary format; do not restate acceptance criteria in the implementation snapshot.
+- Carry the AI PR review result in the PR body: append (or update in place) an `## AI PR Review` section with the subagent's verdict line verbatim (`VERDICT: ...`), the Test Coverage lines, and any user decision on NOT READY findings (fixed in follow-up commits vs rejected with justification). Do this for READY and NOT READY alike — the PR always shows the review outcome.
 - Report the PR URL and remaining manual follow-up, if any.
 - Move the issue to `In Review` only after the PR exists.
 

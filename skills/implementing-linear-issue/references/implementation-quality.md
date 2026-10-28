@@ -27,6 +27,7 @@ The gate list lives in SKILL.md Phase 4 step 11. This reference provides runner 
 | Simplification review | Independent subagent using `code-simplifier` | Changed files, intent, diff |
 | Test coverage review | Independent subagent using `superpowers:requesting-code-review` | Tests, uncovered risks, verification |
 | Acceptance-criteria review | Independent subagent | Linear issue, specs, plan, diff, evidence |
+| AI PR review preview | Independent subagent using `ai-pr-review-guide` | Local diff (branch vs default branch), draft PR description, issue, specs, plan, verification evidence |
 
 | Review rule | Requirement |
 |---|---|
@@ -35,6 +36,7 @@ The gate list lives in SKILL.md Phase 4 step 11. This reference provides runner 
 | Findings | Use `superpowers:receiving-code-review` before applying any quality-gate, human, or external review feedback |
 | Verified feedback | Resolve one item at a time and rerun the relevant validation |
 | Failed or unverified gate | Stop |
+| AI preview NOT READY | Present findings to the user with a per-finding fix-vs-reject proposal; fix chosen items (rerun validation and preview), record rejected items with justification in the final Linear note; carry the preview verdict in that note |
 
 ### Functional Spec Reconciliation
 

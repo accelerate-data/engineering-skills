@@ -1,13 +1,11 @@
 # Local Docker path
 
 One machine, one operator. Non-prod compose auth: `NODE_ENV=development`,
-`AUTH_ENABLED=false`, no web-login gate. Studio and the CLI are paired 1:1 —
-there is no version to pick.
+`AUTH_ENABLED=false`, no web-login gate. Studio and the CLI are paired 1:1 — there is no version to pick.
 
 ## 1. Gate the prerequisites (login-only)
 
-Run these checks. On any miss, stop and hand back the exact fix — do not run
-install past a failed gate.
+Run these checks. On any miss, stop and hand back the exact fix — do not run install past a failed gate.
 
 | Check | Command | On failure |
 | --- | --- | --- |
@@ -15,8 +13,7 @@ install past a failed gate.
 | Docker daemon running | `docker info` | Start Docker Desktop / the Docker Engine, then re-check |
 | GitHub signed in **(required)** | `gh auth status` | `gh auth login --scopes repo,read:org,workflow` — **required to create a domain**; install blocks without it |
 
-`az login` is **optional** and **Fabric-only** — it happens *inside the
-container after install*, not now. State this so the customer isn't sent to
+`az login` is **optional** and **Fabric-only** — it happens *inside the container after install*, not now. State this so the customer isn't sent to
 Azure they don't need. Skip it entirely for DuckDB-only pipelines.
 
 ## 2. Drive the install
@@ -24,16 +21,10 @@ Azure they don't need. Skip it entirely for DuckDB-only pipelines.
 Ask two things, then run it:
 
 - **Observability?** Lean by default (~3.5 GB images). `--with-observability`
-  adds LGTM+Alloy; `--full-observability` adds Langfuse too (~11 GB). Sizes the
-  host — the optional containers carry hard memory caps; core services don't.
-  On a **re-install** the flag is not optional: a run that names no profile
-  blocks and prints both the keep and the remove command, so nobody loses
-  observability (and its Langfuse data) by forgetting a flag.
+  adds LGTM+Alloy; `--full-observability` adds Langfuse too (~11 GB). Sizes the host — the optional containers carry hard memory caps; core services don't.
+  On a **re-install** the flag is not optional: a run that names no profile blocks and prints both the keep and the remove command, so nobody loses observability (and its Langfuse data) by forgetting a flag.
   `--no-observability` is the only way to remove it.
-- **Reached from another machine / using a companion app off-host?** Pass
-  `--studio-url http://<host-ip>:5173` (that one value drives Studio + Obot +
-  Grafana/Langfuse logins; `http://host[:port]` only, no HTTPS for Local
-  Docker). Studio's own screens work off-host with no flag.
+- **Reached from another machine / using a companion app off-host?** Pass `--studio-url http://<host-ip>:5173` (that one value drives Studio + Obot + Grafana/Langfuse logins; `http://host[:port]` only, no HTTPS for Local Docker). Studio's own screens work off-host with no flag.
 
 ```bash
 vibedata install compose
@@ -41,9 +32,7 @@ vibedata install compose
 vibedata install compose --full-observability --studio-url http://<host-ip>:5173
 ```
 
-It renders `.env` + compose, pulls images, starts the stack, applies
-migrations, and imports the laptop GitHub session into the API container. It
-prompts for nothing on a fresh install (reads `DATA_DIR/state.json`; default
+It renders `.env` + compose, pulls images, starts the stack, applies migrations, and imports the laptop GitHub session into the API container. It prompts for nothing on a fresh install (reads `DATA_DIR/state.json`; default
 `~/.vibedata/studio`).
 
 **Report the outcome** — the command ends in one state:
@@ -60,8 +49,7 @@ LLM provider is set **inside Studio** (Org Settings → LLM), not by the CLI.
 
 ## 3. Fabric cloud/GitHub creds (only if they use Fabric)
 
-These run **inside the API container** — they are not `vibedata` commands. Walk
-the customer through them; don't wrap them. (Default `DATA_DIR`
+These run **inside the API container** — they are not `vibedata` commands. Walk the customer through them; don't wrap them. (Default `DATA_DIR`
 `~/.vibedata/studio` shown; substitute a custom one.)
 
 ```bash
@@ -75,8 +63,7 @@ docker compose -f ~/.vibedata/studio/docker-compose.yml exec -T api az account s
 docker compose -f ~/.vibedata/studio/docker-compose.yml exec api gh auth token >/dev/null
 ```
 
-If the `gh` check fails: `gh auth login --scopes repo,read:org,workflow` on the
-laptop, then `vibedata install compose` again. Sessions bind-mount under
+If the `gh` check fails: `gh auth login --scopes repo,read:org,workflow` on the laptop, then `vibedata install compose` again. Sessions bind-mount under
 `DATA_DIR`, so `down`/`up` keeps you signed in.
 
 ## Day-2
@@ -90,6 +77,4 @@ laptop, then `vibedata install compose` again. Sessions bind-mount under
 | Sign CLI in/out of Studio | `vibedata login [--studio-url URL]` / `vibedata logout` |
 | Tear down | `vibedata cleanup [--force \| -y] [--keep-images]` — removes this project's containers, network, volumes, images; **preserves `DATA_DIR`**; prompts unless `--force` |
 
-`compose up/down/restart` never modify state or prompt. `cleanup` is the only
-one that prompts (skip with `--force`) and is scoped to the Studio Compose
-project only — it does **not** touch a k8s deployment.
+`compose up/down/restart` never modify state or prompt. `cleanup` is the only one that prompts (skip with `--force`) and is scoped to the Studio Compose project only — it does **not** touch a k8s deployment.
