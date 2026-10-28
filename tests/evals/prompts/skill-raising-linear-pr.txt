@@ -47,6 +47,8 @@ Field semantics:
 - `checks_off_acceptance_criteria` is true only when this scenario includes at least one unchecked AC that is already proven complete and would be checked off now. If all ACs are already checked, set it to false.
 - `compares_design_to_implementation_evidence` is true only when local design references exist and the design gate actively compares them against implementation evidence.
 - `records_design_conformance_evidence` is true whenever the design gate runs, including a `not_applicable` outcome with empty checked paths. It is false only when the design gate does not run.
+- `ai_review_turn_cap` is the maximum number of AI PR review turns the skill allows in this scenario, counting the first run. Return 0 when AI PR review never runs in this scenario.
+- `hands_back_to_implementation_for_ai_review_fix` is true only when the AI PR review verdict is NOT READY and at least one accepted finding sends the work back to `implementing-linear-issue`. It is false when there is no AI review, the verdict is READY, or every finding is rejected. This workflow never edits code in the PR phase.
 Set `blocks_pr_for_design_mismatch_in_this_scenario` to true only when the design conformance result is `fail`. Set it to false when the design result is `pass` or `not_applicable`.
 If `checked_design_paths` is empty, set this to false.
 
@@ -76,6 +78,7 @@ Never write an explanation before the JSON object.
   "checks_off_acceptance_criteria": <bool>,
   "checks_off_only_proven_acceptance_criteria": <bool>,
   "hands_back_to_implementation_when_ac_requires_code": <bool>,
+  "hands_back_to_implementation_for_ai_review_fix": <bool>,
   "stops_if_acceptance_criteria_incomplete": <bool>,
   "runs_design_conformance_gate": <bool>,
   "supports_local_design_references": <bool>,
@@ -87,5 +90,6 @@ Never write an explanation before the JSON object.
   "moves_issue_to_in_review": <bool>,
   "merges_pr": <bool>,
   "uses_generic_issue_linking_language": <bool>,
+  "ai_review_turn_cap": <number>,
   "notes": "string"
 }

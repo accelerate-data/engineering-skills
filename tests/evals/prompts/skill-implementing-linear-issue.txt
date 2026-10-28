@@ -59,6 +59,9 @@ If routing priority 6 applies before any approved plan exists, return
 `uses_writing_tests_before_plan=true` and `creates_implementation_plan=true`.
 When the scenario says Phase 4 quality gates run as independent subagent or
 independent review gates, return `uses_independent_review_agents=true`.
+`ai_review_turn_cap` is the maximum number of AI PR review preview turns the
+skill allows in this scenario, counting the first run. Return 0 when the AI PR
+review preview never runs in this scenario.
 When the scenario is at final Linear implementation-note or final-handoff time,
 `linear_update_references_*` fields should reflect what that final note must
 cite, not only what has already been written earlier in the scenario.
@@ -102,6 +105,7 @@ Return JSON only with this shape:
   "linear_update_references_implementation_plan": <bool>,
   "asks_question_immediately": <bool>,
   "question_count": <number>,
+  "ai_review_turn_cap": <number>,
   "creates_branch_and_worktree_first": <bool>,
   "stops_on_branch_or_worktree_failure": <bool>,
   "requires_clean_worktree_for_handoff": <bool>,

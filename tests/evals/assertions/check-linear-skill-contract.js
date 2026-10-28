@@ -221,9 +221,10 @@ module.exports = (output, context) => {
       'checks_off_only_proven_acceptance_criteria',
       parseExpectedBoolean(context.vars.expect_checks_off_only_proven_acceptance_criteria),
     ],
+    ['hands_back_to_implementation_when_ac_requires_code', parseExpectedBoolean(context.vars.expect_hands_back_to_implementation_when_ac_requires_code)],
     [
-      'hands_back_to_implementation_when_ac_requires_code',
-      parseExpectedBoolean(context.vars.expect_hands_back_to_implementation_when_ac_requires_code),
+      'hands_back_to_implementation_for_ai_review_fix',
+      parseExpectedBoolean(context.vars.expect_hands_back_to_implementation_for_ai_review_fix),
     ],
     ['uses_generic_issue_linking_language', parseExpectedBoolean(context.vars.expect_uses_generic_issue_linking_language)],
     ['asks_complexity_question', parseExpectedBoolean(context.vars.expect_asks_complexity_question)],
@@ -303,6 +304,17 @@ module.exports = (output, context) => {
         pass: false,
         score: 0,
         reason: `Expected question_count=${expected}, got ${payload.question_count}`,
+      };
+    }
+  }
+
+  if (context.vars.expect_ai_review_turn_cap !== undefined) {
+    const expected = Number(context.vars.expect_ai_review_turn_cap);
+    if (payload.ai_review_turn_cap !== expected) {
+      return {
+        pass: false,
+        score: 0,
+        reason: `Expected ai_review_turn_cap=${expected}, got ${payload.ai_review_turn_cap}`,
       };
     }
   }

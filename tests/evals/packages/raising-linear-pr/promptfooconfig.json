@@ -44,6 +44,35 @@
       }
     },
     {
+      "description": "raise-pr — accepted AI review finding hands back to implementation without code edits, capped at 5 turns",
+      "vars": {
+        "eval_type": "user-behavior",
+        "failure_modes": "edits-code-in-pr-phase,stops-after-one-review-turn",
+        "user_prompt": "Raise the PR for ENG-PR-2 and run the AI PR review before moving it to review.",
+        "simulated_context": "Linear issue ENG-PR-2 exists.\nTeam: Internal-IT.\nProject: Engineering Skills.\nCurrent Linear status: Ready for PR.\nBranch state: implementation commits already exist on the feature branch.\nEntry worktree state: clean.\nAcceptance criteria state: all Linear acceptance criteria are complete and checked.\nLinked design docs: none, so design conformance is not_applicable.\nLatest eval evidence: the promptfoo DB has a latest fully passing targeted run that is newer than content-relevant changes.\nPR state: the PR is created and the AI PR review runs against it.\nAI PR review result: `VERDICT: NOT READY` with one major finding about a missing error-path test.\nUser decision: the user accepts that finding and asks for it to be addressed.",
+        "expect_enters_plan_mode": "false",
+        "expect_creates_checkpoint_commits": "false",
+        "expect_creates_final_commit": "false",
+        "expect_edits_code_in_pr_phase": "false",
+        "expect_reviews_committed_code_before_ac_decision": "true",
+        "expect_runs_required_validation": "true",
+        "expect_checks_promptfoo_db_for_latest_passing_eval": "true",
+        "expect_pushes_branch": "true",
+        "expect_creates_pr": "true",
+        "expect_creates_pr_with_unproven_acceptance_criteria": "false",
+        "expect_runs_design_conformance_gate": "true",
+        "expect_records_design_conformance_evidence": "true",
+        "expect_blocks_pr_for_design_mismatch_in_this_scenario": "false",
+        "expected_design_conformance_result": "not_applicable",
+        "expected_design_paths_empty": "true",
+        "expect_hands_back_to_implementation_for_ai_review_fix": "true",
+        "expect_ai_review_turn_cap": "5",
+        "expect_moves_issue_to_in_review": "false",
+        "expect_merges_pr": "false",
+        "required_terms": "implementing-linear-issue"
+      }
+    },
+    {
       "description": "raise-pr — uses fresh eval evidence without new local commits and moves issue to In Review",
       "vars": {
         "eval_type": "user-behavior",

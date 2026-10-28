@@ -29,7 +29,7 @@ Move completed implementation work into review. This skill owns final branch syn
 | 7 | Push the prepared branch |
 | 8 | Create or update the PR |
 | 9 | Run the AI PR review via an independent subagent using `ai-pr-review-guide` |
-| 10 | If the verdict is NOT READY, present findings to the user with a fix-vs-reject proposal and apply the decision |
+| 10 | If the verdict is NOT READY, present findings to the user with a fix-vs-reject proposal. Accepted findings hand back to `implementing-linear-issue` — never change code in this phase. Rejected findings are recorded with justification. After the fixes land, resume this phase and re-run the review, counting review turns across hand-backs. Stop on `READY TO MERGE` or when every remaining finding is rejected, for at most 5 review turns total |
 | 11 | Carry the AI review result in the PR body |
 | 12 | Move the Linear issue to `In Review` only after the PR exists |
 
@@ -67,7 +67,8 @@ Run after the PR exists, via an independent subagent (never inline self-review).
 Give it the PR URL/number, the PR diff, the PR description, and the repo indexes (`repo-map.json`, `test-map.json`, `docs/functional/`) so it can apply `ai-pr-review-guide` including its PR-description justification check.
 
 - On `VERDICT: READY TO MERGE`: proceed to PR-body carry and `In Review`.
-- On `VERDICT: NOT READY`: present the findings to the user with a per-finding proposal — fix it (hand back to `implementing-linear-issue`, then re-run PR-phase gates from step 1) or reject it (record justification).
+- On `VERDICT: NOT READY`: present the findings to the user with a per-finding proposal — fix it (hand back to `implementing-linear-issue`, then re-run PR-phase gates from step 1) or reject it (record justification). Never edit code in this phase; accepted findings always route through the implementation phase.
+- Repeat until `VERDICT: READY TO MERGE` or every remaining finding is rejected with recorded justification, counting review turns across hand-backs for at most 5 review turns total including the first run. On turn 5 with accepted findings still open, stop and report them instead of continuing.
 - Do not edit files, stage, or commit in this phase.
 - Do not move to `In Review` until the user decides and the PR body carries the outcome.
 
@@ -93,6 +94,8 @@ Tool contract: use repo test commands from `repo-map.json`, `git status`, `git p
 - Moving the issue to `In Review` before the PR exists.
 - Duplicating acceptance criteria instead of checking the main Linear requirements section.
 - Merging or closing from this phase.
+- Fixing accepted AI review findings by editing code in the PR phase instead of handing back to `implementing-linear-issue`.
+- Looping AI review past 5 turns.
 
 ## References
 
