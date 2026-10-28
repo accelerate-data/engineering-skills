@@ -40,6 +40,18 @@
       }
     },
     {
+      "description": "AI PR review preview loops after NOT READY until READY or all findings rejected, capped at 5 turns",
+      "vars": {
+        "eval_type": "user-behavior",
+        "failure_modes": "stops-after-one-review-turn,loops-ai-review-forever",
+        "scenario": "- The user says: \"implement ENG-1052. Run the AI PR review preview and handle whatever it flags.\"\n- Simulated Linear metadata: team `Internal-IT`, project `Engineering Skills`, current status `Ready for Development`.\n- The implementation plan at `docs/plan/ENG-1052-export-audit.md` already exists from `superpowers:writing-plans`.\n- Implementation, local validation, code review, simplification review, test coverage review, and acceptance-criteria review have all completed and passed.\n- The `ai-pr-review-guide` preview runs on the local diff and returns `VERDICT: NOT READY` on its first run with two findings.\n- After that run the user rejects both findings with recorded justification and asks for no further code changes.\n- The workflow must re-run the preview rather than hand off after one review turn, and it must never exceed a cap of 5 review turns total.",
+        "expect_ai_review_turn_cap": "5",
+        "expect_uses_independent_review_agents": "true",
+        "expect_runs_code_review": "true",
+        "expect_creates_final_commit": "true"
+      }
+    },
+    {
       "description": "quality gates run all 6 independent checks before handoff",
       "vars": {
         "eval_type": "user-behavior",

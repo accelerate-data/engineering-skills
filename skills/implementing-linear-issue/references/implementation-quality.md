@@ -37,6 +37,7 @@ The gate list lives in SKILL.md Phase 4 step 11. This reference provides runner 
 | Verified feedback | Resolve one item at a time and rerun the relevant validation |
 | Failed or unverified gate | Stop |
 | AI preview NOT READY | Present findings to the user with a per-finding fix-vs-reject proposal; fix chosen items (rerun validation and preview), record rejected items with justification in the final Linear note; carry the preview verdict in that note |
+| AI preview loop cap | Repeat the NOT READY cycle until `READY TO MERGE` or every remaining finding is user-rejected, for at most 5 review turns total counting the first run. On turn 5 with accepted findings still open, stop and report them for the user's decision |
 
 ### Functional Spec Reconciliation
 
