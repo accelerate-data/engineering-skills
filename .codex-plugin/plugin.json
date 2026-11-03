@@ -1,7 +1,7 @@
 {
   "name": "engineering-skills",
   "description": "Shared engineering-team skills for code review, issue workflow, code simplification, and testing.",
-  "version": "1.18.0",
+  "version": "1.18.1",
   "author": {
     "name": "Accelerate Data"
   },
@@ -18,8 +18,9 @@
     "displayName": "Engineering Skills",
     "shortDescription": "Shared engineering team skills.",
     "developerName": "Accelerate Data",
-    "category": "Coding",
+    "category": "Developer Tools",
     "capabilities": [],
-    "screenshots": []
+    "screenshots": [],
+    "longDescription": "Shared engineering-team skills for code review, issue workflow, code simplification, and testing."
   }
 }
