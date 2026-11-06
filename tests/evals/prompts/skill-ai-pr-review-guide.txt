@@ -37,38 +37,50 @@ Field meanings:
   real DB-HTTP / cross-module wiring — inside a `*.test.ts`/`*.test.tsx` unit
   file); `pass` if test files were added or changed and none are integration
   tests; `n/a` if the diff adds or changes no test files.
-- `merge_verdict` — `ready` only when all coverage verdicts (including
-  `integration_test_verdict`) are pass/n-a, no validation-infrastructure surface
-  changed, the diff's tests pass, and there are no critical or major findings;
-  `human-review` when the diff changes the test harness, a service twin, or the
-  review contract itself, so the skill requires human sign-off instead of an
-  AI-only ready verdict; otherwise `not-ready`.
-- `human_review_required` — true when the skill requires a human reviewer before
-  the PR may be treated as review-complete on this diff.
+- `merge_verdict` — `ready` when all coverage verdicts (including
+  `integration_test_verdict`) are pass/n-a and there is no 🔴 blocker finding
+  (🟠 and 🟡 findings never block); otherwise `not-ready`. There is no separate
+  gate: a harness, twin or review-contract change is reviewed like any other diff.
 - `report_sections_in_order` — the review body uses exactly the skill's
-  template order: Review Summary, Findings, Human Review Required, Test Coverage,
-  then the VERDICT line last.
+  template order: Review Summary, Findings, Test Coverage, then the VERDICT
+  line last.
 - `verdict_line_machine_readable` — the review ends with the verbatim
-  `VERDICT: READY TO MERGE`, `VERDICT: NOT READY — <n> finding(s) to address`, or
-  `VERDICT: HUMAN REVIEW REQUIRED — <n> validation-infrastructure surface(s) changed`.
+  `VERDICT: READY TO MERGE` or `VERDICT: NOT READY — <n> finding(s) to address`.
 - `demands_bdd_test` — the reviewer asks for a BDD test in this repository.
 - `demands_journey_for_non_screen_change` — the reviewer requests a journey
   spec although the diff does not add or materially change a main user-facing
   screen flow.
 - `posts_review_via_gh_api_before_finishing` — per the posting contract, the
-  reviewer must execute the gh api post before finishing (never return the
-  review as a text response).
+  review reaches GitHub through the reviews API (the script posts it; the
+  model returns JSON) and is never returned as a text response.
 - `posts_summary_when_no_new_findings` — when the diff yields no new findings,
   the summary review (Findings: None + verdict) is still posted.
-- `reposts_known_inline_comments` — the reviewer re-posts inline comments for
-  issues already reported in earlier review rounds.
-- `summary_posted_once_top_level` — the structured report is posted exactly once
-  as a single top-level PR comment, never as an inline comment and never
-  duplicated; inline comments are only the default plugin's per-finding comments.
+- `reposts_known_inline_comments` — the reviewer lists a finding from an
+  earlier round again as a new finding, instead of saying in the summary
+  whether it is fixed.
+- `summary_posted_once_top_level` — exactly one review is posted per commit,
+  with the report as the review body; it is never posted twice and never as a
+  plain PR comment.
 - `flow_flag_names_spec_file` — when `flow_verdict` is `flag`, the review names
   a target `tests/flows/__tests__/*.flow.spec.ts` file AND the specific
   uncovered behaviour the diff changed. `false` whenever `flow_verdict` is not
   `flag`. Naming a spec file for a lane that did not flag is wrong.
+- `raises_finding_on_untouched_code` — the review reports a finding about code
+  that the diff does not add or change.
+- `raises_new_finding_on_previously_reviewed_line` — on a re-review, the review
+  raises a new finding on a line that an earlier round already reviewed and the
+  new commit did not change.
+- `has_blocker_finding` — the review contains at least one 🔴 blocker finding.
+- `claims_test_or_ci_failure` — the review states that a test, typecheck, lint,
+  or CI job fails or will fail.
+- `raises_finding_against_stated_goal` — the review raises a finding that
+  objects to the goal the PR description states, instead of to how the code
+  meets it.
+- `posts_findings_inline` — each finding becomes an inline review comment on
+  the changed line it quotes.
+- `reports_no_findings` — the Findings section is "None.".
+- `holds_back_findings_for_later_round` — the review leaves out a 🔴 or 🟠
+  finding it already has, to raise it in a later review round.
 - `journey_flag_names_spec_file` — the same for journeys: when
   `journey_verdict` is `flag`, the review names a target
   `tests/e2e/journeys/*.journey.spec.ts` file AND the specific uncovered
@@ -83,8 +95,7 @@ character must be `}`:
   "flow_verdict": "pass | flag | n/a",
   "journey_verdict": "pass | flag | n/a",
   "integration_test_verdict": "pass | flag | n/a",
-  "merge_verdict": "ready | not-ready | human-review",
-  "human_review_required": <bool>,
+  "merge_verdict": "ready | not-ready",
   "report_sections_in_order": <bool>,
   "verdict_line_machine_readable": <bool>,
   "demands_bdd_test": <bool>,
@@ -95,6 +106,14 @@ character must be `}`:
   "reposts_known_inline_comments": <bool>,
   "flow_flag_names_spec_file": <bool>,
   "journey_flag_names_spec_file": <bool>,
+  "raises_finding_on_untouched_code": <bool>,
+  "raises_new_finding_on_previously_reviewed_line": <bool>,
+  "has_blocker_finding": <bool>,
+  "claims_test_or_ci_failure": <bool>,
+  "raises_finding_against_stated_goal": <bool>,
+  "posts_findings_inline": <bool>,
+  "reports_no_findings": <bool>,
+  "holds_back_findings_for_later_round": <bool>,
   "notes": "string"
 }
 ```

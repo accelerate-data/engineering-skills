@@ -1,6 +1,6 @@
 # Maintenance & Sync (source of truth)
 
-This skill is the **master copy** of the review guide consumed by vd-studio's automated AI PR reviewer (OpenHands `pr-review` plugin, wired in
+This skill is the **master copy** of the review guide consumed by vd-studio's automated AI PR reviewer (`scripts/ai-pr-review/review.py`, run by
 `.github/workflows/ai-pr-review.yml`).
 
 ## Deployed copy
@@ -17,9 +17,12 @@ The OpenHands plugin auto-discovers every file under `.agents/skills/` in the re
 
 1. Edit `SKILL.md` here.
 2. Run the evals: `cd tests/evals && npm run eval:ai-pr-review-guide`.
+   Run them on the model CI uses: set `OPENCODE_MODEL` to that model. OpenCode 2
+   ignores the per-agent `model` in `tests/evals/opencode.json`, so without the
+   variable the run uses your global default model.
    All rule scenarios must pass before syncing.
 3. Copy the updated `SKILL.md` body (including frontmatter) over the vd-studio deployed copy and raise a vd-studio PR.
-4. The vd-studio copy carries a header comment pointing back to this master — keep it intact.
+   In vd-studio, `scripts/ai-pr-review/review.py` sends sections 1-5 to the model and renders sections 6-8 itself; run `python3 scripts/ai-pr-review/review_test.py` and a dry-run replay (`REPLAY_HEAD`, `REPLAY_FIRST=1`, `DRY_RUN=1`) on a past PR before pushing.
 
 Nightly CI sync was considered and rejected (AD-55): the skill changes rarely,
 and manual sync keeps testing/refinement in this repo where the evals live.
@@ -34,8 +37,14 @@ and manual sync keeps testing/refinement in this repo where the evals live.
 - clean diff → quiet review, READY verdict
 - no-new-findings re-review → summary still posted (posting contract)
 - report format → fixed section order + machine-readable verdict line
-- test-harness change → human review required, no AI-only ready verdict
-- service-twin change → human review required, no AI-only ready verdict
-- review-contract change → human review required, no AI-only ready verdict
-- unrelated agent skill edited → human review must NOT be required
-- ordinary flow spec added → human review must NOT be required
+- bug in a file the diff does not touch → no finding, ready
+- only 🟠 and 🟡 findings → ready; only a proven 🔴 or a flagged lane blocks
+- harness, twin or review-contract change → reviewed like any other diff, no human gate
+- re-review after a fix → no new finding on a line an earlier round reviewed
+- proven crash with an exact input → 🔴, not ready
+- stale comment only → 🟡, ready
+- suspected test failure the reviewer cannot run → no CI claim, no blocker
+- concern against the PR's stated goal → no finding against the goal
+- findings exist → each posted inline, report posted once
+- clean diff → Findings "None.", no invented finding
+- first review with many notes → every 🔴 and 🟠 listed now, none held back

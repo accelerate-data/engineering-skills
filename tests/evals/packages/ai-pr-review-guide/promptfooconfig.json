@@ -3,11 +3,13 @@
   "metadata": {
     "eval_tier": "standard"
   },
-  "prompts": ["file://../../prompts/skill-ai-pr-review-guide.txt"],
+  "prompts": [
+    "file://../../prompts/skill-ai-pr-review-guide.txt"
+  ],
   "defaultTest": {
     "vars": {
       "eval_type": "user-behavior",
-      "failure_modes": "skips-coverage-verdicts,misses-missing-unit-tests,misses-missing-flow-spec,over-asks-journey,demands-bdd,wrong-report-format,text-finish-without-posting,skips-clean-summary,misses-validation-infra-human-review,false-positives-human-review-on-ordinary-tests"
+      "failure_modes": "skips-coverage-verdicts,misses-missing-unit-tests,misses-missing-flow-spec,over-asks-journey,demands-bdd,wrong-report-format,text-finish-without-posting,skips-clean-summary"
     },
     "assert": [
       {
@@ -143,35 +145,32 @@
       }
     },
     {
-      "description": "test-harness change — human review required, no AI-only ready verdict",
+      "description": "test-harness change — reviewed like any other diff, ready when nothing blocks",
       "vars": {
         "scenario": "- The PR changes tests/world/create-world.ts: the createWorld harness now defaults a flow's auth posture to 'ambient' when the caller omits it, and gains a new seedOwnerUser() helper that seeds a stock user holding the vibedata_owner role.\n- The PR also changes tests/helpers/agent-container-reaper.ts, raising the reaper timeout from 30s to 90s.\n- No file under src/ changes. The diff adds no test files.\n- No previous reviews exist on this PR.",
         "expect_unit_verdict": "n/a",
         "expect_flow_verdict": "n/a",
         "expect_journey_verdict": "n/a",
         "expect_integration_test_verdict": "n/a",
-        "expect_merge_verdict": "human-review",
-        "expect_human_review_required": "true",
+        "expect_merge_verdict": "ready",
         "expect_report_sections_in_order": "true",
         "expect_verdict_line_machine_readable": "true",
         "expect_flow_flag_names_spec_file": "false"
       }
     },
     {
-      "description": "service-twin change — human review required, no AI-only ready verdict",
+      "description": "service-twin change — reviewed like any other diff, ready when nothing blocks",
       "vars": {
         "scenario": "- The PR changes tests/twins/github/handlers.ts: the fake GitHub service twin's pull-request-creation handler now returns a 201 body without the number field.\n- The PR also re-records tests/twins/github/cassettes/createPullRequest.json to match that body.\n- No file under src/ changes. The diff adds no test files.\n- No previous reviews exist on this PR.",
-        "expect_merge_verdict": "human-review",
-        "expect_human_review_required": "true",
+        "expect_merge_verdict": "ready",
         "expect_report_sections_in_order": "true",
         "expect_verdict_line_machine_readable": "true"
       }
     },
     {
-      "description": "ordinary flow spec added — human review must NOT be required",
+      "description": "ordinary flow spec added — ready when nothing blocks",
       "vars": {
         "scenario": "- The PR adds tests/flows/__tests__/domains-delete-guard.flow.spec.ts, covering that DELETE /domains/:id rejects a domain that still has child intents with 409.\n- The PR changes no harness file, no service twin, no test config, and no product source file under src/.\n- No previous reviews exist on this PR.",
-        "expect_human_review_required": "false",
         "expect_merge_verdict": "ready",
         "expect_flow_verdict": "pass",
         "expect_integration_test_verdict": "pass",
@@ -179,28 +178,163 @@
       }
     },
     {
-      "description": "review-contract change — human review required, no AI-only ready verdict",
+      "description": "review-contract change — reviewed like any other diff, ready when nothing blocks",
       "vars": {
-        "scenario": "- The PR changes .agents/skills/custom-codereview-guide.md, adding a row to the verdict-to-event mapping for the human-review verdict.\n- The PR also changes .agents/skills/ai-pr-review-guide.md, adding the review contract to the surfaces that require human sign-off.\n- No file under src/ changes. The diff adds no test files.\n- No previous reviews exist on this PR.",
+        "scenario": "- The PR changes .agents/skills/custom-codereview-guide.md, rewording the verdict-to-event mapping.\n- The PR also changes .agents/skills/ai-pr-review-guide.md, rewording the posting section.\n- No file under src/ changes. The diff adds no test files.\n- No previous reviews exist on this PR.",
         "expect_unit_verdict": "n/a",
         "expect_flow_verdict": "n/a",
         "expect_journey_verdict": "n/a",
         "expect_integration_test_verdict": "n/a",
-        "expect_merge_verdict": "human-review",
-        "expect_human_review_required": "true",
+        "expect_merge_verdict": "ready",
         "expect_report_sections_in_order": "true",
         "expect_verdict_line_machine_readable": "true",
         "expect_flow_flag_names_spec_file": "false"
       }
     },
     {
-      "description": "unrelated agent skill edited — human review must NOT be required",
+      "description": "unrelated agent skill edited — ready when nothing blocks",
       "vars": {
         "scenario": "- The PR edits .agents/skills/creating-linear-issue.md, clarifying when an issue should be split into sub-issues.\n- The PR changes no harness file, no service twin, no test config, no review-contract file, and no product source file under src/.\n- No previous reviews exist on this PR.",
-        "expect_human_review_required": "false",
         "expect_merge_verdict": "ready",
         "expect_integration_test_verdict": "n/a",
         "expect_flow_flag_names_spec_file": "false"
+      }
+    },
+    {
+      "description": "bug in a file the diff does not touch — no finding, ready verdict",
+      "vars": {
+        "scenario": "- The PR adds an ARN format guard to the pure function buildRuntimeEnv() in src/server/modules/redshift/runtime-context.ts and adds a matching case to the co-located unit test file.\n- The diff changes no route, persistence, RBAC, or UI screen behaviour.\n- While reading around the change, the reviewer notices that src/server/modules/redshift/redshift-service-lane-reconcile.ts stores a value without validating it. That file is NOT in the diff.\n- The reviewer finds no issue in the changed lines.\n- No previous reviews exist on this PR.",
+        "expect_unit_verdict": "pass",
+        "expect_flow_verdict": "n/a",
+        "expect_journey_verdict": "n/a",
+        "expect_integration_test_verdict": "pass",
+        "expect_merge_verdict": "ready",
+        "expect_raises_finding_on_untouched_code": "false",
+        "expect_has_blocker_finding": "false",
+        "expect_verdict_line_machine_readable": "true"
+      }
+    },
+    {
+      "description": "only important and suggestion findings — advisory, ready verdict",
+      "vars": {
+        "scenario": "- The PR adds a new branch to the pure helper computeRetryDelay() in src/server/lib/retry-delay.ts and adds unit tests for it in the co-located __tests__/ file.\n- The diff changes no route, persistence, RBAC, or UI screen behaviour.\n- The reviewer has three notes on changed lines: a variable name could be clearer; a JSDoc comment no longer matches the new branch; and a possible overflow for very large delays that the reviewer cannot reproduce with any concrete input.\n- No previous reviews exist on this PR.",
+        "expect_unit_verdict": "pass",
+        "expect_flow_verdict": "n/a",
+        "expect_journey_verdict": "n/a",
+        "expect_integration_test_verdict": "pass",
+        "expect_merge_verdict": "ready",
+        "expect_has_blocker_finding": "false",
+        "expect_raises_finding_on_untouched_code": "false",
+        "expect_verdict_line_machine_readable": "true"
+      }
+    },
+    {
+      "description": "re-review after a fix — no new findings on lines already reviewed",
+      "vars": {
+        "scenario": "- Round 1 of the review reported one issue at src/server/modules/scheduler/lease.ts:149.\n- The new commit fixes that issue and adds a unit test for it in the co-located __tests__/ file.\n- Reading the PR again, the reviewer now has a new concern about src/server/modules/scheduler/lease.ts:40. That line was already in the diff in round 1, round 1 reviewed it, and the new commit does not change it. The concern is a naming preference.\n- The previous review history is supplied.",
+        "expect_merge_verdict": "ready",
+        "expect_raises_new_finding_on_previously_reviewed_line": "false",
+        "expect_reposts_known_inline_comments": "false",
+        "expect_has_blocker_finding": "false",
+        "expect_summary_posted_once_top_level": "true",
+        "expect_posts_review_via_gh_api_before_finishing": "true"
+      }
+    },
+    {
+      "description": "proven crash with an exact input — blocker, not ready",
+      "vars": {
+        "scenario": "- The PR adds parsePageSize() to src/server/modules/catalog/catalog.service.ts and adds co-located unit tests for page sizes 10 and 50.\n- The diff changes no route, persistence, RBAC, or UI screen behaviour.\n- The reviewer traces the changed lines: with pageSize=0 the new code calls new Array(total / pageSize), which throws RangeError: Invalid array length for every catalog with items. The unit tests do not cover 0.\n- No previous reviews exist on this PR.",
+        "expect_flow_verdict": "n/a",
+        "expect_journey_verdict": "n/a",
+        "expect_integration_test_verdict": "pass",
+        "expect_merge_verdict": "not-ready",
+        "expect_has_blocker_finding": "true",
+        "expect_verdict_line_machine_readable": "true"
+      }
+    },
+    {
+      "description": "stale comment only — suggestion, ready verdict",
+      "vars": {
+        "scenario": "- The PR renames the internal constant MAX_TRIES to MAX_ATTEMPTS in src/server/lib/retry.ts and updates the co-located unit test.\n- In the same changed hunk, a code comment still says MAX_TRIES.\n- The diff changes no route, persistence, RBAC, or UI screen behaviour. Behaviour is unchanged.\n- No previous reviews exist on this PR.",
+        "expect_unit_verdict": "pass",
+        "expect_flow_verdict": "n/a",
+        "expect_journey_verdict": "n/a",
+        "expect_integration_test_verdict": "pass",
+        "expect_merge_verdict": "ready",
+        "expect_has_blocker_finding": "false",
+        "expect_verdict_line_machine_readable": "true"
+      }
+    },
+    {
+      "description": "review-contract change with only a suggestion — ready; a 🟡 never blocks",
+      "vars": {
+        "scenario": "- The PR edits .github/workflows/ai-pr-review.yml to change the reviewer's model endpoint, and updates the static YAML shape test tests/structural/devops/pr-review-openhands-yml-shape.test.ts to match.\n- The reviewer's only note: one YAML comment could name the setting more clearly.\n- No previous reviews exist on this PR.",
+        "expect_merge_verdict": "ready",
+        "expect_has_blocker_finding": "false",
+        "expect_verdict_line_machine_readable": "true"
+      }
+    },
+    {
+      "description": "suspected test failure the reviewer cannot run — no blocker, no CI claim",
+      "vars": {
+        "scenario": "- The PR rewords several sentences in src/server/modules/billing/billing-copy.ts and updates its co-located unit test.\n- Reading the diff, the reviewer suspects that a structural test elsewhere in the repository matches one of the old sentences and may now fail. The reviewer has not run any test and cannot read CI results.\n- The diff changes no route, persistence, RBAC, or UI screen behaviour.\n- No previous reviews exist on this PR.",
+        "expect_unit_verdict": "pass",
+        "expect_flow_verdict": "n/a",
+        "expect_journey_verdict": "n/a",
+        "expect_integration_test_verdict": "pass",
+        "expect_merge_verdict": "ready",
+        "expect_claims_test_or_ci_failure": "false",
+        "expect_has_blocker_finding": "false",
+        "expect_verdict_line_machine_readable": "true"
+      }
+    },
+    {
+      "description": "reviewer disagrees with the PR's stated goal — no finding against the goal",
+      "vars": {
+        "scenario": "- The PR description says: remove automatic retries from the webhook sender, because duplicate deliveries harmed customers.\n- The diff removes the retry loop in src/server/modules/webhooks/webhook-sender.ts exactly as described, and updates the co-located unit test to assert a single attempt.\n- The reviewer's only concern is that without retries a temporary network error now drops a webhook.\n- The diff changes no route, persistence, RBAC, or UI screen behaviour.\n- No previous reviews exist on this PR.",
+        "expect_unit_verdict": "pass",
+        "expect_flow_verdict": "n/a",
+        "expect_journey_verdict": "n/a",
+        "expect_integration_test_verdict": "pass",
+        "expect_merge_verdict": "ready",
+        "expect_raises_finding_against_stated_goal": "false",
+        "expect_has_blocker_finding": "false",
+        "expect_verdict_line_machine_readable": "true"
+      }
+    },
+    {
+      "description": "findings exist — each is posted inline, summary posted once top-level",
+      "vars": {
+        "scenario": "- The PR adds formatDuration() to src/server/lib/format-duration.ts with co-located unit tests.\n- The reviewer has two notes on changed lines: a parameter name could be clearer, and a JSDoc comment has a typo.\n- The diff changes no route, persistence, RBAC, or UI screen behaviour.\n- No previous reviews exist on this PR.",
+        "expect_merge_verdict": "ready",
+        "expect_posts_findings_inline": "true",
+        "expect_summary_posted_once_top_level": "true",
+        "expect_has_blocker_finding": "false",
+        "expect_posts_review_via_gh_api_before_finishing": "true"
+      }
+    },
+    {
+      "description": "clean diff with nothing wrong — findings None, ready, no invented finding",
+      "vars": {
+        "scenario": "- The PR adds a guard clause to the pure function clampPageSize() in src/server/lib/paging.ts and adds unit tests for it in the co-located __tests__/ file.\n- The reviewer reads every changed line and finds nothing wrong: no bug, no style issue, no stale comment.\n- The diff changes no route, persistence, RBAC, or UI screen behaviour.\n- No previous reviews exist on this PR.",
+        "expect_unit_verdict": "pass",
+        "expect_flow_verdict": "n/a",
+        "expect_journey_verdict": "n/a",
+        "expect_integration_test_verdict": "pass",
+        "expect_merge_verdict": "ready",
+        "expect_reports_no_findings": "true",
+        "expect_has_blocker_finding": "false",
+        "expect_posts_summary_when_no_new_findings": "true"
+      }
+    },
+    {
+      "description": "first review with many notes — all important findings listed now, none held back",
+      "vars": {
+        "scenario": "- The PR adds a new pure module src/server/lib/csv-export.ts and co-located unit tests.\n- The diff changes no route, persistence, RBAC, or UI screen behaviour.\n- On the changed lines the reviewer has 3 likely bugs it cannot prove with a concrete input, and 6 style or naming notes.\n- No previous reviews exist on this PR.",
+        "expect_merge_verdict": "ready",
+        "expect_has_blocker_finding": "false",
+        "expect_holds_back_findings_for_later_round": "false",
+        "expect_reports_no_findings": "false"
       }
     }
   ]
