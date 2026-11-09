@@ -1,6 +1,6 @@
 ---
 name: ai-pr-review-guide
-description: Use when reviewing a vd-studio pull request as the automated AI PR reviewer (OpenHands pr-review plugin) — judging test coverage for a diff, structuring the review report, or deciding merge readiness.
+description: Use when reviewing a vd-studio pull request as the automated AI PR reviewer — judging test coverage for a diff, structuring the review report, or deciding merge readiness.
 ---
 
 # AI PR Review Guide
@@ -26,7 +26,7 @@ vd-studio deploys a byte-for-byte copy at `.agents/skills/ai-pr-review-guide.md`
 
 - 🔴 Blocker: a crash, wrong result, data loss, or security hole, with the input that causes it. A test the diff skips without a reason is also 🔴.
 - 🟠 Important: a likely bug with no concrete input. Advisory, unless the script's second check confirms a failing input; then it becomes 🔴.
-- 🟡 Suggestion: style, naming, docs, comments, refactors. Advisory only. It never blocks.
+- 🟡 Suggestion: worth considering — a significant improvement to clarity or maintainability. Advisory only. It never blocks. NEVER post a nit (formatting, trivial style): leave that to linters. NEVER post a comment that only says code is fine ("looks good", "acceptable trade-off"): silence is approval.
 
 Format: one bullet per finding: severity, `file:line`, the quoted line, one sentence for the problem, one sentence for the fix.
 
@@ -38,6 +38,14 @@ Examples:
 - 🟠, not 🔴: "This loop may be slow on large inputs." There is no failing input.
 
 # 3. What to look for (on changed lines only)
+
+Before posting a finding, prove it:
+
+1. Re-read the full file (sent as context) and trace enough surrounding code to reproduce the failure.
+2. Confirm no repository mechanism, caller, test, or documented exception already invalidates the concern. A requirement the diff inherits from an unchanged sibling or caller (a tool it shells to, an env it runs in) is not a finding on this diff.
+3. Reduce related symptoms to one root-cause finding with the smallest correction.
+
+If any step fails, drop the finding — or phrase the unresolved point as a non-blocking question in the summary, never as an inline finding.
 
 - Correctness: a concrete input on which the changed code crashes or gives a wrong result. This is the only source of a 🔴.
 - Breaking changes: an API, schema, event, env name or stored-data contract changed without every caller, consumer and stored row accounted for.
@@ -68,7 +76,7 @@ When Flow or Journey flags, name the gap: the target spec file and the exact cha
 - A `vdStudioMeta` pin to a first-party artifact gets no recency or supply-chain finding: `demoPackRepository` and `demoPackTag` on an `accelerate-data/<repo>` name, and any `ghcr.io/accelerate-data/*` image digest. These are our own builds.
 - Still check a Demo Pack pin: both keys move together, the tag names an existing release, and the repository is `accelerate-data/<repo>`.
 - Still check a first-party image pin: the value is a full `@sha256:` digest with 64 hex characters, and every copy of the digest moves in the same PR (`agentServerImage` also lives in `deploy/docker/docker-compose.yml` and `cli/vibedata/src/vibedata/release/build_image_set.py`; `obotImage` in the latter). A source PR that changes an Agent Server image input must not pin its own unbuilt result.
-- Every other pin, such as third-party images and charts, has a real external publisher and is judged normally.
+- Every other pin, such as third-party images and charts, has a real external publisher and is judged on supply chain: verify the exact released artifact and its provenance, and flag a version published less than seven days ago or with missing release notes, a yanked version, or no adoption signal.
 
 # 6. Report (rendered by the script from your JSON)
 
@@ -87,26 +95,34 @@ vd-studio's `scripts/ai-pr-review/review.py` turns your summary, findings and la
 - Journey: <pass | flag | n/a> — <one line>
 - Integration: <pass | flag | n/a> — <one line>
 
+## Human Review Advised
+<one bullet per changed validation-trust file (harness or twins the lanes rely on) — or omit the section when none changed. Advisory only; it never blocks.>
+
 VERDICT: <one verdict line from section 7>
 ```
 
 # 7. Verdict (computed by the script, last line, verbatim)
 
-- `VERDICT: READY TO MERGE` — no 🔴 finding and every lane is pass or n/a. 🟠 and 🟡 findings do not block. The script approves the PR.
+- `VERDICT: READY TO MERGE` — no 🔴 finding and every lane is pass or n/a. 🟠 and 🟡 findings do not block. The verdict line is always exactly this text: the advisory trust-surface signal lives in the `## Human Review Advised` section, never in a verdict suffix.
 - `VERDICT: NOT READY — <n> finding(s) to address` — only when a 🔴 finding exists or a lane flags. Count only 🔴 findings and flagged lanes in `<n>`.
+- `VERDICT: HUMAN REVIEW REQUIRED — <n> reviewer file(s) changed` — when the diff touches the reviewer itself (this guide, `review.py`, its evals, the workflow, or its shape test). You never emit this verdict yourself: the script computes it from the file list. `NOT READY` wins when both apply.
 
 # 8. Posting (done by the script)
 
 - You never post. You return findings and lane verdicts as JSON; the script does the rest.
 - The script posts exactly one review per commit to `pulls/<number>/reviews`. The report is the review body. Each finding is an inline comment on its changed line. It never returns the review as a text response.
-- The review `event` follows the verdict: `READY TO MERGE` → `"event": "APPROVE"`. `NOT READY` → `"event": "COMMENT"`. Never `REQUEST_CHANGES`.
-- A finding whose quoted line is not in the diff is dropped. Every 🔴 and 🟠 gets a second check against the full file: a confirmed failing input is 🔴 and blocks, an unconfirmed one is 🟠.
-- On a re-review the script sends you only the new commits' diff and the earlier findings.
-- The script retries the post twice, then fails the job, so a missing review is never silent.
+- The review `event` follows the verdict: `READY TO MERGE` → `"event": "APPROVE"`. `NOT READY` → `"event": "COMMENT"`. Never `REQUEST_CHANGES`. On a draft PR the script downgrades `APPROVE` to `COMMENT`: approving an unmergeable draft is noise.
+- GitHub can reject an approval (for example on a pull request it no longer lets this reviewer approve). The script then posts the same report as a `COMMENT` rather than losing it, so a `VERDICT: READY TO MERGE` line can arrive as a comment.
+- A finding whose quoted line is not in the diff is dropped. Every 🔴 and 🟠 gets a second check against the full file: a confirmed failing input is 🔴 and blocks, an unconfirmed one is 🟠. The checker also rejects a finding when the file's own comments document the mechanism the finding claims is missing.
+- The script adds `## Human Review Advised` for changed validation-trust files (`tests/world/`, `tests/helpers/`, `tests/fixtures/`, `config/vitest/`, `tests/run.sh`, `scripts/devops/world-lane-linux/`, `tests/twins/`): advisory, never blocking. It forces `HUMAN REVIEW REQUIRED` (a `COMMENT`) for a diff touching the reviewer itself: this guide, `scripts/ai-pr-review/`, `.github/workflows/ai-pr-review.yml`, or the shape test.
+- On a re-review the script sends you only the new commits' diff and the earlier findings. When a rebase or force-push means the earlier review's commit is no longer an ancestor of the head — or GitHub truncates that range at 300 files — the round reviews the whole PR diff and carries no earlier findings instead of grading the base branch's own commits.
+- The script deletes its own leftover draft review before retrying: GitHub allows one pending review per account per pull request, and a stale draft blocks every later post with a 422 that only that account can clear.
+- The script retries the post twice, then fails the job, so a missing review is never silent. Each failure logs GitHub's own explanation, not just the status code.
 
 # 9. Before you answer (check every item)
 
 - Each 🔴 quotes a changed line and names an input and the wrong result it causes.
 - No finding is about untouched code, a test or CI result, or the goal the PR description states.
+- No 🟡 is a nit or praise: acceptable code gets no comment.
 - Every 🔴 and 🟠 finding is in this answer. Nothing is saved for a later round.
 - If there are no findings, the list is empty. That is a good result.
