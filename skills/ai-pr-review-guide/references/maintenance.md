@@ -1,28 +1,24 @@
 # Maintenance & Sync (source of truth)
 
-This skill is the **master copy** of the review guide consumed by vd-studio's automated AI PR reviewer (OpenHands `pr-review` plugin, wired in
+This skill is the **master copy** of the review guide consumed by vd-studio's automated AI PR reviewer (`scripts/ai-pr-review/review.py`, run by
 `.github/workflows/ai-pr-review.yml`).
 
-## Deployed copy
+## How vd-studio reads it
 
-vd-studio consumes the guide as an OpenHands project skill at:
+vd-studio keeps no copy. Its `ai-pr-review.yml` checks out this repository at a pinned commit and passes this folder to the script as `GUIDE_DIR`. The script sends sections 1-5 to the model and renders sections 6-8 itself.
 
-```
-vd-studio/.agents/skills/ai-pr-review-guide.md
-```
-
-The OpenHands plugin auto-discovers every file under `.agents/skills/` in the reviewed repo (`load_project_skills`) — no workflow configuration points at the file, so the filename only needs to stay a valid skill file.
-
-## Edit workflow (manual sync — deliberate choice)
+## Edit workflow
 
 1. Edit `SKILL.md` here.
 2. Run the evals: `cd tests/evals && npm run eval:ai-pr-review-guide`.
-   All rule scenarios must pass before syncing.
-3. Copy the updated `SKILL.md` body (including frontmatter) over the vd-studio deployed copy and raise a vd-studio PR.
-4. The vd-studio copy carries a header comment pointing back to this master — keep it intact.
+   Run them on the model CI uses: set `OPENCODE_MODEL` to that model. OpenCode 2
+   ignores the per-agent `model` in `tests/evals/opencode.json`, so without the
+   variable the run uses your global default model.
+   All rule scenarios must pass before merging.
+3. After this repository merges, raise a vd-studio PR that moves the pinned commit in `ai-pr-review.yml`.
+   In vd-studio, run `python3 scripts/ai-pr-review/review_test.py`, `python3 scripts/ai-pr-review/eval_planted.py` and a dry-run replay (`REPLAY_HEAD`, `REPLAY_FIRST=1`, `DRY_RUN=1`) on a past PR before pushing.
 
-Nightly CI sync was considered and rejected (AD-55): the skill changes rarely,
-and manual sync keeps testing/refinement in this repo where the evals live.
+A pinned commit, not `main`, so a guide change reaches vd-studio CI only through a reviewed vd-studio PR.
 
 ## What the evals cover
 
@@ -34,8 +30,14 @@ and manual sync keeps testing/refinement in this repo where the evals live.
 - clean diff → quiet review, READY verdict
 - no-new-findings re-review → summary still posted (posting contract)
 - report format → fixed section order + machine-readable verdict line
-- test-harness change → human review required, no AI-only ready verdict
-- service-twin change → human review required, no AI-only ready verdict
-- review-contract change → human review required, no AI-only ready verdict
-- unrelated agent skill edited → human review must NOT be required
-- ordinary flow spec added → human review must NOT be required
+- bug in a file the diff does not touch → no finding, ready
+- only 🟠 and 🟡 findings → ready; only a proven 🔴 or a flagged lane blocks
+- harness or twin change → reviewed like any other diff, ready when nothing blocks (the script adds an advisory Human Review Advised section)
+- re-review after a fix → no new finding on a line an earlier round reviewed
+- proven crash with an exact input → 🔴, not ready
+- stale comment only → 🟡, ready
+- suspected test failure the reviewer cannot run → no CI claim, no blocker
+- concern against the PR's stated goal → no finding against the goal
+- findings exist → each posted inline, report posted once
+- clean diff → Findings "None.", no invented finding
+- first review with many notes → every 🔴 and 🟠 listed now, none held back

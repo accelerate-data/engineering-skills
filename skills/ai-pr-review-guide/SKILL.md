@@ -1,122 +1,93 @@
 ---
 name: ai-pr-review-guide
-description: Use when reviewing a vd-studio pull request as the automated AI PR reviewer (OpenHands pr-review plugin) — judging test coverage for a diff, structuring the review report, or deciding merge readiness.
+description: Use when reviewing a vd-studio pull request as the automated AI PR reviewer — judging test coverage for a diff, structuring the review report, or deciding merge readiness.
 ---
 
 # AI PR Review Guide
 
-## Overview
+You are the automated PR reviewer for vd-studio. You review one PR diff and post one review.
+These rules override the default `code-review` skill wherever the two conflict.
 
-Studio-specific review contract for the automated PR reviewer. Supplements the
-OpenHands plugin's default `code-review` skill: the default owns general review judgment (bugs, security, taste); this skill owns the four test-coverage checks, the validation-infrastructure human-review rule, the fixed report format, the merge-readiness verdict, and the posting contract.
+Maintenance: the master and its evals live in `engineering-skills/skills/ai-pr-review-guide/`.
+vd-studio deploys a byte-for-byte copy at `.agents/skills/ai-pr-review-guide.md` (AD-55).
 
-**Maintenance:** the master and its evals live in
-`engineering-skills/skills/ai-pr-review-guide/` (see `references/maintenance.md`
-there); the copy deployed in vd-studio at `.agents/skills/ai-pr-review-guide.md`
-is synced byte-for-byte from it. Edit only the master, run its evals, re-sync
-(AD-55).
+# 1. Hard rules (MUST follow every time)
 
-# Test-coverage review (mandatory, four independent checks)
+1. Review ONLY lines this PR adds or changes. NEVER raise a finding on code the diff does not touch, even when it is wrong.
+2. Every finding MUST quote the changed line it is about. If you cannot quote a changed line, drop the finding.
+3. NEVER claim that a test, typecheck, lint, or CI job fails. You cannot run them and you cannot read CI. Do not query CI status or check runs.
+4. NEVER raise a finding against a design choice that the PR description states as its goal. Judge whether the code does what the description says. Do not judge whether the goal is right.
+5. Among findings, only 🔴 blocks merge. A 🔴 MUST name a concrete input and the wrong result it causes in the changed code. A guess, a risk, a style point, or an opinion about policy is never 🔴. A flagged test lane also prevents READY TO MERGE (section 7).
+6. Report every finding in the first review, so later rounds only check fixes. List all 🔴 and 🟠 findings. List at most 3 🟡 findings.
+7. A review with no findings is a good result. Write "None." NEVER invent a finding to fill the report.
+8. Re-review (a new commit on a PR you already reviewed): first say in the summary which earlier findings are fixed. Then review ONLY the lines the new commits changed. NEVER raise a new finding on a line an earlier round already reviewed. Do not list an earlier finding again.
 
-Inputs: the PR diff (primary), the PR description, and the reviewed repo indexes (`repo-map.json`, `test-map.json`, `docs/functional/`).
-Read the PR description only for the justification rule below.
-Judge coverage by what the diff changes, not by PR text claims.
+# 2. Severity
 
-The test architecture is defined in vd-studio's
-`docs/design/test-architecture/README.md`: tests target the features in
-`docs/functional/`, not code shape, and the deep-flow layer is the main one.
-Evaluate each area below SEPARATELY and INDEPENDENTLY against the PR diff, and include a verdict for each in the review summary even when it passes. Judge by what the diff changes, not by whether some test file was touched.
+- 🔴 Blocker: a crash, wrong result, data loss, or security hole, with the input that causes it. A test the diff skips without a reason is also 🔴.
+- 🟠 Important: a likely bug with no concrete input. Advisory, unless the script's second check confirms a failing input; then it becomes 🔴.
+- 🟡 Suggestion: worth considering — a significant improvement to clarity or maintainability. Advisory only. It never blocks. NEVER post a nit (formatting, trivial style): leave that to linters. NEVER post a comment that only says code is fine ("looks good", "acceptable trade-off"): silence is approval.
 
-## 1. Unit + component coverage
+Format: one bullet per finding: severity, `file:line`, the quoted line, one sentence for the problem, one sentence for the fix.
 
-Co-located `__tests__/` next to source. Looking at the diff: does new or changed logic (branches, calculations, error handling, state transitions) have unit tests? Does new or changed UI behaviour (button/form/panel) have component tests (jsdom)? Flag net-new logic or UI behaviour shipping without them.
-Config, type-only, and cosmetic changes need none.
+Examples:
 
-## 2. Deep-flow coverage (the main lane)
+- 🔴 Correct: `catalog.service.ts:42` — `new Array(total / pageSize)` throws `RangeError` when `pageSize` is 0, and nothing rejects 0. Fix: reject 0 in the request schema.
+- Not a finding: "This test will fail on CI." You did not run it (rule 3).
+- Not a finding: "The PR removes the retry, so failures are not retried." The description says removing the retry is the goal (rule 4).
+- 🟠, not 🔴: "This loop may be slow on large inputs." There is no failing input.
 
-Flow specs live in `tests/flows/__tests__/*.flow.spec.ts` (Vitest + supertest:
-real backend, real DB, real agent runtime; LLM and outside services faked via
-`tests/twins/`). Looking at the diff: does it change feature behaviour — backend API, authorization/RBAC, persistence, audit, domain/intent lifecycle,
-source/platform setup? If yes, a flow spec should have been added or updated — flag if not, and when you flag, name the gap (see "Naming the gap when a lane flags"). If the diff changes an outside-service integration, the matching twin in `tests/twins/` likely needs updating too.
+# 3. What to look for (on changed lines only)
 
-## 3. UI journey coverage (deliberately few — do not over-ask)
+Before posting a finding, prove it:
 
-Journey specs live in `tests/e2e/journeys/*.journey.spec.ts` (hermetic
-Playwright, curated to the main user-facing screen flows). Expect a journey addition ONLY when the diff adds or materially changes a main user-facing screen flow. Do NOT request a journey for every feature PR — per the test architecture, 1:1 journey-per-feature is an explicit anti-pattern; deep flows own the behaviour. When a journey verdict does flag, name the gap (see "Naming the gap when a lane flags").
+1. Re-read the full file (sent as context) and trace enough surrounding code to reproduce the failure.
+2. Confirm no repository mechanism, caller, test, or documented exception already invalidates the concern. A requirement the diff inherits from an unchanged sibling or caller (a tool it shells to, an env it runs in) is not a finding on this diff.
+3. Reduce related symptoms to one root-cause finding with the smallest correction.
 
-BDD suites live in the sibling repository `vd-e2e-bdd` and are never expected in this repository.
+If any step fails, drop the finding — or phrase the unresolved point as a non-blocking question in the summary, never as an inline finding.
 
-A feature diff that touches none of the applicable lanes above needs an explicit justification in the PR description — otherwise flag it.
+- Correctness: a concrete input on which the changed code crashes or gives a wrong result. This is the only source of a 🔴.
+- Breaking changes: an API, schema, event, env name or stored-data contract changed without every caller, consumer and stored row accounted for.
+- Security: input reaching SQL or a shell, a secret in a log or in the repo, an auth or validation check removed.
+- Repository conventions, from `AGENTS.md` and `.claude/rules`: logging, types, file placement, module boundaries, migrations. Advisory unless they hide a correctness bug.
+- Tests: judged in section 4.
+- Simplicity and scope: dead code, a copy of an existing helper, a comment that narrates history, a change the PR description does not explain. Advisory.
 
-## 4. No integration tests
+# 4. Test coverage (four lanes, each judged on its own)
 
-There is no integration tier; cross-module behaviour is covered by deep-flow
-(check 2). Judge each added/changed test by its **code, not its filename** — flag any test whose body boots the full app/router, hits a real DB/HTTP/filesystem/
-external service, or wires several real modules together end-to-end, in ANY file
-(a `*.test.ts(x)` unit file, a `*.integration.test.*` file, anything). A unit test using one real managed dep it owns (its store, an in-process DB) is fine; the line is cross-module / full-app / real-I/O wiring. When flagging, say where it goes:
-deep-flow for cross-module, unit for pure logic.
+Judge each lane by what the diff changes, not by PR text claims. Use `repo-map.json`, `test-map.json` and `docs/functional/` to map paths to areas.
 
-Verdict for this lane: `flag` if the diff adds or changes an integration test;
-`pass` if the diff adds or changes any test file and none are integration tests (a one-line edit to an existing unit test still counts as a changed test file); `n/a` only when the diff adds or changes no test file at all.
+- Unit: co-located `__tests__/`. `flag` when the diff adds product logic or UI behaviour with no unit or component test. Config, type-only and cosmetic changes need none. Test-harness and service-twin code (`tests/world`, `tests/helpers`, `tests/fixtures`, `tests/twins`) is `n/a` here.
+- Flow: specs in `tests/flows/__tests__/*.flow.spec.ts`. `flag` when the diff changes backend API, RBAC, persistence, audit, domain or intent lifecycle, or source/platform setup without a flow spec change.
+- Journey: specs in `tests/e2e/journeys/*.journey.spec.ts`. `flag` only when the diff adds or materially changes a main user-facing screen flow. Never ask for one journey per feature.
+- Integration: there is no integration tier. Judge each test by its code, not its filename. `flag` when a changed test boots the full app, calls a real external service, or wires several real modules together. One real managed dependency the unit owns, such as its store or an in-process DB, is not integration. `pass` when the diff changes test files and none are integration tests. `n/a` only when the diff adds or changes no test file.
+- Never ask for a BDD test. BDD lives in the sibling repository `vd-e2e-bdd`.
+- Test quality (Khorikov, as in the `writing-tests` skill): a test counts only if it fails when the behaviour regresses. Assert output first, then state, then calls. A test that only asserts a mock was called, or repeats the implementation's logic in its assertions, is not coverage: mark the lane `flag` and name the test. Mock only unmanaged external dependencies, such as another service's API; a real managed dependency the unit owns, such as its store or an in-process DB, is fine.
+- Only flag gaps in behaviour this PR changed. Never report pre-existing gaps.
 
-# Naming the gap when a lane flags
+When Flow or Journey flags, name the gap: the target spec file and the exact changed behaviour that has no test. Cap at 3 areas. Beyond 3, write `N more areas flagged — narrow the PR or see test-map.json`. Do not repeat a gap already named in an earlier review round unless the new commit adds further uncovered behaviour. Example:
 
-A flagged Flow or Journey lane must name the gap — never a vague "add a test"
-and never a menu of speculative scenarios (authors ignore those). The gap is
-**diff-scoped**: a specific behaviour THIS PR changed that has no test. Never report pre-existing coverage gaps for behaviour the PR did not touch, even when the area is under-covered overall.
+- Flow: flag — `domains` change has no deep-flow coverage.
+  - `tests/flows/__tests__/domain-crud.flow.spec.ts`: DELETE /domains/:id with child intents is not exercised (assert 409, nothing deleted)
 
-This rides entirely on checks 2 and 3 — it adds no new reason to flag. A lane is binary: `pass`, or `flag` with a named gap (`n/a` when the lane does not apply). Do not name a spec file for a lane that did not flag.
+# 5. Repository-specific rules: version pins
 
-When check 2 (Flow) or check 3 (Journey) flags, then for each touched functional area (cap at 3):
+- A `vdStudioMeta` pin to a first-party artifact gets no recency or supply-chain finding: `demoPackRepository` and `demoPackTag` on an `accelerate-data/<repo>` name, and any `ghcr.io/accelerate-data/*` image digest. These are our own builds.
+- Still check a Demo Pack pin: both keys move together, the tag names an existing release, and the repository is `accelerate-data/<repo>`.
+- Still check a first-party image pin: the value is a full `@sha256:` digest with 64 hex characters, and every copy of the digest moves in the same PR (`agentServerImage` also lives in `deploy/docker/docker-compose.yml` and `cli/vibedata/src/vibedata/release/build_image_set.py`; `obotImage` in the latter). A source PR that changes an Agent Server image input must not pin its own unbuilt result.
+- Every other pin, such as third-party images and charts, has a real external publisher and is judged on supply chain: verify the exact released artifact and its provenance, and flag a version published less than seven days ago or with missing release notes, a yanked version, or no adoption signal.
 
-1. Map the changed paths to a functional area and its spec files using the reviewed repo's own index files: `repo-map.json` (path → module), then `test-map.json` and `docs/functional/README.md` (module → area and its flow/journey specs).
-2. Read that area's `docs/functional/<area>/README.md` only enough to name the changed behaviour precisely. Do not read module source beyond the diff or crawl unrelated specs — this review runs under a time budget.
-3. Under the flagged lane's line in the Test Coverage block, add one nested bullet per uncovered changed behaviour, naming the target spec file (an existing one to extend, or the conventional `tests/flows/__tests__/<area>.flow.spec.ts` /
-   `tests/e2e/journeys/<area>.journey.spec.ts` path) and the specific behaviour. For example:
+# 6. Report (rendered by the script from your JSON)
 
-   - Flow: flag — `domains` change has no deep-flow coverage.
-     - `tests/flows/__tests__/domain-crud.flow.spec.ts`: DELETE /domains/:id with child intents is not exercised (assert 409, nothing deleted)
-
-4. If the path → area mapping is ambiguous (a cross-cutting change), name the 2–3 candidate spec files instead of guessing one.
-5. Beyond 3 flagged areas, stop listing and write: `N more areas flagged — narrow the PR or see test-map.json`.
-6. Do not repeat a gap already named in an earlier review round unless the new commit adds further uncovered behaviour (see the posting contract's review-history rule).
-
-# Validation-infrastructure changes require human review (mandatory)
-
-The test harness and the service twins define what PR validation trusts. A diff that weakens either can turn the lanes greener without the product changing, so an AI-only approval is never review-complete for those surfaces — a human reviewer must sign off.
-
-Trigger the rule when the diff adds, changes, or deletes any of:
-
-- **Test harness** — `tests/world/**` (the `createWorld` world harness and lane boot), `tests/helpers/**`, `tests/fixtures/**`, `config/vitest/**`,
-  `tests/run.sh`, or `scripts/devops/world-lane-linux/**`.
-- **Service twins** — anything under `tests/twins/**`: a fake, its registry entry, a twin unit test, or a committed cassette/recording.
-- **The review contract itself** — `.agents/skills/ai-pr-review-guide.md`,
-  `.agents/skills/custom-codereview-guide.md`, or
-  `.github/workflows/ai-pr-review.yml`. These files decide what this review trusts and how it reports, so a diff that edits them cannot be approved by the reviewer it would change — the bot would be rewriting its own instructions.
-
-Ordinary app tests never trigger it. A co-located `src/**/__tests__/**` file, a
-`tests/flows/__tests__/*.flow.spec.ts` flow spec, a
-`tests/e2e/journeys/*.journey.spec.ts` journey spec, or any other product test added alongside a change is ordinary even when it lives under `tests/`. The rule keys on the surface a path belongs to, never on the word "test" appearing in it.
-
-When the rule triggers:
-
-1. List each changed surface under `## Human Review Required` (see the report format): the path and what changed about it.
-2. State plainly that the change requires a human reviewer before the PR is treated as review-complete, and why — the surface decides what the lanes trust.
-3. Do not emit `VERDICT: READY TO MERGE`; use the human-review verdict below.
-
-# Review report format (use this exact structure every time)
-
-The top-level review body MUST follow this template, in this order:
+vd-studio's `scripts/ai-pr-review/review.py` turns your summary, findings and lane verdicts into this report:
 
 ```
 ## Review Summary
-<1-3 sentences on what the PR does and the overall assessment>
+<1-3 sentences: what the PR does and your overall assessment>
 
 ## Findings
-<one bullet per finding posted inline, with severity — or "None.">
-
-## Human Review Required
-<one bullet per validation-infrastructure surface the diff changes, naming the path — or "None.">
+<one bullet per finding, with severity — or "None.">
 
 ## Test Coverage
 - Unit: <pass | flag | n/a> — <one line>
@@ -124,32 +95,34 @@ The top-level review body MUST follow this template, in this order:
 - Journey: <pass | flag | n/a> — <one line>
 - Integration: <pass | flag | n/a> — <one line>
 
-VERDICT: READY TO MERGE
+## Human Review Advised
+<one bullet per changed validation-trust file (harness or twins the lanes rely on) — or omit the section when none changed. Advisory only; it never blocks.>
+
+VERDICT: <one verdict line from section 7>
 ```
 
-When a lane flags, its `Test Coverage` line may carry nested sub-bullets naming the gap and target spec file (see "Naming the gap when a lane flags").
-When the validation-infrastructure rule triggers, its section carries one plain bullet per changed surface and the review ends with the human-review verdict.
-The sections above and the final `VERDICT:` line stay in this exact order.
+# 7. Verdict (computed by the script, last line, verbatim)
 
-The last line is the merge-readiness verdict, exactly one of (verbatim,
-machine-readable):
+- `VERDICT: READY TO MERGE` — no 🔴 finding and every lane is pass or n/a. 🟠 and 🟡 findings do not block. The verdict line is always exactly this text: the advisory trust-surface signal lives in the `## Human Review Advised` section, never in a verdict suffix.
+- `VERDICT: NOT READY — <n> finding(s) to address` — only when a 🔴 finding exists or a lane flags. Count only 🔴 findings and flagged lanes in `<n>`.
+- `VERDICT: HUMAN REVIEW REQUIRED — <n> reviewer file(s) changed` — when the diff touches the reviewer itself (this guide, `review.py`, its evals, the workflow, or its shape test). You never emit this verdict yourself: the script computes it from the file list. `NOT READY` wins when both apply.
 
-- `VERDICT: READY TO MERGE` — all coverage verdicts pass/n-a, no validation-infrastructure surface changed, the diff's tests pass (a known-failing or unjustified-skip test blocks), and no critical or major findings.
-- `VERDICT: NOT READY — <n> finding(s) to address`
-- `VERDICT: HUMAN REVIEW REQUIRED — <n> validation-infrastructure surface(s) changed` — no blocking finding, but the diff changes the test harness, a service twin, or the review contract itself, so a human reviewer must sign off before the PR is review-complete.
+# 8. Posting (done by the script)
 
-Precedence: `NOT READY` wins over `HUMAN REVIEW REQUIRED` when both apply; the
-`## Human Review Required` section still lists the surfaces either way.
+- You never post. You return findings and lane verdicts as JSON; the script does the rest.
+- The script posts exactly one review per commit to `pulls/<number>/reviews`. The report is the review body. Each finding is an inline comment on its changed line. It never returns the review as a text response.
+- The review `event` follows the verdict: `READY TO MERGE` → `"event": "APPROVE"`. `NOT READY` → `"event": "COMMENT"`. Never `REQUEST_CHANGES`. On a draft PR the script downgrades `APPROVE` to `COMMENT`: approving an unmergeable draft is noise.
+- GitHub can reject an approval (for example on a pull request it no longer lets this reviewer approve). The script then posts the same report as a `COMMENT` rather than losing it, so a `VERDICT: READY TO MERGE` line can arrive as a comment.
+- A finding whose quoted line is not in the diff is dropped. Every 🔴 and 🟠 gets a second check against the full file: a confirmed failing input is 🔴 and blocks, an unconfirmed one is 🟠. The checker also rejects a finding when the file's own comments document the mechanism the finding claims is missing.
+- The script adds `## Human Review Advised` for changed validation-trust files (`tests/world/`, `tests/helpers/`, `tests/fixtures/`, `config/vitest/`, `tests/run.sh`, `scripts/devops/world-lane-linux/`, `tests/twins/`): advisory, never blocking. It forces `HUMAN REVIEW REQUIRED` (a `COMMENT`) for a diff touching the reviewer itself: this guide, `scripts/ai-pr-review/`, `.github/workflows/ai-pr-review.yml`, or the shape test.
+- On a re-review the script sends you only the new commits' diff and the earlier findings. When a rebase or force-push means the earlier review's commit is no longer an ancestor of the head — or GitHub truncates that range at 300 files — the round reviews the whole PR diff and carries no earlier findings instead of grading the base branch's own commits.
+- The script deletes its own leftover draft review before retrying: GitHub allows one pending review per account per pull request, and a stale draft blocks every later post with a 422 that only that account can clear.
+- The script retries the post twice, then fails the job, so a missing review is never silent. Each failure logs GitHub's own explanation, not just the status code.
 
-A review without this structure and verdict line is incomplete.
+# 9. Before you answer (check every item)
 
-# Working within the iteration budget
-
-The review runs under a fixed iteration budget, and every wasted step shortens the review.
-
-- The PR diff is already in your prompt. Read it there instead of regenerating it. If you must run git, diff against the remote-tracking ref (`git diff origin/<base>...HEAD`): the checkout is the PR head branch and may have no local base branch.
-- Do not query CI status or check runs (`gh pr checks`, the checks API). The token cannot read them and the review does not depend on them.
-
-# Posting contract
-
-Post via `gh api`, never as a text response. The summary report is **one top-level comment per commit** — never inline, never duplicated. Inline comments are the default `code-review` plugin's per-finding comments only. Post the summary even with no new findings ("Findings: None" + the verdict line); skip re-posting already-reported inline comments, never skip the summary. On post failure, retry twice, then post a plain summary fallback and report the error.
+- Each 🔴 quotes a changed line and names an input and the wrong result it causes.
+- No finding is about untouched code, a test or CI result, or the goal the PR description states.
+- No 🟡 is a nit or praise: acceptable code gets no comment.
+- Every 🔴 and 🟠 finding is in this answer. Nothing is saved for a later round.
+- If there are no findings, the list is empty. That is a good result.
