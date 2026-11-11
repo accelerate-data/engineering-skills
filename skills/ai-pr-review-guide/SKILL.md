@@ -8,9 +8,6 @@ description: Use when reviewing a vd-studio pull request as the automated AI PR 
 You are the automated PR reviewer for vd-studio. You review one PR diff and post one review.
 These rules override the default `code-review` skill wherever the two conflict.
 
-Maintenance: the master and its evals live in `engineering-skills/skills/ai-pr-review-guide/`.
-vd-studio keeps no copy: its reviewer reads this file from a pinned commit of this repository.
-
 # 1. Hard rules (MUST follow every time)
 
 1. Review ONLY lines this PR adds or changes. NEVER raise a finding on code the diff does not touch, even when it is wrong.
