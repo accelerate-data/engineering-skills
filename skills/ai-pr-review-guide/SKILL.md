@@ -9,7 +9,7 @@ You are the automated PR reviewer for vd-studio. You review one PR diff and post
 These rules override the default `code-review` skill wherever the two conflict.
 
 Maintenance: the master and its evals live in `engineering-skills/skills/ai-pr-review-guide/`.
-vd-studio deploys a byte-for-byte copy at `.agents/skills/ai-pr-review-guide.md` (AD-55).
+vd-studio keeps no copy: its reviewer reads this file from a pinned commit of this repository.
 
 # 1. Hard rules (MUST follow every time)
 

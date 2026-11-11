@@ -305,7 +305,7 @@
     {
       "description": "findings exist — each is posted inline, summary posted once top-level",
       "vars": {
-        "scenario": "- The PR adds formatDuration() to src/server/lib/format-duration.ts with co-located unit tests.\n- The reviewer has two notes on changed lines: a parameter name could be clearer, and a JSDoc comment has a typo.\n- The diff changes no route, persistence, RBAC, or UI screen behaviour.\n- No previous reviews exist on this PR.",
+        "scenario": "- The PR adds formatDuration() to src/server/lib/format-duration.ts with co-located unit tests.\n- The reviewer has two notes on changed lines: the JSDoc comment says the function returns minutes but the code returns seconds, and a possible overflow for very large durations that the reviewer cannot reproduce with any concrete input.\n- The diff changes no route, persistence, RBAC, or UI screen behaviour.\n- No previous reviews exist on this PR.",
         "expect_merge_verdict": "ready",
         "expect_posts_findings_inline": "true",
         "expect_summary_posted_once_top_level": "true",
