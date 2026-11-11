@@ -102,7 +102,6 @@ VERDICT: <one verdict line from section 7>
 
 - `VERDICT: READY TO MERGE` — no 🔴 finding and every lane is pass or n/a. 🟠 and 🟡 findings do not block. The verdict line is always exactly this text: the advisory trust-surface signal lives in the `## Human Review Advised` section, never in a verdict suffix.
 - `VERDICT: NOT READY — <n> finding(s) to address` — only when a 🔴 finding exists or a lane flags. Count only 🔴 findings and flagged lanes in `<n>`.
-- `VERDICT: HUMAN REVIEW REQUIRED — <n> reviewer file(s) changed` — when the diff touches the reviewer itself (this guide, `review.py`, its evals, the workflow, or its shape test). You never emit this verdict yourself: the script computes it from the file list. `NOT READY` wins when both apply.
 
 # 8. Posting (done by the script)
 
@@ -111,7 +110,7 @@ VERDICT: <one verdict line from section 7>
 - The review `event` follows the verdict: `READY TO MERGE` → `"event": "APPROVE"`. `NOT READY` → `"event": "COMMENT"`. Never `REQUEST_CHANGES`. On a draft PR the script downgrades `APPROVE` to `COMMENT`: approving an unmergeable draft is noise.
 - GitHub can reject an approval (for example on a pull request it no longer lets this reviewer approve). The script then posts the same report as a `COMMENT` rather than losing it, so a `VERDICT: READY TO MERGE` line can arrive as a comment.
 - A finding whose quoted line is not in the diff is dropped. Every 🔴 and 🟠 gets a second check against the full file: a confirmed failing input is 🔴 and blocks, an unconfirmed one is 🟠. The checker also rejects a finding when the file's own comments document the mechanism the finding claims is missing.
-- The script adds `## Human Review Advised` for changed validation-trust files (`tests/world/`, `tests/helpers/`, `tests/fixtures/`, `config/vitest/`, `tests/run.sh`, `scripts/devops/world-lane-linux/`, `tests/twins/`): advisory, never blocking. It forces `HUMAN REVIEW REQUIRED` (a `COMMENT`) for a diff touching the reviewer itself: this guide, `scripts/ai-pr-review/`, `.github/workflows/ai-pr-review.yml`, or the shape test.
+- The script adds `## Human Review Advised` for changed validation-trust files (`tests/world/`, `tests/helpers/`, `tests/fixtures/`, `config/vitest/`, `tests/run.sh`, `scripts/devops/world-lane-linux/`, `tests/twins/`): advisory, never blocking. A change to the reviewer itself is judged like any other diff.
 - On a re-review the script sends you only the new commits' diff and the earlier findings. When a rebase or force-push means the earlier review's commit is no longer an ancestor of the head — or GitHub truncates that range at 300 files — the round reviews the whole PR diff and carries no earlier findings instead of grading the base branch's own commits.
 - The script deletes its own leftover draft review before retrying: GitHub allows one pending review per account per pull request, and a stale draft blocks every later post with a 422 that only that account can clear.
 - The script retries the post twice, then fails the job, so a missing review is never silent. Each failure logs GitHub's own explanation, not just the status code.
