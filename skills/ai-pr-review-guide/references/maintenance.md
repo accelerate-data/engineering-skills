@@ -5,7 +5,7 @@ This skill is the **master copy** of the review guide consumed by vd-studio's au
 
 ## How vd-studio reads it
 
-vd-studio keeps no copy. Its `ai-pr-review.yml` checks out this repository at a pinned commit and passes this folder to the script as `GUIDE_DIR`. The script sends sections 1-5 to the model and renders sections 6-8 itself.
+vd-studio keeps no copy. Its `ai-pr-review.yml` checks out this repository's `main` on every review and passes this folder to the script as `GUIDE_DIR`. The script sends sections 1-5 to the model and renders sections 6-8 itself.
 
 ## Edit workflow
 
@@ -15,10 +15,7 @@ vd-studio keeps no copy. Its `ai-pr-review.yml` checks out this repository at a 
    ignores the per-agent `model` in `tests/evals/opencode.json`, so without the
    variable the run uses your global default model.
    All rule scenarios must pass before merging.
-3. After this repository merges, raise a vd-studio PR that moves the pinned commit in `ai-pr-review.yml`.
-   In vd-studio, run `python3 scripts/ai-pr-review/review_test.py`, `python3 scripts/ai-pr-review/eval_planted.py` and a dry-run replay (`REPLAY_HEAD`, `REPLAY_FIRST=1`, `DRY_RUN=1`) on a past PR before pushing.
-
-A pinned commit, not `main`, so a guide change reaches vd-studio CI only through a reviewed vd-studio PR.
+3. Before merging, check the change against vd-studio's reviewer, because a merge applies to its next review: from vd-studio, set `GUIDE_DIR` to this folder and run `python3 scripts/ai-pr-review/review_test.py` and `python3 scripts/ai-pr-review/eval_planted.py`.
 
 ## What the evals cover
 
